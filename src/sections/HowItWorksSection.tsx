@@ -25,10 +25,11 @@ const STEPS = [
     desc: "Get the families involved. Meet and solidify the bond with your elders' blessings.",
   },
 ];
+
 // ─── Main export ──────────────────────────────────────────────────────────────
 export default function HowItWorksSection() {
   return (
-    <section className="relative w-full overflow-hidden bg-white py-0 md:py-11 font-poppins">
+    <section className="relative w-full overflow-hidden bg-white py-0 md:py-12 font-poppins">
 
       {/* ── Left union design ── */}
       <div
@@ -40,7 +41,8 @@ export default function HowItWorksSection() {
           alt=""
           width={797}
           height={780}
-          className="h-[460px] w-auto object-contain md:h-[540px] lg:h-[780px]"
+          className="h-[460px] object-contain md:h-[540px] lg:h-[780px]"
+          style={{ width: "auto" }}
         />
       </div>
 
@@ -52,9 +54,10 @@ export default function HowItWorksSection() {
         <Image
           src="/images/union_design.png"
           alt=""
-          width={160}
+          width={797}
           height={780}
-          className="h-[460px] w-auto object-contain md:h-[540px] lg:h-[780px] scale-x-[-1]"
+          className="h-[460px] object-contain md:h-[540px] lg:h-[780px] scale-x-[-1]"
+          style={{ width: "auto" }}
         />
       </div>
 
@@ -73,7 +76,7 @@ export default function HowItWorksSection() {
             How Tamilinai Works
           </h2>
 
-          {/* Step rows — gap: 40 */}
+          {/* Step rows */}
           <div className="flex flex-col gap-10">
             {STEPS.map((step, i) => (
               <StepRow key={i} icon={step.icon} title={step.title} desc={step.desc} />
@@ -99,22 +102,17 @@ export default function HowItWorksSection() {
 }
 
 // ─── Step row ─────────────────────────────────────────────────────────────────
-function StepRow({
-  icon,
-  title,
-  desc,
-}: {
-  icon: string;
-  title: string;
-  desc: string;
-}) {
+function StepRow({ icon, title, desc }: { icon: string; title: string; desc: string }) {
   return (
     <div className="flex items-center gap-5">
-   <img
-  src={icon}
-  alt=""
-  className="w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10"
-/>
+      <Image
+        src={icon}
+        alt=""
+        width={40}
+        height={40}
+        className="w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10"
+
+      />
       <div className="flex flex-col">
         <span className="text-[16px] font-medium leading-[1.4] text-[#222222] md:text-[20px]">
           {title}
@@ -126,4 +124,3 @@ function StepRow({
     </div>
   );
 }
-

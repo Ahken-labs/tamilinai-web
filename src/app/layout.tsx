@@ -3,9 +3,11 @@ import Header from "../components/Header";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <Header />
-      <body>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <Header />  
+        {children}
+      </body>
     </html>
   );
 }
