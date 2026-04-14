@@ -385,7 +385,7 @@ export default function Footer() {
           <div className="flex items-center gap-4">
 
             {/* Socials */}
-            <a href="https://facebook.com" target="_blank" className="hover:opacity-80">
+            {/* <a href="https://facebook.com" target="_blank" className="hover:opacity-80">
               <FaFacebookF size={16} />
             </a>
 
@@ -403,7 +403,7 @@ export default function Footer() {
 
             <a href="https://instagram.com" target="_blank" className="hover:opacity-80">
               <FaInstagram size={16} />
-            </a>
+            </a> */}
 
           </div>
         </div>
