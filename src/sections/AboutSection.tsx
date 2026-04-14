@@ -101,12 +101,12 @@ export default function AboutSection() {
       </section>
 
 
-      <section className="w-full bg-white font-poppins px-5 md:px-10 xl:px-[120px] pb-20">
+      <section className="w-full bg-white font-poppins px-5 md:px-10 xl:px-[120px]">
 
         {/* Section title */}
         <h2
           className="font-bold text-[#222222] 
-            text-[26px] sm:text-[32px] md:text-[40px] mt-15 md:mt-30 mb-6 md:mb-10"
+            text-[26px] lg:text-[40px] md:text-[32px] mt-15 md:mt-30 mb-6 md:mb-10"
           style={{
             lineHeight: "44.48px",
             letterSpacing: "0.64px",
@@ -154,13 +154,13 @@ function TrustCard({
     >
       <span
         className="font-semibold leading-[150%] text-[#222222]
-          text-[18px] sm:text-[20px] md:text-[24px]"
+          text-[18px] lg:text-[24px] md:text-[20px]"
       >
         {title}
       </span>
       <span
         className="font-normal leading-[150%] text-[#222222]
-          text-[13px] sm:text-[15px] md:text-[20px] mt-4"
+          text-[13px] lg:text-[20px] md:text-[15px] mt-4"
       >
         {desc}
       </span>

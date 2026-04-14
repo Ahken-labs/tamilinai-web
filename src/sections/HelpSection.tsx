@@ -1,0 +1,86 @@
+"use client";
+
+import Image from "next/image";
+import { FaWhatsapp } from "react-icons/fa";
+
+const WHATSAPP_NUMBER = "+94762360948";
+
+export function HelpSection() {
+  return (
+    <section
+      className="
+        relative w-full overflow-hidden
+        mt-8 md:mt-20 lg:mt-30"
+      style={{
+        background: "linear-gradient(180deg, #FFF7F0 0%, #FFEBEB 100%)",
+      }}
+    >
+      <div className="mx-auto max-w-[1100px] px-6 flex flex-col md:flex-row items-center gap-10">
+
+        {/* ── LEFT IMAGE ── */}
+        <div className="w-full md:w-auto flex justify-center">
+          <Image
+            src="/images/help_girl.png"
+            alt="Support"
+            width={528}
+            height={480}
+            className="
+              w-[260px] sm:w-[360px] md:w-[420px] lg:w-[528px]
+              h-auto object-contain
+            "
+            priority
+          />
+        </div>
+
+        {/* ── RIGHT CONTENT ── */}
+        <div className="flex flex-col text-center md:text-left max-w-[620px]">
+
+          {/* Title */}
+          <h2
+            className="
+              font-bold text-[#222222]
+              text-[22px] lg:text-[40px] md:text-[32px]
+              leading-[120%]
+            "
+          >
+            Need Help Finding a Match?
+          </h2>
+
+          {/* Description */}
+          <p
+            className="
+              mt-4 md:mt-6 text-[#222222]
+              text-[12px] md:text-[14px] lg:text-[16px]
+              leading-[150%]
+            "
+          >
+            Chat with Tamilinai’s friendly support team for profile creation,
+            photo uploads, or personalized matchmaking assistance.
+          </p>
+
+          {/* WhatsApp Button */}
+          <div className="mt-8 lg:mb-0 md:mb-0 mb-6 md:mt-10">
+            <a
+              href={`https://wa.me/${WHATSAPP_NUMBER.replace("+", "")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="
+                inline-flex items-center justify-center
+                h-[48px] px-10
+                border border-[#222222]
+                rounded-[31px]
+                text-[#222222]
+                text-[16px] font-medium
+                transition hover:bg-black hover:text-white
+              "
+            >
+              <FaWhatsapp className="mr-2 text-[18px]" />
+
+              WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
