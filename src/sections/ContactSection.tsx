@@ -51,7 +51,9 @@ export default function ContactSection() {
     mx-auto
   "
                 >
-                    More than just matchmaking.<br />We are your bridge to home.
+                    <span className="block">More than just matchmaking.</span>
+                    <span className="block">We are your bridge to home.</span>
+                    {/* More than just matchmaking.<br />We are your bridge to home. */}
                 </h2>
                 {/* Tamil text */}
                 <p className="mt-6 text-[12px] md:text-[16px] lg:text-[20px] leading-[150%] text-[#222222] font-normal">
@@ -71,6 +73,6 @@ export default function ContactSection() {
                 </div>
             </div>
         </section>
-        
+
     );
 }

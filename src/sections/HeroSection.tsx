@@ -369,8 +369,7 @@ function GlobeIcon() {
             className="text-[#222222] shrink-0">
             <circle cx="10" cy="10" r="8.5" stroke="currentColor" strokeWidth="1.4" />
             <ellipse cx="10" cy="10" rx="3.5" ry="8.5" stroke="currentColor" strokeWidth="1.4" />
-            <line x1="1.5" y1="7.5" x2="18.5" y2="7.5" stroke="currentColor" strokeWidth="1.4" />
-            <line x1="1.5" y1="12.5" x2="18.5" y2="12.5" stroke="currentColor" strokeWidth="1.4" />
+            <line x1="1.5" y1="9.8" x2="18.5" y2="9.8" stroke="currentColor" strokeWidth="1.4" />
         </svg>
     );
 }
