@@ -203,7 +203,7 @@ import { useLang } from "../context/LangContext";
 
 const LANGUAGES = [
   { label: "ஆங்கிலம்", value: "en" as const },
-  { label: "தமிழ்",    value: "ta" as const },
+  { label: "Tamil",    value: "ta" as const },
 ];
 
 export default function Header() {
