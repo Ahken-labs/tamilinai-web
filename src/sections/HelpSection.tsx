@@ -2,10 +2,12 @@
 
 import Image from "next/image";
 import { FaWhatsapp } from "react-icons/fa";
+import { useLang } from "../context/LangContext";
 
 const WHATSAPP_NUMBER = "+94762360948";
 
 export function HelpSection() {
+  const { t } = useLang();
   return (
     <section
       className="
@@ -43,7 +45,7 @@ export function HelpSection() {
               leading-[120%]
             "
           >
-            Need Help Finding a Match?
+           {t("Need_Help_Finding_a_Match")}
           </h2>
 
           {/* Description */}
@@ -54,8 +56,7 @@ export function HelpSection() {
               leading-[150%]
             "
           >
-            Chat with Tamilinai’s friendly support team for profile creation,
-            photo uploads, or personalized matchmaking assistance.
+            {t("Chat_with_Tamilinais_friendly_support_team_for_profile_creation_photo_uploads_or_personalized_matchmaking_assistance")}
           </p>
 
           {/* WhatsApp Button */}
@@ -70,13 +71,12 @@ export function HelpSection() {
                 border border-[#222222]
                 rounded-[31px]
                 text-[#222222]
-                text-[16px] font-medium
+               text-[14px] md:text-[16px] font-medium
                 transition hover:bg-black hover:text-white
               "
             >
               <FaWhatsapp className="mr-2 text-[18px]" />
-
-              WhatsApp
+              {t("WhatsApp")}
             </a>
           </div>
         </div>

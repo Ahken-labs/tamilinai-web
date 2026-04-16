@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import { useLang } from "../context/LangContext";
 
 export default function ContactSection() {
+    const { t } = useLang();
     return (
         <section className="relative w-full bg-white overflow-hidden font-poppins py-16 md:py-24 mt-8 md:mt-20 lg:mt-40">
 
@@ -35,7 +37,7 @@ export default function ContactSection() {
 
                 {/* Small heading */}
                 <p className="text-[12px] md:text-[14px] lg:text-[16px] font-medium text-[#222222]">
-                    Our vision and purpose
+                    {t("Our_vision_and_purpose")}
                 </p>
 
                 {/* Main heading */}
@@ -51,8 +53,8 @@ export default function ContactSection() {
     mx-auto
   "
                 >
-                    <span className="block">More than just matchmaking.</span>
-                    <span className="block">We are your bridge to home.</span>
+                    <span className="block">{t("More_than_just_matchmaking")}</span>
+                    <span className="block">{t("We_are_your_bridge_to_home")}</span>
                     {/* More than just matchmaking.<br />We are your bridge to home. */}
                 </h2>
                 {/* Tamil text */}
@@ -65,10 +67,10 @@ export default function ContactSection() {
                 <div className="mt-8">
                     <button
                         className="h-[48px] px-10 rounded-[31px] bg-[#B31B38]
-              text-white text-[16px] font-semibold uppercase
+              text-white text-[14px] md:text-[16px] font-semibold uppercase
               transition hover:opacity-85 active:scale-[0.98]"
                     >
-                        Start your roots
+                        {t("Start_your_roots")}
                     </button>
                 </div>
             </div>

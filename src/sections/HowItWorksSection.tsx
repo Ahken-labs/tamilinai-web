@@ -1,33 +1,35 @@
 "use client";
 
 import Image from "next/image";
+import { useLang } from "../context/LangContext";
 
 // ─── Step data ────────────────────────────────────────────────────────────────
 const STEPS = [
   {
     icon: "/icons/profile.png",
-    title: "Create Your Profile",
-    desc: "Add details and photos. Our 100% verification secures the process.",
+    title: "Create_Your_Profile",
+    desc: "Add_details_and_photos_Our_verification_secures_the_process",
   },
   {
     icon: "/icons/preferences.png",
-    title: "Set Preferences",
-    desc: "Tell us what matters most to you in a life partner, from background to values.",
+    title: "Set_Preferences",
+    desc: "Tell_us_what_matters_most_to_you_in_a_life_partner_from_background_to_values",
   },
   {
     icon: "/icons/match.png",
-    title: "Find Your Match",
-    desc: "Browse verified profiles with total photo and data privacy.",
+    title: "Find_Your_Match",
+    desc: "Browse_verified_profiles_with_total_photo_and_data_privacy",
   },
   {
     icon: "/icons/family.png",
-    title: "Involve Your Family",
-    desc: "Get the families involved. Meet and solidify the bond with your elders' blessings.",
+    title: "Involve_Your_Family",
+    desc: "Get_the_families_involved_Meet_and_solidify_the_bond_with_your_elders_blessings",
   },
-];
+] as const;
 
 // ─── Main export ──────────────────────────────────────────────────────────────
 export default function HowItWorksSection() {
+  const { t } = useLang();
   return (
     <section className="relative w-full overflow-hidden bg-white py-0 md:py-12 font-poppins">
 
@@ -73,13 +75,18 @@ export default function HowItWorksSection() {
         >
           {/* Title */}
           <h2 className="mb-12 text-center font-semibold text-[26px] leading-[150%] text-[#222222] md:text-[32px]">
-            How Tamilinai Works
+            {t("How_Tamilinai_Works")}
           </h2>
 
           {/* Step rows */}
           <div className="flex flex-col gap-10">
             {STEPS.map((step, i) => (
-              <StepRow key={i} icon={step.icon} title={step.title} desc={step.desc} />
+              <StepRow
+                key={i}
+                icon={step.icon}
+                title={t(step.title)}
+                desc={t(step.desc)}
+              />
             ))}
           </div>
 
@@ -88,11 +95,11 @@ export default function HowItWorksSection() {
             <button
               type="button"
               className="flex h-12 cursor-pointer items-center justify-center gap-2
-                rounded-full bg-[#B31B38] font-semibold text-[16px] leading-[150%]
+                rounded-full bg-[#B31B38] font-semibold text-[14px] md:text-[16px] leading-[150%]
                 text-white transition-opacity duration-150 hover:opacity-85 active:scale-[0.98]"
               style={{ paddingLeft: 64, paddingRight: 64 }}
             >
-              Register for Free
+              {t("Register_for_free")}
             </button>
           </div>
         </div>

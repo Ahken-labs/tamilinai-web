@@ -1,38 +1,40 @@
 "use client";
 
 import { useState } from "react";
+import { useLang } from "../context/LangContext";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 const FAQS = [
   {
-    q: "What is the best and safest matrimonial site for Eelam (Sri Lankan) Tamils?",
-    a: "Tamilinai is widely considered the best and most secure matrimonial platform exclusively built for the Eelam Tamil community. Unlike generic sites, Tamilinai focuses heavily on 100% manual profile verification (Mobile, Nic, LinkedIn) and caters specifically to the cultural nuances of Sri Lankan Tamils living in the homeland and the global diaspora.",
+    q: "FAQ1",
+    a: "FAQ1_Answer",
   },
   {
-    q: "How does Tamilinai Matrimony protect users from fake matrimonial profiles and scams?",
-    a: "Trust and security are the foundations of Inai. Every single profile submitted to our platform undergoes a strict manual verification process using mobile, government-issued IDs (National Identity Card or Passport) and LinkedIn. We ensure zero fake profiles, making it the safest space for Tamil brides and grooms to find their life partners.",
+    q: "FAQ2",
+    a: "FAQ2_Answer",
   },
   {
-    q: "Can Sri Lankan Tamils living in the UK, Canada, Australia, or Europe use Tamilinai Matrimony?",
-    a: "Yes, absolutely. Tamilinai is specifically designed to bridge the gap between the homeland and the diaspora. Whether you are looking for a Jaffna marriage proposal from London, a Vanni match from Toronto, or a local partner in Sri Lanka, our advanced location and community filters make global matchmaking seamless.",
+    q: "FAQ3",
+    a: "FAQ3_Answer",
   },
   {
-    q: "Can I hide my photos or restrict who sees my contact details on Tamilinai Matrimony?",
-    a: "Yes, your privacy is fully in your control. Tamilinai offers bank-grade privacy settings. You can choose to blur your photos, hide your contact number, and only reveal your full profile to members you have explicitly accepted or shown interest in.",
+    q: "FAQ4",
+    a: "FAQ4_Answer",
   },
   {
-    q: "Does Tamilinai Matrimony support specific regional preferences like Jaffna, Vanni, or Batticaloa proposals?",
-    a: "Yes. We understand that Eelam Tamil marriages deeply value regional and cultural roots. Tamilinai's smart filtering system allows you to find matches based on specific districts and towns, ensuring you find a partner who perfectly aligns with your family's traditions and values.",
+    q: "FAQ5",
+    a: "FAQ5_Answer",
   },
   {
-    q: "Is it free to register and create a profile on Tamilinai Matrimony?",
-    a: "Creating a profile, uploading your details, and getting verified on Inai is completely free. To unlock premium features like direct messaging and viewing verified contact numbers, we offer highly affordable, transparent membership plans with no hidden fees.",
+    q: "FAQ6",
+    a: "FAQ6_Answer",
   },
-];
+] as const;
 
 // ─── Main export ──────────────────────────────────────────────────────────────
 export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const { t } = useLang();
 
   const toggle = (i: number) => setOpenIndex(openIndex === i ? null : i);
 
@@ -42,7 +44,7 @@ export default function FAQSection() {
       {/* Title */}
       <h2 className="font-bold text-[#222222] text-center leading-[150%]
         text-[26px] lg:text-[40px] md:text-[32px]">
-        Your Questions, Answered
+        {t("Your_Questions_Answered")}
       </h2>
 
       {/* FAQ list */}
@@ -50,8 +52,8 @@ export default function FAQSection() {
         {FAQS.map((faq, i) => (
           <FAQItem
             key={i}
-            question={faq.q}
-            answer={faq.a}
+            question={t(faq.q)}
+            answer={t(faq.a)}
             isOpen={openIndex === i}
             onToggle={() => toggle(i)}
           />

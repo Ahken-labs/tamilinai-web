@@ -3,36 +3,37 @@
 import Image from "next/image";
 import { FaFacebookF, FaWhatsapp, FaInstagram } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
+import { useLang } from "../context/LangContext";
 
 // ─── Nav link data ────────────────────────────────────────────────────────────
 const NAV_LEFT = [
-  { label: "Home",     href: "#hero"  },
-  { label: "About Us", href: "#about" },
-  { label: "Join Now", href: "#"      },
-];
+  { label: "Home", href: "#hero" },
+  { label: "About_Us", href: "#about" },
+  { label: "Join_Now", href: "#" },
+] as const;
 
 const NAV_RIGHT = [
-  { label: "Terms & Conditions", href: "#" },
-  { label: "Privacy Policy",     href: "#" },
-  { label: "Blog",               href: "#" },
-];
+  { label: "Terms_Conditions", href: "#" },
+  { label: "Privacy_Policy", href: "#" },
+  { label: "Blog", href: "#" },
+] as const;
 
 const BOTTOM_LINKS = [
-  { label: "Privacy", href: "#" },
-  { label: "Terms",   href: "#" },
-];
+  { label: "Privacy_Policy", href: "#" },
+  { label: "Terms_Conditions", href: "#" },
+] as const;
 
 // ─── Social links ─────────────────────────────────────────────────────────────
 const SOCIALS = [
- {
-  label: "Facebook",
-  href: "https://facebook.com",
-  icon: (
-    <div className="w-4 h-4 rounded-full bg-white flex items-end justify-center">
-      <FaFacebookF size={13} className="text-[#740234]" />
-    </div>
-  ),
-},
+  {
+    label: "Facebook",
+    href: "https://facebook.com",
+    icon: (
+      <div className="w-4 h-4 rounded-full bg-white flex items-end justify-center">
+        <FaFacebookF size={13} className="text-[#740234]" />
+      </div>
+    ),
+  },
   {
     label: "WhatsApp",
     href: "https://wa.me/94762360948",
@@ -56,6 +57,7 @@ const navLinkClass =
 
 // ─── Main export ──────────────────────────────────────────────────────────────
 export default function Footer() {
+  const { t } = useLang();
   /** Smooth scroll helper */
   const scrollTo = (href: string) => {
     if (!href.startsWith("#") || href === "#") return;
@@ -71,50 +73,45 @@ export default function Footer() {
       <div className="mx-auto max-w-[1200px] px-6 md:pt-10 pt-8 pb-0">
 
         {/* ── Top 3-column row ── */}
-       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-10 lg:gap-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-10 lg:gap-0">
 
-{/* LEFT SIDE (Col1 + Col2 combined) */}
-<div className="flex justify-between max-w-[400px] w-full">
-  
-  {/* Col 1 */}
-  <div className="flex flex-col gap-2">
-    {NAV_LEFT.map(({ label, href }) => (
-      <a
-        key={label}
-        href={href}
-        onClick={(e) => {
-          if (href.startsWith("#")) {
-            e.preventDefault();
-            scrollTo(href);
-          }
-        }}
-        className={navLinkClass}
-      >
-        {label}
-      </a>
-    ))}
-  </div>
+          {/* LEFT SIDE (Col1 + Col2 combined) */}
+          <div className="flex justify-between max-w-[400px] w-full">
 
-  {/* Col 2 */}
-  <div className="flex flex-col gap-2">
-    {NAV_RIGHT.map(({ label, href }) => (
-      <a key={label} href={href} className={navLinkClass}>
-        {label}
-      </a>
-    ))}
-  </div>
+            {/* Col 1 */}
+            <div className="flex flex-col gap-2">
+              {NAV_LEFT.map(({ label, href }) => (
+                <a
+                  key={t(label)}
+                  href={href}
+                  onClick={(e) => {
+                    if (href.startsWith("#")) {
+                      e.preventDefault();
+                      scrollTo(href);
+                    }
+                  }}
+                  className={navLinkClass}
+                >
+                  {t(label)}
+                </a>
+              ))}
+            </div>
 
-</div>
+            {/* Col 2 */}
+            <div className="flex flex-col gap-2">
+              {NAV_RIGHT.map(({ label, href }) => (
+                <a key={label} href={href} className={navLinkClass}>
+                  {t(label)}
+                </a>
+              ))}
+            </div>
+
+          </div>
 
           {/* Col 3 — Description (pushed right on desktop) */}
           <div className="md:ml-auto ">
             <p className="font-poppins font-normal text-[13px] md:text-[14px] lg:text-[16px] leading-[150%] text-white">
-              Tamilinai Matrimony, a proud initiative by Ahken Labs based in Eelam&apos;s heart,
-              Kilinochchi, is Sri Lanka&apos;s most trusted matrimonial platform exclusively built
-              for the global Eelam Tamil community. We blend cutting-edge privacy design with deep
-              cultural roots to provide 100% ID-verified marriage proposals, seamlessly connecting
-              Jaffna, Vanni, Trincomalee, Batticaloa, the center province and the worldwide Tamil
-              diaspora.
+              {t("Footer_parah")}
             </p>
           </div>
         </div>
@@ -130,16 +127,15 @@ export default function Footer() {
               </span>
 
               {BOTTOM_LINKS.map(({ label, href }) => (
-                <>
-                  <Dot key={`dot-${label}`} />
+                <div key={label} className="flex items-center gap-1.5">
+                  <Dot />
                   <a
-                    key={label}
                     href={href}
-                    className="font-poppins font-normal  text-[12px] md:text-[13px] lg:text-[14px] leading-[18px] text-white hover:text-white transition-colors"
+                    className="font-poppins font-normal text-[12px] md:text-[13px] lg:text-[14px] leading-[18px] text-white hover:text-white transition-colors"
                   >
-                    {label}
+                    {t(label)}
                   </a>
-                </>
+                </div>
               ))}
 
               <Dot />
@@ -162,7 +158,7 @@ export default function Footer() {
             </div>
 
             {/* Right — locale + socials */}
-           <div className="w-full flex flex-wrap items-center gap-2 md:justify-end">
+            <div className="w-full flex flex-wrap items-center gap-2 md:justify-end">
 
               {/* Globe + locale */}
               <div className="flex items-center gap-1.5">
@@ -174,7 +170,7 @@ export default function Footer() {
 
               <Dot />
               <span className="font-poppins font-normal text-[12px] md:text-[13px] lg:text-[14px] leading-[18px] text-white mx-0 md:mx-2 lg:mx-3">
-                LKR
+                {t("LKR")}
               </span>
               <Dot />
 
