@@ -1,10 +1,17 @@
 "use client";
-import {
-    CheckBadgeIcon,
-} from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { useState } from "react";
+import {
+  ArrowRightIcon,
+  HeroButtonSideIcon,
+  TrustPrivacyIcon,
+  TrustVerifiedIcon,
+  ChevronIcon,
+  FlowerIcon,
+  GlobeIcon,
+} from "../assets/Icons";
 import { useLang } from "../context/LangContext";
+import InputBox from "../components/common/InputBox";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const PROFILES = ["Myself", "Son", "Daughter", "Brother", "Sister", "Friend"];
@@ -24,7 +31,7 @@ export default function HeroSection() {
         <FormCard>
             {/* Box 1 — Profile created for */}
             <DropdownField
-                label={profileFor || t("Profile_created_for")}
+                label={profileFor || t("This_profile_is_for")}
                 open={profileOpen}
                 onToggle={() => { setProfileOpen(v => !v); setCountryOpen(false); }}
             >
@@ -39,19 +46,12 @@ export default function HeroSection() {
                 ))}
             </DropdownField>
 
-            {/* Box 2 — Full name */}
-            <div className="flex h-[60px] items-center rounded-xl border border-[#8C8C8C] px-4
-        focus-within:border-[#B31B38]">
-                <input
-                    type="text"
-                    value={fullName}
-                    onChange={e => setFullName(e.target.value)}
-                    placeholder={t("Full_Name")}
-                    className="w-full bg-transparent text-[16px] font-normal leading-[1.25]
-            text-[#222222] outline-none placeholder:text-[#222222]"
-                />
-            </div>
-
+            {/* Full name */}
+            <InputBox
+                value={fullName}
+                onChange={setFullName}
+                label={t("Name")}
+            />
             {/* Box 3 — Country code */}
             <DropdownField
                 open={countryOpen}
@@ -74,60 +74,34 @@ export default function HeroSection() {
                 ))}
             </DropdownField>
 
-            {/* Box 4 — Phone */}
-            <div>
-                <div className="flex h-[60px] flex-col justify-center rounded-xl border border-[#8C8C8C]
-          px-4 focus-within:border-[#B31B38]">
-                    <input
-                        type="tel"
-                        value={phone}
-                        onChange={e => setPhone(e.target.value)}
-                        placeholder={t("Phone_number")}
-                        className="w-full bg-transparent text-[16px] font-normal leading-[1.25]
-              text-[#222222] outline-none placeholder:text-[#222222]"
-                    />
-                </div>
-                <p className="mt-1 text-[12px] leading-[1.5] text-[#666666]">
-                    {t("OTP_will_be_sent_to_his_number")}
-                </p>
-            </div>
-
+            {/* Email address */}
+            <InputBox
+                value={phone}
+                onChange={setPhone}
+                label={t("Email")}
+                type="email"
+            />
             {/* CTA */}
             <button
                 type="button"
-                className="relative mt-1 flex h-[48px] w-full items-center justify-center
+                className="relative mt-2 flex h-[48px] w-full items-center justify-center
     text-[14px] md:text-[16px] font-semibold text-white
     transition hover:opacity-85 active:scale-[0.99] cursor-pointer"
             >
                 {/* CENTER BACKGROUND ONLY */}
-                <div className="absolute left-[50px] right-[50px] top-0 bottom-0 bg-[#B31B38] z-0" />
+                <div className="absolute left-[28px] right-[28px] top-0 bottom-0 bg-[#B31B38] z-0" />
 
-                {/* LEFT IMAGE */}
-                <Image
-                    src="/images/button_design.png"
-                    alt=""
-                    width={50}
-                    height={48}
-                    className="absolute left-0 top-0 h-full w-auto z-10"
-                />
-
-                {/* RIGHT IMAGE */}
-                <Image
-                    src="/images/button_design.png"
-                    alt=""
-                    width={50}
-                    height={48}
-                    className="absolute right-0 top-0 h-full w-auto scale-x-[-1] z-10"
-                />
+     <HeroButtonSideIcon className="absolute left-0 top-0 h-full w-auto z-10" />
+<HeroButtonSideIcon className="absolute right-0 top-0 h-full w-auto scale-x-[-1] z-10" />
 
                 {/* TEXT */}
                 <span className="relative z-20 flex items-center gap-2 px-4">
                     {t("Continue_for_Free")}
-                    <ArrowRight />
+                    <ArrowRightIcon />
                 </span>
             </button>
             <p className="text-center text-[12px] leading-[1.5] text-[#666666]">
-                {t("Takes_2_minutes_Data_Privacy_Guaranteed")}
+                {t("Takes_2_minutes_Your_data_is_never_shared_without_your_permission")}
             </p>
         </FormCard>
     );
@@ -140,7 +114,7 @@ export default function HeroSection() {
                 {/* ── Image + overlay ── */}
                 <div
                     className="relative w-full overflow-hidden rounded-[60px]
-            h-[320px] sm:h-[380px] md:h-[420px] lg:h-[658px]"
+            h-[320px] sm:h-[380px] md:h-[420px] lg:h-[850px] select-none"
                 >
                     <Image
                         src="/images/hero_image.png"
@@ -151,7 +125,7 @@ export default function HeroSection() {
                     />
 
                     {/* Gradient overlay */}
-                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(38,2,3,0.9)_0%,rgba(230,39,99,0.1)_50%,#260203_100%)]" />
+                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(38,2,3,0.9)_0%,rgba(230,39,99,0.3)_50%,#260203_100%)]" />
 
                     {/* Content inside the overlay — badge + (desktop-only form) + headline */}
                     <div
@@ -159,20 +133,20 @@ export default function HeroSection() {
                         style={{ padding: "40px 40px" }}
                     >
                         {/* Top row: badge left + form right (form hidden on mobile/tablet) */}
-                        <div className="flex justify-between items-stretch h-full">
+                        <div className="flex justify-between items-center h-full">
 
                             {/* Trust badge */}
                             <div className="flex flex-col justify-between h-full w-full">
                                 <TrustBadge />
 
                                 {/* Bottom text */}
-                                <div>
+                                <div className="mr-2">
                                     <h1 className="mb-2 font-semibold leading-[1.5] text-white
-      text-[20px] sm:text-[24px] md:text-[28px] lg:text-[32px]">
-                                        {t("Find_your_perfect_partner_who_shares_your_culture_future")}
+                                                text-[18px] sm:text-[20px] md:text-[26px] lg:text-[32px]">
+                                        {t("Find_your_Tamil_life_partner_wherever_in_the_world_you_are")}
                                     </h1>
-                                    <p className="text-[14px] leading-[1.5] text-white/85 md:text-[16px]">
-                                        {t("verified_profiles_From_the_homeland_to_the_global_diaspora")}
+                                    <p className="text-[12px] leading-[1.5] text-white/85 md:text-[14px] lg:text-[16px]">
+                                        {t("Sri_Lankan_Tamil_matrimony_site_trusted_by_families_in_Sri_Lanka_London_Toronto_and_Sydney_verified_profiles")}
                                     </p>
                                 </div>
                             </div>
@@ -192,14 +166,14 @@ export default function HeroSection() {
             </div>
 
             {/* ── Trust bar ── */}
-            <div className="mt-15 mb-15 md:mb-4 lg:mb-15 px-6">
+            <div className="lg:pt-15 pt-10 px-6">
                 <div className="max-w-[1260px] mx-auto">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-6">
 
                         {/* 1 */}
                         <div className="flex items-center justify-center md:col-span-2 lg:col-span-1">
                             <TrustItem
-                                icon={<CheckBadgeIcon className="w-6 h-6 text-[#222222]" />}
+                                icon={<TrustVerifiedIcon />}
                                 text={t("Verified_Profiles")}
                             />
                         </div>
@@ -207,7 +181,7 @@ export default function HeroSection() {
                         {/* 2 */}
                         <div className="flex items-center justify-center">
                             <TrustItem
-                                icon={<GlobeIcon />}
+                                icon={<GlobeIcon className="w-6 h-6 text-[#222222] shrink-0" />}
                                 text={t("Global_Tamil_Network")}
                             />
                         </div>
@@ -215,7 +189,7 @@ export default function HeroSection() {
                         {/* 3 */}
                         <div className="flex items-center justify-center">
                             <TrustItem
-                                icon={<LockIcon />}
+                               icon={<TrustPrivacyIcon />}
                                 text={t("Absolute_Data_Privacy")}
                             />
                         </div>
@@ -233,24 +207,16 @@ function TrustBadge() {
     const { t } = useLang();
     return (
         <div className="flex items-center">
-            <Image
-                src="/images/flower.png" alt=""
-                width={37} height={72}
-                className="mr-3 shrink-0 object-contain h-[48px] w-[24px] md:h-[72px] md:w-[37px]"
-            />
+           <FlowerIcon className="mr-3 shrink-0 h-[48px] w-[24px] md:h-[72px] md:w-[37px]" />
             <div className="flex flex-col">
-                <p className="font-medium leading-[1.5] text-white text-[15px] md:text-[24px] text-center">
+                <p className="font-medium leading-[1.5] text-white text-[15px] sm:text-[18px] md:text-[21px] lg:text-[24px] text-center">
                     {t("2026_MOST_TRUSTED")}
                 </p>
-                <p className="font-medium leading-[1.5] text-white text-[15px] md:text-[24px]">
+                <p className="font-medium leading-[1.5] text-white text-[15px] sm:text-[18px] md:text-[21px] lg:text-[24px]">
                     {t("Eelam_Tamil_Matrimony")}
                 </p>
             </div>
-            <Image
-                src="/images/flower.png" alt=""
-                width={37} height={72}
-                className="ml-3 shrink-0 object-contain scale-x-[-1] h-[48px] w-[24px] md:h-[72px] md:w-[37px]"
-            />
+       <FlowerIcon className="ml-3 shrink-0 scale-x-[-1] h-[48px] w-[24px] md:h-[72px] md:w-[37px]" />
         </div>
     );
 }
@@ -262,7 +228,7 @@ function FormCard({ children }: { children: React.ReactNode }) {
         <div className="w-full rounded-[20px] bg-white shadow-[0px_2px_16px_0px_rgba(0,0,0,0.12)]">
             <div className="flex flex-col gap-6 px-4 pb-10 pt-8 md:px-6">
                 <h2 className="text-center text-[20px] font-semibold leading-[1.5] text-[#222222]">
-                    {t("Start_Your_Journey_for_Free")}
+                    {t("Create_your_free_profile")}
                 </h2>
                 {children}
             </div>
@@ -292,7 +258,7 @@ function DropdownField({
           focus:outline-none focus:border-[#B31B38] transition-colors cursor-pointer"
             >
                 <span className="text-[16px] leading-[1.25] text-[#222222]">{label}</span>
-                <Chevron open={open} />
+                <ChevronIcon open={open} />
             </button>
 
             {open && (
@@ -341,65 +307,5 @@ function TrustItem({ icon, text }: { icon: React.ReactNode; text: string }) {
                 {text}
             </span>
         </div>
-    );
-}
-
-// ─── SVG icons ────────────────────────────────────────────────────────────────
-function Chevron({ open }: { open: boolean }) {
-    return (
-        <svg
-            width="16" height="16" viewBox="0 0 16 16" fill="none"
-            className={`shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-            aria-hidden="true"
-        >
-            <path d="M3.5 6L8 10.5L12.5 6" stroke="#222222"
-                strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-    );
-}
-
-function ArrowRight() {
-    return (
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <path d="M3 8H13M9 4L13 8L9 12" stroke="white"
-                strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-    );
-}
-
-function GlobeIcon() {
-    return (
-        <svg width="24" height="24" viewBox="0 0 20 20" fill="none"
-            className="text-[#222222] shrink-0">
-            <circle cx="10" cy="10" r="8.5" stroke="currentColor" strokeWidth="1.4" />
-            <ellipse cx="10" cy="10" rx="3.5" ry="8.5" stroke="currentColor" strokeWidth="1.4" />
-            <line x1="1.5" y1="9.8" x2="18.5" y2="9.8" stroke="currentColor" strokeWidth="1.4" />
-        </svg>
-    );
-}
-
-function LockIcon() {
-    return (
-        <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            className="text-[#222222] shrink-0"
-        >
-            <path
-                d="M12 2L4 5V11C4 16 7.5 20.5 12 22C16.5 20.5 20 16 20 11V5L12 2Z"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinejoin="round"
-            />
-            <path
-                d="M9 12L11 14L15 10"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-        </svg>
     );
 }

@@ -30,11 +30,10 @@ export default function AboutSection() {
       <section
         className="relative w-full font-poppins overflow-hidden"
         style={{
-          minHeight: 724,
           background: "linear-gradient(180deg, #FFF7F0 0%, #FFEBEB 100%)",
         }}
       >
-        <div className="flex flex-col items-center px-5 pb-16">
+        <div className="flex flex-col items-center px-5 pb-14 md:pb-18 lg:pb-20 ">
 
           {/* Phone image — simple CSS skeleton via bg + opacity trick */}
           <div
@@ -65,8 +64,7 @@ export default function AboutSection() {
           {/* Headline */}
           <h2
             className="font-bold text-center leading-[150%] text-[#191C1D]
-              text-[26px] sm:text-[32px] md:text-[40px]"
-            style={{ marginTop: 40 }}
+              text-[20px] sm:text-[28px] md:text-[32px] lg:text-[40px] md:mt-10 mt-4"
           >
             {t("Absolute_Privacy_Control")}
           </h2>
@@ -74,7 +72,7 @@ export default function AboutSection() {
           {/* Body */}
           <p
             className="font-normal leading-[150%] text-[#222222]
-              text-center max-w-[730px] text-[13px] md:text-[16px]"
+              text-center max-w-[730px] text-[12px] md:text-[14px] lg:text-[16px]"
             style={{ marginTop: 24 }}
           >
             {t("At_Tamilinai_you_have_100_control_over_who_views_your_profile_and_photos_Our_SafeView_technology_ensures_your_identity_is_protected_until_you_choose_to_share_it")}
@@ -105,8 +103,8 @@ export default function AboutSection() {
 
         {/* Section title */}
         <h2
-          className="font-bold text-[#222222] 
-            text-[26px] lg:text-[40px] md:text-[32px] mt-15 md:mt-30 mb-6 md:mb-10"
+          className="font-bold text-[#222222] text-center
+            text-[20px] sm:text-[28px] md:text-[32px] lg:text-[40px] mt-12 md:mt-20 lg:mt-30 mb-6 md:mb-10"
           style={{
             lineHeight: "44.48px",
             letterSpacing: "0.64px",
@@ -143,24 +141,17 @@ function TrustCard({
 }) {
   return (
     <div
-      className={`flex flex-col rounded-[32px] bg-[#EFEFEF] ${className}`}
-      style={{
-        minHeight: 252,
-        paddingTop: 40,
-        paddingBottom: 40,
-        paddingLeft: 24,
-        paddingRight: 24,
-      }}
+      className={`flex flex-col rounded-[16px] md:rounded-[32px] py-5 md:py-8 lg:py-10 px-3 md:px-5 lg:px-6 bg-[#EFEFEF] ${className}`}
     >
       <span
         className="font-semibold leading-[150%] text-[#222222]
-         text-[16px] lg:text-[24px] md:text-[20px]"
+         text-[16px] md:text-[20px] lg:text-[24px]"
       >
         {title}
       </span>
       <span
         className="font-normal leading-[150%] text-[#222222]
-          text-[12px] lg:text-[20px] md:text-[16px] mt-4"
+          text-[12px] md:text-[16px] lg:text-[20px] mt-4"
       >
         {desc}
       </span>

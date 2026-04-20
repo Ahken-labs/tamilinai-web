@@ -6,7 +6,7 @@ import { useLang } from "../context/LangContext";
 export default function ContactSection() {
     const { t } = useLang();
     return (
-        <section className="relative w-full bg-white overflow-hidden font-poppins py-16 md:py-24 mt-8 md:mt-20 lg:mt-40">
+        <section className="relative w-full bg-white overflow-hidden font-poppins py-15 md:py-20 lg:py-25 mt-8 md:mt-15 lg:mt-30">
 
             {/* ── LEFT PILLAR ── */}
             <div className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 select-none">
@@ -47,7 +47,7 @@ export default function ContactSection() {
     font-bold text-[#191C1D] capitalize text-center
     leading-[150%]
 
-    text-[20px] lg:text-[40px] md:text-[32px]
+    text-[20px] sm:text-[25px] md:text-[30px] lg:text-[40px]
 
     max-w-[200px] sm:max-w-[300px] md:max-w-[640px]
     mx-auto

@@ -12,7 +12,7 @@ export function HelpSection() {
     <section
       className="
         relative w-full overflow-hidden
-        mt-8 md:mt-20 lg:mt-30"
+        mt-8 md:mt-15 lg:mt-25"
       style={{
         background: "linear-gradient(180deg, #FFF7F0 0%, #FFEBEB 100%)",
       }}
@@ -41,7 +41,7 @@ export function HelpSection() {
           <h2
             className="
               font-bold text-[#222222]
-              text-[22px] lg:text-[40px] md:text-[32px]
+              text-[20px] sm:text-[28px] md:text-[30px] lg:text-[40px]
               leading-[120%]
             "
           >
@@ -72,7 +72,7 @@ export function HelpSection() {
                 rounded-[31px]
                 text-[#222222]
                text-[14px] md:text-[16px] font-medium
-                transition hover:bg-black hover:text-white
+                transition hover:bg-[#075E54] hover:text-white
               "
             >
               <FaWhatsapp className="mr-2 text-[18px]" />

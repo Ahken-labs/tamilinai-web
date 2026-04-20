@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useLang } from "../context/LangContext";
+import { ChevronIcon } from "../assets/Icons";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 const FAQS = [
@@ -39,11 +40,11 @@ export default function FAQSection() {
   const toggle = (i: number) => setOpenIndex(openIndex === i ? null : i);
 
   return (
-    <section className="w-full bg-white font-poppins px-5 md:px-10 xl:px-[120px] my-20 md:my-20 lg:my-30">
+    <section className="w-full bg-white font-poppins px-5 md:px-10 xl:px-[120px] my-15 md:my-20 lg:my-30">
 
       {/* Title */}
       <h2 className="font-bold text-[#222222] text-center leading-[150%]
-        text-[26px] lg:text-[40px] md:text-[32px]">
+        text-[20px] sm:text-[28px] md:text-[32px] lg:text-[40px]">
         {t("Your_Questions_Answered")}
       </h2>
 
@@ -93,21 +94,11 @@ function FAQItem({
         </span>
 
         {/* Chevron — rotates 180° when open */}
-        <span
-          className="shrink-0 transition-transform duration-300 ease-in-out"
-          style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
-        >
-          <svg
-            width="20" height="20" viewBox="0 0 20 20"
-            fill="none" xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-          >
-            <path
-              d="M5 7.5L10 12.5L15 7.5"
-              stroke="#242424" strokeWidth="1.6"
-              strokeLinecap="round" strokeLinejoin="round"
-            />
-          </svg>
+        <span className="shrink-0">
+          <ChevronIcon
+            open={isOpen}
+            className="w-4 h-4 transition-transform duration-300 ease-in-out"
+          />
         </span>
       </button>
 
