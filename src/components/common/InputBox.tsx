@@ -32,7 +32,7 @@ export default function InputBox({
           className={`absolute left-4 transition-all duration-300 ease-in-out pointer-events-none select-none
           ${isActive
               ? "top-2 text-[12px] text-[#525252]"
-              : "top-1/2 -translate-y-1/2 text-[14px] md:text-[16px] text-[#222222]"
+              : "top-1/2 -translate-y-1/2 text-[14px] md:text-[16px] text-[#525252]"
             }`}
         >
           {label}
