@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useState } from "react";
 import { useLang } from "../context/LangContext";
+import Button from "../components/common/Button";
+import ProfileForm from "../components/form/ProfileForm";
 
 // ─── Data ───────
 const TRUST_CARDS = [
@@ -18,12 +20,14 @@ const TRUST_CARDS = [
     title: "100_Verified_Profiles",
     desc: "Every_single_profile_is_manually_verified_using_government_IDs_before_going_live",
   },
-]as const;
+] as const;
 
 // ─── Main export ────
 export default function AboutSection() {
   const [imageLoaded, setImageLoaded] = useState(false);
   const { t } = useLang();
+  const [openForm, setOpenForm] = useState(false);
+
 
   return (
     <>
@@ -79,22 +83,12 @@ export default function AboutSection() {
           </p>
 
           {/* CTA */}
-          <button
-            type="button"
-            className="font-semibold text-[14px] md:text-[16px] leading-[150%] tracking-wide
-              uppercase text-white bg-[#B31B38] cursor-pointer
-              transition-opacity duration-150 hover:opacity-85 active:scale-[0.98]"
-            style={{
-              marginTop: 24,
-              paddingTop: 12,
-              paddingBottom: 12,
-              paddingLeft: 40,
-              paddingRight: 40,
-              borderRadius: 31,
-            }}
-          >
-            {t("Start_your_journey")}
-          </button>
+          <Button
+            text={t("Start_your_journey")}
+            className="mt-6 uppercase"
+            onPress={() => setOpenForm(true)}
+
+          />
         </div>
       </section>
 
@@ -124,6 +118,11 @@ export default function AboutSection() {
             />
           ))}
         </div>
+        <ProfileForm
+          variant="modal"
+          open={openForm}
+          onClose={() => setOpenForm(false)}
+        />
       </section>
     </>
   );

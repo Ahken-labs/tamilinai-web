@@ -45,7 +45,7 @@ export function HelpSection() {
               leading-[120%]
             "
           >
-           {t("Need_Help_Finding_a_Match")}
+            {t("Need_Help_Finding_a_Match")}
           </h2>
 
           {/* Description */}

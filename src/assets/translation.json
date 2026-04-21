@@ -3,6 +3,7 @@
         "Already_a_member": "Already a member?",
         "Log_In": "Log In",
         "Create_your_free_profile": "Create your free profile",
+        "Create_my_free_profile": "Create my free profile",
         "This_profile_is_for": "This profile is for",
         "Name": "Name",
         "Email_Address": "Email Address",
@@ -68,12 +69,16 @@
         "Footer_parah": "Tamilinai Matrimony, a proud initiative by Ahken Labs based in Eelam's heart, Kilinochchi, is Sri Lanka’s most trusted matrimonial platform exclusively built for the global Eelam Tamil community. We blend cutting-edge privacy design with deep cultural roots to provide 100% ID-verified marriage proposals, seamlessly connecting Jaffna, Vanni, Trincomalee, Batticaloa, the center province and the worldwide Tamil diaspora.",
         "2026_Ahken_nexus": "© 2026 Ahken nexus",
         "LKR": "LKR",
-        "English":"ஆங்கிலம்"
+        "English": "ஆங்கிலம்",
+        "Male": "Male",
+        "Female": "Female",
+        "Gender": "Gender :"
     },
     "ta": {
         "Already_a_member": "ஏற்கனவே உறுப்பினரா?",
         "Log_In": "உள்நுழை",
         "Create_your_free_profile": "இலவசமாக உங்கள் சுயவிவரத்தை உருவாக்குங்கள்",
+        "Create_my_free_profile": "சுயவிவரத்தை உருவாக்கு",
         "This_profile_is_for": "சுயவிவரம் யாருக்காக",
         "Name": "பெயர்",
         "Email_Address": "மின்னஞ்சல் முகவரி",
@@ -139,6 +144,9 @@
         "Footer_parah": "“இணை” — கிளிநொச்சி Ahken Labs நிறுவனத்தின் பெருமைமிகு தயாரிப்பு. இது ஈழத் தமிழர்களுக்காகவே பிரத்தியேகமாக உருவாக்கப்பட்ட 100% பாதுகாப்பான திருமணத் தகவல் தளம். யாழ்ப்பாணம், வன்னி, திருகோணமலை, மட்டக்களப்பு, மலையகம் மற்றும் உலகெங்கும் வாழும் புலம்பெயர் தமிழர்களை திருமண பந்தத்தில் இணைக்கும் நம்பகமான டிஜிட்டல் பாலம்.",
         "2026_Ahken_nexus": "© 2026 Ahken nexus",
         "LKR": "LKR",
-        "English":"English"
+        "English": "English",
+        "Male": "ஆண்",
+        "Female": "பெண்",
+        "Gender": "பாலினம் :"
     }
 }

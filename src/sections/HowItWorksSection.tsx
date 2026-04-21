@@ -9,6 +9,9 @@ import {
   StepFamilyIcon,
   UnionDesignIcon,
 } from "../assets/Icons";
+import Button from "../components/common/Button";
+import { useState } from "react";
+import ProfileForm from "../components/form/ProfileForm";
 
 // ─── Step data ────────────────────────────────────────────────────────────────
 const STEPS = [
@@ -37,6 +40,7 @@ const STEPS = [
 // ─── Main export ──────────────────────────────────────────────────────────────
 export default function HowItWorksSection() {
   const { t } = useLang();
+  const [openForm, setOpenForm] = useState(false);
   return (
     <section className="relative w-full overflow-hidden bg-white md:pt-10 pt-8 lg:py-12 font-poppins">
 
@@ -91,18 +95,20 @@ export default function HowItWorksSection() {
 
           {/* Register CTA */}
           <div className="mt-12 flex justify-center">
-            <button
-              type="button"
-              className="flex h-12 cursor-pointer items-center justify-center gap-2
-                rounded-full bg-[#B31B38] font-semibold text-[14px] md:text-[16px] leading-[150%]
-                text-white transition-opacity duration-150 hover:opacity-85 active:scale-[0.98]"
-              style={{ paddingLeft: 64, paddingRight: 64 }}
-            >
-              {t("Register_for_free")}
-            </button>
+            <Button
+              text={t("Register_for_free")}
+              className="px-16"
+              onPress={() => setOpenForm(true)}
+            />
           </div>
+
         </div>
       </div>
+      <ProfileForm
+        variant="modal"
+        open={openForm}
+        onClose={() => setOpenForm(false)}
+      />
     </section>
   );
 }

@@ -2,9 +2,14 @@
 
 import Image from "next/image";
 import { useLang } from "../context/LangContext";
+import Button from "../components/common/Button";
+import ProfileForm from "../components/form/ProfileForm";
+import { useState } from "react";
 
 export default function ContactSection() {
     const { t } = useLang();
+    const [openForm, setOpenForm] = useState(false);
+
     return (
         <section className="relative w-full bg-white overflow-hidden font-poppins py-15 md:py-20 lg:py-25 mt-8 md:mt-15 lg:mt-30">
 
@@ -64,16 +69,18 @@ export default function ContactSection() {
                 </p>
 
                 {/* CTA Button */}
-                <div className="mt-8">
-                    <button
-                        className="h-[48px] px-10 rounded-[31px] bg-[#B31B38]
-              text-white text-[14px] md:text-[16px] font-semibold uppercase
-              transition hover:opacity-85 active:scale-[0.98]"
-                    >
-                        {t("Start_your_roots")}
-                    </button>
-                </div>
+                <Button
+                    text={t("Start_your_roots")}
+                    className="uppercase mt-8"
+                    onPress={() => setOpenForm(true)}
+
+                />
             </div>
+            <ProfileForm
+                variant="modal"
+                open={openForm}
+                onClose={() => setOpenForm(false)}
+            />
         </section>
 
     );
