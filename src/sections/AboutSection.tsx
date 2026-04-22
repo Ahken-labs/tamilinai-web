@@ -41,8 +41,8 @@ export default function AboutSection() {
 
           {/* Phone image — simple CSS skeleton via bg + opacity trick */}
           <div
-            className="relative mx-auto w-full"
-            style={{ maxWidth: 565, marginTop: 80, height: 320 }}
+            className="relative mt-15 md:mt-20 mx-auto w-full"
+            style={{ maxWidth: 565}}
           >
             {/* Skeleton: just a rounded bg that disappears once image loads */}
             {!imageLoaded && (
@@ -57,7 +57,6 @@ export default function AboutSection() {
               onLoad={() => setImageLoaded(true)}
               style={{
                 width: "100%",
-                height: "100%",
                 objectFit: "contain",
                 opacity: imageLoaded ? 1 : 0,
                 transition: "opacity 0.4s ease",
@@ -68,7 +67,7 @@ export default function AboutSection() {
           {/* Headline */}
           <h2
             className="font-bold text-center leading-[150%] text-[#191C1D]
-              text-[20px] sm:text-[28px] md:text-[32px] lg:text-[40px] md:mt-10 mt-4"
+              text-[20px] sm:text-[28px] md:text-[32px] lg:text-[40px] sm:mt-10 md:mt-10 mt-8"
           >
             {t("Absolute_Privacy_Control")}
           </h2>

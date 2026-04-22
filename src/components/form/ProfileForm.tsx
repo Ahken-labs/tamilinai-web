@@ -45,7 +45,8 @@ export default function ProfileForm({
     const [phone, setPhone] = useState("");
     const [email, setEmail] = useState("");
 
-    const [profileOpen, setProfileOpen] = useState(false);
+    const [activeDropdown, setActiveDropdown] = useState<"" | "profile" | "country">("");
+
     const [errors, setErrors] = useState<{
         gender?: string;
         name?: string;
@@ -82,7 +83,7 @@ export default function ProfileForm({
         const nextErrors: typeof errors = {};
 
         if (!profileFor) {
-            setProfileOpen(true);
+            setActiveDropdown("profile");
             return false;
         }
 
@@ -128,12 +129,14 @@ export default function ProfileForm({
             )}
             <DropdownField
                 label={profileFor || t("This_profile_is_for")}
-                open={profileOpen}
-                onToggle={() => setProfileOpen((v) => !v)}
+                open={activeDropdown === "profile"}
+                onToggle={() =>
+                    setActiveDropdown((prev) => (prev === "profile" ? "" : "profile"))
+                }
                 onSelect={(value) => {
                     setProfileFor(value);
                     setGender(AUTO_GENDER[value] ?? "");
-                    setProfileOpen(false);
+                    setActiveDropdown("");
                     setErrors((prev) => ({ ...prev, gender: undefined }));
                 }}
             />
@@ -181,8 +184,9 @@ export default function ProfileForm({
                 <CountryCodeSelect
                     value={countryCode}
                     onChange={setCountryCode}
+                    open={activeDropdown === "country"}
+                    setOpen={(val) => setActiveDropdown(val ? "country" : "")}
                 />
-
                 <InputBox
                     value={phone}
                     onChange={(val) => {
@@ -210,7 +214,7 @@ export default function ProfileForm({
                 <button
                     type="button"
                     onClick={handleSubmit}
-                    className="group relative mt-2 flex w-full items-center justify-center py-3 text-[14px] font-semibold text-white transition-all active:scale-[0.99] md:text-[16px]"
+                    className="group relative mt-2 flex w-full items-center justify-center py-3 text-[14px] font-semibold text-white transition-all active:scale-[0.99] md:text-[16px] cursor-pointer"
                 >
                     <div className="absolute left-[28px] right-[28px] top-0 bottom-0 z-0 bg-[#B31B38] transition-colors duration-150 group-hover:bg-[#8E162D] group-active:bg-[#6F1023]" />
 
@@ -231,9 +235,9 @@ export default function ProfileForm({
                         {t("Takes_2_minutes_Your_data_is_never_shared_without_your_permission")}
                     </p>
                     {variant === "modal" && (
-                        <p className="text-center text-[14px] font-normal leading-[150%] text-[#B31B38]">
+                        <p className="font-poppins text-center text-[12px] md:text-[14px] font-normal leading-[150%] text-[#B31B38]">
                             Already registered? {" "}
-                            <button type="button" className="text-[#B31B38] underline cursor-pointer select-none">
+                            <button type="button" className="underline cursor-pointer select-none">
                                 Sign in
                             </button>
                         </p>
@@ -268,7 +272,7 @@ export default function ProfileForm({
             />
 
             <div
-                className={`relative w-full max-w-[420px] overflow-hidden rounded-[20px] bg-white shadow-[0px_2px_16px_0px_rgba(0,0,0,0.18)] transition-all duration-300 ease-out ${animateIn ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
+                className={`relative w-full max-w-[420px] md:max-w-[616px] overflow-hidden rounded-[20px] bg-white shadow-[0px_2px_16px_0px_rgba(0,0,0,0.18)] transition-all duration-300 ease-out ${animateIn ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
                     }`}
             >
                 {body}
@@ -293,7 +297,7 @@ function DropdownField({
             <button
                 type="button"
                 onClick={onToggle}
-                className="flex h-[60px] w-full items-center justify-between rounded-xl border border-[#8C8C8C] bg-white px-4 text-left transition-colors focus:border-[#B31B38] focus:outline-none"
+                className="flex h-[60px] w-full items-center justify-between rounded-xl border border-[#8C8C8C] bg-white px-4 text-left transition-colors focus:border-[#B31B38] focus:outline-none cursor-pointer"
             >
                 <span className="text-[14px] md:text-[16px] font-normal leading-[125%] text-[#525252]">{label}</span>
                 <ChevronIcon open={open} />
@@ -320,11 +324,14 @@ function DropdownField({
 function CountryCodeSelect({
     value,
     onChange,
+    open,
+    setOpen,
 }: {
     value: string;
     onChange: (val: string) => void;
+    open: boolean;
+    setOpen: (val: boolean) => void;
 }) {
-    const [open, setOpen] = useState(false);
 
     const getCodeOnly = (val: string) => {
         const match = val.match(/\(\+\d+\)/);
@@ -335,8 +342,8 @@ function CountryCodeSelect({
         <div className="relative">
             <button
                 type="button"
-                onClick={() => setOpen((v) => !v)}
-                className="flex h-[60px] w-full min-[370px]:w-[120px] items-center justify-between  rounded-[12px] border border-[#8C8C8C] bg-white px-4 text-left transition-colors focus:border-[#B31B38] focus:outline-none"
+                onClick={() => setOpen(!open)}
+                className="flex h-[60px] border w-full min-[370px]:w-[120px] items-center justify-between  rounded-[12px] border border-[#8C8C8C] bg-white px-4 text-left transition-colors focus:border-[#B31B38] focus:outline-none cursor-pointer"
             >
                 <span className="text-[14px] md:text-[16px] font-normal leading-[125%] text-[#525252]">
                     {getCodeOnly(value)}
@@ -345,7 +352,7 @@ function CountryCodeSelect({
             </button>
 
             {open && (
-                <div className="absolute left-0 right-0 top-[calc(100%+4px)] z-30 overflow-hidden rounded-xl border border-[#E0E0E0] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.1)]">
+                <div className="absolute left-0 right-0 top-[calc(100%+4px)] z-30 max-h-[230px] overflow-y-auto rounded-xl border border-[#E0E0E0] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.1)]">
                     {COUNTRIES.map((item) => (
                         <button
                             key={item}

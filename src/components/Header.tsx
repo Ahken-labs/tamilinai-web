@@ -27,7 +27,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/60 backdrop-blur-sm">
-      <div className="max-w-[1440px] mx-auto flex items-center justify-between px-5 md:px-10 xl:px-[120px] h-[76px]">
+      <div className="max-w-[1920px] mx-auto flex items-center justify-between px-5 md:px-10 xl:px-[120px] h-[76px]">
 
         {/* Logo */}
         <div className="flex items-center gap-2">
