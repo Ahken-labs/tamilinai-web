@@ -1,13 +1,9 @@
 "use client";
+import { FlowerIcon, GlobeIcon, TrustPrivacyIcon, TrustVerifiedIcon } from "@/src/assets/Icons";
+import ProfileForm from "@/src/components/form/ProfileForm";
+import { useLang } from "@/src/context/LangContext";
 import Image from "next/image";
-import {
-    TrustPrivacyIcon,
-    TrustVerifiedIcon,
-    FlowerIcon,
-    GlobeIcon,
-} from "../assets/Icons";
-import { useLang } from "../context/LangContext";
-import ProfileForm from "../components/form/ProfileForm";
+
 
 export default function HeroSection() {
     const { t } = useLang();

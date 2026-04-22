@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useLang } from "../context/LangContext";
-import Button from "../components/common/Button";
-import ProfileForm from "../components/form/ProfileForm";
+import { useLang } from "@/src/context/LangContext";
+import Button from "@/src/components/common/Button";
+import ProfileForm from "@/src/components/form/ProfileForm";
 import { useState } from "react";
 
 export default function ContactSection() {

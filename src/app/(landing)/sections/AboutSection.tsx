@@ -1,10 +1,10 @@
 "use client";
 
+import Button from "@/src/components/common/Button";
+import ProfileForm from "@/src/components/form/ProfileForm";
+import { useLang } from "@/src/context/LangContext";
 import Image from "next/image";
 import { useState } from "react";
-import { useLang } from "../context/LangContext";
-import Button from "../components/common/Button";
-import ProfileForm from "../components/form/ProfileForm";
 
 // ─── Data ───────
 const TRUST_CARDS = [

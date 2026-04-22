@@ -3,7 +3,7 @@
 import translations from "../assets/translation.json";
 import { createContext, useContext, useState, type ReactNode } from "react";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// Types
 type Lang = "en" | "ta";
 type TranslationKey = keyof typeof translations.en;
 
@@ -13,10 +13,9 @@ interface LangContextValue {
   t: (key: TranslationKey) => string;
 }
 
-// ─── Context ──────────────────────────────────────────────────────────────────
+// Context
 const LangContext = createContext<LangContextValue | null>(null);
 
-// ─── Provider ─────────────────────────────────────────────────────────────────
 export function LangProvider({ children }: { children: ReactNode }) {
   const [lang, setLang] = useState<Lang>("en");
 
@@ -30,7 +29,7 @@ export function LangProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// ─── Hook ─────────────────────────────────────────────────────────────────────
+// Hook 
 export function useLang(): LangContextValue {
   const ctx = useContext(LangContext);
   if (!ctx) throw new Error("useLang must be used inside <LangProvider>");

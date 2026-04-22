@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { FaWhatsapp } from "react-icons/fa";
-import { useLang } from "../context/LangContext";
+import { useLang } from "@/src/context/LangContext";
 
 const WHATSAPP_NUMBER = "+94762360948";
 

@@ -32,7 +32,7 @@ export default function Header() {
         {/* Logo */}
         <div className="flex items-center gap-2">
           <Image
-            src="/logo.svg"
+            src="/icons/logo.svg"
             alt="logo"
             width={40}
             height={40}

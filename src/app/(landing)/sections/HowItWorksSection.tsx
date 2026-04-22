@@ -1,6 +1,6 @@
 "use client";
 
-import { useLang } from "../context/LangContext";
+import { useLang } from "@/src/context/LangContext";
 
 import {
   StepProfileIcon,
@@ -8,10 +8,10 @@ import {
   StepMatchIcon,
   StepFamilyIcon,
   UnionDesignIcon,
-} from "../assets/Icons";
-import Button from "../components/common/Button";
+} from "@/src/assets/Icons";
+import Button from "@/src/components/common/Button";
 import { useState } from "react";
-import ProfileForm from "../components/form/ProfileForm";
+import ProfileForm from "@/src/components/form/ProfileForm";
 
 // ─── Step data ────────────────────────────────────────────────────────────────
 const STEPS = [
