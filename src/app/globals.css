@@ -9,6 +9,10 @@
   --text-dark: #222222;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 /* Font utility classes */
 .font-arima {
   font-family: 'Arima Madurai', cursive;

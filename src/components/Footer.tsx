@@ -4,8 +4,10 @@ import { FaFacebookF, FaWhatsapp, FaInstagram } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { GlobeIcon } from "../assets/Icons";
 import { useLang } from "../context/LangContext";
+import { useState } from "react";
+import ProfileForm from "./form/ProfileForm";
 
-// ─── Nav link data ────────────────────────────────────────────────────────────
+// Nav link data
 const NAV_LEFT = [
   { label: "Home", href: "#hero" },
   { label: "About_Us", href: "#about" },
@@ -18,7 +20,7 @@ const NAV_RIGHT = [
   { label: "Blog", href: "#" },
 ] as const;
 
-// ─── Social links ─────────────────────────────────────────────────────────────
+// Social links
 const SOCIALS = [
   {
     label: "Facebook",
@@ -46,14 +48,14 @@ const SOCIALS = [
   },
 ];
 
-// ─── Shared link style ────────────────────────────────────────────────────────
+// Shared link style
 const navLinkClass =
   "font-poppins font-normal text-[12px] sm:text-[14px] md:text-[16px] lg:text-[18px] leading-[200%] text-white hover:opacity-70 transition-opacity duration-150 block";
 
-// ─── Main export ──────────────────────────────────────────────────────────────
 export default function Footer() {
   const { t } = useLang();
-  /** Smooth scroll helper */
+  const [openForm, setOpenForm] = useState(false);
+
   const scrollTo = (href: string) => {
     if (!href.startsWith("#") || href === "#") return;
     const el = document.querySelector(href);
@@ -75,21 +77,34 @@ export default function Footer() {
 
             {/* Col 1 */}
             <div className="flex flex-col gap-2 md:mr-4 mr:0">
-              {NAV_LEFT.map(({ label, href }) => (
-                <a
-                  key={t(label)}
-                  href={href}
-                  onClick={(e) => {
-                    if (href.startsWith("#")) {
-                      e.preventDefault();
-                      scrollTo(href);
-                    }
-                  }}
-                  className={navLinkClass}
-                >
-                  {t(label)}
-                </a>
-              ))}
+              {NAV_LEFT.map(({ label, href }) => {
+                const isJoinNow = label === "Join_Now";
+
+                return isJoinNow ? (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => setOpenForm(true)}
+                    className={navLinkClass}
+                  >
+                    {t(label)}
+                  </button>
+                ) : (
+                  <a
+                    key={label}
+                    href={href}
+                    onClick={(e) => {
+                      if (href.startsWith("#")) {
+                        e.preventDefault();
+                        scrollTo(href);
+                      }
+                    }}
+                    className={navLinkClass}
+                  >
+                    {t(label)}
+                  </a>
+                );
+              })}
             </div>
 
             {/* Col 2 */}
@@ -127,7 +142,7 @@ export default function Footer() {
 
               {/* Globe + locale */}
               <div className="flex items-center gap-1.5">
-               <GlobeIcon className="w-4 h-4 text-white shrink-0" />
+                <GlobeIcon className="w-4 h-4 text-white shrink-0" />
                 <span className="font-poppins font-normal text-[12px] md:text-[13px] lg:text-[14px] leading-[18px] text-white">
                   {t("English")}
                 </span>
@@ -159,11 +174,16 @@ export default function Footer() {
           </div>
         </div>
       </div>
+      <ProfileForm
+        variant="modal"
+        open={openForm}
+        onClose={() => setOpenForm(false)}
+      />
     </footer>
   );
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// Helpers
 function Dot() {
   return <span className="text-white text-[14px] leading-none">·</span>;
 }
