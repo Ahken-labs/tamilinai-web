@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
     ArrowRightIcon,
     ChevronIcon,
@@ -33,6 +34,7 @@ export default function ProfileForm({
     onClose,
 }: ProfileFormProps) {
     const { t } = useLang();
+    const router = useRouter();
 
     const [mounted, setMounted] = useState(variant === "hero" ? true : open);
     const [animateIn, setAnimateIn] = useState(open);
@@ -98,7 +100,10 @@ export default function ProfileForm({
 
     const handleSubmit = () => {
         if (!validate()) return;
-        console.log("success");
+        sessionStorage.setItem("otp_phone", phone);
+        sessionStorage.setItem("otp_country_code", countryCode.match(/\(\+\d+\)/)?.[0] ?? countryCode);
+        sessionStorage.setItem("otp_email", email);
+        router.push("/verify");
     };
 
     const body = (

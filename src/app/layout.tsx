@@ -1,5 +1,4 @@
 import "./globals.css";
-import Header from "../components/Header";
 import { LangProvider } from "../context/LangContext";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -7,7 +6,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <body>
         <LangProvider>
-          <Header />
           {children}
         </LangProvider>
       </body>

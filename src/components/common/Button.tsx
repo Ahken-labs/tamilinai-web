@@ -5,6 +5,7 @@ type ButtonProps = {
     onPress?: () => void;
     className?: string;
     type?: "button" | "submit";
+    icon?: React.ReactNode;
 };
 
 export default function Button({
@@ -12,6 +13,7 @@ export default function Button({
     onPress,
     className = "",
     type = "button",
+    icon,
 }: ButtonProps) {
     return (
         <button
@@ -26,14 +28,15 @@ export default function Button({
         px-10
         rounded-full
         text-[14px] md:text-[16px]
-        bg-[#B31B38] 
-        hover:bg-[#8E162D]   /* darker on hover */
-        active:bg-[#6F1023]  /* even darker on click */
+        bg-[#B31B38]
+        hover:bg-[#8E162D]
+        active:bg-[#6F1023]
 
         ${className}
       `}
         >
             {text}
+            {icon && <span className="ml-2 flex items-center">{icon}</span>}
         </button>
     );
 }
