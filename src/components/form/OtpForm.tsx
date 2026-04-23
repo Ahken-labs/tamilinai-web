@@ -27,17 +27,21 @@ export default function OtpForm({ variant = "register" }: OtpFormProps) {
   const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const [error, setError] = useState("");
   const [shake, setShake] = useState(false);
-  const [countdown, setCountdown] = useState(RESEND_SECONDS);
   const [success, setSuccess] = useState(false);
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  
+  const [countdown, setCountdown] = useState(() => {
+    if (typeof window === "undefined") return RESEND_SECONDS;
+
+    const sentAt = Number(sessionStorage.getItem("otp_sent_at") ?? 0);
+    if (!sentAt) return RESEND_SECONDS;
+
+    const elapsed = Math.floor((Date.now() - sentAt) / 1000);
+    return Math.max(0, RESEND_SECONDS - elapsed);
+  });
 
   useEffect(() => {
-    const sentAt = Number(sessionStorage.getItem("otp_sent_at") ?? 0);
-    if (sentAt) {
-      const elapsed = Math.floor((Date.now() - sentAt) / 1000);
-      setCountdown(Math.max(0, RESEND_SECONDS - elapsed));
-    }
     inputRefs.current[0]?.focus();
   }, []);
 
