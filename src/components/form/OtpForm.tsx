@@ -1,22 +1,29 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRightIcon, ChevronIcon } from "../../assets/Icons";
 import Button from "../common/Button";
+import CartBox from "../common/CartBox";
+import NewToInaiCart from "../more/NewToInaiCart";
 import { useLang } from "../../context/LangContext";
 
 const OTP_LENGTH = 6;
 const RESEND_SECONDS = 60;
 
-export default function OtpForm() {
+type OtpFormProps = {
+  variant?: "register" | "reset";
+};
+
+export default function OtpForm({ variant = "register" }: OtpFormProps) {
   const router = useRouter();
   const { t } = useLang();
 
-  const [phone, setPhone] = useState("");
-  const [countryCode, setCountryCode] = useState("");
-  const [email, setEmail] = useState("");
-  const [method, setMethod] = useState<"sms" | "email">("sms");
+  const searchParams = useSearchParams();
+  const phone = searchParams.get("phone") ?? "";
+  const countryCode = searchParams.get("countryCode") ?? "";
+  const email = searchParams.get("email") ?? "";
+  const [method, setMethod] = useState<"sms" | "email">(phone ? "sms" : "email");
   const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const [error, setError] = useState("");
   const [shake, setShake] = useState(false);
@@ -26,12 +33,11 @@ export default function OtpForm() {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
-    const storedPhone = sessionStorage.getItem("otp_phone") ?? "";
-    const storedCode = sessionStorage.getItem("otp_country_code") ?? "";
-    const storedEmail = sessionStorage.getItem("otp_email") ?? "";
-    setPhone(storedPhone);
-    setCountryCode(storedCode);
-    setEmail(storedEmail);
+    const sentAt = Number(sessionStorage.getItem("otp_sent_at") ?? 0);
+    if (sentAt) {
+      const elapsed = Math.floor((Date.now() - sentAt) / 1000);
+      setCountdown(Math.max(0, RESEND_SECONDS - elapsed));
+    }
     inputRefs.current[0]?.focus();
   }, []);
 
@@ -82,9 +88,7 @@ export default function OtpForm() {
     }
     if (otp === "123456") {
       setSuccess(true);
-      sessionStorage.removeItem("otp_phone");
-      sessionStorage.removeItem("otp_country_code");
-      setTimeout(() => router.push("/dashboard"), 1000);
+      setTimeout(() => router.push(variant === "reset" ? "/reset-password" : "/dashboard"), 1000);
     } else {
       setError(t("Invalid_OTP_Please_try_again"));
       triggerShake();
@@ -95,6 +99,7 @@ export default function OtpForm() {
 
   const handleResend = () => {
     if (countdown > 0) return;
+    sessionStorage.setItem("otp_sent_at", String(Date.now()));
     setCountdown(RESEND_SECONDS);
     setDigits(Array(OTP_LENGTH).fill(""));
     setError("");
@@ -119,7 +124,7 @@ export default function OtpForm() {
 
           {/* Title */}
           <h1 className="text-[18px] sm:text-[20px] md:text-[22px] lg:text-[24px] font-semibold text-[#222] leading-[150%]">
-            {t("Verify_your_phone")}
+            {variant === "reset" ? t("Enter_your_reset_code") : t("Verify_your_phone")}
           </h1>
 
           {/* Description */}
@@ -141,7 +146,7 @@ export default function OtpForm() {
 
           {/* OTP Boxes */}
           <div
-            className={`mt-8 md:mt-12 flex gap-2 sm:gap-3 md:gap-3 ${shake ? "animate-shake" : ""}`}
+            className={`select-none mt-8 md:mt-12 flex gap-2 sm:gap-3 md:gap-3 ${shake ? "animate-shake" : ""}`}
             onPaste={handlePaste}
           >
             {digits.map((digit, i) => (
@@ -204,7 +209,10 @@ export default function OtpForm() {
             <Button
               text={t("Back")}
               onPress={() => router.back()}
-              className="!bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE] flex-1"
+              className={`flex-1 ${variant === "reset"
+                ? "!bg-white !text-[#222222] hover:!bg-[#F8F8F8]"
+                : "!bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
+                }`}
             />
             <Button
               text={t("Next")}
@@ -214,41 +222,44 @@ export default function OtpForm() {
             />
           </div>
 
-          {/* Verify via Email toggle */}
-          <div className="mt-4 flex">
-            <span className="text-[12px] sm:text-[14px] md:text-[16px] font-normal text-[#222] leading-[150%]">
-              {method === "sms" ? t("Dont_receive_OTP_via_SMS") : t("Dont_receive_OTP_via_Email")}
-            </span>
-            <button
-              type="button"
-              onClick={() => {
-                setMethod(method === "sms" ? "email" : "sms");
-                setCountdown(RESEND_SECONDS);
-                setDigits(Array(OTP_LENGTH).fill(""));
-                setError("");
-              }}
-              className="ml-2 flex items-center text-[12px] sm:text-[14px] md:text-[16px] font-medium text-[#222] underline leading-[150%] cursor-pointer hover:opacity-70 select-none"
-            >
-              {method === "sms" ? t("Verify_via_Email") : t("Verify_via_SMS")}
-              <ChevronIcon open={false} className="ml-1 w-3 h-3 md:w-4 md:h-4 rotate-270" />
-            </button>
-          </div>
+          {variant === "register" && (
+            <div className="mt-4 flex">
+              <span className="text-[12px] sm:text-[14px] md:text-[16px] font-normal text-[#222] leading-[150%]">
+                {method === "sms" ? t("Dont_receive_OTP_via_SMS") : t("Dont_receive_OTP_via_Email")}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setMethod(method === "sms" ? "email" : "sms");
+                  setDigits(Array(OTP_LENGTH).fill(""));
+                  setError("");
+                }}
+                className="ml-2 flex items-center text-[12px] sm:text-[14px] md:text-[16px] font-medium text-[#222] underline leading-[150%] cursor-pointer hover:opacity-70 select-none"
+              >
+                {method === "sms" ? t("Verify_via_Email") : t("Verify_via_SMS")}
+                <ChevronIcon open={false} className="ml-1 w-3 h-3 md:w-4 md:h-4 rotate-270" />
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* ── Card 2: Benefits ── */}
-        <div className="mt-8 w-full rounded-[18px] md:rounded-[20px] bg-[#EAEAEA] p-4 md:p-6 text-[12px] sm:text-[14px] md:text-[16px]">
-          <p className="font-semibold text-[#222] leading-[150%]">
-            {t("Benefits_of_verification")}
-          </p>
-          <div className="mt-4 flex flex-col gap-2">
-            {benefits.map((benefit, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <span className="text-[#222] mt-[3px] shrink-0">•</span>
-                <span className="font-normal text-[#222] leading-[150%]">{benefit}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        {variant === "register" ? (
+          <CartBox className="mt-8 text-[12px] sm:text-[14px] md:text-[16px]">
+            <p className="font-semibold text-[#222] leading-[150%]">
+              {t("Benefits_of_verification")}
+            </p>
+            <div className="mt-4 flex flex-col gap-2">
+              {benefits.map((benefit, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <span className="text-[#222] mt-[3px] shrink-0">•</span>
+                  <span className="font-normal text-[#222] leading-[150%]">{benefit}</span>
+                </div>
+              ))}
+            </div>
+          </CartBox>
+        ) : (
+          <NewToInaiCart className="mt-8" />
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useLang } from "../context/LangContext";
 import Image from "next/image";
 import { ChevronIcon } from "../assets/Icons";
@@ -12,6 +13,7 @@ const LANGUAGES = [
 
 export default function Header() {
   const { lang, setLang, t } = useLang();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -36,7 +38,7 @@ export default function Header() {
             alt="logo"
             width={40}
             height={40}
-            className="w-[36px] h-[36px] lg:w-[40px] lg:h-[40px]"
+            className="w-[36px] h-[36px] lg:w-[40px] lg:h-[40px] select-none"
           />
           <span className="font-tamil font-semibold text-[20px] lg:text-[22px] leading-[1.5] tracking-[0.7px] text-[#222222]">
             இணை.com
@@ -50,7 +52,8 @@ export default function Header() {
           </span>
 
           <button
-            className="font-poppins cursor-pointer font-medium text-[16px] text-[#B31B38] ml-4
+            onClick={() => router.push("/login")}
+            className="font-poppins cursor-pointer font-medium text-[16px] text-[#B31B38] ml-4 select-none
               rounded border border-[#B31B38] hover:bg-[#B31B38] hover:text-white transition-colors duration-150"
             style={{ paddingTop: 4, paddingBottom: 4, paddingLeft: 24, paddingRight: 24, borderRadius: 8, borderWidth: 1.4 }}
           >
@@ -97,6 +100,7 @@ function MobileMenu({
   setLang: (l: "en" | "ta") => void;
   t: (key: keyof typeof import("../assets/translation.json")["en"]) => string;
 }) {
+  const router = useRouter();
   const [menu, setMenu] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
 
@@ -112,7 +116,7 @@ function MobileMenu({
         <div className="fixed top-[76px] left-0 right-0 bg-white/98 backdrop-blur-md shadow-lg flex flex-col gap-5 p-6 md:hidden z-50">
           <span className="font-poppins font-medium text-[16px] text-[#222222]">{t("Already_a_member")}</span>
 
-          <button className="font-poppins font-medium text-[16px] text-[#B31B38] border border-[#B31B38] rounded w-full hover:bg-[#B31B38] hover:text-white transition-colors"
+          <button onClick={() => router.push("/login")} className="font-poppins font-medium text-[16px] text-[#B31B38] border border-[#B31B38] rounded w-full hover:bg-[#B31B38] hover:text-white transition-colors cursor-pointer"
             style={{ paddingTop: 8, paddingBottom: 8 }}>
             {t("Log_In")}
           </button>

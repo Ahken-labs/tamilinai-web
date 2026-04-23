@@ -9,9 +9,6 @@
   --text-dark: #222222;
 }
 
-html {
-  scroll-behavior: smooth;
-}
 
 /* Font utility classes */
 .font-arima {

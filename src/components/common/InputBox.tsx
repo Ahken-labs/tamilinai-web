@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 
 interface InputBoxProps {
   value: string;
@@ -8,6 +8,8 @@ interface InputBoxProps {
   label: string;
   type?: string;
   error?: string;
+  className?: string;
+  suffix?: ReactNode;
 }
 
 export default function InputBox({
@@ -16,6 +18,8 @@ export default function InputBox({
   label,
   type = "text",
   error,
+  className,
+  suffix,
 }: InputBoxProps) {
   const [focused, setFocused] = useState(false);
 
@@ -24,8 +28,8 @@ export default function InputBox({
   return (
     <div className="flex flex-col">
       <div
-        className={`relative flex h-[60px] items-center rounded-xl border px-4 transition-colors
-        ${focused ? "border-[#B31B38]" : "border-[#8C8C8C]"}`}
+        className={`relative flex h-[55px] md:h-[60px] items-center rounded-xl border px-4 transition-colors
+        ${focused ? "border-[#B31B38]" : "border-[#8C8C8C]"} ${className ?? ""}`}
       >
         {/* Floating label */}
         <label
@@ -45,8 +49,10 @@ export default function InputBox({
           onChange={(e) => onChange(e.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          className="w-full bg-transparent text-[16px] text-[#222222] outline-none pt-4"
+          className="w-full bg-transparent text-[14px] md:text-[16px] text-[#222222] outline-none pt-4"
         />
+
+        {suffix && <div className="shrink-0 ml-2 flex items-center">{suffix}</div>}
       </div>
 
       {error && <p className="mt-0.5 text-[12px] text-[#B31B38]">{error}</p>}

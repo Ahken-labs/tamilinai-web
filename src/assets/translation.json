@@ -98,7 +98,23 @@
         "Benefits_of_verification": "Benefits of verification",
         "Benefit_1": "You will not miss out on any marriage proposal.",
         "Benefit_2": "Prospects can contact you directly without middle man.",
-        "Benefit_3": "Gives authentic feel to your profile"
+        "Benefit_3": "Gives authentic feel to your profile",
+        "Welcome_back": "Welcome back",
+        "Keep_your_Inai_account_secure": "Keep your Inai account secure. You'll use this to sign in.",
+        "Mobile_or_email": "Mobile or email",
+        "Password": "Password",
+        "Forgotten_password": "Forgotten password?",
+        "New_to_Inai": "New to Inai?",
+        "We_keep_your_information_safe_and_secure": "We keep your information safe and secure.",
+        "Fill_all_the_Input_fields": "*Fill all the Input fields",
+        "Password_is_required": "*Password is required",
+        "Reset_your_password": "Reset your password",
+        "Choose_reset_method": "Choose how you'd like to receive your reset code.",
+        "Mobile": "Mobile",
+        "Your_mobile_number": "Your mobile number",
+        "Your_email_address": "Your email address",
+        "Send_reset_code": "Send reset code",
+        "Enter_your_reset_code": "Enter your reset code"
     },
     "ta": {
         "Already_a_member": "ஏற்கனவே உறுப்பினரா?",
@@ -199,6 +215,22 @@
         "Benefits_of_verification": "சரிபார்ப்பின் நன்மைகள்",
         "Benefit_1": "எந்த திருமண முன்மொழிவையும் தவறவிட மாட்டீர்கள்.",
         "Benefit_2": "இணைகள் நேரடியாக தொடர்பு கொள்ள முடியும்.",
-        "Benefit_3": "உங்கள் சுயவிவரத்திற்கு நம்பகத்தன்மை கிடைக்கும்"
+        "Benefit_3": "உங்கள் சுயவிவரத்திற்கு நம்பகத்தன்மை கிடைக்கும்",
+        "Welcome_back": "மீண்டும் வருக",
+        "Keep_your_Inai_account_secure": "உங்கள் இணை கணக்கை பாதுகாப்பாக வைத்திருங்கள். இதை உள்நுழைவதற்கு பயன்படுத்துவீர்கள்.",
+        "Mobile_or_email": "மொபைல் அல்லது மின்னஞ்சல்",
+        "Password": "கடவுச்சொல்",
+        "Forgotten_password": "கடவுச்சொல் மறந்துவிட்டதா?",
+        "New_to_Inai": "இணை-யில் புதியவரா?",
+        "We_keep_your_information_safe_and_secure": "உங்கள் தகவல்களை நாங்கள் பாதுகாப்பாக வைத்திருபோம்.",
+        "Fill_all_the_Input_fields": "*அனைத்து புலங்களையும் நிரப்பவும்",
+        "Password_is_required": "*கடவுச்சொல் தேவை",
+        "Reset_your_password": "உங்கள் கடவுச்சொல்லை மீட்டமைக்கவும்",
+        "Choose_reset_method": "உங்கள் மீட்டமைப்பு குறியீட்டை எந்த வழியில் பெற விரும்புகிறீர்கள்?",
+        "Mobile": "மொபைல்",
+        "Your_mobile_number": "உங்கள் மொபைல் எண்",
+        "Your_email_address": "உங்கள் மின்னஞ்சல் முகவரி",
+        "Send_reset_code": "மீட்டமைப்பு குறியீடு அனுப்பு",
+        "Enter_your_reset_code": "உங்கள் மீட்டமைப்பு குறியீட்டை உள்ளிடவும்"
     }
 }

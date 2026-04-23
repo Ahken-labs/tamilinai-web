@@ -11,9 +11,10 @@ import {
 } from "../../assets/Icons";
 import { useLang } from "../../context/LangContext";
 import InputBox from "../common/InputBox";
+import CountryCodeSelect from "../more/CountryCodeSelect";
+import { COUNTRIES } from "../../constants/countries";
 
 const PROFILES = ["Myself", "Son", "Daughter", "Brother", "Sister", "Friend"];
-const COUNTRIES = ["Sri Lanka (+94)", "India (+91)", "UK (+44)", "Canada (+1)", "Australia (+61)"];
 
 const AUTO_GENDER: Record<string, "Male" | "Female"> = {
     Son: "Male",
@@ -100,10 +101,10 @@ export default function ProfileForm({
 
     const handleSubmit = () => {
         if (!validate()) return;
-        sessionStorage.setItem("otp_phone", phone);
-        sessionStorage.setItem("otp_country_code", countryCode.match(/\(\+\d+\)/)?.[0] ?? countryCode);
-        sessionStorage.setItem("otp_email", email);
-        router.push("/verify");
+        const code = countryCode.match(/\(\+\d+\)/)?.[0] ?? countryCode;
+        const params = new URLSearchParams({ phone, countryCode: code, email });
+        sessionStorage.setItem("otp_sent_at", String(Date.now()));
+        router.push(`/verify?${params.toString()}`);
     };
 
     const body = (
@@ -302,7 +303,7 @@ function DropdownField({
             <button
                 type="button"
                 onClick={onToggle}
-                className="flex h-[60px] w-full items-center justify-between rounded-xl border border-[#8C8C8C] bg-white px-4 text-left transition-colors focus:border-[#B31B38] focus:outline-none cursor-pointer"
+                className="flex h-[55px] md:h-[60px] w-full items-center justify-between rounded-xl border border-[#8C8C8C] bg-white px-4 text-left transition-colors focus:border-[#B31B38] focus:outline-none cursor-pointer"
             >
                 <span className="text-[14px] md:text-[16px] font-normal leading-[125%] text-[#525252]">{label}</span>
                 <ChevronIcon open={open} />
@@ -326,56 +327,6 @@ function DropdownField({
     );
 }
 
-function CountryCodeSelect({
-    value,
-    onChange,
-    open,
-    setOpen,
-}: {
-    value: string;
-    onChange: (val: string) => void;
-    open: boolean;
-    setOpen: (val: boolean) => void;
-}) {
-
-    const getCodeOnly = (val: string) => {
-        const match = val.match(/\(\+\d+\)/);
-        return match ? match[0] : val;
-    };
-
-    return (
-        <div className="relative">
-            <button
-                type="button"
-                onClick={() => setOpen(!open)}
-                className="flex h-[60px] border w-full min-[370px]:w-[120px] items-center justify-between  rounded-[12px] border border-[#8C8C8C] bg-white px-4 text-left transition-colors focus:border-[#B31B38] focus:outline-none cursor-pointer"
-            >
-                <span className="text-[14px] md:text-[16px] font-normal leading-[125%] text-[#525252]">
-                    {getCodeOnly(value)}
-                </span>
-                <ChevronIcon open={open} />
-            </button>
-
-            {open && (
-                <div className="absolute left-0 right-0 top-[calc(100%+4px)] z-30 max-h-[230px] overflow-y-auto rounded-xl border border-[#E0E0E0] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.1)]">
-                    {COUNTRIES.map((item) => (
-                        <button
-                            key={item}
-                            type="button"
-                            onClick={() => {
-                                onChange(item);
-                                setOpen(false);
-                            }}
-                            className="flex w-full items-center px-4 py-3 text-left text-[15px] text-[#222222] transition-colors hover:bg-[#fdf0f2] hover:text-[#B31B38]"
-                        >
-                            {item}
-                        </button>
-                    ))}
-                </div>
-            )}
-        </div>
-    );
-}
 
 function GenderOption({
     label,

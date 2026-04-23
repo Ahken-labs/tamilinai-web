@@ -1,7 +1,7 @@
 "use client";
 
 import translations from "../assets/translation.json";
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 
 // Types
 type Lang = "en" | "ta";
@@ -13,11 +13,23 @@ interface LangContextValue {
   t: (key: TranslationKey) => string;
 }
 
+const STORAGE_KEY = "tamilinai_lang";
+
 // Context
 const LangContext = createContext<LangContextValue | null>(null);
 
 export function LangProvider({ children }: { children: ReactNode }) {
-  const [lang, setLang] = useState<Lang>("en");
+  const [lang, setLangState] = useState<Lang>("en");
+
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY) as Lang | null;
+    if (saved === "en" || saved === "ta") setLangState(saved);
+  }, []);
+
+  const setLang = (l: Lang) => {
+    setLangState(l);
+    localStorage.setItem(STORAGE_KEY, l);
+  };
 
   const t = (key: TranslationKey): string =>
     translations[lang][key] || translations["en"][key] || key;

@@ -76,7 +76,7 @@ export default function Footer() {
           <div className="flex justify-between max-w-[490px] w-full">
 
             {/* Col 1 */}
-            <div className="flex flex-col gap-2 md:mr-4 mr:0">
+            <div className="flex flex-col gap-2 md:mr-4 mr:0 select-none">
               {NAV_LEFT.map(({ label, href }) => {
                 const isJoinNow = label === "Join_Now";
 
@@ -108,7 +108,7 @@ export default function Footer() {
             </div>
 
             {/* Col 2 */}
-            <div className="flex flex-col gap-2 md:mr-4 mr-0">
+            <div className="flex flex-col gap-2 md:mr-4 mr-0 select-none">
               {NAV_RIGHT.map(({ label, href }) => (
                 <a key={label} href={href} className={navLinkClass}>
                   {t(label)}
@@ -131,14 +131,14 @@ export default function Footer() {
           <div className="flex flex-col min-[440px]:flex-row min-[440px]:justify-between min-[440px]:items-left items-left gap-4">
 
             {/* Left — copyright */}
-            <div className="flex flex-wrap items-center gap-1.5">
+            <div className="flex flex-wrap items-center gap-1.5 select-none">
               <span className="font-poppins font-normal text-[12px] md:text-[13px] lg:text-[14px] leading-[18px] text-white">
                 © 2026 Ahken nexus
               </span>
             </div>
 
             {/* Right — locale + socials */}
-            <div className="flex flex-wrap items-center gap-2 min-[440px]:justify-end">
+            <div className="flex flex-wrap items-center gap-2 min-[440px]:justify-end select-none">
 
               {/* Globe + locale */}
               <div className="flex items-center gap-1.5">
