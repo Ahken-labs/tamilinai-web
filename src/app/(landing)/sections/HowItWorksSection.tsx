@@ -11,7 +11,7 @@ import {
 } from "@/src/assets/Icons";
 import Button from "@/src/components/common/Button";
 import { useState } from "react";
-import ProfileForm from "@/src/components/form/ProfileForm";
+import RegisterForm from "@/src/components/form/RegisterForm";
 
 // ─── Step data ────────────────────────────────────────────────────────────────
 const STEPS = [
@@ -104,7 +104,7 @@ export default function HowItWorksSection() {
 
         </div>
       </div>
-      <ProfileForm
+      <RegisterForm
         variant="modal"
         open={openForm}
         onClose={() => setOpenForm(false)}

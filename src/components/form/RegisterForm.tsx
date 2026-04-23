@@ -23,17 +23,17 @@ const AUTO_GENDER: Record<string, "Male" | "Female"> = {
     Sister: "Female",
 };
 
-type ProfileFormProps = {
+type RegisterFormProps = {
     variant?: "hero" | "modal";
     open?: boolean;
     onClose?: () => void;
 };
 
-export default function ProfileForm({
+export default function RegisterForm({
     variant = "hero",
     open = true,
     onClose,
-}: ProfileFormProps) {
+}: RegisterFormProps) {
     const { t } = useLang();
     const router = useRouter();
 
@@ -316,7 +316,7 @@ function DropdownField({
                             key={item}
                             type="button"
                             onClick={() => onSelect(item)}
-                            className="flex w-full items-center px-4 py-3 text-left text-[15px] text-[#222222] transition-colors hover:bg-[#fdf0f2] hover:text-[#B31B38]"
+                            className="flex w-full items-center px-4 py-2 md:py-3 text-left text-[15px] text-[#222222] transition-colors hover:bg-[#fdf0f2] hover:text-[#B31B38] cursor-pointer"
                         >
                             {item}
                         </button>

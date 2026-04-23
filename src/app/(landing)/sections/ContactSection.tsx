@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useLang } from "@/src/context/LangContext";
 import Button from "@/src/components/common/Button";
-import ProfileForm from "@/src/components/form/ProfileForm";
+import RegisterForm from "@/src/components/form/RegisterForm";
 import { useState } from "react";
 
 export default function ContactSection() {
@@ -76,7 +76,7 @@ export default function ContactSection() {
 
                 />
             </div>
-            <ProfileForm
+            <RegisterForm
                 variant="modal"
                 open={openForm}
                 onClose={() => setOpenForm(false)}

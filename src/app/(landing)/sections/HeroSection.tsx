@@ -1,13 +1,13 @@
 "use client";
 import { FlowerIcon, GlobeIcon, TrustPrivacyIcon, TrustVerifiedIcon } from "@/src/assets/Icons";
-import ProfileForm from "@/src/components/form/ProfileForm";
+import RegisterForm from "@/src/components/form/RegisterForm";
 import { useLang } from "@/src/context/LangContext";
 import Image from "next/image";
 
 
 export default function HeroSection() {
     const { t } = useLang();
-    const form = <ProfileForm variant="hero" />;
+    const form = <RegisterForm variant="hero" />;
 
     return (
         <section className="w-full bg-white font-poppins">

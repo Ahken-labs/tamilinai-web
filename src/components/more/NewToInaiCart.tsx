@@ -7,7 +7,7 @@ import { ArrowRightIcon } from "../../assets/Icons";
 import { useLang } from "../../context/LangContext";
 import dynamic from "next/dynamic";
 
-const ProfileForm = dynamic(() => import("../form/ProfileForm"), {
+const RegisterForm = dynamic(() => import("../form/RegisterForm"), {
   ssr: false,
 });
 
@@ -40,7 +40,7 @@ export default function NewToInaiCart({ className }: NewToInaiCartProps) {
         </p>
       </CartBox>
 
-      <ProfileForm
+      <RegisterForm
         variant="modal"
         open={openForm}
         onClose={() => setOpenForm(false)}

@@ -51,7 +51,7 @@ export default function CountryCodeSelect({ value, onChange, open, setOpen, labe
                 onChange(item);
                 setOpen(false);
               }}
-              className="flex w-full items-center px-4 py-3 text-left text-[15px] text-[#222222] transition-colors hover:bg-[#fdf0f2] hover:text-[#B31B38]"
+              className="flex w-full items-center px-4 py-2 md:py-3 text-left text-[14px] md:text-[15px] text-[#222222] transition-colors hover:bg-[#fdf0f2] hover:text-[#B31B38]"
             >
               {item}
             </button>

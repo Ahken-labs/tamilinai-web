@@ -1,7 +1,7 @@
 "use client";
 
 import Button from "@/src/components/common/Button";
-import ProfileForm from "@/src/components/form/ProfileForm";
+import RegisterForm from "@/src/components/form/RegisterForm";
 import { useLang } from "@/src/context/LangContext";
 import Image from "next/image";
 import { useState } from "react";
@@ -117,7 +117,7 @@ export default function AboutSection() {
             />
           ))}
         </div>
-        <ProfileForm
+        <RegisterForm
           variant="modal"
           open={openForm}
           onClose={() => setOpenForm(false)}

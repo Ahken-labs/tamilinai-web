@@ -5,7 +5,7 @@ import { FaXTwitter } from "react-icons/fa6";
 import { GlobeIcon } from "../assets/Icons";
 import { useLang } from "../context/LangContext";
 import { useState } from "react";
-import ProfileForm from "./form/ProfileForm";
+import RegisterForm from "./form/RegisterForm";
 
 // Nav link data
 const NAV_LEFT = [
@@ -174,7 +174,7 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <ProfileForm
+      <RegisterForm
         variant="modal"
         open={openForm}
         onClose={() => setOpenForm(false)}
