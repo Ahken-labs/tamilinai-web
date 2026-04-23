@@ -1,9 +1,10 @@
-import OtpForm from "@/src/components/form/OtpForm";
+import OtpForm from "../../../components/form/OtpForm";
 
-export default function Page({
+export default async function Page({
   searchParams,
 }: {
-  searchParams: { phone?: string; countryCode?: string; email?: string };
+  searchParams: Promise<{ phone?: string; countryCode?: string; email?: string }>;
 }) {
-  return <OtpForm variant="reset" searchParams={searchParams} />;
+  const params = await searchParams;
+  return <OtpForm variant="reset" searchParams={params} />;
 }

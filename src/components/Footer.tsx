@@ -85,7 +85,7 @@ export default function Footer() {
                     key={label}
                     type="button"
                     onClick={() => setOpenForm(true)}
-                    className={navLinkClass}
+                    className={`cursor-pointer ${navLinkClass}`}
                   >
                     {t(label)}
                   </button>
