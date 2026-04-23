@@ -1,16 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { ArrowRightIcon, EyeOffIcon, EyeOnIcon } from "../../assets/Icons";
 import Button from "../common/Button";
 import InputBox from "../common/InputBox";
 import NewToInaiCart from "../more/NewToInaiCart";
 import { useLang } from "../../context/LangContext";
+import Link from "next/link";
 
 export default function LoginForm() {
   const { t } = useLang();
-  const router = useRouter();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -86,13 +85,13 @@ export default function LoginForm() {
           </div>
 
           <div className="mt-6 md:mt-8 flex justify-center">
-            <button
-              type="button"
-              onClick={() => router.push("/forgot-password")}
+            <Link
+              href="/forgot-password"
+              prefetch
               className="text-[#B31B38] text-center text-[14px] sm:text-[16px] md:text-[18px] font-normal leading-[150%] cursor-pointer hover:opacity-70 select-none"
             >
               {t("Forgotten_password")}
-            </button>
+            </Link>
           </div>
         </div>
 

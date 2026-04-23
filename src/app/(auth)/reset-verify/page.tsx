@@ -1,9 +1,9 @@
 import OtpForm from "@/src/components/form/OtpForm";
-import { Suspense } from "react";
-export default function Page() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <OtpForm variant="reset" />
-    </Suspense>
-  );
+
+export default function Page({
+  searchParams,
+}: {
+  searchParams: { phone?: string; countryCode?: string; email?: string };
+}) {
+  return <OtpForm variant="reset" searchParams={searchParams} />;
 }

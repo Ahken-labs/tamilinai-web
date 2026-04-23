@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useLang } from "../context/LangContext";
 import Image from "next/image";
 import { ChevronIcon } from "../assets/Icons";
+import Link from "next/link";
 
 const LANGUAGES = [
   { label: "ஆங்கிலம்", value: "en" as const },
@@ -13,7 +13,6 @@ const LANGUAGES = [
 
 export default function Header() {
   const { lang, setLang, t } = useLang();
-  const router = useRouter();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -51,14 +50,15 @@ export default function Header() {
             {t("Already_a_member")}
           </span>
 
-          <button
-            onClick={() => router.push("/login")}
+          <Link
+            href="/login"
+            prefetch
             className="font-poppins cursor-pointer font-medium text-[16px] text-[#B31B38] ml-4 select-none
-              rounded border border-[#B31B38] hover:bg-[#B31B38] hover:text-white transition-colors duration-150"
+    rounded border border-[#B31B38] hover:bg-[#B31B38] hover:text-white transition-colors duration-150"
             style={{ paddingTop: 4, paddingBottom: 4, paddingLeft: 24, paddingRight: 24, borderRadius: 8, borderWidth: 1.4 }}
           >
             {t("Log_In")}
-          </button>
+          </Link>
 
           {/* Language selector */}
           <div ref={ref} className="relative ml-11">
@@ -66,7 +66,7 @@ export default function Header() {
               <span className="font-tamil font-medium text-[16px] text-[#222222]">
                 {currentLang.label}
               </span>
-               <ChevronIcon open={open} />
+              <ChevronIcon open={open} />
             </div>
 
             {open && (
@@ -100,7 +100,6 @@ function MobileMenu({
   setLang: (l: "en" | "ta") => void;
   t: (key: keyof typeof import("../assets/translation.json")["en"]) => string;
 }) {
-  const router = useRouter();
   const [menu, setMenu] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
 
@@ -116,14 +115,17 @@ function MobileMenu({
         <div className="fixed top-[76px] left-0 right-0 bg-white/98 backdrop-blur-md shadow-lg flex flex-col gap-5 p-6 md:hidden z-50">
           <span className="font-poppins font-medium text-[16px] text-[#222222]">{t("Already_a_member")}</span>
 
-          <button onClick={() => router.push("/login")} className="font-poppins font-medium text-[16px] text-[#B31B38] border border-[#B31B38] rounded w-full hover:bg-[#B31B38] hover:text-white transition-colors cursor-pointer"
-            style={{ paddingTop: 8, paddingBottom: 8 }}>
+          <Link
+            href="/login"
+            prefetch
+            className="font-poppins font-medium text-[16px] text-[#B31B38] border border-[#B31B38] rounded w-full hover:bg-[#B31B38] hover:text-white transition-colors cursor-pointer text-center"
+            style={{ paddingTop: 8, paddingBottom: 8 }}
+          >
             {t("Log_In")}
-          </button>
-
+          </Link>
           <div onClick={() => setLangOpen(!langOpen)} className="flex items-center justify-between cursor-pointer select-none">
             <span className="font-tamil font-medium text-[16px] text-[#222222]">{currentLang.label}</span>
-             <ChevronIcon open={langOpen} />
+            <ChevronIcon open={langOpen} />
           </div>
 
           {langOpen && (

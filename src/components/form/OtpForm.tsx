@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { ArrowRightIcon, ChevronIcon } from "../../assets/Icons";
 import Button from "../common/Button";
 import CartBox from "../common/CartBox";
@@ -13,16 +13,21 @@ const RESEND_SECONDS = 60;
 
 type OtpFormProps = {
   variant?: "register" | "reset";
+  searchParams?: {
+    phone?: string;
+    countryCode?: string;
+    email?: string;
+  };
 };
 
-export default function OtpForm({ variant = "register" }: OtpFormProps) {
+export default function OtpForm({ variant = "register", searchParams }: OtpFormProps) {
   const router = useRouter();
   const { t } = useLang();
 
-  const searchParams = useSearchParams();
-  const phone = searchParams.get("phone") ?? "";
-  const countryCode = searchParams.get("countryCode") ?? "";
-  const email = searchParams.get("email") ?? "";
+  const phone = searchParams?.phone ?? "";
+  const countryCode = searchParams?.countryCode ?? "";
+  const email = searchParams?.email ?? "";
+
   const [method, setMethod] = useState<"sms" | "email">(phone ? "sms" : "email");
   const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const [error, setError] = useState("");
@@ -30,7 +35,7 @@ export default function OtpForm({ variant = "register" }: OtpFormProps) {
   const [success, setSuccess] = useState(false);
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  
+
   const [countdown, setCountdown] = useState(() => {
     if (typeof window === "undefined") return RESEND_SECONDS;
 

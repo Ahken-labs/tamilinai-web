@@ -5,7 +5,11 @@ import CartBox from "../common/CartBox";
 import Button from "../common/Button";
 import { ArrowRightIcon } from "../../assets/Icons";
 import { useLang } from "../../context/LangContext";
-import ProfileForm from "../form/ProfileForm";
+import dynamic from "next/dynamic";
+
+const ProfileForm = dynamic(() => import("../form/ProfileForm"), {
+  ssr: false,
+});
 
 interface NewToInaiCartProps {
   className?: string;
