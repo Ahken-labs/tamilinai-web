@@ -10,6 +10,8 @@ interface InputBoxProps {
   error?: string;
   className?: string;
   suffix?: ReactNode;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }
 
 export default function InputBox({
@@ -20,6 +22,8 @@ export default function InputBox({
   error,
   className,
   suffix,
+  onFocus,
+  onBlur,
 }: InputBoxProps) {
   const [focused, setFocused] = useState(false);
 
@@ -47,8 +51,14 @@ export default function InputBox({
           type={type}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+          onFocus={() => {
+            setFocused(true);
+            onFocus?.();
+          }}
+          onBlur={() => {
+            setFocused(false);
+            onBlur?.();
+          }}
           className="w-full bg-transparent text-[14px] md:text-[16px] text-[#222222] outline-none pt-4"
         />
 

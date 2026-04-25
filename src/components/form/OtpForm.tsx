@@ -97,7 +97,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
     }
     if (otp === "123456") {
       setSuccess(true);
-      setTimeout(() => router.push(variant === "reset" ? "/reset-password" : "/dashboard"), 1000);
+      router.push(variant === "reset" ? "/reset-password" : "/create-password");
     } else {
       setError(t("Invalid_OTP_Please_try_again"));
       triggerShake();
@@ -125,11 +125,11 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
   ];
 
   return (
-    <div className="w-full flex items-left justify-center px-4 py-8 bg-[#F8F5F2] font-poppins">
+    <div className="w-full flex items-left justify-center px-4 py-8 bg-mvp font-poppins">
       <div className="w-full max-w-[784px] flex flex-col items-left">
 
         {/* ── Card 1: Verify ── */}
-        <div className="w-full rounded-[20px] bg-white pt-6 md:pt-8 px-4 md:px-6 pb-4 md:pb-6">
+        <div className="w-full rounded-[20px] bg-light pt-6 md:pt-8 px-4 md:px-6 pb-4 md:pb-6">
 
           {/* Title */}
           <h1 className="font-24 font-semibold text-dark leading-[150%]">
@@ -137,7 +137,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
           </h1>
 
           {/* Description */}
-          <p className="mt-5 sm:mt-6 md:mt-8 lg:mt-10 font-18 font-normal text-[#222] leading-[150%]">
+          <p className="mt-5 sm:mt-6 md:mt-8 lg:mt-10 font-18 font-normal text-dark leading-[150%]">
             {method === "sms" ? (
               <>
                 {t("We_sent_code_to")}{" "}

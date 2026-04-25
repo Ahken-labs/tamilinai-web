@@ -198,7 +198,7 @@ export function EyeOffIcon({ className = "w-4 md:w-5 h-4 md:h-5", ...props }: Ic
   );
 }
 
-export function EyeOnIcon({ className = "w-5 h-5", ...props }: IconProps) {
+export function EyeOnIcon({ className = "w-4 md:w-5 h-4 md:h-5", ...props }: IconProps) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" className={className} {...props}>
       <path d="M12.9833 10.0014C12.9833 11.6514 11.6499 12.9847 9.99993 12.9847C8.34993 12.9847 7.0166 11.6514 7.0166 10.0014C7.0166 8.3514 8.34993 7.01807 9.99993 7.01807C11.6499 7.01807 12.9833 8.3514 12.9833 10.0014Z" stroke="#222222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

@@ -7,6 +7,7 @@ import InputBox from "../common/InputBox";
 import NewToInaiCart from "../more/NewToInaiCart";
 import { useLang } from "../../context/LangContext";
 import Link from "next/link";
+import FormCardLayout from "../common/FormCardLayout";
 
 export default function LoginForm() {
   const { t } = useLang();
@@ -25,21 +26,34 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="w-full flex justify-center px-4 py-8 bg-[#F8F5F2] font-poppins">
-      <div className="w-full max-w-[784px] flex flex-col">
+    <>
+      <FormCardLayout
+        title={t("Welcome_back")}
+        subtitle={t("Keep_your_Inai_account_secure")}
+        footer={
+          <>
+            <Button
+              text={t("Log_In")}
+              icon={<ArrowRightIcon />}
+              onPress={handleLogin}
+              className="w-full"
+            />
 
-        {/* Box 1 */}
-        <div className="w-full rounded-[20px] bg-white pt-6 md:pt-8 px-4 md:px-6 pb-8 md:pb-10">
-          <h1 className="font-24 font-semibold text-dark leading-[150%]">
-            {t("Welcome_back")}
-          </h1>
-
-          <p className="mt-5 sm:mt-7 md:mt-10 font-18 font-normal text-dark leading-[150%]">
-            {t("Keep_your_Inai_account_secure")}
-          </p>
-
-          <div className="mt-7 sm:mt-10 md:mt-12">
-            <InputBox
+            <div className="mt-6 md:mt-8 flex justify-center">
+              <Link
+                href="/forgot-password"
+                prefetch
+                className="text-primary font-18 font-normal leading-[150%] cursor-pointer hover:opacity-70 select-none"
+              >
+                {t("Forgotten_password")}
+              </Link>
+            </div>
+          </>
+        }
+        bottom={<NewToInaiCart />} 
+      >
+           <div className="mt-7 sm:mt-10 md:mt-12">
+             <InputBox
               value={identifier}
               onChange={(val) => {
                 setIdentifier(val);
@@ -74,29 +88,7 @@ export default function LoginForm() {
               }
             />
           </div>
-
-          <div className="mt-10 md:mt-12">
-            <Button
-              text={t("Log_In")}
-              icon={<ArrowRightIcon />}
-              onPress={handleLogin}
-              className="w-full"
-            />
-          </div>
-
-          <div className="mt-6 md:mt-8 flex justify-center">
-            <Link
-              href="/forgot-password"
-              prefetch
-              className="text-primary font-18 font-normal leading-[150%] cursor-pointer hover:opacity-70 select-none"
-            >
-              {t("Forgotten_password")}
-            </Link>
-          </div>
-        </div>
-
-        <NewToInaiCart className="mt-8" />
-      </div>
-    </div>
+      </FormCardLayout>
+    </>
   );
 }

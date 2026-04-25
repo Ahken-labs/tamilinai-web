@@ -114,7 +114,13 @@
         "Your_mobile_number": "Your mobile number",
         "Your_email_address": "Your email address",
         "Send_reset_code": "Send reset code",
-        "Enter_your_reset_code": "Enter your reset code"
+        "Enter_your_reset_code": "Enter your reset code",
+        "Create_your_password": "Create your password",
+        "Create_new_password_subtitle": "Keep your Inai account secure. You'll use this to sign in.",
+        "Continue": "Continue",
+        "Create_a_new_password": "Create a new password",
+        "Reset_new_password_subtitle": "Choose something strong - and different from your old password.",
+        "Save_new_password":"Save new password"
     },
     "ta": {
         "Already_a_member": "ஏற்கனவே உறுப்பினரா?",
@@ -231,6 +237,12 @@
         "Your_mobile_number": "உங்கள் மொபைல் எண்",
         "Your_email_address": "உங்கள் மின்னஞ்சல் முகவரி",
         "Send_reset_code": "மீட்டமைப்பு குறியீடு அனுப்பு",
-        "Enter_your_reset_code": "உங்கள் மீட்டமைப்பு குறியீட்டை உள்ளிடவும்"
+        "Enter_your_reset_code": "உங்கள் மீட்டமைப்பு குறியீட்டை உள்ளிடவும்",
+        "Create_your_password": "உங்கள் கடவுச்சொல்லை உருவாக்கவும்",
+        "Create_new_password_subtitle": "உங்கள் இணை கணக்கைப் பாதுகாப்பாக வைத்திருங்கள். உள்நுழைவதற்கு இதைத்தான் பயன்படுத்துவீர்கள்.",
+        "Continue": "தொடர",
+        "Create_a_new_password": "புதிய கடவுச்சொல்லை உருவாக்கவும்",
+        "Reset_new_password_subtitle": "வலிமையானதும், உங்கள் பழைய கடவுச்சொல்லிலிருந்து வேறுபட்டதுமான ஒன்றைத் தேர்ந்தெடுங்கள்.",
+        "Save_new_password":"புதிய கடவுச்சொல்லை சேமிக்கவும்"
     }
 }

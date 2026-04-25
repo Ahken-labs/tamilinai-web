@@ -104,7 +104,7 @@ export default function RegisterForm({
         const code = countryCode.match(/\(\+\d+\)/)?.[0] ?? countryCode;
         const params = new URLSearchParams({ phone, countryCode: code, email });
         sessionStorage.setItem("otp_sent_at", String(Date.now()));
-        router.push(`/verify?${params.toString()}`);
+        router.push(`/verify-otp?${params.toString()}`);
     };
 
     const body = (
