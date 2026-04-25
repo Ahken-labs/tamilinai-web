@@ -43,19 +43,27 @@ export default function CountryCodeSelect({ value, onChange, open, setOpen, labe
 
       {open && (
         <div className="absolute left-0 right-0 top-[calc(100%+4px)] z-30 max-h-[230px] overflow-y-auto rounded-xl border border-[#E0E0E0] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.1)]">
-          {COUNTRIES.map((item) => (
-            <button
-              key={item}
-              type="button"
-              onClick={() => {
-                onChange(item);
-                setOpen(false);
-              }}
-              className="flex w-full items-center px-4 py-2 md:py-3 text-left text-[14px] md:text-[15px] text-[#222222] transition-colors hover:bg-[#fdf0f2] hover:text-[#B31B38]"
-            >
-              {item}
-            </button>
-          ))}
+          {COUNTRIES.map((item) => {
+            const isSelected = item === value;
+
+            return (
+              <button
+                key={item}
+                type="button"
+                onClick={() => {
+                  onChange(item);
+                  setOpen(false);
+                }}
+                className={`flex w-full items-center px-4 py-2 md:py-3 text-left text-[14px] md:text-[15px] transition-colors
+        ${isSelected
+                    ? "bg-[#FFF0F3] text-[#B31B38]"
+                    : "text-[#222222] hover:bg-[#FFF0F3] hover:text-[#B31B38]"
+                  }`}
+              >
+                {item}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

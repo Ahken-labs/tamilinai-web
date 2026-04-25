@@ -39,14 +39,14 @@ export default function Header() {
             height={40}
             className="w-[36px] h-[36px] lg:w-[40px] lg:h-[40px] select-none"
           />
-          <span className="font-tamil font-semibold text-[20px] lg:text-[22px] leading-[1.5] tracking-[0.7px] text-[#222222]">
+          <span className="font-tamil font-semibold text-[20px] lg:text-[22px] leading-[1.5] tracking-[0.7px] text-dark">
             இணை.com
           </span>
         </div>
 
         {/* Desktop right */}
         <div className="hidden md:flex items-center">
-          <span className="font-poppins font-medium text-[16px] text-[#222222]">
+          <span className="font-poppins font-medium text-[16px] text-dark">
             {t("Already_a_member")}
           </span>
 
@@ -63,7 +63,7 @@ export default function Header() {
           {/* Language selector */}
           <div ref={ref} className="relative ml-11">
             <div onClick={() => setOpen(!open)} className="flex items-center gap-2 cursor-pointer select-none">
-              <span className="font-tamil font-medium text-[16px] text-[#222222]">
+              <span className="font-tamil font-medium text-[16px] text-dark">
                 {currentLang.label}
               </span>
               <ChevronIcon open={open} />
@@ -76,7 +76,7 @@ export default function Header() {
                     key={l.value}
                     onClick={() => { setLang(l.value); setOpen(false); }}
                     className={`px-5 py-3 font-tamil text-[15px] font-medium cursor-pointer transition-colors
-                      ${lang === l.value ? "text-[#B31B38] bg-[#fdf0f2]" : "text-[#222222] hover:bg-[#fdf0f2] hover:text-[#B31B38]"}`}
+                      ${lang === l.value ? "text-[#B31B38] bg-[#fdf0f2]" : "text-dark hover:bg-[#fdf0f2] hover:text-[#B31B38]"}`}
                   >
                     {l.label}
                   </div>
@@ -105,26 +105,32 @@ function MobileMenu({
 
   return (
     <>
-      <button onClick={() => setMenu(!menu)} className="md:hidden flex flex-col justify-center gap-[5px] p-1" aria-label="Toggle menu">
+      <button onClick={() => setMenu(!menu)} className="md:hidden flex flex-col justify-center cursor-pointer select-none gap-[5px] p-1" aria-label="Toggle menu">
         <span className="block w-6 h-[2px] bg-[#222222] rounded" style={{ transition: "transform 0.2s", transform: menu ? "translateY(7px) rotate(45deg)" : "none" }} />
         <span className="block w-6 h-[2px] bg-[#222222] rounded" style={{ transition: "opacity 0.2s", opacity: menu ? 0 : 1 }} />
         <span className="block w-6 h-[2px] bg-[#222222] rounded" style={{ transition: "transform 0.2s", transform: menu ? "translateY(-7px) rotate(-45deg)" : "none" }} />
       </button>
 
       {menu && (
-        <div className="fixed top-[76px] left-0 right-0 bg-white/98 backdrop-blur-md shadow-lg flex flex-col gap-5 p-6 md:hidden z-50">
-          <span className="font-poppins font-medium text-[16px] text-[#222222]">{t("Already_a_member")}</span>
+        // <div className="fixed top-[76px] left-0 right-0 bg-white/98 backdrop-blur-md shadow-lg flex flex-col gap-5 p-6 md:hidden z-50">
+        <div
+          className={`fixed top-[76px] left-0 right-0 z-50 bg-white/98 backdrop-blur-md shadow-lg 
+            flex flex-col gap-5 p-6 md:hidden transition-all duration-300 ease-in-out 
+            ${menu ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none"} `}
+        >
+          <span className="font-poppins font-medium text-[16px] text-dark">{t("Already_a_member")}</span>
 
           <Link
             href="/login"
             prefetch
-            className="font-poppins font-medium text-[16px] text-[#B31B38] border border-[#B31B38] rounded w-full hover:bg-[#B31B38] hover:text-white transition-colors cursor-pointer text-center"
+            onClick={() => setMenu(false)}
+            className="font-poppins select-none font-medium text-[16px] text-[#B31B38] border border-[#B31B38] rounded w-full hover:bg-[#B31B38] hover:text-white transition-colors cursor-pointer text-center"
             style={{ paddingTop: 8, paddingBottom: 8 }}
           >
             {t("Log_In")}
           </Link>
           <div onClick={() => setLangOpen(!langOpen)} className="flex items-center justify-between cursor-pointer select-none">
-            <span className="font-tamil font-medium text-[16px] text-[#222222]">{currentLang.label}</span>
+            <span className="font-tamil font-medium text-[16px] text-dark">{currentLang.label}</span>
             <ChevronIcon open={langOpen} />
           </div>
 
@@ -134,7 +140,7 @@ function MobileMenu({
                 <div key={l.value}
                   onClick={() => { setLang(l.value); setMenu(false); setLangOpen(false); }}
                   className={`px-4 py-3 font-tamil text-[15px] font-medium cursor-pointer transition-colors
-                    ${lang === l.value ? "bg-[#fdf0f2] text-[#B31B38]" : "text-[#222222] hover:bg-[#fdf0f2] hover:text-[#B31B38]"}`}
+                    ${lang === l.value ? "bg-[#fdf0f2] text-[#B31B38]" : "text-dark hover:bg-[#fdf0f2] hover:text-[#B31B38]"}`}
                 >
                   {l.label}
                 </div>

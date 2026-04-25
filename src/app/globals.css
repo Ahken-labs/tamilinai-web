@@ -14,16 +14,15 @@
 .font-arima {
   font-family: 'Arima Madurai', cursive;
 }
-
 .font-poppins {
   font-family: 'Poppins', sans-serif;
 }
-
 .font-tamil {
   font-family: 'Noto Sans Tamil', sans-serif;
 }
 
 @keyframes shake {
+
   0%,
   100% {
     transform: translateX(0);
@@ -41,6 +40,159 @@
     transform: translateX(4px);
   }
 }
+
 .animate-shake {
   animation: shake 0.45s ease;
+}
+
+
+
+/* text-Colors */
+.primary {
+  background-color: #B31B38;
+}
+.text-primary {
+  color: #B31B38;
+}
+.text-dark {
+  color: #222222;
+}
+.text-dark1 {
+  color: #191C1D;
+}
+.text-dark2 {
+  color: #242424;
+}
+.text-secondary {
+  color: #6B6B6B;
+}
+.text-secondary1 {
+  color: #666666;
+}
+.text-secondary2 {
+  color: #6A6A6A;
+}
+.text-secondary3 {
+  color: #767676;
+}
+.text-light {
+  color: #ffffff;
+}
+
+/* background-Colors */
+.bg-light {
+  background-color: #ffffff;
+}
+.bg-cartbox1 {
+  background-color: #EFEFEF;
+}
+.bg-cartbox2 {
+  background-color: #F2F2F2;
+}
+.bg-cartbox3 {
+  background-color: #FFF0F3;
+}
+
+/* Border-Colors */
+.border-gray {
+  border-color: #E6E6E6;
+}
+.border-gray1 {
+  border-color: #F2F2F2;
+}
+
+
+/* font sizes */
+.font-40 {
+  font-size: 20px;
+}
+.font-32 {
+  font-size: 18px;
+}
+.font-24 {
+  font-size: 15px;
+}
+.font-20 {
+  font-size: 12px;
+}
+.font-18 {
+  font-size: 12px;
+}
+.font-16 {
+  font-size: 12px;
+}
+.font-14 {
+  font-size: 12px;
+}
+
+@media (min-width: 640px) {
+  .font-40 {
+    font-size: 26px;
+  }
+  .font-32 {
+    font-size: 20px;
+  }
+  .font-24 {
+    font-size: 18px;
+  }
+  .font-20 {
+    font-size: 13px;
+  }
+  .font-18 {
+    font-size: 14px;
+  }
+  .font-16 {
+    font-size: 13px;
+  }
+  .font-14 {
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 768px) {
+  .font-40 {
+    font-size: 30px;
+  }
+  .font-32 {
+    font-size: 26px;
+  }
+  .font-24 {
+    font-size: 20px;
+  }
+  .font-20 {
+    font-size: 16px;
+  }
+  .font-18 {
+    font-size: 16px;
+  }
+  .font-16 {
+    font-size: 14px;
+  }
+  .font-14 {
+    font-size: 13px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .font-40 {
+    font-size: 40px;
+  }
+  .font-32 {
+    font-size: 32px;
+  }
+  .font-24 {
+    font-size: 24px;
+  }
+  .font-20 {
+    font-size: 20px;
+  }
+  .font-18 {
+    font-size: 18px;
+  }
+  .font-16 {
+    font-size: 16px;
+  }
+  .font-14 {
+    font-size: 14px;
+  }
 }

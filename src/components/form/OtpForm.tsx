@@ -132,12 +132,12 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
         <div className="w-full rounded-[20px] bg-white pt-6 md:pt-8 px-4 md:px-6 pb-4 md:pb-6">
 
           {/* Title */}
-          <h1 className="text-[18px] sm:text-[20px] md:text-[22px] lg:text-[24px] font-semibold text-[#222] leading-[150%]">
+          <h1 className="font-24 font-semibold text-dark leading-[150%]">
             {variant === "reset" ? t("Enter_your_reset_code") : t("Verify_your_phone")}
           </h1>
 
           {/* Description */}
-          <p className="mt-6 md:mt-10 text-[14px] sm:text-[16px] md:text-[18px] font-normal text-[#222] leading-[150%]">
+          <p className="mt-5 sm:mt-6 md:mt-8 lg:mt-10 font-18 font-normal text-[#222] leading-[150%]">
             {method === "sms" ? (
               <>
                 {t("We_sent_code_to")}{" "}
@@ -168,11 +168,11 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
                 value={digit}
                 onChange={(e) => handleChange(i, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(i, e)}
-                className={`flex-1 max-w-[42px] sm:max-w-[50px] md:max-w-[56px] text-center py-3 md:py-4 rounded-[10px] sm:rounded-[11px] md:rounded-[12px] border text-[16px] md:text-[18px] font-medium text-[#242424] outline-none transition-colors duration-150
+                className={`flex-1 max-w-[42px] sm:max-w-[50px] md:max-w-[56px] text-center py-3 md:py-4 rounded-[10px] sm:rounded-[11px] md:rounded-[12px] border text-[16px] md:text-[18px] font-medium text-dark2 outline-none transition-colors duration-150
                   ${error
                     ? "border-[#B31B38] bg-[#fff5f7]"
                     : digit
-                      ? "border-[#B31B38] bg-[#F0F0F0]"
+                      ? "border-[#F0F0F0] bg-[#F0F0F0]"
                       : "border-white bg-[#F0F0F0] focus:border-[#B31B38]"
                   }
                   ${success ? "!border-[#16a34a] !bg-[#f0fdf4]" : ""}
@@ -183,19 +183,19 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
 
           {/* Error */}
           {error && (
-            <p className="mt-3 text-[12px] text-[#B31B38]">{error}</p>
+            <p className="mt-3 text-[12px] text-primary">{error}</p>
           )}
 
           {/* Success */}
           {success && (
-            <p className="mt-3 text-[13px] text-[#16a34a] font-medium">
+            <p className="mt-3 text-[12px] text-[#16a34a] font-medium">
               {t("Verified_Redirecting")}
             </p>
           )}
 
           {/* Timer + Resend */}
           <div className="mt-3 flex">
-            <span className="text-[12px] sm:text-[14px] md:text-[16px] font-normal text-[#222] leading-[150%]">
+            <span className="font-16 font-normal text-dark leading-[150%]">
               {t("Code_expires_in")}{" "}
               <span className="font-medium">{formattedTimer}</span>
             </span>
@@ -203,10 +203,10 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
               type="button"
               onClick={handleResend}
               disabled={countdown > 0}
-              className={`ml-3 text-[12px] sm:text-[14px] md:text-[16px] font-medium leading-[150%] underline transition-colors select-none
+              className={`ml-3 font-16 font-medium leading-[150%] underline transition-colors select-none
                 ${countdown > 0
                   ? "text-[#B31B38] opacity-40 cursor-default"
-                  : "text-[#B31B38] cursor-pointer hover:text-[#8E162D]"
+                  : "text-[#B31B38] cursor-pointer hover:text-[#8E162D] active:text-[#6F1023]"
                 }`}
             >
               {t("Resend_code")}
@@ -233,7 +233,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
 
           {variant === "register" && (
             <div className="mt-4 flex">
-              <span className="text-[12px] sm:text-[14px] md:text-[16px] font-normal text-[#222] leading-[150%]">
+              <span className="font-16 font-normal text-dark leading-[150%]">
                 {method === "sms" ? t("Dont_receive_OTP_via_SMS") : t("Dont_receive_OTP_via_Email")}
               </span>
               <button
@@ -243,7 +243,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
                   setDigits(Array(OTP_LENGTH).fill(""));
                   setError("");
                 }}
-                className="ml-2 flex items-center text-[12px] sm:text-[14px] md:text-[16px] font-medium text-[#222] underline leading-[150%] cursor-pointer hover:opacity-70 select-none"
+                className="ml-2 flex items-center font-16 font-medium text-dark underline leading-[150%] cursor-pointer hover:opacity-70 select-none"
               >
                 {method === "sms" ? t("Verify_via_Email") : t("Verify_via_SMS")}
                 <ChevronIcon open={false} className="ml-1 w-3 h-3 md:w-4 md:h-4 rotate-270" />
@@ -253,15 +253,15 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
         </div>
 
         {variant === "register" ? (
-          <CartBox className="mt-8 text-[12px] sm:text-[14px] md:text-[16px]">
-            <p className="font-semibold text-[#222] leading-[150%]">
+          <CartBox className="mt-8 font-16">
+            <p className="font-semibold text-dark leading-[150%]">
               {t("Benefits_of_verification")}
             </p>
             <div className="mt-4 flex flex-col gap-2">
               {benefits.map((benefit, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <span className="text-[#222] mt-[3px] shrink-0">•</span>
-                  <span className="font-normal text-[#222] leading-[150%]">{benefit}</span>
+                  <span className="text-dark mt-[3px] shrink-0">•</span>
+                  <span className="font-normal text-dark leading-[150%]">{benefit}</span>
                 </div>
               ))}
             </div>

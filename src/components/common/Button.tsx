@@ -6,6 +6,7 @@ type ButtonProps = {
     className?: string;
     type?: "button" | "submit";
     icon?: React.ReactNode;
+    iconRight?: React.ReactNode;
 };
 
 export default function Button({
@@ -14,6 +15,7 @@ export default function Button({
     className = "",
     type = "button",
     icon,
+    iconRight,
 }: ButtonProps) {
     return (
         <button
@@ -35,6 +37,7 @@ export default function Button({
         ${className}
       `}
         >
+            {iconRight && <span className="mr-2 flex items-center">{icon}</span>}
             {text}
             {icon && <span className="ml-2 flex items-center">{icon}</span>}
         </button>

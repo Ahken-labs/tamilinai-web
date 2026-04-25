@@ -10,14 +10,14 @@ export default function HeroSection() {
     const form = <RegisterForm variant="hero" />;
 
     return (
-        <section className="w-full bg-white font-poppins">
+        <section className="w-full bg-light font-poppins">
             {/* ── Image + content wrapper ── */}
-            <div className="mx-3 md:mx-5 lg:mx-10 xl:mx-[40px]">
+            <div className="mx-3 sm:mx-4 md:mx-5 lg:mx-10 xl:mx-[40px]">
 
                 {/* ── Image + overlay ── */}
                 <div
                     className="relative w-full overflow-hidden rounded-[60px]
-            h-[320px] sm:h-[380px] md:h-[420px] lg:h-[850px] select-none"
+            h-[320px] sm:h-[360px] md:h-[380px] lg:h-[850px] select-none"
                 >
                     <Image
                         src="/images/hero_image.png"
@@ -44,11 +44,10 @@ export default function HeroSection() {
 
                                 {/* Bottom text */}
                                 <div className="mr-2">
-                                    <h1 className="mb-2 font-semibold leading-[1.5] text-white
-                                                text-[18px] sm:text-[20px] md:text-[26px] lg:text-[32px]">
+                                    <h1 className="mb-2 font-semibold leading-[1.5] text-light font-32">
                                         {t("Find_your_Tamil_life_partner_wherever_in_the_world_you_are")}
                                     </h1>
-                                    <p className="text-[12px] leading-[1.5] text-white/85 md:text-[14px] lg:text-[16px]">
+                                    <p className="font-16 leading-[1.5] text-white/85">
                                         {t("Sri_Lankan_Tamil_matrimony_site_trusted_by_families_in_Sri_Lanka_London_Toronto_and_Sydney_verified_profiles")}
                                     </p>
                                 </div>
@@ -84,7 +83,7 @@ export default function HeroSection() {
                         {/* 2 */}
                         <div className="flex items-center justify-center">
                             <TrustItem
-                                icon={<GlobeIcon className="w-6 h-6 text-[#222222] shrink-0" />}
+                                icon={<GlobeIcon className="w-6 h-6 text-dark shrink-0" />}
                                 text={t("Global_Tamil_Network")}
                             />
                         </div>
@@ -112,10 +111,10 @@ function TrustBadge() {
         <div className="flex items-center">
             <FlowerIcon className="mr-3 shrink-0 h-[48px] w-[24px] md:h-[72px] md:w-[37px]" />
             <div className="flex flex-col">
-                <p className="font-medium leading-[1.5] text-white text-[15px] sm:text-[18px] md:text-[21px] lg:text-[24px] text-center">
+                <p className="font-medium leading-[1.5] text-light font-24 text-center">
                     {t("2026_MOST_TRUSTED")}
                 </p>
-                <p className="font-medium leading-[1.5] text-white text-[15px] sm:text-[18px] md:text-[21px] lg:text-[24px]">
+                <p className="font-medium leading-[1.5] text-light font-24">
                     {t("Eelam_Tamil_Matrimony")}
                 </p>
             </div>

@@ -22,7 +22,7 @@ export default function NewToInaiCart({ className }: NewToInaiCartProps) {
   return (
     <>
       <CartBox className={className}>
-        <p className="text-[18px] sm:text-[20px] md:text-[22px] lg:text-[24px] font-semibold text-[#222] leading-[150%]">
+        <p className="font-24 font-semibold text-dark leading-[150%]">
           {t("New_to_Inai")}
         </p>
 
@@ -35,7 +35,7 @@ export default function NewToInaiCart({ className }: NewToInaiCartProps) {
           />
         </div>
 
-        <p className="mt-5 text-[14px] sm:text-[16px] md:text-[18px] font-normal text-[#222] leading-[150%] text-center">
+        <p className="mt-5 font-18 font-normal text-dark leading-[150%] text-center">
           {t("We_keep_your_information_safe_and_secure")}
         </p>
       </CartBox>

@@ -50,7 +50,7 @@ const SOCIALS = [
 
 // Shared link style
 const navLinkClass =
-  "font-poppins font-normal text-[12px] sm:text-[14px] md:text-[16px] lg:text-[18px] leading-[200%] text-white hover:opacity-70 transition-opacity duration-150 block";
+  "font-poppins font-normal font-18 leading-[200%] text-white hover:opacity-70 transition-opacity duration-150 block";
 
 export default function Footer() {
   const { t } = useLang();
@@ -120,7 +120,7 @@ export default function Footer() {
 
           {/* Col 3 — Description (pushed right on desktop) */}
           <div className="md:ml-auto ">
-            <p className="font-poppins font-normal text-[12px] sm:text-[13px] md:text-[14px] lg:text-[16px] leading-[150%] text-white">
+            <p className="font-poppins font-normal font-16 leading-[150%] text-white">
               {t("Footer_parah")}
             </p>
           </div>
@@ -132,7 +132,7 @@ export default function Footer() {
 
             {/* Left — copyright */}
             <div className="flex flex-wrap items-center gap-1.5 select-none">
-              <span className="font-poppins font-normal text-[12px] md:text-[13px] lg:text-[14px] leading-[18px] text-white">
+              <span className="font-poppins font-normal font-14 leading-[18px] text-white">
                 © 2026 Ahken nexus
               </span>
             </div>
@@ -143,13 +143,13 @@ export default function Footer() {
               {/* Globe + locale */}
               <div className="flex items-center gap-1.5">
                 <GlobeIcon className="w-4 h-4 text-white shrink-0" />
-                <span className="font-poppins font-normal text-[12px] md:text-[13px] lg:text-[14px] leading-[18px] text-white">
+                <span className="font-poppins font-normal font-14 leading-[18px] text-white">
                   {t("English")}
                 </span>
               </div>
 
               <Dot />
-              <span className="font-poppins font-normal text-[12px] md:text-[13px] lg:text-[14px] leading-[18px] text-white mx-0 md:mx-2 lg:mx-3">
+              <span className="font-poppins font-normal font-14 leading-[18px] text-white mx-0 md:mx-2 lg:mx-3">
                 {t("LKR")}
               </span>
               <Dot />

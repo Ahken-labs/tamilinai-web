@@ -40,11 +40,11 @@ export default function FAQSection() {
   const toggle = (i: number) => setOpenIndex(openIndex === i ? null : i);
 
   return (
-    <section className="w-full bg-white font-poppins px-5 md:px-10 xl:px-[120px] my-15 md:my-20 lg:my-30">
+    <section className="w-full bg-light font-poppins px-5 md:px-10 xl:px-[120px] my-15 md:my-20 lg:my-30">
 
       {/* Title */}
-      <h2 className="font-bold text-[#222222] text-center leading-[150%]
-        text-[20px] sm:text-[28px] md:text-[32px] lg:text-[40px]">
+      <h2 className="font-bold text-dark text-center leading-[150%]
+        font-40">
         {t("Your_Questions_Answered")}
       </h2>
 
@@ -79,7 +79,7 @@ function FAQItem({
   return (
     <div>
       {/* Divider line */}
-      <div className="border-t border-[#E6E6E6]" />
+      <div className="border-t border-gray" />
 
       {/* Question row */}
       <button
@@ -88,7 +88,7 @@ function FAQItem({
         className="w-full flex items-center justify-between gap-4 text-left
           cursor-pointer md:py-4 lg:py-5 py-4 group"
       >
-        <span className="font-normal text-[#242424] leading-[150%]
+        <span className="font-normal text-dark2 leading-[150%]
           text-[14px] md:text-[16px] lg:text-[20px]">
           {question}
         </span>
@@ -107,8 +107,8 @@ function FAQItem({
         className="overflow-hidden transition-all duration-300 ease-in-out"
         style={{ maxHeight: isOpen ? 400 : 0 }}
       >
-        <p className="font-normal text-[#6A6A6A] leading-[150%]
-          text-[12px] md:text-[14px] lg:text-[16px] md:pb-10 pb-8">
+        <p className="font-normal text-secondary2 leading-[150%]
+          font-16 md:pb-10 pb-8">
           {answer}
         </p>
       </div>

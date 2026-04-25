@@ -39,22 +39,13 @@ export function HelpSection() {
 
           {/* Title */}
           <h2
-            className="
-              font-bold text-[#222222]
-              text-[20px] sm:text-[28px] md:text-[30px] lg:text-[40px]
-              leading-[120%]
-            "
-          >
+            className="font-bold text-dark font-40 leading-[120%]">
             {t("Need_Help_Finding_a_Match")}
           </h2>
 
           {/* Description */}
           <p
-            className="
-              mt-4 md:mt-6 text-[#222222]
-              text-[12px] md:text-[14px] lg:text-[16px]
-              leading-[150%]
-            "
+            className="mt-4 md:mt-6 text-dark font-16 leading-[150%]"
           >
             {t("Chat_with_Tamilinais_friendly_support_team_for_profile_creation_photo_uploads_or_personalized_matchmaking_assistance")}
           </p>

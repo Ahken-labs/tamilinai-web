@@ -48,11 +48,11 @@ export default function ForgotPasswordForm() {
 
         {/* Box 1 */}
         <div className="w-full rounded-[20px] bg-white pt-6 md:pt-8 px-4 md:px-6 pb-8 md:pb-10">
-          <h1 className="text-[18px] sm:text-[20px] md:text-[22px] lg:text-[24px] font-semibold text-[#222] leading-[150%]">
+          <h1 className="font-24 font-semibold text-dark leading-[150%]">
             {t("Reset_your_password")}
           </h1>
 
-          <p className="mt-6 md:mt-10 text-[14px] sm:text-[16px] md:text-[18px] font-normal text-[#222] leading-[150%]">
+          <p className="mt-5 sm:mt-7 md:mt-10 font-18 font-normal text-dark leading-[150%]">
             {t("Choose_reset_method")}
           </p>
 
@@ -62,20 +62,20 @@ export default function ForgotPasswordForm() {
               type="button"
               onClick={() => handleMethod("sms")}
               className={`select-none cursor-pointer flex-1 flex flex-col items-center justify-center gap-0.5 py-3 md:py-4 rounded-[12px] transition-colors duration-150
-                ${method === "sms" ? "bg-[#FFF0F3] text-[#B31B38]" : "bg-[#F2F2F2] text-[#222222]"}`}
+                ${method === "sms" ? "bg-cartbox3 text-primary" : "bg-cartbox2 text-dark"}`}
             >
               <SmsIcon />
-              <span className="text-[12px] sm:text-[14px] md:text-[16px] font-normal leading-[150%]">{t("Mobile")}</span>
+              <span className="font-16 font-normal leading-[150%]">{t("Mobile")}</span>
             </button>
 
             <button
               type="button"
               onClick={() => handleMethod("email")}
               className={`select-none cursor-pointer flex-1 flex flex-col items-center justify-center gap-0.5 py-3 md:py-4 rounded-[12px] transition-colors duration-150
-                ${method === "email" ? "bg-[#FFF0F3] text-[#B31B38]" : "bg-[#F2F2F2] text-[#222222]"}`}
+                ${method === "email" ? "bg-cartbox3 text-primary" : "bg-cartbox2 text-dark"}`}
             >
               <MailIcon />
-              <span className="text-[12px] sm:text-[14px] md:text-[16px] font-normal leading-[150%]">{t("Email")}</span>
+              <span className="font-16 font-normal leading-[150%]">{t("Email")}</span>
             </button>
           </div>
 
@@ -98,7 +98,7 @@ export default function ForgotPasswordForm() {
                   }}
                   label={t("Your_mobile_number")}
                   type="tel"
-                  className="bg-[#F2F2F2] border-[#F2F2F2]"
+                  className="bg-cartbox2 border-gray1"
                   error={error}
                 />
               </div>
@@ -111,7 +111,7 @@ export default function ForgotPasswordForm() {
                 }}
                 label={t("Your_email_address")}
                 type="email"
-                className="bg-[#F2F2F2] border-[#F2F2F2]"
+                className="bg-cartbox2 border-gray1"
                 error={error}
               />
             )}

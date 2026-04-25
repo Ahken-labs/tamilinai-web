@@ -42,7 +42,7 @@ export default function HowItWorksSection() {
   const { t } = useLang();
   const [openForm, setOpenForm] = useState(false);
   return (
-    <section className="relative w-full overflow-hidden bg-white md:pt-10 pt-8 lg:py-12 font-poppins">
+    <section className="relative w-full overflow-hidden bg-light md:pt-10 pt-8 lg:py-12 font-poppins">
 
       {/* ── Left union design ── */}
       <div
@@ -77,7 +77,7 @@ export default function HowItWorksSection() {
           }}
         >
           {/* Title */}
-          <h2 className="text-[18px] sm:text-[20px] md:text-[26px] lg:text-[32px] mb-12 text-center font-semibold leading-[150%] text-[#222222]">
+          <h2 className="font-32 mb-12 text-center font-semibold leading-[150%] text-dark">
             {t("Find_your_match_in_4_simple_steps")}
           </h2>
 
@@ -127,10 +127,10 @@ function StepRow({
     <div className="flex items-center gap-5">
       <Icon />
       <div className="flex flex-col">
-        <span className="text-[16px] font-medium leading-[1.4] text-[#222222] md:text-[20px]">
+        <span className="text-[16px] font-medium leading-[1.4] text-dark md:text-[20px]">
           {title}
         </span>
-        <span className="mt-2 text-[13px] leading-[1.5] text-[#6B6B6B] md:text-[16px]">
+        <span className="mt-2 text-[13px] leading-[1.5] text-secondary md:text-[16px]">
           {desc}
         </span>
       </div>

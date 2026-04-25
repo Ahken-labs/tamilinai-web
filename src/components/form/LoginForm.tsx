@@ -30,15 +30,15 @@ export default function LoginForm() {
 
         {/* Box 1 */}
         <div className="w-full rounded-[20px] bg-white pt-6 md:pt-8 px-4 md:px-6 pb-8 md:pb-10">
-          <h1 className="text-[18px] sm:text-[20px] md:text-[22px] lg:text-[24px] font-semibold text-[#222] leading-[150%]">
+          <h1 className="font-24 font-semibold text-dark leading-[150%]">
             {t("Welcome_back")}
           </h1>
 
-          <p className="mt-6 md:mt-10 text-[14px] sm:text-[16px] md:text-[18px] font-normal text-[#222] leading-[150%]">
+          <p className="mt-5 sm:mt-7 md:mt-10 font-18 font-normal text-dark leading-[150%]">
             {t("Keep_your_Inai_account_secure")}
           </p>
 
-          <div className="mt-10 md:mt-12">
+          <div className="mt-7 sm:mt-10 md:mt-12">
             <InputBox
               value={identifier}
               onChange={(val) => {
@@ -88,7 +88,7 @@ export default function LoginForm() {
             <Link
               href="/forgot-password"
               prefetch
-              className="text-[#B31B38] text-center text-[14px] sm:text-[16px] md:text-[18px] font-normal leading-[150%] cursor-pointer hover:opacity-70 select-none"
+              className="text-primary font-18 font-normal leading-[150%] cursor-pointer hover:opacity-70 select-none"
             >
               {t("Forgotten_password")}
             </Link>

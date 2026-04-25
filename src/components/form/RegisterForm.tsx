@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
     ArrowRightIcon,
-    ChevronIcon,
     CloseCircleIcon,
     HeroButtonSideIcon,
     RadioCircleIcon,
@@ -13,6 +12,7 @@ import { useLang } from "../../context/LangContext";
 import InputBox from "../common/InputBox";
 import CountryCodeSelect from "../more/CountryCodeSelect";
 import { COUNTRIES } from "../../constants/countries";
+import DropdownField from "../common/DropdownField";
 
 const PROFILES = ["Myself", "Son", "Daughter", "Brother", "Sister", "Friend"];
 
@@ -112,10 +112,10 @@ export default function RegisterForm({
             {variant === "modal" ? (
                 <div className="flex items-start justify-between gap-4">
                     <div className="flex flex-col">
-                        <h2 className="text-left text-[16px] sm:text-[17px] md:text-[18px] font-semibold leading-[1.5] text-[#222222]">
+                        <h2 className="text-left text-[16px] sm:text-[17px] md:text-[18px] font-semibold leading-[1.5] text-dark">
                             {t("Create_your_free_profile")}
                         </h2>
-                        <p className="text-[12px] mt-1 md:text-[14px] font-normal leading-[150%] text-[#767676]">
+                        <p className="text-[12px] mt-1 md:text-[14px] font-normal leading-[150%] text-secondary3">
                             Find your life partner - rooted in Tamil values
                         </p>
                     </div>
@@ -129,23 +129,29 @@ export default function RegisterForm({
                     </button>
                 </div>
             ) : (
-                <h2 className="text-center text-[16px] sm:text-[17px] md:text-[18px] font-semibold leading-[1.5] text-[#222222]">
+                <h2 className="text-center text-[16px] sm:text-[17px] md:text-[18px] font-semibold leading-[1.5] text-dark">
                     {t("Create_your_free_profile")}
                 </h2>
             )}
+
             <DropdownField
-                label={profileFor || t("This_profile_is_for")}
+                value={profileFor}
+                placeholder={t("This_profile_is_for")}
                 open={activeDropdown === "profile"}
-                onToggle={() =>
-                    setActiveDropdown((prev) => (prev === "profile" ? "" : "profile"))
-                }
+                setOpen={(val) => setActiveDropdown(val ? "profile" : "")}
                 onSelect={(value) => {
                     setProfileFor(value);
                     setGender(AUTO_GENDER[value] ?? "");
-                    setActiveDropdown("");
                     setErrors((prev) => ({ ...prev, gender: undefined }));
                 }}
+                items={PROFILES}
+                className="h-[55px] md:h-[60px] bg-white"
+                borderClassName="border-[#8C8C8C]"
+                openBorderClassName="border-[#B31B38]"
+                textClassName="text-[#525252]"
+                height="290px"
             />
+
             {profileFor && (
                 <>
                     <div className="flex flex-col gap-[2px]">
@@ -237,11 +243,11 @@ export default function RegisterForm({
                     </span>
                 </button>
                 <div className="flex flex-col gap-2">
-                    <p className="text-center text-[10px] md:text-[12px] leading-[1.5] text-[#666666]">
+                    <p className="text-center text-[10px] md:text-[12px] leading-[1.5] text-secondary1">
                         {t("Takes_2_minutes_Your_data_is_never_shared_without_your_permission")}
                     </p>
                     {variant === "modal" && (
-                        <p className="font-poppins text-center text-[12px] md:text-[14px] font-normal leading-[150%] text-[#B31B38]">
+                        <p className="font-poppins text-center text-[12px] md:text-[14px] font-normal leading-[150%] text-primary">
                             Already registered? {" "}
                             <button type="button" className="underline cursor-pointer select-none">
                                 Sign in
@@ -255,7 +261,6 @@ export default function RegisterForm({
     );
 
     if (variant === "hero") {
-        // return <div className="w-full rounded-[20px] bg-white shadow-[0px_2px_16px_0px_rgba(0,0,0,0.12)]">{body}</div>;
         return (
             <div className="w-full flex justify-center">
                 <div className="w-full max-w-[800px] lg:w-[400px] rounded-[20px] bg-white shadow-[0px_2px_16px_0px_rgba(0,0,0,0.12)]">
@@ -286,47 +291,6 @@ export default function RegisterForm({
         </div>
     );
 }
-
-function DropdownField({
-    label,
-    open,
-    onToggle,
-    onSelect,
-}: {
-    label: string;
-    open: boolean;
-    onToggle: () => void;
-    onSelect: (value: string) => void;
-}) {
-    return (
-        <div className="relative">
-            <button
-                type="button"
-                onClick={onToggle}
-                className="flex h-[55px] md:h-[60px] w-full items-center justify-between rounded-xl border border-[#8C8C8C] bg-white px-4 text-left transition-colors focus:border-[#B31B38] focus:outline-none cursor-pointer"
-            >
-                <span className="text-[14px] md:text-[16px] font-normal leading-[125%] text-[#525252]">{label}</span>
-                <ChevronIcon open={open} />
-            </button>
-
-            {open && (
-                <div className="absolute left-0 right-0 top-[calc(100%+4px)] z-30 overflow-hidden rounded-xl border border-[#E0E0E0] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.1)]">
-                    {PROFILES.map((item) => (
-                        <button
-                            key={item}
-                            type="button"
-                            onClick={() => onSelect(item)}
-                            className="flex w-full items-center px-4 py-2 md:py-3 text-left text-[15px] text-[#222222] transition-colors hover:bg-[#fdf0f2] hover:text-[#B31B38] cursor-pointer"
-                        >
-                            {item}
-                        </button>
-                    ))}
-                </div>
-            )}
-        </div>
-    );
-}
-
 
 function GenderOption({
     label,

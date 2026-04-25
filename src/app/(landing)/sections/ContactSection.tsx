@@ -11,7 +11,7 @@ export default function ContactSection() {
     const [openForm, setOpenForm] = useState(false);
 
     return (
-        <section className="relative w-full bg-white overflow-hidden font-poppins py-15 md:py-20 lg:py-25 mt-8 md:mt-15 lg:mt-30">
+        <section className="relative w-full bg-light overflow-hidden font-poppins py-15 md:py-20 lg:py-25 mt-8 md:mt-15 lg:mt-30">
 
             {/* ── LEFT PILLAR ── */}
             <div className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 select-none">
@@ -47,23 +47,16 @@ export default function ContactSection() {
 
                 {/* Main heading */}
                 <h2
-                    className="
-    mt-2
-    font-bold text-[#191C1D] capitalize text-center
-    leading-[150%]
+                    className="mt-2 font-bold text-dark1 capitalize text-center leading-[150%] 
+                    font-40 
+                    max-w-[200px] sm:max-w-[300px] md:max-w-[640px] mx-auto" >
 
-    text-[20px] sm:text-[25px] md:text-[30px] lg:text-[40px]
-
-    max-w-[200px] sm:max-w-[300px] md:max-w-[640px]
-    mx-auto
-  "
-                >
                     <span className="block">{t("More_than_just_matchmaking")}</span>
                     <span className="block">{t("We_are_your_bridge_to_home")}</span>
-                    {/* More than just matchmaking.<br />We are your bridge to home. */}
+
                 </h2>
                 {/* Tamil text */}
-                <p className="mt-6 text-[12px] md:text-[16px] lg:text-[20px] leading-[150%] text-[#222222] font-normal">
+                <p className="mt-6 font-20 leading-[150%] text-dark font-normal">
                     தமிழால் இணைவதால்,<br />தமிழ் மணங்களை இணைப்பதால்,<br />இணைகளை இணைப்பதால், <br />நாம் -{" "}
                     <span className="font-semibold">தமிழிணை!</span>
                 </p>
