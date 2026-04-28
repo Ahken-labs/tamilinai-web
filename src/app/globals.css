@@ -48,9 +48,6 @@
 
 
 /* text-Colors */
-.primary {
-  background-color: #B31B38;
-}
 .text-primary {
   color: #B31B38;
 }
@@ -86,6 +83,9 @@
 }
 
 /* background-Colors */
+.primary {
+  background-color: #B31B38;
+}
 .bg-light {
   background-color: #ffffff;
 }

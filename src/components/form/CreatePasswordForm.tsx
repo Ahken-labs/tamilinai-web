@@ -87,7 +87,7 @@ export default function CreatePasswordForm({ variant = "register" }: Props) {
             return;
         }
         if (password !== confirmPassword) {
-            setConfirmPasswordError("Passwords do not match");
+            setConfirmPasswordError("*Passwords do not match");
             return;
         }
         setPasswordError("");

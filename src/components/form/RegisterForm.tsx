@@ -13,15 +13,8 @@ import InputBox from "../common/InputBox";
 import CountryCodeSelect from "../more/CountryCodeSelect";
 import { COUNTRIES } from "../../constants/countries";
 import DropdownField from "../common/DropdownField";
-
-const PROFILES = ["Myself", "Son", "Daughter", "Brother", "Sister", "Friend"];
-
-const AUTO_GENDER: Record<string, "Male" | "Female"> = {
-    Son: "Male",
-    Brother: "Male",
-    Daughter: "Female",
-    Sister: "Female",
-};
+import Link from "next/link";
+import { AUTO_GENDER, PROFILES } from "@/src/constants/profiles";
 
 type RegisterFormProps = {
     variant?: "hero" | "modal";
@@ -249,9 +242,12 @@ export default function RegisterForm({
                     {variant === "modal" && (
                         <p className="font-poppins text-center text-[12px] md:text-[14px] font-normal leading-[150%] text-primary">
                             Already registered? {" "}
-                            <button type="button" className="underline cursor-pointer select-none">
+                            <Link
+                                href="/login"
+                                prefetch
+                                className="underline cursor-pointer select-none">
                                 Sign in
-                            </button>
+                            </Link>
                         </p>
 
                     )}

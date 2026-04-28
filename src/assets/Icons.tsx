@@ -316,6 +316,58 @@ export function MailIcon({ className = "w-4 md:w-5 h-4 md:h-5 shrink-0", ...prop
   );
 }
 
+export function SecurityIcon({
+  className = "w-4 md:w-5 h-4 md:h-5",
+  ...props
+}: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 20 20"
+      fill="none"
+      className={className}
+      {...props}
+    >
+      <path
+        d="M17.4242 9.2661C17.4242 13.3411 14.4659 17.1578 10.4242 18.2744C10.1492 18.3494 9.84921 18.3494 9.57421 18.2744C5.53255 17.1578 2.57422 13.3411 2.57422 9.2661V5.60775C2.57422 4.92442 3.0909 4.14942 3.73256 3.89109L8.37421 1.99111C9.41588 1.56611 10.5909 1.56611 11.6325 1.99111L16.2742 3.89109C16.9076 4.14942 17.4326 4.92442 17.4326 5.60775L17.4242 9.2661Z"
+        fill="white"
+      />
+    </svg>
+  );
+}
+
+export function CheckmarkIcon({
+  stroke = "currentColor",
+  className = "w-5 md:w-6 h-5 md:h-6 shrink-0",
+  ...props
+}: IconProps & { stroke?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} {...props}>
+      <path d="M6 12L10 16L18 8" stroke={stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function CameraIcon({
+  className = "w-4 h-4",
+  ...props
+}: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 16 16"
+      fill="none"
+      className={className}
+      {...props}
+    >
+      <path
+        d="M9.55469 2C10.2167 2 10.799 2.42326 11.0088 3.04102L11.083 3.29297C11.293 3.91031 11.8744 4.333 12.5361 4.33301H12.7979C13.8305 4.33301 14.668 5.17047 14.668 6.20312V11C14.668 13.6667 14.0007 14.333 11.334 14.333H4.66797C2.0013 14.333 1.33398 13.6667 1.33398 11V6.26367C1.33398 5.1978 2.19878 4.33301 3.26465 4.33301H3.44141C4.17242 4.33295 4.8205 3.86238 5.0459 3.16699C5.27125 2.47144 5.91925 2 6.65039 2H9.55469ZM8.00098 6.33301C6.52822 6.33301 5.33398 7.52724 5.33398 9C5.33398 10.4728 6.52822 11.667 8.00098 11.667C9.47374 11.667 10.668 10.4728 10.668 9C10.668 7.52724 9.47374 6.33301 8.00098 6.33301Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
 export function CloseCircleIcon({
   className = "h-8 w-8",
   ...props

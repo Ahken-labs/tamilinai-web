@@ -29,7 +29,7 @@ export default function Button({
         py-3
         px-10
         rounded-full
-        text-[14px] md:text-[16px]
+        font-16
         bg-[#B31B38]
         hover:bg-[#8E162D]
         active:bg-[#6F1023]
@@ -37,7 +37,7 @@ export default function Button({
         ${className}
       `}
         >
-            {iconLeft && <span className="mr-2 flex items-center">{icon}</span>}
+            {iconLeft && <span className="mr-2 flex items-center">{iconLeft}</span>}
             {text}
             {icon && <span className="ml-2 flex items-center">{icon}</span>}
         </button>

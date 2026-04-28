@@ -1,11 +1,12 @@
 type FormCardLayoutProps = {
-  title: string;
+  title?: string;
   subtitle?: string;
   children: React.ReactNode;
   footer?: React.ReactNode; // for buttons or extra content
   bottom?: React.ReactNode;
   paddingBottom?: string;
   childrenTopMargin?: string;
+  bgColor?: string;
 };
 
 export default function FormCardLayout({
@@ -16,17 +17,20 @@ export default function FormCardLayout({
   bottom,
   paddingBottom = "pb-8 md:pb-10",
   childrenTopMargin = "mt-7 sm:mt-10 md:mt-12",
+  bgColor = "bg-light"
 }: FormCardLayoutProps) {
   return (
-    <div className="w-full flex justify-center px-4 py-8 bg-mvp font-poppins">
+    <div className="w-full flex justify-center px-4 md:px-10 py-8 bg-mvp font-poppins">
       <div className="w-full max-w-[784px] flex flex-col">
 
-        <div className={`w-full rounded-[20px] bg-light pt-6 md:pt-8 px-4 md:px-6 ${paddingBottom}`}>
+        <div className={`w-full rounded-[20px] px-4 md:px-6 ${bgColor} ${paddingBottom}`}>
           
           {/* Title */}
-          <h1 className="font-24 font-semibold text-dark leading-[150%]">
+          {title && (
+          <h1 className="font-24 font-semibold pt-6 md:pt-8 text-dark leading-[150%]">
             {title}
           </h1>
+          )}
 
           {/* Subtitle */}
           {subtitle && (
