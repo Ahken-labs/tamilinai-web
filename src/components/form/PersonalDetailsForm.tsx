@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Button from "../common/Button";
 import DropdownField from "../common/DropdownField";
@@ -10,12 +10,7 @@ import FormRow from "../more/FormRow";
 import FormCardLayout from "../common/FormCardLayout";
 import { useLang } from "@/src/context/LangContext";
 import {
-  EDUCATION_OPTIONS,
-  RELIGION_OPTIONS,
-  CASTE_OPTIONS,
-  COUNTRY_OPTIONS,
-  CITY_OPTIONS,
-  CITIZENSHIP_OPTIONS,
+  EDUCATION_OPTIONS, RELIGION_OPTIONS, CASTE_OPTIONS, COUNTRY_OPTIONS, CITY_OPTIONS, CITIZENSHIP_OPTIONS,
 } from "@/src/constants/profiles";
 
 function filterItems(items: string[], query: string) {
@@ -28,7 +23,7 @@ function filterItems(items: string[], query: string) {
 type OpenKey = "education" | "religion" | "caste" | "country" | "city" | "citizenship";
 const ALL_CLOSED: Record<OpenKey, boolean> = {
   education: false, religion: false, caste: false,
-  country: false,   city: false,     citizenship: false,
+  country: false, city: false, citizenship: false,
 };
 
 const STORAGE_KEY = "tamilinai_personal";
@@ -37,42 +32,38 @@ export default function PersonalDetailsForm() {
   const router = useRouter();
   const { t } = useLang();
 
-  const [education,   setEducation]   = useState("");
-  const [occupation,  setOccupation]  = useState("");
-  const [religion,    setReligion]    = useState("");
-  const [caste,       setCaste]       = useState("");
-  const [country,     setCountry]     = useState("");
-  const [city,        setCity]        = useState("");
-  const [citizenship, setCitizenship] = useState("");
-
-  const [opens,  setOpens]  = useState<Record<OpenKey, boolean>>(ALL_CLOSED);
+  const [opens, setOpens] = useState<Record<OpenKey, boolean>>(ALL_CLOSED);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Restore saved values when returning to this step.
-  useEffect(() => {
+  function getSavedPersonalDetails() {
+    if (typeof window === "undefined") return {};
     try {
       const raw = sessionStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      const d = JSON.parse(raw) as Record<string, string>;
-      if (d.education)   setEducation(d.education);
-      if (d.occupation)  setOccupation(d.occupation);
-      if (d.religion)    setReligion(d.religion);
-      if (d.caste)       setCaste(d.caste);
-      if (d.country)     setCountry(d.country);
-      if (d.city)        setCity(d.city);
-      if (d.citizenship) setCitizenship(d.citizenship);
-    } catch { /* ignore malformed storage */ }
-  }, []);
+      return raw ? (JSON.parse(raw) as Record<string, string>) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  const saved = getSavedPersonalDetails();
+
+  const [education, setEducation] = useState(saved.education ?? "");
+  const [occupation, setOccupation] = useState(saved.occupation ?? "");
+  const [religion, setReligion] = useState(saved.religion ?? "");
+  const [caste, setCaste] = useState(saved.caste ?? "");
+  const [country, setCountry] = useState(saved.country ?? "");
+  const [city, setCity] = useState(saved.city ?? "");
+  const [citizenship, setCitizenship] = useState(saved.citizenship ?? "");
 
   const setOpen = (key: OpenKey) => (val: boolean) =>
     setOpens({ ...ALL_CLOSED, [key]: val });
 
   // ── Filtered dropdown items ───────────────────────────────────────
-  const filtEducation   = useMemo(() => filterItems(EDUCATION_OPTIONS,   education),   [education]);
-  const filtReligion    = useMemo(() => filterItems(RELIGION_OPTIONS,    religion),    [religion]);
-  const filtCaste       = useMemo(() => filterItems(CASTE_OPTIONS,       caste),       [caste]);
-  const filtCountry     = useMemo(() => filterItems(COUNTRY_OPTIONS,     country),     [country]);
-  const filtCity        = useMemo(() => filterItems(CITY_OPTIONS,        city),        [city]);
+  const filtEducation = useMemo(() => filterItems(EDUCATION_OPTIONS, education), [education]);
+  const filtReligion = useMemo(() => filterItems(RELIGION_OPTIONS, religion), [religion]);
+  const filtCaste = useMemo(() => filterItems(CASTE_OPTIONS, caste), [caste]);
+  const filtCountry = useMemo(() => filterItems(COUNTRY_OPTIONS, country), [country]);
+  const filtCity = useMemo(() => filterItems(CITY_OPTIONS, city), [city]);
   const filtCitizenship = useMemo(() => filterItems(CITIZENSHIP_OPTIONS, citizenship), [citizenship]);
 
   function persist() {
@@ -90,13 +81,13 @@ export default function PersonalDetailsForm() {
 
   function handleDone() {
     const errs: Record<string, string> = {};
-    if (!education)          errs.education   = "*Highest education is required";
-    if (!occupation.trim())  errs.occupation  = "*Occupation is required";
-    if (!religion)           errs.religion    = "*Religion is required";
-    if (!caste)              errs.caste       = "*Caste or denomination is required";
-    if (!country)            errs.country     = "*Country is required";
-    if (!city)               errs.city        = "*District or city is required";
-    if (!citizenship)        errs.citizenship = "*Citizenship is required";
+    if (!education) errs.education = "*Highest education is required";
+    if (!occupation.trim()) errs.occupation = "*Occupation is required";
+    if (!religion) errs.religion = "*Religion is required";
+    if (!caste) errs.caste = "*Caste or denomination is required";
+    if (!country) errs.country = "*Country is required";
+    if (!city) errs.city = "*District or city is required";
+    if (!citizenship) errs.citizenship = "*Citizenship is required";
 
     setErrors(errs);
     if (Object.keys(errs).length) return;
@@ -106,7 +97,7 @@ export default function PersonalDetailsForm() {
   }
 
   return (
-    <FormCardLayout 
+    <FormCardLayout
       childrenTopMargin="mt-6 md:mt-8"
       footer={
         <div className="flex gap-5 w-full">
@@ -144,10 +135,10 @@ export default function PersonalDetailsForm() {
             items={filtEducation}
             dropdownClassName="max-h-[220px]"
           />
-   
+
         </FormRow>
 
-        <FormRow label={t("Occupation")} align="center"required error={errors.occupation}>
+        <FormRow label={t("Occupation")} align="center" required error={errors.occupation}>
           <InputBox
             compact
             value={occupation}

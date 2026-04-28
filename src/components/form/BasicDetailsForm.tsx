@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRightIcon, RadioCircleIcon } from "../../assets/Icons";
 import Button from "../common/Button";
@@ -25,10 +25,10 @@ const HEIGHTS = Array.from({ length: 81 }, (_, i) => `${140 + i} cm`);
 const WEIGHTS = Array.from({ length: 111 }, (_, i) => `${40 + i} kg`);
 
 const MARITAL_OPTIONS = [
-  { value: "Unmarried",     label: "Unmarried" },
+  { value: "Unmarried", label: "Unmarried" },
   { value: "Widow/Widower", label: "Widow/Widower" },
-  { value: "Divorced",      label: "Divorced" },
-  { value: "Separated",     label: "Separated" },
+  { value: "Divorced", label: "Divorced" },
+  { value: "Separated", label: "Separated" },
 ];
 
 function filterItems(items: string[], query: string) {
@@ -50,35 +50,29 @@ export default function BasicDetailsForm() {
   const router = useRouter();
   const { t } = useLang();
 
-  const [birthYear,         setBirthYear]         = useState("");
-  const [birthMonth,        setBirthMonth]        = useState("");
-  const [birthDay,          setBirthDay]          = useState("");
-  const [maritalStatus,     setMaritalStatus]     = useState("Unmarried");
-  const [height,            setHeight]            = useState("");
-  const [weight,            setWeight]            = useState("");
-  const [physicalChallenge, setPhysicalChallenge] = useState<"no" | "yes">("no");
-  const [disability,        setDisability]        = useState("");
-
-  const [opens,  setOpens]  = useState<Record<OpenKey, boolean>>(ALL_CLOSED);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  // Restore saved values when returning from step 2.
-  useEffect(() => {
+  function getSavedBasicDetails() {
+    if (typeof window === "undefined") return {};
     try {
       const raw = sessionStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      const d = JSON.parse(raw) as Record<string, string>;
-      if (d.birthYear)  setBirthYear(d.birthYear);
-      if (d.birthMonth) setBirthMonth(d.birthMonth);
-      if (d.birthDay)   setBirthDay(d.birthDay);
-      if (d.maritalStatus) setMaritalStatus(d.maritalStatus);
-      if (d.height)     setHeight(d.height);
-      if (d.weight)     setWeight(d.weight);
-      if (d.physicalChallenge === "yes" || d.physicalChallenge === "no")
-        setPhysicalChallenge(d.physicalChallenge);
-      if (d.disability) setDisability(d.disability);
-    } catch { /* ignore malformed storage */ }
-  }, []);
+      return raw ? (JSON.parse(raw) as Record<string, string>) : {};
+    } catch {
+      return {};
+    }
+  }
+  const saved = getSavedBasicDetails();
+
+  const [birthYear, setBirthYear] = useState(saved.birthYear ?? "");
+  const [birthMonth, setBirthMonth] = useState(saved.birthMonth ?? "");
+  const [birthDay, setBirthDay] = useState(saved.birthDay ?? "");
+  const [maritalStatus, setMaritalStatus] = useState(saved.maritalStatus ?? "Unmarried");
+  const [height, setHeight] = useState(saved.height ?? "");
+  const [weight, setWeight] = useState(saved.weight ?? "");
+  const [physicalChallenge, setPhysicalChallenge] = useState<"no" | "yes">(
+    saved.physicalChallenge === "yes" ? "yes" : "no"
+  );
+  const [disability, setDisability] = useState(saved.disability ?? "");
+  const [opens, setOpens] = useState<Record<OpenKey, boolean>>(ALL_CLOSED);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const setOpen = (key: OpenKey) => (val: boolean) =>
     setOpens({ ...ALL_CLOSED, [key]: val });
@@ -105,11 +99,11 @@ export default function BasicDetailsForm() {
   }
 
   // ── Filtered dropdown items ───────────────────────────────────────
-  const filtYears      = useMemo(() => filterItems(YEARS,             birthYear),   [birthYear]);
-  const filtMonths     = useMemo(() => filterItems(MONTHS,            birthMonth),  [birthMonth]);
-  const filtDays       = useMemo(() => filterItems(validDays,         birthDay),    [validDays, birthDay]);
-  const filtHeights    = useMemo(() => filterItems(HEIGHTS,           height),      [height]);
-  const filtWeights    = useMemo(() => filterItems(WEIGHTS,           weight),      [weight]);
+  const filtYears = useMemo(() => filterItems(YEARS, birthYear), [birthYear]);
+  const filtMonths = useMemo(() => filterItems(MONTHS, birthMonth), [birthMonth]);
+  const filtDays = useMemo(() => filterItems(validDays, birthDay), [validDays, birthDay]);
+  const filtHeights = useMemo(() => filterItems(HEIGHTS, height), [height]);
+  const filtWeights = useMemo(() => filterItems(WEIGHTS, weight), [weight]);
   const filtDisability = useMemo(() => filterItems(DISABILITY_OPTIONS, disability), [disability]);
 
   // Live DOB error — only fires when year looks like a full 4-digit number.
@@ -129,8 +123,8 @@ export default function BasicDetailsForm() {
       const dobErr = validateDOB(birthYear, birthMonth, birthDay);
       if (dobErr) errs.dob = dobErr;
     }
-    if (!height)   errs.height = "*Height is required";
-    if (!weight)   errs.weight = "*Weight is required";
+    if (!height) errs.height = "*Height is required";
+    if (!weight) errs.weight = "*Weight is required";
     if (physicalChallenge === "yes" && !disability)
       errs.disability = "*Please provide disability details";
 

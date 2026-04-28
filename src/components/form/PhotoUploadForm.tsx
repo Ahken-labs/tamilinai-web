@@ -35,8 +35,17 @@ export default function PhotoUploadForm() {
       setAboutMe(val);
     }
   }
-
+  function clearDraftData() {
+    try {
+      sessionStorage.removeItem("tamilinai_basic");
+      sessionStorage.removeItem("tamilinai_personal");
+      sessionStorage.removeItem("tamilinai_photo");
+    } catch {
+      /* storage unavailable */
+    }
+  }
   function handleSkip() {
+    clearDraftData();
     router.push("/dashboard");
   }
 
@@ -45,6 +54,7 @@ export default function PhotoUploadForm() {
     try {
       sessionStorage.setItem("tamilinai_photo", JSON.stringify({ aboutMe }));
     } catch { /* storage unavailable */ }
+    clearDraftData();
     router.push("/dashboard");
   }
 
@@ -149,8 +159,8 @@ export default function PhotoUploadForm() {
               }
               onPress={() => fileInputRef.current?.click()}
               className={`!px-10 ${hasPhoto
-                  ? "!bg-white !text-[#222222] hover:!bg-gray-50"
-                  : ""
+                ? "!bg-white !text-[#222222] hover:!bg-gray-50"
+                : ""
                 }`}
             />
           </div>
