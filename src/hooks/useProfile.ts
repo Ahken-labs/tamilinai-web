@@ -1,4 +1,3 @@
-// Fetch own profile
 "use client";
 
 import { useState, useEffect } from "react";
@@ -17,11 +16,36 @@ export function useProfile(): UseProfileReturn {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchProfile = async () => {
+  // pure fetch (no state here)
+  const fetchProfile = async (): Promise<UserProfile> => {
+    return await getMe();
+  };
+
+  useEffect(() => {
+    const load = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const data = await fetchProfile();
+        setProfile(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load profile");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    load();
+  }, []);
+
+  // refetch with state handling
+  const refetch = async () => {
     setIsLoading(true);
     setError(null);
+
     try {
-      const data = await getMe();
+      const data = await fetchProfile();
       setProfile(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load profile");
@@ -30,9 +54,5 @@ export function useProfile(): UseProfileReturn {
     }
   };
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-
-  return { profile, isLoading, error, refetch: fetchProfile };
+  return { profile, isLoading, error, refetch };
 }
