@@ -156,7 +156,14 @@
         "Word_count": "/ 60",
         "Skip": "Skip",
         "Save": "Save",
-        "Change_photo":"Change photo"
+        "Change_photo":"Change photo",
+        "App_Matches": "Matches",
+        "App_Notifications": "Notifications",
+        "App_Shortlisted": "Shortlisted",
+        "App_Interested": "Interested",
+        "App_Search": "Search",
+        "App_My_Profile": "My Profile",
+        "App_Settings": "Settings"
     },
     "ta": {
         "Already_a_member": "ஏற்கனவே உறுப்பினரா?",
@@ -315,6 +322,13 @@
         "Word_count": "/ 60",
         "Skip": "தவிர்க்க",
         "Save": "சேமிக்க",
-        "Change_photo":"புகைப்படத்தை மாற்ற"
+        "Change_photo":"புகைப்படத்தை மாற்ற",
+        "App_Matches": "இணை வரன்கள்",
+        "App_Notifications": "அறிவிப்புகள்",
+        "App_Shortlisted": "பட்டியலிடப்பட்டவர்",
+        "App_Interested": "விருப்பமானவர்",
+        "App_Search": "தேடு",
+        "App_My_Profile": "என் சுயவிவரம்",
+        "App_Settings": "அமைப்புகள்"
     }
 }

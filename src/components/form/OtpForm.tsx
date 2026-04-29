@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRightIcon, ChevronIcon } from "../../assets/Icons";
 import Button from "../common/Button";
-import CartBox from "../common/CartBox";
 import NewToInaiCart from "../more/NewToInaiCart";
 import { useLang } from "../../context/LangContext";
 
@@ -253,7 +252,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
         </div>
 
         {variant === "register" ? (
-          <CartBox className="mt-8 font-16">
+          <div className="w-full rounded-[18px] md:rounded-[20px] bg-[#EAEAEA] p-4 md:p-6 mt-8 font-16">
             <p className="font-semibold text-dark leading-[150%]">
               {t("Benefits_of_verification")}
             </p>
@@ -265,7 +264,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
                 </div>
               ))}
             </div>
-          </CartBox>
+           </div>
         ) : (
           <NewToInaiCart className="mt-8" />
         )}

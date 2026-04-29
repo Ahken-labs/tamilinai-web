@@ -2,8 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useLang } from "../context/LangContext";
-import Image from "next/image";
-import { ChevronIcon } from "../assets/Icons";
+import { ChevronIcon, Logo} from "../assets/Icons";
 import Link from "next/link";
 
 const LANGUAGES = [
@@ -29,16 +28,9 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full bg-white/60 backdrop-blur-sm">
       <div className="max-w-[1920px] mx-auto flex items-center justify-between px-5 md:px-10 xl:px-[120px] h-[76px]">
-
         {/* Logo */}
         <div className="flex items-center gap-2">
-          <Image
-            src="/icons/logo.svg"
-            alt="logo"
-            width={40}
-            height={40}
-            className="w-[36px] h-[36px] lg:w-[40px] lg:h-[40px] select-none"
-          />
+          <Logo />
           <span className="font-tamil font-semibold text-[20px] lg:text-[22px] leading-[1.5] tracking-[0.7px] text-dark">
             இணை.com
           </span>
@@ -114,7 +106,7 @@ function MobileMenu({
       {menu && (
         // <div className="fixed top-[76px] left-0 right-0 bg-white/98 backdrop-blur-md shadow-lg flex flex-col gap-5 p-6 md:hidden z-50">
         <div
-          className={`fixed top-[76px] left-0 right-0 z-50 bg-white/98 backdrop-blur-md shadow-lg 
+          className={`fixed  border-t border-[#EEE] top-[76px] left-0 right-0 z-50 bg-white/98 backdrop-blur-md shadow-lg 
             flex flex-col gap-5 p-6 md:hidden transition-all duration-300 ease-in-out 
             ${menu ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none"} `}
         >

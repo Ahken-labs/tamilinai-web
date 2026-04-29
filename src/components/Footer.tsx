@@ -2,16 +2,23 @@
 
 import { FaFacebookF, FaWhatsapp, FaInstagram } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-import { GlobeIcon } from "../assets/Icons";
+import { GlobeIcon, PrivacyChoicesIcon } from "../assets/Icons";
 import { useLang } from "../context/LangContext";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import RegisterForm from "./form/RegisterForm";
+
+type FooterVariant = "landing" | "app";
+
+interface FooterProps {
+  variant?: FooterVariant;
+}
 
 // Nav link data
 const NAV_LEFT = [
-  { label: "Home", href: "#hero" },
-  { label: "About_Us", href: "#about" },
-  { label: "Join_Now", href: "#" },
+  { label: "Home", href: "#hero", appHref: "/matches" },
+  { label: "About_Us", href: "#about", appHref: "/about" },
+  { label: "Join_Now", href: "#", appHref: "/register" },
 ] as const;
 
 const NAV_RIGHT = [
@@ -25,9 +32,15 @@ const SOCIALS = [
   {
     label: "Facebook",
     href: "https://facebook.com",
-    icon: (
-      <div className="w-4 h-4 rounded-full bg-white flex items-end justify-center">
-        <FaFacebookF size={13} className="text-[#740234]" />
+    icon: (isApp: boolean) => (
+      <div
+        className={`w-4 h-4 rounded-full flex items-end justify-center ${isApp ? "bg-[#464646]" : "bg-white"
+          }`}
+      >
+        <FaFacebookF
+          size={13}
+          className={isApp ? "text-[#E4D8C4]" : "text-[#740234]"}
+        />
       </div>
     ),
   },
@@ -48,13 +61,15 @@ const SOCIALS = [
   },
 ];
 
-// Shared link style
-const navLinkClass =
-  "font-poppins font-normal font-18 leading-[200%] text-white hover:opacity-70 transition-opacity duration-150 block";
-
-export default function Footer() {
+export default function Footer({ variant = "landing" }: FooterProps) {
   const { t } = useLang();
   const [openForm, setOpenForm] = useState(false);
+  const router = useRouter();
+
+  const isApp = variant === "app";
+
+  const textClass = isApp ? "text-[#464646] hover:text-[#222]" : "text-white hover:opacity-70";
+  const navLinkClass = `font-poppins font-normal font-18 leading-[200%] ${textClass} transition-opacity duration-150 block`;
 
   const scrollTo = (href: string) => {
     if (!href.startsWith("#") || href === "#") return;
@@ -62,10 +77,26 @@ export default function Footer() {
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
+  const handleLeftNav = (label: string, href: string, appHref: string) => {
+    if (isApp) {
+      router.push(appHref);
+      return;
+    }
+    if (label === "Join_Now") {
+      setOpenForm(true);
+    } else {
+      scrollTo(href);
+    }
+  };
+
   return (
     <footer
       className="w-full font-poppins"
-      style={{ background: "linear-gradient(270deg, #35050C 0%, #740234 100%)" }}
+      style={
+        isApp
+          ? { background: "#E4D8C4" }
+          : { background: "linear-gradient(270deg, #35050C 0%, #740234 100%)" }
+      }
     >
       <div className="mx-auto max-w-[1200px] px-6 md:pt-10 pt-8 pb-0">
 
@@ -77,34 +108,16 @@ export default function Footer() {
 
             {/* Col 1 */}
             <div className="flex flex-col gap-2 md:mr-4 mr:0 select-none">
-              {NAV_LEFT.map(({ label, href }) => {
-                const isJoinNow = label === "Join_Now";
-
-                return isJoinNow ? (
-                  <button
-                    key={label}
-                    type="button"
-                    onClick={() => setOpenForm(true)}
-                    className={`cursor-pointer ${navLinkClass}`}
-                  >
-                    {t(label)}
-                  </button>
-                ) : (
-                  <a
-                    key={label}
-                    href={href}
-                    onClick={(e) => {
-                      if (href.startsWith("#")) {
-                        e.preventDefault();
-                        scrollTo(href);
-                      }
-                    }}
-                    className={navLinkClass}
-                  >
-                    {t(label)}
-                  </a>
-                );
-              })}
+              {NAV_LEFT.map(({ label, href, appHref }) => (
+                <button
+                  key={label}
+                  type="button"
+                  onClick={() => handleLeftNav(label, href, appHref)}
+                  className={`cursor-pointer text-left ${navLinkClass}`}
+                >
+                  {t(label)}
+                </button>
+              ))}
             </div>
 
             {/* Col 2 */}
@@ -119,40 +132,56 @@ export default function Footer() {
           </div>
 
           {/* Col 3 — Description (pushed right on desktop) */}
-          <div className="md:ml-auto ">
-            <p className="font-poppins font-normal font-16 leading-[150%] text-white">
+          <div className="md:ml-auto">
+            <p className={`font-poppins font-normal font-16 leading-[150%] ${textClass}`}>
               {t("Footer_parah")}
             </p>
           </div>
         </div>
 
         {/* ── Divider ── */}
-        <div className="mt-5 border-t border-white pt-[30px] pb-[40px]">
-          <div className="flex flex-col min-[440px]:flex-row min-[440px]:justify-between min-[440px]:items-left items-left gap-4">
+        <div className={`mt-5 border-t pt-[30px] pb-[40px] ${isApp ? "border-[#35050C]/30" : "border-white"}`}>
+          <div className={`flex flex-col ${isApp ? "min-[650px]:flex-row min-[650px]:justify-between min-[650px]:items-left" : "min-[460px]:flex-row min-[460px]:justify-between min-[460px]:items-left"} items-left gap-4`}>
 
             {/* Left — copyright */}
             <div className="flex flex-wrap items-center gap-1.5 select-none">
-              <span className="font-poppins font-normal font-14 leading-[18px] text-white">
-                © 2026 Ahken nexus
-              </span>
+              {isApp ? (
+                <>
+                  <span className={`font-poppins font-normal font-14 leading-[18px] ${textClass}`}>
+                    © 2026 Ahken nexus
+                  </span>
+
+                  <Dot isApp={isApp} />
+
+                  <span className={`font-poppins font-normal font-14 leading-[18px] ${textClass}`}>
+                    Your Privacy Choices
+                  </span>
+
+                  <PrivacyChoicesIcon className="ml-1 w-5 md:w-6 h-3 shrink-0" />
+                </>
+              ) : (
+                <span className={`font-poppins font-normal font-14 leading-[18px] ${textClass}`}>
+                  © 2026 Ahken nexus
+                </span>
+              )}
             </div>
 
             {/* Right — locale + socials */}
-            <div className="flex flex-wrap items-center gap-2 min-[440px]:justify-end select-none">
+            <div className={`flex flex-wrap items-center gap-2 ${isApp ? "min-[650px]:justify-end" : "min-[460px]:justify-end"} select-none`}>
 
               {/* Globe + locale */}
               <div className="flex items-center gap-1.5">
-                <GlobeIcon className="w-4 h-4 text-white shrink-0" />
-                <span className="font-poppins font-normal font-14 leading-[18px] text-white">
+                <GlobeIcon className={`w-4 h-4 shrink-0 ${isApp ? "text-[#464646]" : "text-white"}`} />
+                <span className={`font-poppins font-normal font-14 leading-[18px] ${textClass}`}>
                   {t("English")}
                 </span>
               </div>
 
-              <Dot />
-              <span className="font-poppins font-normal font-14 leading-[18px] text-white mx-0 md:mx-2 lg:mx-3">
+              <Dot isApp={isApp} />
+              <span className={`font-poppins font-normal font-14 leading-[18px] ${textClass} mx-0 md:mx-2 lg:mx-3`}>
                 {t("LKR")}
               </span>
-              <Dot />
+              <Dot isApp={isApp} />
 
               {/* Social icons */}
               <div className="flex items-center gap-4 md:gap-6 lg:gap-8 ml-1 md:ml-3 lg:ml-4">
@@ -163,9 +192,9 @@ export default function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={label}
-                    className="text-white transition transform hover:scale-110 duration-200"
+                    className={`transition transform hover:scale-110 duration-200 ${isApp ? "text-[#464646]" : "text-white"}`}
                   >
-                    {icon}
+                    {typeof icon === "function" ? icon(isApp) : icon}
                   </a>
                 ))}
               </div>
@@ -174,16 +203,22 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <RegisterForm
-        variant="modal"
-        open={openForm}
-        onClose={() => setOpenForm(false)}
-      />
+      {!isApp && (
+        <RegisterForm
+          variant="modal"
+          open={openForm}
+          onClose={() => setOpenForm(false)}
+        />
+      )}
     </footer>
   );
 }
 
 // Helpers
-function Dot() {
-  return <span className="text-white text-[14px] leading-none">·</span>;
+function Dot({ isApp }: { isApp: boolean }) {
+  return (
+    <span className={`text-[14px] leading-none ${isApp ? "text-[#35050C]" : "text-white"}`}>
+      ·
+    </span>
+  );
 }

@@ -46,7 +46,7 @@ export default function PhotoUploadForm() {
   }
   function handleSkip() {
     clearDraftData();
-    router.push("/dashboard");
+    router.push("/matches");
   }
 
   function handleSave() {
@@ -55,7 +55,7 @@ export default function PhotoUploadForm() {
       sessionStorage.setItem("tamilinai_photo", JSON.stringify({ aboutMe }));
     } catch { /* storage unavailable */ }
     clearDraftData();
-    router.push("/dashboard");
+    router.push("/matches");
   }
 
   const bullets = [
