@@ -36,7 +36,7 @@ export default function InterestedPage() {
 
   useEffect(() => {
     setIsLoading(true);
-    const t = setTimeout(() => setIsLoading(false), 800);
+    const t = setTimeout(() => setIsLoading(false), 500); //delay
     return () => clearTimeout(t);
   }, [activeTab]);
 
