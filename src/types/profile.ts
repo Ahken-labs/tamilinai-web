@@ -15,4 +15,5 @@ export interface Profile {
   isViewed: boolean;
   photo?: string;
   isPrivate?: boolean;
+  isShortlisted?: boolean;
 }

@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
 import { Profile } from "../../types/profile";
+import { useShortlist } from "../../context/ShortlistContext";
 import {
   ProfileVerifiedBadgeIcon,
   EliteCrownIcon,
@@ -41,7 +41,8 @@ const TAG_STYLES: Record<string, string> = {
 };
 
 export default function ProfileCard({ profile }: ProfileCardProps) {
-  const [shortlisted, setShortlisted] = useState(false);
+  const { isShortlisted, toggle } = useShortlist();
+  const shortlisted = isShortlisted(profile.id);
   const tags = getTags(profile);
 
   const detailRows = [
@@ -148,7 +149,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
               text="View Full Profile"
             />
             <Button
-              onPress={() => setShortlisted((s) => !s)}
+              onPress={() => toggle(profile.id)}
               className="basis-full flex-1 [@media(min-width:450px)]:basis-[calc(50%-0.375rem)] [@media(min-width:690px)]:basis-[calc(33.333%-0.5rem)] [@media(min-width:838px)]:basis-[calc(50%-0.375rem)] [@media(min-width:940px)]:basis-[calc(33.333%-0.5rem)] !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
               text={shortlisted ? "Remove" : "Shortlist"}
               iconLeft={

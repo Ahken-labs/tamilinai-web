@@ -83,8 +83,8 @@ export default function AppHeader() {
                   }`}
               >
                 <Icon
-                  className="w-5 lg:w-6 h-5 lg:h-6 shrink-0 transition-colors duration-150"
-                  style={{ color: active ? "[#222]" : "[#888888]" }}
+                  className={`w-5 lg:w-6 h-5 lg:h-6 shrink-0 transition-colors duration-150 ${active ? "text-[#222222]" : "text-[#888888]"
+                    }`}
                 />
                 <span
                   className={`font-poppins font-16 font-normal leading-[150%] transition-colors duration-150 ${active ? "text-dark" : "text-secondary"
