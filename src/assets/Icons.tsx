@@ -537,3 +537,56 @@ export const ShieldLockIcon = ({ className = "" }: { className?: string }) => {
     </svg>
   );
 };
+
+export function ChevronRightIcon({ className = "w-6 h-6 shrink-0" }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M9 6L15 12L9 18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+// ── Interest icons ──────────────────────────────────────────────────────────
+
+export function RedDotIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none" className={className}>
+      <circle cx="6" cy="6" r="6" fill="#D42042" />
+    </svg>
+  );
+}
+
+export function InterestArrowIcon({ className = "w-6 h-6 shrink-0" }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M19 5L5 19" stroke="white" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M19 15.27V5H8.73" stroke="white" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function InterestXIcon({ className = "w-6 h-6 shrink-0" }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M7.75781 7.75739L16.2431 16.2427" stroke="#B31B38" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.75691 16.2427L16.2422 7.75739" stroke="#B31B38" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function InterestLockIcon({ className = "w-6 h-6 shrink-0" }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M7.20703 10.3996V8.80075C7.20703 6.15469 8.00644 4.00427 12.0035 4.00427C16.0006 4.00427 16.8 6.15469 16.8 8.80075V10.3996" stroke="#B31B38" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M15.999 19.9949H8.00488C4.80723 19.9949 4.00781 19.1955 4.00781 15.9978V14.399C4.00781 11.2013 4.80723 10.4019 8.00488 10.4019H15.999C19.1967 10.4019 19.9961 11.2013 19.9961 14.399V15.9978C19.9961 19.1955 19.1967 19.9949 15.999 19.9949Z" stroke="#B31B38" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function InterestCheckIcon({ className = "w-6 h-6 shrink-0" }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M6 12L9.99428 16.0029L17.9969 7.99707" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}

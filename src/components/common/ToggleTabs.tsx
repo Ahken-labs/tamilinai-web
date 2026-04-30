@@ -3,6 +3,7 @@
 interface Tab {
   label: string;
   value: string;
+  icon?: React.ReactNode;
 }
 
 interface ToggleTabsProps {
@@ -26,7 +27,10 @@ export default function ToggleTabs({ tabs, activeTab, onTabChange }: ToggleTabsP
                 : "text-[#222222] hover:bg-[#F0F0F0]"
             }`}
           >
-            {tab.label}
+            <span className="flex items-center gap-2">
+              {tab.label}
+              {tab.icon}
+            </span>
           </button>
         );
       })}

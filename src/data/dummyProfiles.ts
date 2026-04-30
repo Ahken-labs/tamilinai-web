@@ -46,7 +46,7 @@ export const dummyProfiles: Profile[] = [
     country: "India",
     work: "Doctor",
     religion: "Hindu",
-    height: "5'3\"",
+    height: "5'3 / 154 cm",
     caste: "No Caste Preference",
     isVerified: true,
     isElite: true,
