@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ToggleTabs from "../../../components/common/ToggleTabs";
 import InterestCard from "../../../components/app/InterestCard";
 import InterestCardSkeleton from "../../../components/app/InterestCardSkeleton";
@@ -32,13 +32,7 @@ const SKELETON_COUNT = 4;
 
 export default function InterestedPage() {
   const [activeTab, setActiveTab] = useState("sent");
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setIsLoading(true);
-    const t = setTimeout(() => setIsLoading(false), 500); //delay
-    return () => clearTimeout(t);
-  }, [activeTab]);
+  const [isLoading] = useState(false);
 
   const items = dummyInterests.filter((i) =>
     TAB_STATUSES[activeTab].includes(i.status)
