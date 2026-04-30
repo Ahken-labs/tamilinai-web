@@ -10,6 +10,11 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
 }
 
+function goToPage(page: number, onPageChange: (p: number) => void) {
+  onPageChange(page);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 export default function Pagination({
   currentPage,
   totalPages,
@@ -36,7 +41,7 @@ export default function Pagination({
     <div className="select-none flex items-center justify-end font-poppins sm:justify-between gap-3 mt-8 mb-20">
       {/* Left: page label */}
       <button
-        onClick={() => onPageChange(currentPage)}
+        onClick={() => goToPage(currentPage, onPageChange)}
         className="hidden sm:flex items-center gap-1 md:gap-2 py-2 pl-2 md:pl-3 pr-1 rounded-full bg-light font-16 font-medium text-[#767676]"
       >
         Page number
@@ -48,7 +53,7 @@ export default function Pagination({
       {/* Right: navigation */}
       <div className="flex items-center gap-0.5 sm:gap-1.5 md:gap-2.5">
         <button
-          onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+          onClick={() => goToPage(Math.max(1, currentPage - 1), onPageChange)}
           disabled={currentPage === 1}
           className="cursor-pointer gap-2 mr-[15px] flex text-16 text-dark items-center justify-center hover:bg-[#F8F5F2] disabled:opacity-30 disabled:cursor-not-allowed transition-colors duration-150"
           aria-label="Previous page"
@@ -60,7 +65,7 @@ export default function Pagination({
         {pages.map((page) => (
           <button
             key={page}
-            onClick={() => onPageChange(page)}
+            onClick={() => goToPage(page, onPageChange)}
             className={`cursor-pointer flex items-center justify-center py-2 px-5 rounded-[20px] font-poppins font-16 font-medium transition-colors duration-150 ${
               page === currentPage
                 ? "bg-[#222222] text-white"
@@ -72,7 +77,7 @@ export default function Pagination({
         ))}
 
         <button
-          onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+          onClick={() => goToPage(Math.min(totalPages, currentPage + 1), onPageChange)}
           disabled={currentPage === totalPages}
           className="cursor-pointer flex gap-2 ml-[13px] text-16 text-dark items-center justify-center hover:bg-[#F8F5F2] disabled:opacity-30 disabled:cursor-not-allowed transition-colors duration-150"
           aria-label="Next page"

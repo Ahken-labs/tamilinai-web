@@ -13,7 +13,7 @@ interface ToggleTabsProps {
 
 export default function ToggleTabs({ tabs, activeTab, onTabChange }: ToggleTabsProps) {
   return (
-    <div className="flex items-center gap-1 md:gap-3 p-1 rounded-[44px] bg-white shadow-[0_0_11.1px_0_rgba(0,0,0,0.25)]">
+    <div className="flex select-none items-center gap-1 md:gap-3 p-1 rounded-[44px] bg-white shadow-[0_0_11.1px_0_rgba(0,0,0,0.25)]">
       {tabs.map((tab) => {
         const isActive = tab.value === activeTab;
         return (

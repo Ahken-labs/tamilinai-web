@@ -14,4 +14,5 @@ export interface Profile {
   isNew: boolean;
   isViewed: boolean;
   photo?: string;
+  isPrivate?: boolean;
 }

@@ -18,6 +18,7 @@ import {
   ShortlistRemoveIcon,
   SendInterestMsgIcon,
   ViewedIcon,
+  ShieldLockIcon,
 } from "../../assets/Icons";
 import Button from "../common/Button";
 
@@ -63,22 +64,36 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
   ];
 
   return (
-    <div className="w-full max-w-[944px] p-4 mx-auto rounded-[32px] bg-white shadow-[0_4px_40px_0_rgba(255,140,60,0.18)] overflow-hidden">
+    <div className="w-full select-none max-w-[944px] p-4 mx-auto rounded-[32px] bg-white shadow-[0_4px_40px_0_rgba(255,140,60,0.18)] overflow-hidden">
       <div className="flex flex-col min-[840px]:flex-row">
         {/* Photo */}
         <div className="relative w-full min-[840px]:w-[220px] md:min-w-[220px] h-[240px] md:h-[263px] lg:h-[293.33px] rounded-[16px] overflow-hidden bg-[#DBDBDB]/20">
-
           <Image
-            src={profile.photo || "/images/no_photo.png"}
+            src={profile.photo && !profile.isPrivate ? profile.photo : "/images/no_photo.png"}
             alt={profile.name}
             fill
             className="object-cover"
             sizes="(max-width: 840px) 100vw, 220px"
             priority={false}
           />
-          {/* overlay to match design */}
-          {!profile.photo && (
-            <div className="absolute inset-0 bg-[#DBDBDB]/20" />
+          {(!profile.photo || profile.isPrivate) && (
+            <>
+              {/* smoke gradient */}
+              <div
+                className="absolute bottom-0 left-0 right-0 h-[25%] pointer-events-none"
+                style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.00) 0%, #FFF 80%)" }}
+              />
+              {/* label / icon */}
+              <div className="absolute bottom-2.5 left-0 right-0 flex justify-center">
+                {profile.isPrivate ? (
+                  <ShieldLockIcon  />
+                ) : (
+                  <span className="flex items-center px-3 py-[2px] rounded-[38px] bg-white font-poppins font-16 font-normal leading-[150%] text-[#5D5D5D]">
+                    No photo
+                  </span>
+                )}
+              </div>
+            </>
           )}
         </div>
         {/* Details */}
@@ -87,21 +102,21 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
           <div className="flex justify-between flex-wrap items-center gap-2">
             <h2 className="font-poppins flex gap-2 text-[14px] sm:text-[15px] md:text-[17px] lg:text-[18px] font-semibold text-dark leading-tight">
               {profile.name}
-                          {profile.isVerified && (
-              <ProfileVerifiedBadgeIcon className="w-4 md:w-5 h-4 md:h-5 shrink-0" />
-            )}
+              {profile.isVerified && (
+                <ProfileVerifiedBadgeIcon className="w-4 md:w-5 h-4 md:h-5 shrink-0" />
+              )}
             </h2>
-<div className="flex gap-2">
-            {tags.map((tag) => (
-              <span
-                key={tag.type}
-                className={`flex items-center gap-1 px-3 py-1 rounded-full font-16 font-poppins font-medium leading-none ${TAG_STYLES[tag.type]}`}
-              >
-                {tag.type === "elite" && <EliteCrownIcon className="w-3.5 h-3.5 shrink-0" />}
-                 {tag.type === "viewed" && <ViewedIcon  />}
-                {tag.label}
-              </span>
-            ))}
+            <div className="flex gap-2">
+              {tags.map((tag) => (
+                <span
+                  key={tag.type}
+                  className={`flex items-center gap-1 px-3 py-1 rounded-full font-16 font-poppins font-medium leading-none ${TAG_STYLES[tag.type]}`}
+                >
+                  {tag.type === "elite" && <EliteCrownIcon className="w-3.5 h-3.5 shrink-0" />}
+                  {tag.type === "viewed" && <ViewedIcon />}
+                  {tag.label}
+                </span>
+              ))}
             </div >
           </div>
 
@@ -127,12 +142,11 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
             )}
           </div>
 
-     <div className="flex flex-wrap gap-3 mt-5 md:mt-6">
+          <div className="flex flex-wrap gap-3 mt-5 md:mt-6">
             <Button
               className="basis-full [@media(min-width:450px)]:basis-[calc(50%-0.375rem)] [@media(min-width:690px)]:basis-[calc(33.333%-0.5rem)] [@media(min-width:838px)]:basis-[calc(50%-0.375rem)] [@media(min-width:940px)]:basis-[calc(33.333%-0.5rem)]"
               text="View Full Profile"
             />
-
             <Button
               onPress={() => setShortlisted((s) => !s)}
               className="basis-full flex-1 [@media(min-width:450px)]:basis-[calc(50%-0.375rem)] [@media(min-width:690px)]:basis-[calc(33.333%-0.5rem)] [@media(min-width:838px)]:basis-[calc(50%-0.375rem)] [@media(min-width:940px)]:basis-[calc(33.333%-0.5rem)] !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
@@ -145,7 +159,6 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
                 )
               }
             />
-
             <Button
               className="basis-full flex-1 [@media(min-width:450px)]:basis-[calc(50%-0.375rem)] [@media(min-width:690px)]:basis-[calc(33.333%-0.5rem)] [@media(min-width:838px)]:basis-full [@media(min-width:940px)]:basis-[calc(33.333%-0.5rem)] !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
               text="Send Interest"

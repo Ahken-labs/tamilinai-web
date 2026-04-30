@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   Logo,
   SearchIcon,
@@ -24,15 +24,26 @@ const NAV_TABS = [
 
 export default function AppHeader() {
   const pathname = usePathname();
+  const router = useRouter();
   const { t } = useLang();
   const [searchActive, setSearchActive] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // useEffect(() => { setMobileOpen(false); }, [pathname]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const q = searchValue.trim();
+      if (q) {
+        router.replace(`/matches?q=${encodeURIComponent(q)}`, { scroll: false });
+      } else if (pathname === "/matches") {
+        router.replace("/matches", { scroll: false });
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchValue, pathname, router]);
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/60 backdrop-blur-sm">
+    <header className="select-none sticky top-0 z-50 w-full bg-white/60 backdrop-blur-sm">
       <div className="max-w-[1920px] mx-auto flex px-5 lg:px-10 h-[74px] pt-5 gap-5 min-[840px]:gap-6">
         {/* Left: Logo + Search */}
         {/* <div className="flex items-center gap-2 lg:gap-3 flex-1 min-[840px]:flex-none mr-5 min-w-0"> */}
