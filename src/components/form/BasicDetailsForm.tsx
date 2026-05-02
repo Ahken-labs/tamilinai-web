@@ -10,7 +10,7 @@ import FormRow from "../more/FormRow";
 import FormCardLayout from "../common/FormCardLayout";
 import { useLang } from "@/src/context/LangContext";
 import { getDaysInMonth, validateDOB } from "../../utils/dateUtils";
-import { DISABILITY_OPTIONS } from "@/src/constants/profiles";
+import { DISABILITY_OPTIONS, MARITAL_OPTIONS } from "@/src/constants/profiles";
 
 // ── Static data ───────────────────────────────────────────────────────
 const THIS_YEAR = new Date().getFullYear();
@@ -24,12 +24,6 @@ const MONTHS = [
 const HEIGHTS = Array.from({ length: 81 }, (_, i) => `${140 + i} cm`);
 const WEIGHTS = Array.from({ length: 111 }, (_, i) => `${40 + i} kg`);
 
-const MARITAL_OPTIONS = [
-  { value: "Unmarried", label: "Unmarried" },
-  { value: "Widow/Widower", label: "Widow/Widower" },
-  { value: "Divorced", label: "Divorced" },
-  { value: "Separated", label: "Separated" },
-];
 
 function filterItems(items: string[], query: string) {
   if (!query || items.includes(query)) return items;
@@ -209,14 +203,14 @@ export default function BasicDetailsForm() {
             <div className="flex flex-wrap gap-5 mt-3 md:mt-2">
               {MARITAL_OPTIONS.map((opt) => (
                 <button
-                  key={opt.value}
+                  key={opt}
                   type="button"
-                  onClick={() => setMaritalStatus(opt.value)}
+                  onClick={() => setMaritalStatus(opt)}
                   className="flex items-center gap-2 cursor-pointer"
                 >
-                  <RadioCircleIcon checked={maritalStatus === opt.value} />
+                  <RadioCircleIcon checked={maritalStatus === opt} />
                   <span className="font-16 font-normal text-secondary4 leading-[125%]">
-                    {opt.label}
+                    {opt}
                   </span>
                 </button>
               ))}

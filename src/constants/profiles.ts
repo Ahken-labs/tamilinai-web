@@ -1,3 +1,10 @@
+export const MARITAL_OPTIONS = [
+  "Unmarried",
+  "Widow/Widower",
+  "Divorced",
+  "Separated",
+];
+
 export const PROFILES = [
   "Myself",
   "Son",
@@ -24,13 +31,14 @@ export const DISABILITY_OPTIONS = [
 ];
 
 export const EDUCATION_OPTIONS = [
-  "High School (O/L)",
-  "Higher Secondary (A/L)",
+  "School",
+  "O/L",
+  "A/L",
+  "Professional Certification",
   "Diploma",
-  "Higher National Diploma (HND)",
+  "HND",
   "Bachelor's Degree",
   "Master's Degree",
-  "M.Phil",
   "PhD / Doctorate",
   "Professional Degree (CA, CIMA, MBA, etc.)",
   "Other",

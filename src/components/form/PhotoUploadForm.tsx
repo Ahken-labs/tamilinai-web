@@ -46,16 +46,16 @@ export default function PhotoUploadForm() {
   }
   function handleSkip() {
     clearDraftData();
-    router.push("/matches");
+    router.push("/matches?welcome=1");
   }
 
   function handleSave() {
     if (!hasPhoto) return;
     try {
       sessionStorage.setItem("tamilinai_photo", JSON.stringify({ aboutMe }));
-    } catch { /* storage unavailable */ }
+    } catch { /* unavailable */ }
     clearDraftData();
-    router.push("/matches");
+    router.push("/matches?welcome=1");
   }
 
   const bullets = [
