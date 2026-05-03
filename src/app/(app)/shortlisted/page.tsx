@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import ProfileCard from "../../../components/app/ProfileCard";
-import ProfileCardSkeleton from "../../../components/app/ProfileCardSkeleton";
+import ProfileCardSkeleton from "../../../components/app/skeleton-layout/ProfileCardSkeleton";
 import Pagination from "../../../components/more/Pagination";
 import { dummyProfiles } from "../../../data/dummyProfiles";
 import { useShortlist } from "../../../context/ShortlistContext";

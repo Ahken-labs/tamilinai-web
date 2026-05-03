@@ -9,7 +9,7 @@ import InputBox from "../common/InputBox";
 import NewToInaiCart from "../more/NewToInaiCart";
 import { useLang } from "../../context/LangContext";
 import { COUNTRIES } from "../../constants/countries";
-import FormCardLayout from "../common/FormCardLayout";
+import FormCardLayout from "../more/FormCardLayout";
 
 type Method = "sms" | "email";
 

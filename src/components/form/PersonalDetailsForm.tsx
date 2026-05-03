@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import Button from "../common/Button";
 import DropdownField from "../common/DropdownField";
 import InputBox from "../common/InputBox";
-import StepProgress from "../common/StepProgress";
+import StepProgress from "../more/StepProgress";
 import FormRow from "../more/FormRow";
-import FormCardLayout from "../common/FormCardLayout";
+import FormCardLayout from "../more/FormCardLayout";
 import { useLang } from "@/src/context/LangContext";
 import {
   EDUCATION_OPTIONS, RELIGION_OPTIONS, CASTE_OPTIONS, COUNTRY_OPTIONS, CITY_OPTIONS, CITIZENSHIP_OPTIONS,

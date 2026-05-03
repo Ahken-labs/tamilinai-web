@@ -4,7 +4,7 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import ToggleTabs from "../../../components/common/ToggleTabs";
 import ProfileCard from "../../../components/app/ProfileCard";
-import ProfileCardSkeleton from "../../../components/app/ProfileCardSkeleton";
+import ProfileCardSkeleton from "../../../components/app/skeleton-layout/ProfileCardSkeleton";
 import Pagination from "../../../components/more/Pagination";
 import PartnerPreferenceModal from "../../../components/app/PartnerPreferenceModal";
 import { dummyProfiles } from "../../../data/dummyProfiles";

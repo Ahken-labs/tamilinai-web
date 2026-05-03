@@ -7,7 +7,7 @@ import InputBox from "../common/InputBox";
 import NewToInaiCart from "../more/NewToInaiCart";
 import { useLang } from "../../context/LangContext";
 import Link from "next/link";
-import FormCardLayout from "../common/FormCardLayout";
+import FormCardLayout from "../more/FormCardLayout";
 
 export default function LoginForm() {
   const { t } = useLang();

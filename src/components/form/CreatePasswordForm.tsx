@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRightIcon, EyeOffIcon, EyeOnIcon } from "../../assets/Icons";
 import Button from "../common/Button";
 import InputBox from "../common/InputBox";
-import FormCardLayout from "../common/FormCardLayout";
+import FormCardLayout from "../more/FormCardLayout";
 import { useLang } from "@/src/context/LangContext";
 
 type Props = {

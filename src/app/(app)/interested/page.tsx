@@ -3,7 +3,7 @@
 import { useState } from "react";
 import ToggleTabs from "../../../components/common/ToggleTabs";
 import InterestCard from "../../../components/app/InterestCard";
-import InterestCardSkeleton from "../../../components/app/InterestCardSkeleton";
+import InterestCardSkeleton from "../../../components/app/skeleton-layout/InterestCardSkeleton";
 import { dummyInterests } from "../../../data/dummyInterests";
 import { InterestStatus } from "../../../types/interest";
 import { RedDotIcon } from "../../../assets/Icons";
