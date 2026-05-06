@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRightIcon, ChevronIcon } from "../../assets/Icons";
-import Button from "../common/Button";
+import Button from "../common-layout/Button";
 import NewToInaiCart from "../more/NewToInaiCart";
 import { useLang } from "../../context/LangContext";
 

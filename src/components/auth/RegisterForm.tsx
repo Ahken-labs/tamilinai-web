@@ -9,10 +9,10 @@ import {
     RadioCircleIcon,
 } from "../../assets/Icons";
 import { useLang } from "../../context/LangContext";
-import InputBox from "../common/InputBox";
+import InputBox from "../common-layout/InputBox";
 import CountryCodeSelect from "../more/CountryCodeSelect";
 import { COUNTRIES } from "../../constants/countries";
-import DropdownField from "../common/DropdownField";
+import DropdownField from "../common-layout/DropdownField";
 import Link from "next/link";
 import { AUTO_GENDER, PROFILES } from "@/src/constants/profiles";
 
@@ -118,7 +118,7 @@ export default function RegisterForm({
                         className="shrink-0 transition hover:opacity-80 cursor-pointer"
                         aria-label="Close"
                     >
-                        <CloseCircleIcon className="h-8 w-8" />
+                       <CloseCircleIcon className="h-8 w-8 transition-transform duration-200 hover:scale-110 active:scale-95 " />
                     </button>
                 </div>
             ) : (

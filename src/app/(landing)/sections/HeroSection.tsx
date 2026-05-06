@@ -1,6 +1,6 @@
 "use client";
 import { FlowerIcon, GlobeIcon, TrustPrivacyIcon, TrustVerifiedIcon } from "@/src/assets/Icons";
-import RegisterForm from "@/src/components/form/RegisterForm";
+import RegisterForm from "@/src/components/auth/RegisterForm";
 import { useLang } from "@/src/context/LangContext";
 import Image from "next/image";
 

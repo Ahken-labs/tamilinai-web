@@ -3,11 +3,11 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRightIcon, RadioCircleIcon } from "../../assets/Icons";
-import Button from "../common/Button";
-import DropdownField from "../common/DropdownField";
+import Button from "../common-layout/Button";
+import DropdownField from "../common-layout/DropdownField";
 import StepProgress from "../more/StepProgress";
-import FormRow from "../more/FormRow";
-import FormCardLayout from "../more/FormCardLayout";
+import FormRow from "../common-layout/FormRow";
+import FormCardLayout from "../common-layout/FormCardLayout";
 import { useLang } from "@/src/context/LangContext";
 import { getDaysInMonth, validateDOB } from "../../utils/dateUtils";
 import { DISABILITY_OPTIONS, MARITAL_OPTIONS } from "@/src/constants/profiles";

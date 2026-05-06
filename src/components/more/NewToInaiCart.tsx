@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import Button from "../common/Button";
+import Button from "../common-layout/Button";
 import { ArrowRightIcon } from "../../assets/Icons";
 import { useLang } from "../../context/LangContext";
 import dynamic from "next/dynamic";
 
-const RegisterForm = dynamic(() => import("../form/RegisterForm"), {
+const RegisterForm = dynamic(() => import("../auth/RegisterForm"), {
   ssr: false,
 });
 

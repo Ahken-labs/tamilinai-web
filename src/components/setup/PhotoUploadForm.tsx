@@ -3,12 +3,13 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import Button from "../common/Button";
+import Button from "../common-layout/Button";
 import StepProgress from "../more/StepProgress";
-import FormCardLayout from "../more/FormCardLayout";
-import { SecurityIcon, CheckmarkIcon, CameraIcon } from "@/src/assets/Icons";
+import FormCardLayout from "../common-layout/FormCardLayout";
+import { SecurityIcon, CheckmarkIcon, CameraIcon, CheckboxIcon } from "@/src/assets/Icons";
 import { useLang } from "@/src/context/LangContext";
 import { countWords } from "@/src/utils/wordCount";
+import PrivacyPopup from "../footer/PrivacyPopup";
 
 const MAX_WORDS = 60;
 
@@ -22,6 +23,10 @@ export default function PhotoUploadForm() {
 
   const wordCount = countWords(aboutMe);
   const hasPhoto = !!photoUrl;
+
+  const [agreed, setAgreed] = useState(true);
+  const [showError, setShowError] = useState(false);
+  const [openPrivacy, setOpenPrivacy] = useState(false);
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -45,19 +50,27 @@ export default function PhotoUploadForm() {
     }
   }
   function handleSkip() {
+    if (!agreed) {
+      setShowError(true);
+      return;
+    }
     clearDraftData();
     router.push("/matches?welcome=1");
   }
 
   function handleSave() {
-    if (!hasPhoto) return;
+    if (!agreed || !hasPhoto) {
+      setShowError(!agreed);
+      return;
+    }
+
     try {
       sessionStorage.setItem("tamilinai_photo", JSON.stringify({ aboutMe }));
-    } catch { /* unavailable */ }
+    } catch { }
+
     clearDraftData();
     router.push("/matches?welcome=1");
   }
-
   const bullets = [
     t("Photo_protected"),
     t("Control_who_sees_photo"),
@@ -69,21 +82,52 @@ export default function PhotoUploadForm() {
       bgColor="bg-mvp"
       childrenTopMargin="mt-6 md:mt-8"
       footer={
-        <div className="flex gap-5 w-full">
-          <Button
-            text={t("Skip")}
-            onPress={handleSkip}
-            className="flex-1 !bg-[#FFF] !text-[#767676] hover:!bg-gray-50 active:!bg-gray-100"
-          />
-          <Button
-            text={t("Save")}
-            onPress={handleSave}
-            className={`flex-1 ${hasPhoto
-              ? ""
-              : "!bg-[#BBBBBB] hover:!bg-[#BBBBBB] active:!bg-[#BBBBBB] !cursor-default"
-              }`}
-          />
-        </div>
+        <>
+          <div className="flex gap-5 w-full">
+            <Button
+              text={t("Skip")}
+              onPress={handleSkip}
+              className={`flex-1 ${!agreed
+                ? "!bg-[#FFF] !text-[#999] "
+                : "!bg-[#FFF] !text-[#767676] hover:!bg-gray-50 active:!bg-gray-100"
+                }`}
+            />
+
+            <Button
+              text={t("Save")}
+              onPress={handleSave}
+              className={`flex-1 ${!agreed || !hasPhoto
+                ? "!bg-[#BBBBBB] hover:!bg-[#BBBBBB] active:!bg-[#BBBBBB]"
+                : ""}`}
+            />
+          </div>
+          <div className="mt-8 flex gap-3 md:gap-4 items-start">
+            <button onClick={() => {
+              setAgreed(prev => !prev);
+              setShowError(false);
+            }}>
+              <CheckboxIcon checked={agreed} />
+            </button>
+
+            <span className="font-14 text-secondary4 font-poppins font-normal">
+              I have read and agree to Inai&apos;s{" "}
+              <button
+                type="button"
+                onClick={() => setOpenPrivacy(true)}
+                className="underline font-medium cursor-pointer"
+              >
+                Privacy Policy
+              </button>{" "}
+              and understand how my information will be used to help me find a partner.
+            </span>
+          </div>
+
+          {showError && (
+            <p className="mt-2 text-[12px] text-[#B31B38]">
+              * Please agree to the terms and conditions
+            </p>
+          )}
+        </>
       }
     >
       <StepProgress currentStep={3} />
@@ -183,6 +227,11 @@ export default function PhotoUploadForm() {
           <span >{wordCount} {t("Word_count")}</span>
         </div>
       </div>
+      <PrivacyPopup
+        isOpen={openPrivacy}
+        onClose={() => setOpenPrivacy(false)}
+      />
     </FormCardLayout>
+
   );
 }

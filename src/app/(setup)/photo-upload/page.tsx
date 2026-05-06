@@ -1,4 +1,4 @@
-import PhotoUploadForm from "../../../components/form/PhotoUploadForm";
+import PhotoUploadForm from "../../../components/setup/PhotoUploadForm";
 
 export default function PhotoUploadPage() {
   return <PhotoUploadForm />;

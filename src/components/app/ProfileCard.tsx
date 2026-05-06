@@ -20,7 +20,7 @@ import {
   ViewedIcon,
   ShieldLockIcon,
 } from "../../assets/Icons";
-import Button from "../common/Button";
+import Button from "../common-layout/Button";
 
 interface ProfileCardProps {
   profile: Profile;
@@ -65,7 +65,8 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
   ];
 
   return (
-    <div className="w-full select-none max-w-[944px] p-4 mx-auto rounded-[32px] bg-white shadow-[0_4px_40px_0_rgba(255,140,60,0.18)] overflow-hidden">
+    <div className={`w-full select-none max-w-[944px] p-4 mx-auto rounded-[32px] bg-white 
+      ${profile.isElite ? "shadow-[0_4px_40px_0_rgba(255,140,60,0.18)]" : "shadow-none"} overflow-hidden`}>
       <div className="flex flex-col min-[840px]:flex-row">
         {/* Photo */}
         <div className="relative w-full min-[840px]:w-[220px] md:min-w-[220px] h-[240px] md:h-[263px] lg:h-[293.33px] rounded-[16px] overflow-hidden bg-[#DBDBDB]/20">
@@ -87,7 +88,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
               {/* label / icon */}
               <div className="absolute bottom-2.5 left-0 right-0 flex justify-center">
                 {profile.isPrivate ? (
-                  <ShieldLockIcon  />
+                  <ShieldLockIcon />
                 ) : (
                   <span className="flex items-center px-3 py-[2px] rounded-[38px] bg-white font-poppins font-16 font-normal leading-[150%] text-[#5D5D5D]">
                     No photo

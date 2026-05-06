@@ -1,7 +1,7 @@
 "use client";
 
-import Button from "@/src/components/common/Button";
-import RegisterForm from "@/src/components/form/RegisterForm";
+import Button from "@/src/components/common-layout/Button";
+import RegisterForm from "@/src/components/auth/RegisterForm";
 import { useLang } from "@/src/context/LangContext";
 import Image from "next/image";
 import { useState } from "react";

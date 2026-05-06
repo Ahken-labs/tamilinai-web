@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import ToggleTabs from "../../../components/common/ToggleTabs";
+import ToggleTabs from "../../../components/common-layout/ToggleTabs";
 import InterestCard from "../../../components/app/InterestCard";
 import InterestCardSkeleton from "../../../components/app/skeleton-layout/InterestCardSkeleton";
 import { dummyInterests } from "../../../data/dummyInterests";
@@ -41,7 +41,7 @@ export default function InterestedPage() {
   return (
     <main className="min-h-screen bg-[#F8F5F2]">
       {/* Toggle bar */}
-      <div className="w-full bg-white border-t border-[#EEEEEE]">
+      <div className="sticky top-[74px] z-10 w-full bg-white border-t border-[#EEEEEE]">
         <div className="flex justify-center items-center py-3 px-4">
           <ToggleTabs tabs={TABS} activeTab={activeTab} onTabChange={setActiveTab} />
         </div>

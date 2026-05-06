@@ -9,9 +9,9 @@ import {
   StepFamilyIcon,
   UnionDesignIcon,
 } from "@/src/assets/Icons";
-import Button from "@/src/components/common/Button";
+import Button from "@/src/components/common-layout/Button";
 import { useState } from "react";
-import RegisterForm from "@/src/components/form/RegisterForm";
+import RegisterForm from "@/src/components/auth/RegisterForm";
 
 // ─── Step data ────────────────────────────────────────────────────────────────
 const STEPS = [

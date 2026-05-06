@@ -2,12 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import Button from "../common/Button";
-import DropdownField from "../common/DropdownField";
-import InputBox from "../common/InputBox";
+import Button from "../common-layout/Button";
+import DropdownField from "../common-layout/DropdownField";
+import InputBox from "../common-layout/InputBox";
 import StepProgress from "../more/StepProgress";
-import FormRow from "../more/FormRow";
-import FormCardLayout from "../more/FormCardLayout";
+import FormRow from "../common-layout/FormRow";
+import FormCardLayout from "../common-layout/FormCardLayout";
 import { useLang } from "@/src/context/LangContext";
 import {
   EDUCATION_OPTIONS, RELIGION_OPTIONS, CASTE_OPTIONS, COUNTRY_OPTIONS, CITY_OPTIONS, CITIZENSHIP_OPTIONS,

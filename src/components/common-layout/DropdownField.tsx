@@ -227,7 +227,7 @@ export function MultiSelectDropdown({
   const listItems = showAll ? ["Show all", ...options] : options;
 
   return (
-    <div ref={containerRef} className={`relative ${className}`}>
+    <div ref={containerRef} className={`md:mb-1 relative ${className}`}>
       <div
         role="button"
         tabIndex={0}

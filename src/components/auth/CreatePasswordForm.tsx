@@ -3,9 +3,9 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRightIcon, EyeOffIcon, EyeOnIcon } from "../../assets/Icons";
-import Button from "../common/Button";
-import InputBox from "../common/InputBox";
-import FormCardLayout from "../more/FormCardLayout";
+import Button from "../common-layout/Button";
+import InputBox from "../common-layout/InputBox";
+import FormCardLayout from "../common-layout/FormCardLayout";
 import { useLang } from "@/src/context/LangContext";
 
 type Props = {

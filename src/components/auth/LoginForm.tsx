@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { ArrowRightIcon, EyeOffIcon, EyeOnIcon } from "../../assets/Icons";
-import Button from "../common/Button";
-import InputBox from "../common/InputBox";
+import Button from "../common-layout/Button";
+import InputBox from "../common-layout/InputBox";
 import NewToInaiCart from "../more/NewToInaiCart";
 import { useLang } from "../../context/LangContext";
 import Link from "next/link";
-import FormCardLayout from "../more/FormCardLayout";
+import FormCardLayout from "../common-layout/FormCardLayout";
 
 export default function LoginForm() {
   const { t } = useLang();

@@ -6,7 +6,9 @@ type FormCardLayoutProps = {
   bottom?: React.ReactNode;
   paddingBottom?: string;
   childrenTopMargin?: string;
+  subtitleMarginTop?:string;
   bgColor?: string;
+  maxwidth?: string;
 };
 
 export default function FormCardLayout({
@@ -17,11 +19,13 @@ export default function FormCardLayout({
   bottom,
   paddingBottom = "pb-8 md:pb-10",
   childrenTopMargin = "mt-7 sm:mt-10 md:mt-12",
-  bgColor = "bg-light"
+  subtitleMarginTop = "mt-5 sm:mt-6 md:mt-8 lg:mt-10",
+  bgColor = "bg-light",
+  maxwidth = "max-w-[784px]"
 }: FormCardLayoutProps) {
   return (
     <div className="w-full flex justify-center px-4 md:px-10 py-8 bg-mvp font-poppins">
-      <div className="w-full max-w-[784px] flex flex-col">
+      <div className={`w-full ${maxwidth} flex flex-col`}>
 
         <div className={`w-full rounded-[20px] px-4 md:px-6 ${bgColor} ${paddingBottom}`}>
           
@@ -34,7 +38,7 @@ export default function FormCardLayout({
 
           {/* Subtitle */}
           {subtitle && (
-            <p className="mt-5 sm:mt-6 md:mt-8 lg:mt-10 font-18 font-normal text-dark leading-[150%]">
+            <p className={ `${subtitleMarginTop} font-18 font-normal text-dark leading-[150%]`}>
               {subtitle}
             </p>
           )}

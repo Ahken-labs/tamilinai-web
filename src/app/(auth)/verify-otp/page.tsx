@@ -1,4 +1,4 @@
-import OtpForm from "../../../components/form/OtpForm";
+import OtpForm from "../../../components/auth/OtpForm";
 
 export default async function Page({
   searchParams,

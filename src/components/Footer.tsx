@@ -6,7 +6,10 @@ import { GlobeIcon, PrivacyChoicesIcon } from "../assets/Icons";
 import { useLang } from "../context/LangContext";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import RegisterForm from "./form/RegisterForm";
+import RegisterForm from "./auth/RegisterForm";
+
+import translations from "../assets/translation.json";
+import PrivacyPopup from "./footer/PrivacyPopup";
 
 type FooterVariant = "landing" | "app";
 
@@ -22,9 +25,9 @@ const NAV_LEFT = [
 ] as const;
 
 const NAV_RIGHT = [
-  { label: "Terms_Conditions", href: "#" },
-  { label: "Privacy_Policy", href: "#" },
-  { label: "Blog", href: "#" },
+  { label: "Terms_Conditions", key: "terms" },
+  { label: "Privacy_Policy", key: "privacy" },
+  { label: "Blog", key: "blog" },
 ] as const;
 
 // Social links
@@ -62,11 +65,17 @@ const SOCIALS = [
 ];
 
 export default function Footer({ variant = "landing" }: FooterProps) {
-  const { t } = useLang();
+  // const { t } = useLang();
+  //in futre remove this and use ----const { t } = useLang();----
+  const { t: _t } = useLang();
+  const t = (key: keyof typeof translations.en) =>
+    variant === "app" ? translations.en[key] || key : _t(key);
+
   const [openForm, setOpenForm] = useState(false);
   const router = useRouter();
 
   const isApp = variant === "app";
+  const [openPrivacy, setOpenPrivacy] = useState(false);
 
   const textClass = isApp ? "text-[#464646] hover:text-[#222]" : "text-white hover:opacity-70";
   const navLinkClass = `font-poppins font-normal font-18 leading-[200%] ${textClass} transition-opacity duration-150 block`;
@@ -122,10 +131,18 @@ export default function Footer({ variant = "landing" }: FooterProps) {
 
             {/* Col 2 */}
             <div className="flex flex-col gap-2 md:mr-4 mr-0 select-none">
-              {NAV_RIGHT.map(({ label, href }) => (
-                <a key={label} href={href} className={navLinkClass}>
+              {NAV_RIGHT.map(({ label, key }) => (
+                <button
+                  key={label}
+                  type="button"
+                  onClick={() => {
+                    if (key === "privacy") setOpenPrivacy(true);
+                    // later: terms, blog etc
+                  }}
+                  className={`cursor-pointer text-left ${navLinkClass}`}
+                >
                   {t(label)}
-                </a>
+                </button>
               ))}
             </div>
 
@@ -133,7 +150,7 @@ export default function Footer({ variant = "landing" }: FooterProps) {
 
           {/* Col 3 — Description (pushed right on desktop) */}
           <div className="md:ml-auto">
-            <p className={`font-poppins font-normal font-16 leading-[150%] ${textClass}`}>
+            <p className={`font-poppins font-normal font-16 leading-[150%] ${isApp ? "text-[#464646] " : "text-white"}`}>
               {t("Footer_parah")}
             </p>
           </div>
@@ -210,6 +227,10 @@ export default function Footer({ variant = "landing" }: FooterProps) {
           onClose={() => setOpenForm(false)}
         />
       )}
+      <PrivacyPopup
+        isOpen={openPrivacy}
+        onClose={() => setOpenPrivacy(false)}
+      />
     </footer>
   );
 }

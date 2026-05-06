@@ -2,7 +2,7 @@
 
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import ToggleTabs from "../../../components/common/ToggleTabs";
+import ToggleTabs from "../../../components/common-layout/ToggleTabs";
 import ProfileCard from "../../../components/app/ProfileCard";
 import ProfileCardSkeleton from "../../../components/app/skeleton-layout/ProfileCardSkeleton";
 import Pagination from "../../../components/more/Pagination";
@@ -70,10 +70,10 @@ function MatchesContent() {
 
   return (
     <>
-      <PartnerPreferenceModal isOpen={showWelcome} onClose={handleCloseWelcome} />
+      <PartnerPreferenceModal isOpen={showWelcome} onClose={handleCloseWelcome} variant="onboarding" />
       <main className="min-h-screen bg-[#F8F5F2]">
         {/* Toggle bar */}
-        <div className="w-full bg-white border-t border-[#EEEEEE]">
+        <div className="sticky top-[74px] z-10 w-full bg-white border-t border-[#EEEEEE]">
           <div className="flex justify-center items-center py-3 px-4">
             <ToggleTabs tabs={TABS} activeTab={activeTab} onTabChange={handleTabChange} />
           </div>

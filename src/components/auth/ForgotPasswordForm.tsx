@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRightIcon, MailIcon, SmsIcon } from "../../assets/Icons";
-import Button from "../common/Button";
+import Button from "../common-layout/Button";
 import CountryCodeSelect from "../more/CountryCodeSelect";
-import InputBox from "../common/InputBox";
+import InputBox from "../common-layout/InputBox";
 import NewToInaiCart from "../more/NewToInaiCart";
 import { useLang } from "../../context/LangContext";
 import { COUNTRIES } from "../../constants/countries";
-import FormCardLayout from "../more/FormCardLayout";
+import FormCardLayout from "../common-layout/FormCardLayout";
 
 type Method = "sms" | "email";
 
