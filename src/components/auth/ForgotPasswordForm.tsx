@@ -6,7 +6,7 @@ import { ArrowRightIcon, MailIcon, SmsIcon } from "../../assets/Icons";
 import Button from "../common-layout/Button";
 import CountryCodeSelect from "../more/CountryCodeSelect";
 import InputBox from "../common-layout/InputBox";
-import NewToInaiCart from "../more/NewToInaiCart";
+import NewToInaiCart from "./NewToInaiCart";
 import { useLang } from "../../context/LangContext";
 import { COUNTRIES } from "../../constants/countries";
 import FormCardLayout from "../common-layout/FormCardLayout";

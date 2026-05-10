@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ArrowRightIcon, EyeOffIcon, EyeOnIcon } from "../../assets/Icons";
 import Button from "../common-layout/Button";
 import InputBox from "../common-layout/InputBox";
-import NewToInaiCart from "../more/NewToInaiCart";
+import NewToInaiCart from "./NewToInaiCart";
 import { useLang } from "../../context/LangContext";
 import Link from "next/link";
 import FormCardLayout from "../common-layout/FormCardLayout";

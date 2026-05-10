@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRightIcon, ChevronIcon } from "../../assets/Icons";
 import Button from "../common-layout/Button";
-import NewToInaiCart from "../more/NewToInaiCart";
+import NewToInaiCart from "./NewToInaiCart";
 import { useLang } from "../../context/LangContext";
 
 const OTP_LENGTH = 6;

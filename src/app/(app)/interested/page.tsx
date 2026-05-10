@@ -22,8 +22,8 @@ function hasUnread(tab: string): boolean {
 }
 
 const TABS = [
-  { label: "Sent",     value: "sent",     icon: hasUnread("sent")     ? <RedDotIcon /> : undefined },
   { label: "Received", value: "received", icon: hasUnread("received") ? <RedDotIcon /> : undefined },
+  { label: "Sent",     value: "sent",     icon: hasUnread("sent")     ? <RedDotIcon /> : undefined },
   { label: "Accepted", value: "accepted", icon: hasUnread("accepted") ? <RedDotIcon /> : undefined },
   { label: "Declined", value: "declined", icon: hasUnread("declined") ? <RedDotIcon /> : undefined },
 ];

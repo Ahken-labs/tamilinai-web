@@ -40,15 +40,11 @@ export default function Pagination({
   return (
     <div className="select-none flex items-center justify-end font-poppins sm:justify-between gap-3 mt-8 mb-20">
       {/* Left: page label */}
-      <button
-        onClick={() => goToPage(currentPage, onPageChange)}
-        className="hidden sm:flex items-center gap-1 md:gap-2 py-2 pl-2 md:pl-3 pr-1 rounded-full bg-light font-16 font-medium text-[#767676]"
-      >
-        Page number
-        <div className="bg-[#DFDFDF] rounded-full p-1">
-          <ArrowRight />
-        </div>
-      </button>
+      <PageJump
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+      />
 
       {/* Right: navigation */}
       <div className="flex items-center gap-0.5 sm:gap-1.5 md:gap-2.5">
@@ -66,11 +62,10 @@ export default function Pagination({
           <button
             key={page}
             onClick={() => goToPage(page, onPageChange)}
-            className={`cursor-pointer flex items-center justify-center py-2 px-5 rounded-[20px] font-poppins font-16 font-medium transition-colors duration-150 ${
-              page === currentPage
+            className={`cursor-pointer flex items-center justify-center py-2 px-5 rounded-[20px] font-poppins font-16 font-medium transition-colors duration-150 ${page === currentPage
                 ? "bg-[#222222] text-white"
                 : "text-dark bg-[F8F5F2] hover:bg-[#E0E0E0]"
-            }`}
+              }`}
           >
             {page}
           </button>
@@ -86,6 +81,55 @@ export default function Pagination({
           <ChevronIcon open={false} className="w-4 h-4 rotate-270" />
         </button>
       </div>
+    </div>
+  );
+}
+
+type PageJumpProps = {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+};
+
+function PageJump({
+  totalPages,
+  onPageChange,
+}: PageJumpProps) {
+  const [inputValue, setInputValue] = useState("");
+
+  function handleSubmit() {
+    const page = Number(inputValue);
+
+    if (!page || page < 1 || page > totalPages) return;
+
+    goToPage(page, onPageChange);
+    setInputValue("");
+  }
+
+  return (
+    <div className="hidden sm:flex items-center gap-1 md:gap-2 py-2 pl-2 md:pl-3 pr-1 rounded-full bg-light font-16 font-medium text-[#767676]">
+      <input
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]*"
+        min={1}
+        max={totalPages}
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") handleSubmit();
+        }}
+        placeholder="Page number"
+        className="w-[110px] bg-transparent outline-none placeholder:text-[#767676]"
+      />
+
+      <button
+        type="button"
+        onClick={handleSubmit}
+        className="bg-[#DFDFDF] rounded-full p-1 cursor-pointer transition-transform duration-150 hover:scale-105 active:scale-95"
+      >
+        <ArrowRight />
+      </button>
     </div>
   );
 }

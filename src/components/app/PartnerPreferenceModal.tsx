@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { ChevronIcon, RadioCircleIcon, CloseCircleIcon, SearchIcon } from "../../assets/Icons";
+import { ChevronIcon, RadioCircleIcon, CloseCircleIcon, SearchIcon, PartyIcon } from "../../assets/Icons";
 import DropdownField, { MultiSelectDropdown } from "../common-layout/DropdownField";
 import FormRow from "../common-layout/FormRow";
 import Button from "../common-layout/Button";
@@ -11,10 +11,10 @@ import {
   EDUCATION_OPTIONS,
   RELIGION_OPTIONS,
   CASTE_OPTIONS,
-  COUNTRY_OPTIONS,
   MARITAL_OPTIONS,
 } from "../../constants/profiles";
 import { countWords } from "../../utils/wordCount";
+import { COUNTRY_OPTIONS } from "@/src/constants/location";
 
 // ── Static option lists ───────────────────────────────────────────────────
 
@@ -42,18 +42,6 @@ const SEARCH_TABS = [
 ];
 
 // ── Small helpers ─────────────────────────────────────────────────────────
-
-function PartyIcon() {
-  return (
-    <span
-      className="shrink-0 select-none text-[42px] leading-[1] w-[53.333px] h-[53.333px] rounded-full"
-      role="img"
-      aria-label="party popper"
-    >
-      🎉
-    </span>
-  );
-}
 
 function RadioGroup({ options, value, onChange }: {
   options: string[]; value: string; onChange: (v: string) => void;
@@ -321,6 +309,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
                         onChange={setEduTags}
                         open={eduOpen}
                         setOpen={setEduOpen}
+                        typeable
                       />
                       <span className="font-14 ml-1">Click to edit</span>
                     </FormRow>
@@ -333,6 +322,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
                         open={countryOpen}
                         setOpen={setCountryOpen}
                         showAll
+                        typeable
                       />
                        <span className="font-14 ml-1">Click to edit</span>
                     </FormRow>
@@ -350,6 +340,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
                         open={casteOpen}
                         setOpen={setCasteOpen}
                         showAll
+                        typeable
                       />
                        <span className="font-14 ml-1">Click to edit</span>
                     </FormRow>

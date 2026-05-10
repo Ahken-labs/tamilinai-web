@@ -5,16 +5,17 @@ type FormRowProps = {
   error?: string;
   className?: string;
   align?: "start" | "center";
+  leftWidth?:string;
 };
 
-export default function FormRow({label, required, children, error, className = "", align = "start", }: FormRowProps) {
+export default function FormRow({label, required, children, error, className = "", align = "start", leftWidth="w-[100px] sm:w-[120px] md:w-[140px] lg:w-[180px]"}: FormRowProps) {
   const isCenter = align === "center";
 
   return (
     <div className={`${className}`}>
       <div className={`flex ${isCenter ? "items-center" : "items-start"}`} >
         <div
-          className={`w-[100px] sm:w-[120px] md:w-[140px] lg:w-[180px] mr-5 shrink-0 ${
+          className={`${leftWidth} mr-5 shrink-0 ${
             isCenter ? "pt-0" : "pt-2"
           }`}
         >

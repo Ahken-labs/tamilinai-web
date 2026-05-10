@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronIcon } from "../../assets/Icons";
 
 export type MultiSelectDropdownProps = {
@@ -11,6 +11,7 @@ export type MultiSelectDropdownProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
   showAll?: boolean;
+  typeable?: boolean;
   className?: string;
   dropdownClassName?: string;
 };
@@ -28,6 +29,7 @@ type DropdownFieldProps = {
   height?: string;
   borderClassName?: string;
   openBorderClassName?: string;
+  bgClassName?: string;
   textClassName?: string;
   typeable?: boolean; // true = input + dropdown
   compact?: boolean;  // 40px height, no floating label — for profile forms
@@ -46,6 +48,7 @@ export default function DropdownField({
   height = "auto",
   borderClassName,
   openBorderClassName,
+  bgClassName = "bg-[#F2F2F2]",
   textClassName,
   typeable = false,
   compact = false,
@@ -75,9 +78,9 @@ export default function DropdownField({
 
   // Enter: confirm the first suggestion in the filtered list.
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter" && items.length > 0) {
+    if (e.key === "Enter" && filteredItems.length > 0) {
       e.preventDefault();
-      onSelect(items[0]);
+      onSelect(filteredItems[0]);
       setOpen(false);
       setFocused(false);
     }
@@ -86,17 +89,37 @@ export default function DropdownField({
   // Blur: auto-complete when exactly one match remains (unambiguous).
   function handleBlur() {
     setFocused(false);
-    if (value && !items.includes(value) && items.length === 1) {
-      onSelect(items[0]);
+    if (
+      value &&
+      !filteredItems.includes(value) &&
+      filteredItems.length === 1
+    ) {
+      onSelect(filteredItems[0]);
     }
     setOpen(false);
   }
 
+  const filteredItems = value
+    ? [...items]
+      .filter((item) =>
+        item.toLowerCase().includes(value.toLowerCase())
+      )
+      .sort((a, b) => {
+        const q = value.toLowerCase();
+        const aStarts = a.toLowerCase().startsWith(q);
+        const bStarts = b.toLowerCase().startsWith(q);
+
+        if (aStarts && !bStarts) return -1;
+        if (!aStarts && bStarts) return 1;
+
+        return a.localeCompare(b);
+      })
+    : items;
   return (
     <div ref={containerRef} className={`relative ${className}`}>
       {typeable ? (
         <div
-          className={`flex ${compact ? "h-[40px]" : "h-[55px] md:h-[60px]"} items-center rounded-[12px] border bg-[#F2F2F2] px-4 transition-colors ${borderClass}`}
+          className={`flex ${compact ? "h-[40px]" : "h-[55px] md:h-[60px]"} items-center rounded-[12px] border ${bgClassName} px-4 transition-colors ${borderClass}`}
         >
           {compact ? (
             <>
@@ -120,11 +143,10 @@ export default function DropdownField({
           ) : (
             <div className="relative flex w-full items-center">
               <label
-                className={`absolute left-0 transition-all duration-300 ease-in-out pointer-events-none select-none ${
-                  isActive
-                    ? "top-[-2px] text-[12px] text-[#525252]"
-                    : "top-1/2 -translate-y-1/2 text-[14px] md:text-[16px] text-[#525252]"
-                }`}
+                className={`absolute left-0 border transition-all duration-300 ease-in-out pointer-events-none select-none ${isActive
+                  ? "top-[-2px] text-[12px] text-[#525252]"
+                  : "top-1/2 -translate-y-1/2 text-[14px] md:text-[16px] text-[#525252]"
+                  }`}
               >
                 {placeholder}
               </label>
@@ -150,7 +172,7 @@ export default function DropdownField({
         <button
           type="button"
           onClick={() => setOpen(!open)}
-          className={`flex w-full items-center justify-between rounded-[12px] border bg-[#F2F2F2] pl-4 pr-[18px] py-[10px] text-left transition-colors cursor-pointer focus:outline-none ${borderClass} ${className}`}
+          className={`flex w-full items-center justify-between rounded-[12px] border ${bgClassName} pl-4 pr-[18px] py-[10px] text-left transition-colors cursor-pointer focus:outline-none ${borderClass} ${className}`}
         >
           <span className={`text-[14px] md:text-[16px] font-normal leading-[125%] ${textClassName ?? "text-[#656565]"}`}>
             {value || placeholder}
@@ -165,7 +187,7 @@ export default function DropdownField({
           className={`absolute left-0 right-0 top-[calc(100%+4px)] z-30 overflow-y-auto rounded-xl border border-[#E0E0E0] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.1)] ${dropdownClassName}`}
           style={{ maxHeight: height }}
         >
-          {items.map((item, index) => {
+          {filteredItems.map((item, index) => {
             const isSelected = item === value;
             const isSuggested = isFiltering && index === 0;
 
@@ -179,13 +201,12 @@ export default function DropdownField({
                   setOpen(false);
                   setFocused(false);
                 }}
-                className={`flex w-full items-center px-4 py-2 md:py-3 text-left text-[13px] md:text-[15px] transition-colors ${
-                  isSelected
-                    ? "bg-[#FFF0F3] text-[#B31B38]"
-                    : isSuggested
+                className={`flex w-full items-center px-4 py-2 md:py-3 text-left text-[13px] md:text-[15px] transition-colors ${isSelected
+                  ? "bg-[#FFF0F3] text-[#B31B38]"
+                  : isSuggested
                     ? "bg-[#FFF8F9] text-[#222222] font-medium"
-                    : "text-[#222222] hover:bg-[#FFF0F3] hover:text-[#B31B38]"
-                } ${itemClassName}`}
+                    : "text-[#222222] hover:bg-[#EAEAEA] hover:text-[#222222]"
+                  } ${itemClassName}`}
               >
                 {item}
               </button>
@@ -205,34 +226,49 @@ export function MultiSelectDropdown({
   open,
   setOpen,
   showAll = false,
+  typeable = false,
   className = "",
   dropdownClassName = "",
 }: MultiSelectDropdownProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [search, setSearch] = useState("");
+
+  function handleClose() {
+    setOpen(false);
+    setSearch("");
+  }
 
   useEffect(() => {
     if (!open) return;
     function onDown(e: MouseEvent) {
-      if (!containerRef.current?.contains(e.target as Node)) setOpen(false);
+      if (!containerRef.current?.contains(e.target as Node)) {
+        setOpen(false);
+        setSearch("");
+      }
     }
     document.addEventListener("mousedown", onDown);
     return () => document.removeEventListener("mousedown", onDown);
   }, [open, setOpen]);
 
   function toggle(item: string) {
-    if (item === "Show all") { onChange([]); setOpen(false); return; }
+    if (item === "Show all") { onChange([]); handleClose(); return; }
     onChange(selected.includes(item) ? selected.filter((s) => s !== item) : [...selected, item]);
   }
 
-  const listItems = showAll ? ["Show all", ...options] : options;
+  const listItems = useMemo(() => {
+    const base = showAll ? ["Show all", ...options] : options;
+    if (!typeable || !search) return base;
+    const q = search.toLowerCase();
+    return base.filter((item) => item === "Show all" || item.toLowerCase().includes(q));
+  }, [showAll, options, search, typeable]);
 
   return (
     <div ref={containerRef} className={`md:mb-1 relative ${className}`}>
       <div
         role="button"
         tabIndex={0}
-        onClick={() => setOpen(!open)}
-        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setOpen(!open); }}
+        onClick={() => { if (open) { handleClose(); } else { setOpen(true); } }}
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { if (open) { handleClose(); } else { setOpen(true); } } }}
         className="flex w-full min-h-[48px] items-start justify-between rounded-[12px] bg-[#F2F2F2] px-4 py-2.5 cursor-pointer gap-2"
       >
         <div className="flex flex-wrap gap-2 flex-1 min-w-0">
@@ -268,24 +304,37 @@ export function MultiSelectDropdown({
       {open && (
         <div
           onMouseDown={(e) => e.preventDefault()}
-          className={`absolute left-0 right-0 top-[calc(100%+4px)] z-30 max-h-[220px] overflow-y-auto rounded-xl border border-[#E0E0E0] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.1)] ${dropdownClassName}`}
+          className={`absolute left-0 right-0 top-[calc(100%+4px)] z-30 rounded-xl border border-[#E0E0E0] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.1)] ${dropdownClassName}`}
         >
-          {listItems.map((item) => {
-            const isSelected = item === "Show all" ? selected.length === 0 : selected.includes(item);
-            return (
-              <button
-                key={item}
-                type="button"
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={() => toggle(item)}
-                className={`flex w-full items-center px-4 py-2 md:py-3 text-left text-[13px] md:text-[15px] transition-colors ${
-                  isSelected ? "bg-[#FFF0F3] text-[#B31B38]" : "text-[#222222] hover:bg-[#FFF0F3] hover:text-[#B31B38]"
-                }`}
-              >
-                {item}
-              </button>
-            );
-          })}
+          {typeable && (
+            <div className="px-3 pt-2 pb-1">
+              <input
+                autoFocus
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                onMouseDown={(e) => e.stopPropagation()}
+                placeholder="Search..."
+                className="w-full rounded-[8px] bg-[#F2F2F2] px-3 py-1.5 text-[13px] md:text-[15px] text-dark outline-none placeholder:text-[#525252]"
+              />
+            </div>
+          )}
+          <div className={`overflow-y-auto ${typeable ? "max-h-[180px]" : "max-h-[220px]"}`}>
+            {listItems.map((item) => {
+              const isSelected = item === "Show all" ? selected.length === 0 : selected.includes(item);
+              return (
+                <button
+                  key={item}
+                  type="button"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => toggle(item)}
+                  className={`flex w-full items-center px-4 py-2 md:py-3 text-left text-[13px] md:text-[15px] transition-colors ${isSelected ? "bg-[#FFF0F3] text-[#B31B38]" : "text-[#222222] hover:bg-[#EAEAEA] hover:text-[#222222]"
+                    }`}
+                >
+                  {item}
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>

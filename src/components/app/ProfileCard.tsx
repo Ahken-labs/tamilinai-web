@@ -21,6 +21,7 @@ import {
   ShieldLockIcon,
 } from "../../assets/Icons";
 import Button from "../common-layout/Button";
+import { useRouter } from "next/navigation";
 
 interface ProfileCardProps {
   profile: Profile;
@@ -41,6 +42,7 @@ const TAG_STYLES: Record<string, string> = {
 };
 
 export default function ProfileCard({ profile }: ProfileCardProps) {
+  const router = useRouter();
   const { isShortlisted, toggle } = useShortlist();
   const shortlisted = isShortlisted(profile.id);
   const tags = getTags(profile);
@@ -148,6 +150,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
             <Button
               className="basis-full [@media(min-width:450px)]:basis-[calc(50%-0.375rem)] [@media(min-width:690px)]:basis-[calc(33.333%-0.5rem)] [@media(min-width:838px)]:basis-[calc(50%-0.375rem)] [@media(min-width:940px)]:basis-[calc(33.333%-0.5rem)]"
               text="View Full Profile"
+              onPress={() => router.push("/user-profile")}
             />
             <Button
               onPress={() => toggle(profile.id)}

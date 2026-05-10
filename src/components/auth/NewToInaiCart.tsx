@@ -6,7 +6,7 @@ import { ArrowRightIcon } from "../../assets/Icons";
 import { useLang } from "../../context/LangContext";
 import dynamic from "next/dynamic";
 
-const RegisterForm = dynamic(() => import("../auth/RegisterForm"), {
+const RegisterForm = dynamic(() => import("./RegisterForm"), {
   ssr: false,
 });
 

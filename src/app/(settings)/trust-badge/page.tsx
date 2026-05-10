@@ -6,17 +6,17 @@ import { getProgressWidth } from "@/src/utils/getProgressWidth";
 import Button from "@/src/components/common-layout/Button";
 import { CheckmarkIcon, MailIcon, PhoneIcon, ProfileIcon } from "@/src/assets/Icons";
 
-const trustBatchData = {
+const trustBadgeData = {
     isPhoneVerified: true,
     isEmailVerified: false,
     isProfileVerified: false,
 };
 
-export default function TrustBatchPage() {
+export default function TrustBadgePage() {
     const completedCount = [
-        trustBatchData.isPhoneVerified,
-        trustBatchData.isEmailVerified,
-        trustBatchData.isProfileVerified,
+        trustBadgeData.isPhoneVerified,
+        trustBadgeData.isEmailVerified,
+        trustBadgeData.isProfileVerified,
     ].filter(Boolean).length;
 
     const progress = (completedCount / 3) * 100;
@@ -25,19 +25,19 @@ export default function TrustBatchPage() {
         {
             text: "Verify your mobile number",
             Icon: PhoneIcon,
-            verified: trustBatchData.isPhoneVerified,
+            verified: trustBadgeData.isPhoneVerified,
             actionLabel: "Verify now",
         },
         {
             text: "Verify your email address",
             Icon: MailIcon,
-            verified: trustBatchData.isEmailVerified,
+            verified: trustBadgeData.isEmailVerified,
             actionLabel: "Verify now",
         },
         {
             text: "Reach 90% profile completion points",
             Icon: ProfileIcon,
-            verified: trustBatchData.isProfileVerified,
+            verified: trustBadgeData.isProfileVerified,
             actionLabel: "Add details",
         },
     ] as const;
@@ -45,7 +45,7 @@ export default function TrustBatchPage() {
     return (
         <div className="font-poppins min-h-screen bg-[#F8F5F2]">
             <FormCardLayout
-                title="Get trust batch"
+                title="Get trust badge"
                 subtitle="Complete 3 quick tasks to show other members you're real and trustworthy."
                 subtitleMarginTop="mt-4 sm:mt-5 md:mt-6.5 lg:mt-8"
                 childrenTopMargin="mt-4 sm:mt-5 md:mt-6"
@@ -103,7 +103,7 @@ export default function TrustBatchPage() {
                         {/* Top row: image + text */}
                         <div className="flex items-center gap-4">
                             <Image
-                                src="/icons/trust_batch.png"
+                                src="/icons/trust_Badge.png"
                                 alt=""
                                 width={44}
                                 height={48}
@@ -117,7 +117,7 @@ export default function TrustBatchPage() {
                             {/* Desktop button */}
                             <div className="hidden min-[520px]:block">
                                 <Button
-                                    text="Claim trust batch"
+                                    text="Claim trust badge"
                                     className={`!px-6 ${progress === 100
                                         ? "" : "!bg-[#F0F0F0] !text-[#656565] hover:!bg-[#BBBBBB] active:!bg-[#BBBBBB]"}`} />
                             </div>
@@ -126,7 +126,7 @@ export default function TrustBatchPage() {
                         {/* Mobile button */}
                         <div className="min-[520px]:hidden">
                             <Button
-                                text="Claim trust batch"
+                                text="Claim trust badge"
                                 className={`!px-6 w-full ${progress === 100
                                     ? "" : "!bg-[#F0F0F0] !text-[#656565] hover:!bg-[#BBBBBB] active:!bg-[#BBBBBB]"}`}/>
                         </div>

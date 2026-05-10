@@ -1,8 +1,10 @@
 "use client";
 
 import { ChevronRightIcon, DeleteIcon, PasswordLockIcon, PrivacyPolicyIcon, SleepIcon } from "@/src/assets/Icons";
+import ChangePasswordPopup from "@/src/components/auth/ChangePasswordPopup";
 import PrivacyPolicy from "@/src/components/more/PrivacySection";
 import Link from "next/link";
+import { useState } from "react";
 
 type SettingItem = {
     icon: React.ElementType;
@@ -29,12 +31,14 @@ const SETTINGS: SettingItem[] = [
 ];
 
 export default function SettingsPage() {
+    const [openPasswordPopup, setOpenPasswordPopup] = useState(false);
+
     return (
         <div className="pb-6 font-poppins min-h-screen bg-[#F8F5F2]">
             {/* Header */}
             <div className="sticky top-[74px] z-10 w-full border-t border-[#EEEEEE] bg-white">
                 <div className="flex items-center justify-center px-4 py-3">
-                    <span className="font-24 font-semibold text-dark">
+                    <span className="select-none font-24 font-semibold text-dark">
                         Account settings
                     </span>
                 </div>
@@ -42,7 +46,7 @@ export default function SettingsPage() {
 
             {/* Content */}
             <div className="px-4 pt-8">
-                <div className="py-4 md:py-6 mx-auto flex max-w-[910px] flex-col overflow-hidden rounded-[20px] bg-white">
+                <div className="select-none py-4 md:py-6 mx-auto flex max-w-[910px] flex-col overflow-hidden rounded-[20px] bg-white">
                     {SETTINGS.map(({ icon: Icon, title, subtitle }, index) => {
                         const content = (
                             <div
@@ -89,7 +93,7 @@ export default function SettingsPage() {
                         return (
                             <div
                                 key={title}
-                                onClick={() => console.log("open ChangePasswordPopup")}
+                                onClick={() => setOpenPasswordPopup(true)}
                                 className="cursor-pointer"
                             >
                                 {content}
@@ -107,6 +111,10 @@ export default function SettingsPage() {
                 </div>
                 <PrivacyPolicy />
             </div>
+            <ChangePasswordPopup
+                isOpen={openPasswordPopup}
+                onClose={() => setOpenPasswordPopup(false)}
+            />
         </div>
     );
 }

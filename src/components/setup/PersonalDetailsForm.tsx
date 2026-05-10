@@ -10,8 +10,11 @@ import FormRow from "../common-layout/FormRow";
 import FormCardLayout from "../common-layout/FormCardLayout";
 import { useLang } from "@/src/context/LangContext";
 import {
-  EDUCATION_OPTIONS, RELIGION_OPTIONS, CASTE_OPTIONS, COUNTRY_OPTIONS, CITY_OPTIONS, CITIZENSHIP_OPTIONS,
+  EDUCATION_OPTIONS, RELIGION_OPTIONS,
+  CASTE_OPTIONS_HINDU,
+  CASTE_OPTIONS_CHRISTIAN,
 } from "@/src/constants/profiles";
+import { COUNTRY_OPTIONS } from "@/src/constants/location";
 
 function filterItems(items: string[], query: string) {
   if (!query || items.includes(query)) return items;
@@ -61,10 +64,20 @@ export default function PersonalDetailsForm() {
   // ── Filtered dropdown items ───────────────────────────────────────
   const filtEducation = useMemo(() => filterItems(EDUCATION_OPTIONS, education), [education]);
   const filtReligion = useMemo(() => filterItems(RELIGION_OPTIONS, religion), [religion]);
-  const filtCaste = useMemo(() => filterItems(CASTE_OPTIONS, caste), [caste]);
+
   const filtCountry = useMemo(() => filterItems(COUNTRY_OPTIONS, country), [country]);
-  const filtCity = useMemo(() => filterItems(CITY_OPTIONS, city), [city]);
-  const filtCitizenship = useMemo(() => filterItems(CITIZENSHIP_OPTIONS, citizenship), [citizenship]);
+  const filtCitizenship = useMemo(() => filterItems(COUNTRY_OPTIONS, citizenship), [citizenship]);
+
+  const casteOptions = useMemo(() => {
+    if (religion === "Hindu") return CASTE_OPTIONS_HINDU;
+    if (religion === "Christian") return CASTE_OPTIONS_CHRISTIAN;
+    return [];
+  }, [religion]);
+
+  const filtCaste = useMemo(
+    () => filterItems(casteOptions, caste),
+    [casteOptions, caste]
+  );
 
   function persist() {
     try {
@@ -159,7 +172,10 @@ export default function PersonalDetailsForm() {
             value={religion}
             open={opens.religion}
             setOpen={setOpen("religion")}
-            onSelect={setReligion}
+            onSelect={(value) => {
+              setReligion(value);
+              setCaste("");
+            }}
             items={filtReligion}
             dropdownClassName="max-h-[220px]"
           />
@@ -167,8 +183,13 @@ export default function PersonalDetailsForm() {
 
         <FormRow label={t("Caste_or_denomination")} align="center" required error={errors.caste}>
           <DropdownField
-            typeable compact
-            placeholder={t("Select_caste")}
+            typeable
+            compact
+            placeholder={
+              religion
+                ? t("Select_caste")
+                : "Select religion first"
+            }
             value={caste}
             open={opens.caste}
             setOpen={setOpen("caste")}
@@ -197,15 +218,11 @@ export default function PersonalDetailsForm() {
         </FormRow>
 
         <FormRow label={t("Residing_district_or_city")} align="center" required error={errors.city}>
-          <DropdownField
-            typeable compact
-            placeholder={t("Select_district_city")}
+          <input
             value={city}
-            open={opens.city}
-            setOpen={setOpen("city")}
-            onSelect={setCity}
-            items={filtCity}
-            dropdownClassName="max-h-[220px]"
+            onChange={(e) => setCity(e.target.value)}
+            placeholder="Enter city or district"
+            className="flex h-[40px] w-full items-center rounded-[12px] border border-[#F2F2F2] bg-[#F2F2F2] px-4 font-16 text-dark outline-none placeholder:text-[#525252]"
           />
         </FormRow>
 
