@@ -10,67 +10,129 @@ import { SecurityIcon, CheckmarkIcon, CameraIcon, CheckboxIcon } from "@/src/ass
 import { useLang } from "@/src/context/LangContext";
 import { countWords } from "@/src/utils/wordCount";
 import PrivacyPopup from "../footer/PrivacyPopup";
+import { apiUpload } from "../../lib/api/client";
+import { ApiRequestError } from "../../lib/api/client";
 
 const MAX_WORDS = 60;
+
+const MARITAL_STATUS_MAP: Record<string, string> = {
+  Unmarried: "unmarried",
+  "Widow/Widower": "widow_widower",
+  Divorced: "divorced",
+  Separated: "separated",
+};
+
+function parseCm(val?: string): number | undefined {
+  if (!val) return undefined;
+  const n = parseInt(val, 10);
+  return isNaN(n) ? undefined : n;
+}
+
+function buildSetupFormData(basic: Record<string, string>, personal: Record<string, string>, aboutMe: string, photo?: File): FormData {
+  const fd = new FormData();
+
+  if (basic.birthYear && basic.birthMonth && basic.birthDay) {
+    const MONTH_MAP: Record<string, string> = {
+      January: "01", February: "02", March: "03", April: "04",
+      May: "05", June: "06", July: "07", August: "08",
+      September: "09", October: "10", November: "11", December: "12",
+    };
+    const mm = MONTH_MAP[basic.birthMonth] ?? basic.birthMonth;
+    const dd = basic.birthDay.padStart(2, "0");
+    fd.append("dateOfBirth", `${basic.birthYear}-${mm}-${dd}`);
+  }
+
+  if (basic.maritalStatus) {
+    fd.append("maritalStatus", MARITAL_STATUS_MAP[basic.maritalStatus] ?? basic.maritalStatus.toLowerCase());
+  }
+
+  const heightCm = parseCm(basic.height);
+  if (heightCm !== undefined) fd.append("heightCm", String(heightCm));
+
+  const weightKg = parseCm(basic.weight);
+  if (weightKg !== undefined) fd.append("weightKg", String(weightKg));
+
+  if (basic.physicalChallenge === "yes") {
+    fd.append("hasPhysicalChallenge", "true");
+    if (basic.disability) fd.append("disabilityType", basic.disability);
+  } else {
+    fd.append("hasPhysicalChallenge", "false");
+  }
+
+  if (personal.education) fd.append("education", personal.education);
+  if (personal.occupation) fd.append("occupation", personal.occupation);
+  if (personal.religion) fd.append("religion", personal.religion);
+  if (personal.caste) fd.append("caste", personal.caste);
+  if (personal.country) fd.append("country", personal.country);
+  if (personal.city) fd.append("city", personal.city);
+  if (personal.citizenship) fd.append("citizenship", personal.citizenship);
+
+  if (aboutMe.trim()) fd.append("aboutMe", aboutMe.trim());
+  if (photo) fd.append("photo", photo);
+
+  return fd;
+}
+
+function clearDraftData() {
+  try {
+    sessionStorage.removeItem("inai_setup_basic");
+    sessionStorage.removeItem("inai_setup_personal");
+  } catch { /* storage unavailable */ }
+}
 
 export default function PhotoUploadForm() {
   const router = useRouter();
   const { t } = useLang();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [aboutMe, setAboutMe] = useState("");
+  const [agreed, setAgreed] = useState(true);
+  const [showError, setShowError] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [openPrivacy, setOpenPrivacy] = useState(false);
 
   const wordCount = countWords(aboutMe);
   const hasPhoto = !!photoUrl;
 
-  const [agreed, setAgreed] = useState(true);
-  const [showError, setShowError] = useState(false);
-  const [openPrivacy, setOpenPrivacy] = useState(false);
-
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    setPhotoFile(file);
     setPhotoUrl(URL.createObjectURL(file));
   }
 
   function handleAboutMeChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     const val = e.target.value;
-    if (countWords(val) <= MAX_WORDS) {
-      setAboutMe(val);
-    }
+    if (countWords(val) <= MAX_WORDS) setAboutMe(val);
   }
-  function clearDraftData() {
-    try {
-      sessionStorage.removeItem("tamilinai_basic");
-      sessionStorage.removeItem("tamilinai_personal");
-      sessionStorage.removeItem("tamilinai_photo");
-    } catch {
-      /* storage unavailable */
-    }
-  }
-  function handleSkip() {
+
+  async function submitSetup(skipPhoto: boolean) {
     if (!agreed) {
       setShowError(true);
       return;
     }
-    clearDraftData();
-    router.push("/matches?welcome=1");
-  }
+    if (!skipPhoto && !hasPhoto) return;
 
-  function handleSave() {
-    if (!agreed || !hasPhoto) {
-      setShowError(!agreed);
-      return;
-    }
-
+    setLoading(true);
+    setSubmitError("");
     try {
-      sessionStorage.setItem("tamilinai_photo", JSON.stringify({ aboutMe }));
-    } catch { }
-
-    clearDraftData();
-    router.push("/matches?welcome=1");
+      const basic = JSON.parse(sessionStorage.getItem("inai_setup_basic") ?? "{}") as Record<string, string>;
+      const personal = JSON.parse(sessionStorage.getItem("inai_setup_personal") ?? "{}") as Record<string, string>;
+      const fd = buildSetupFormData(basic, personal, aboutMe, skipPhoto ? undefined : (photoFile ?? undefined));
+      await apiUpload("/api/user/profile/setup", fd);
+      clearDraftData();
+      router.replace("/settings/partner-preferences");
+    } catch (err) {
+      const message = err instanceof ApiRequestError ? err.message : "Something went wrong. Please try again.";
+      setSubmitError(message);
+    } finally {
+      setLoading(false);
+    }
   }
+
   const bullets = [
     t("Photo_protected"),
     t("Control_who_sees_photo"),
@@ -85,22 +147,26 @@ export default function PhotoUploadForm() {
         <>
           <div className="flex gap-5 w-full">
             <Button
-              text={t("Skip")}
-              onPress={handleSkip}
+              text={loading ? "Saving..." : t("Skip")}
+              onPress={() => submitSetup(true)}
               className={`flex-1 ${!agreed
-                ? "!bg-[#FFF] !text-[#999] "
+                ? "!bg-[#FFF] !text-[#999]"
                 : "!bg-[#FFF] !text-[#767676] hover:!bg-gray-50 active:!bg-gray-100"
-                }`}
+              }`}
             />
-
             <Button
-              text={t("Save")}
-              onPress={handleSave}
+              text={loading ? "Saving..." : t("Save")}
+              onPress={() => submitSetup(false)}
               className={`flex-1 ${!agreed || !hasPhoto
                 ? "!bg-[#BBBBBB] hover:!bg-[#BBBBBB] active:!bg-[#BBBBBB]"
                 : ""}`}
             />
           </div>
+
+          {submitError && (
+            <p className="mt-2 text-[12px] text-[#B31B38]">{submitError}</p>
+          )}
+
           <div className="mt-8 flex gap-3 md:gap-4 items-start">
             <button onClick={() => {
               setAgreed(prev => !prev);
@@ -108,7 +174,6 @@ export default function PhotoUploadForm() {
             }}>
               <CheckboxIcon checked={agreed} />
             </button>
-
             <span className="font-14 text-secondary4 font-poppins font-normal">
               I have read and agree to Inai&apos;s{" "}
               <button
@@ -142,12 +207,10 @@ export default function PhotoUploadForm() {
 
       {/* Photo circle + bullets row */}
       <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-10">
-
         {/* Photo circle */}
         <div className="relative shrink-0 mx-auto sm:mx-0">
           <div
-            className={`w-31 sm:w-41 md:w-41 h-31 sm:h-41 md:h-41 rounded-full overflow-hidden flex items-center justify-center ${hasPhoto ? "" : "bg-[#D9D9D9]"
-              }`}
+            className={`w-31 sm:w-41 md:w-41 h-31 sm:h-41 md:h-41 rounded-full overflow-hidden flex items-center justify-center ${hasPhoto ? "" : "bg-[#D9D9D9]"}`}
           >
             <Image
               src={hasPhoto ? photoUrl! : "/icons/Ellipse.svg"}
@@ -160,7 +223,6 @@ export default function PhotoUploadForm() {
             />
           </div>
 
-          {/* Camera button */}
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
@@ -184,9 +246,7 @@ export default function PhotoUploadForm() {
           <div className="flex flex-col gap-2 sm:gap-3">
             {bullets.map((text) => (
               <div key={text} className="flex items-center gap-2">
-                <CheckmarkIcon
-                  stroke={hasPhoto ? "#B31B38" : "#222222"}
-                />
+                <CheckmarkIcon stroke={hasPhoto ? "#B31B38" : "#222222"} />
                 <span className="font-14 font-normal text-dark leading-[150%]">{text}</span>
               </div>
             ))}
@@ -195,17 +255,9 @@ export default function PhotoUploadForm() {
           <div className="mt-[22px]">
             <Button
               text={hasPhoto ? t("Change_photo") : t("Add_photo")}
-              iconLeft={
-                <CameraIcon
-                  className={`w-4 h-4 ${hasPhoto ? "text-[#222222]" : "text-white"
-                    }`}
-                />
-              }
+              iconLeft={<CameraIcon className={`w-4 h-4 ${hasPhoto ? "text-[#222222]" : "text-white"}`} />}
               onPress={() => fileInputRef.current?.click()}
-              className={`!px-10 ${hasPhoto
-                ? "!bg-white !text-[#222222] hover:!bg-gray-50"
-                : ""
-                }`}
+              className={`!px-10 ${hasPhoto ? "!bg-white !text-[#222222] hover:!bg-gray-50" : ""}`}
             />
           </div>
         </div>
@@ -218,20 +270,20 @@ export default function PhotoUploadForm() {
           value={aboutMe}
           onChange={handleAboutMeChange}
           placeholder={t("About_me_placeholder")}
-          className="w-full mt-3 rounded-[12px] border border-[#767676] 
-          font-16 font-normal text-dark placeholder:text-[#656565] resize-none outline-none 
+          className="w-full mt-3 rounded-[12px] border border-[#767676]
+          font-16 font-normal text-dark placeholder:text-[#656565] resize-none outline-none
           focus:border-[#B31B38] transition-colors h-[160px] md:h-[199px] p-3 sm:p-4"
         />
         <div className="flex text-secondary4 font-14 justify-between mt-1">
-          <span >{t("Keep_it_genuine")}</span>
-          <span >{wordCount} {t("Word_count")}</span>
+          <span>{t("Keep_it_genuine")}</span>
+          <span>{wordCount} {t("Word_count")}</span>
         </div>
       </div>
+
       <PrivacyPopup
         isOpen={openPrivacy}
         onClose={() => setOpenPrivacy(false)}
       />
     </FormCardLayout>
-
   );
 }

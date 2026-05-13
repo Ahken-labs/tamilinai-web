@@ -13,8 +13,10 @@ import {
   PaintBrushIcon,
   HeartIcon,
 } from "@/src/assets/Icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "@/src/components/common-layout/Button";
+import { getMe } from "@/src/lib/api/user";
+import type { Me } from "@/src/types/user";
 import { BiPhoneCall } from "react-icons/bi";
 import ToggleTabs from "@/src/components/common-layout/ToggleTabs";
 import ContactInfoSection from "@/src/components/profile/sections/ContactInfoSection";
@@ -27,9 +29,6 @@ import LifestyleSection from "@/src/components/profile/sections/LifestyleSection
 import InterestsHobbiesSection from "@/src/components/profile/sections/InterestsHobbiesSection";
 import PartnerPreferenceSection from "@/src/components/profile/sections/PartnerPreferenceSection";
 
-const trustBadge = true;
-const isElite = true;
-
 const TABS = [
   { label: "Edit profile", value: "edit_profile" },
   { label: "Preview my profile", value: "preview_my_profile" },
@@ -37,11 +36,20 @@ const TABS = [
 
 export default function MyProfilePage() {
   const [activeTab, setActiveTab] = useState("edit_profile");
-  const [, setCurrentPage] = useState(1);
+  const [me, setMe] = useState<Me | null>(null);
+
+  useEffect(() => {
+    getMe().then(setMe).catch(() => {});
+  }, []);
+
+  const trustBadge = me?.trustBadge ?? false;
+  const isElite = me?.isElite ?? false;
+  const displayName = me?.name ?? "username";
+  const displayId = me?.displayId ?? "";
+  const photoUrl = me?.profile?.photoUrl ?? null;
 
   function handleTabChange(value: string) {
     setActiveTab(value);
-    setCurrentPage(1);
   }
   return (
     <main className="min-h-screen bg-[#F8F5F2] font-poppins select-none pb-0">
@@ -61,7 +69,7 @@ export default function MyProfilePage() {
               {/* Image */}
               <div className="relative z-10 h-[133px] sm:h-[160px] md:h-[213px] lg:h-[266px] overflow-hidden rounded-[16px] bg-[#D9D9D9]">
                 <Image
-                  src="/images/no_photo.png"
+                  src={photoUrl ?? "/images/no_photo.png"}
                   alt="profile"
                   width={200}
                   height={266}
@@ -95,7 +103,7 @@ export default function MyProfilePage() {
             <div className="mt-4 md:mt-6 flex items-center justify-between gap-4 flex-wrap">
               <div className="flex items-center gap-1 md:gap-2">
                 <h1 className="text-dark text-[14px] md:text-[18px] font-medium leading-[150%]">
-                  username
+                  {displayName}
                 </h1>
                 {trustBadge && (
                   <ProfileVerifiedBadgeIcon className="h-4 sm:h-5 lg:h-6 w-4 sm:w-5 lg:w-6 shrink-0" />
@@ -121,7 +129,7 @@ export default function MyProfilePage() {
 
             {/* ID */}
             <div className="md:mt-0.5 text-dark font-16 font-normal leading-[150%]">
-              TI 247
+              {displayId}
             </div>
             {/* Photo visible toggle*/}
             <PhotoVisibilityDropdown />
@@ -374,7 +382,9 @@ function ExpandableSection({
           <span className="font-16 font-medium leading-[150%] text-secondary4">
             {statusText}
           </span>
-          <div className="h-2 md:h-3 w-2 md:w-3 rounded-full bg-[#B31B38]" />
+          {section.completed < section.total && (
+            <div className="h-2 md:h-3 w-2 md:w-3 rounded-full bg-[#B31B38]" />
+          )}
           <ChevronIcon
             open={open}
             stroke="#B31B38"

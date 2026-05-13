@@ -158,33 +158,33 @@ export default function Footer({ variant = "landing" }: FooterProps) {
 
         {/* ── Divider ── */}
         <div className={`mt-5 border-t pt-[30px] pb-[40px] ${isApp ? "border-[#35050C]/30" : "border-white"}`}>
-          <div className={`flex flex-col ${isApp ? "min-[650px]:flex-row min-[650px]:justify-between min-[650px]:items-left" : "min-[460px]:flex-row min-[460px]:justify-between min-[460px]:items-left"} items-left gap-4`}>
+          <div className={`flex flex-col ${isApp ? "min-[750px]:flex-row min-[750px]:justify-between min-[750px]:items-left" : "min-[590px]:flex-row min-[590px]:justify-between min-[590px]:items-left"} items-left gap-4`}>
 
             {/* Left — copyright */}
             <div className="flex flex-wrap items-center gap-1.5 select-none">
               {isApp ? (
                 <>
-                  <span className={`font-poppins font-normal font-14 leading-[18px] ${textClass}`}>
-                    © 2026 Ahken nexus
+                  <span className={`font-poppins font-normal font-14 ${textClass}`}>
+                    © 2026 Ahken Nexus (Pvt) Ltd.
                   </span>
 
                   <Dot isApp={isApp} />
 
-                  <span className={`font-poppins font-normal font-14 leading-[18px] ${textClass}`}>
+                  <span className={`font-poppins font-normal font-14 ${textClass}`}>
                     Your Privacy Choices
                   </span>
 
                   <PrivacyChoicesIcon className="ml-1 w-5 md:w-6 h-3 shrink-0" />
                 </>
               ) : (
-                <span className={`font-poppins font-normal font-14 leading-[18px] ${textClass}`}>
-                  © 2026 Ahken nexus
+                <span className={`font-poppins font-normal font-14 ${textClass}`}>
+                  © 2026 Ahken Nexus (Pvt) Ltd.
                 </span>
               )}
             </div>
 
             {/* Right — locale + socials */}
-            <div className={`flex flex-wrap items-center gap-2 ${isApp ? "min-[650px]:justify-end" : "min-[460px]:justify-end"} select-none`}>
+            <div className={`flex flex-wrap items-center gap-2 ${isApp ? "min-[750px]:justify-end" : "min-[590px]:justify-end"} select-none`}>
 
               {/* Globe + locale */}
               <div className="flex items-center gap-1.5">

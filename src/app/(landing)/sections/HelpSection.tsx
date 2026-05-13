@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { FaWhatsapp } from "react-icons/fa";
 import { useLang } from "@/src/context/LangContext";
+import { UnionDesignIcon, UnionFullIcon } from "@/src/assets/Icons";
 
 const WHATSAPP_NUMBER = "+94762360948";
 
@@ -10,48 +11,49 @@ export function HelpSection() {
   const { t } = useLang();
   return (
     <section
-      className="
-        relative w-full overflow-hidden
-        mt-8 md:mt-15 lg:mt-25"
+      className="relative w-full overflow-hidden mt-10 lg:mt-18"
       style={{
         background: "linear-gradient(180deg, #FFF7F0 0%, #FFEBEB 100%)",
       }}
     >
-      <div className="mx-auto max-w-[1100px] px-6 flex flex-col md:flex-row items-center gap-10">
+      {/* Background Design */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        {/* Mobile + md: left side, half visible */}
+        <div className="absolute left-[-75%] sm:left-[-35%] md:left-[-35%] lg:left-[0%] top-[60px] lg:top-[0px]">
+          <div className="relative">
+            <UnionFullIcon className="w-[620px] md:w-[720px] lg:w-[570px] h-auto opacity-100" />
+            <div className="absolute inset-0 lg:bg-gradient-to-l bg-gradient-to-b from-[#FFF7F0] via-[#FFF7F0]/35 to-transparent blur-3xm lg:blur-3xl" />
+          </div>
+        </div>
+
+      </div>
+      <div className="relative z-10 mx-auto max-w-[884px] sm:px-6 px-4 flex flex-col-reverse lg:flex-row items-center gap-10 pt-10">
 
         {/* ── LEFT IMAGE ── */}
-        <div className="w-full md:w-auto flex justify-center">
+        <div className="relative w-full md:w-auto flex justify-center">
+
+          {/* Girl image */}
           <Image
             src="/images/help_girl.png"
             alt="Support"
-            width={528}
-            height={480}
-            className="
-              w-[260px] sm:w-[360px] md:w-[420px] lg:w-[528px]
-              h-auto object-contain
-            "
+            width={250}
+            height={400}
+            className="relative z-10  w-[180px] h-[288px] md:w-[220px] md:h-[352px] lg:w-[250px] lg:h-[400px] object-contain "
             priority
           />
         </div>
 
-        {/* ── RIGHT CONTENT ── */}
-        <div className="flex flex-col text-center md:text-left max-w-[620px]">
-
-          {/* Title */}
+        <div className="flex flex-col text-center lg:text-left max-w-[620px]">
           <h2
-            className="font-bold text-dark font-40 leading-[120%]">
+            className="font-bold text-dark font-32">
             {t("Need_Help_Finding_a_Match")}
           </h2>
-
-          {/* Description */}
-          <p
-            className="mt-4 md:mt-6 text-dark font-16 leading-[150%]"
-          >
+          <p className="mt-2 text-dark font-16 max-w-[330px] md:max-w-[510px] lg-max-w-none" >
             {t("Chat_with_Tamilinais_friendly_support_team_for_profile_creation_photo_uploads_or_personalized_matchmaking_assistance")}
           </p>
 
-          {/* WhatsApp Button */}
-          <div className="mt-8 lg:mb-0 md:mb-0 mb-6 md:mt-10">
+          {/* CTA WhatsApp */}
+          <div className="mt-10 lg:mt-6">
             <a
               href={`https://wa.me/${WHATSAPP_NUMBER.replace("+", "")}`}
               target="_blank"
@@ -62,6 +64,7 @@ export function HelpSection() {
                 border border-[#222222]
                 rounded-[31px]
                 text-[#222222]
+                bg-[#fff]
                text-[14px] md:text-[16px] font-medium
                 transition hover:bg-[#075E54] hover:text-white
               "

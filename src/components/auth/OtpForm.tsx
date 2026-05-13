@@ -6,6 +6,8 @@ import { ArrowRightIcon, ChevronIcon } from "../../assets/Icons";
 import Button from "../common-layout/Button";
 import NewToInaiCart from "./NewToInaiCart";
 import { useLang } from "../../context/LangContext";
+import { verifyOtp, resendOtp } from "../../lib/api/auth";
+import { ApiRequestError } from "../../lib/api/client";
 
 const OTP_LENGTH = 6;
 const RESEND_SECONDS = 60;
@@ -32,6 +34,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
   const [error, setError] = useState("");
   const [shake, setShake] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -87,26 +90,49 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
     setTimeout(() => setShake(false), 500);
   };
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     const otp = digits.join("");
     if (otp.length < OTP_LENGTH) {
       setError(t("Please_enter_the_complete_OTP"));
       triggerShake();
       return;
     }
-    if (otp === "123456") {
-      setSuccess(true);
-      router.push(variant === "reset" ? "/reset-password" : "/create-password");
-    } else {
-      setError(t("Invalid_OTP_Please_try_again"));
+    setLoading(true);
+    try {
+      if (variant === "register") {
+        const registrationKey = sessionStorage.getItem("inai_reg_key") ?? undefined;
+        const res = await verifyOtp({ otp, registrationKey });
+        sessionStorage.setItem("inai_temp_token", res.tempToken);
+        sessionStorage.removeItem("inai_reg_key");
+        setSuccess(true);
+        router.replace("/create-password");
+      } else {
+        const identifier = sessionStorage.getItem("inai_reset_identifier") ?? undefined;
+        const res = await verifyOtp({ otp, identifier });
+        sessionStorage.setItem("inai_temp_token", res.tempToken);
+        setSuccess(true);
+        router.replace("/reset-password");
+      }
+    } catch (err) {
+      const message = err instanceof ApiRequestError ? err.message : t("Invalid_OTP_Please_try_again");
+      setError(message);
       triggerShake();
       setDigits(Array(OTP_LENGTH).fill(""));
       inputRefs.current[0]?.focus();
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleResend = () => {
+  const handleResend = async () => {
     if (countdown > 0) return;
+    const identifier = phone || email;
+    const method: "sms" | "email" = phone ? "sms" : "email";
+    try {
+      await resendOtp(identifier, method);
+    } catch {
+      // silently ignore resend errors
+    }
     sessionStorage.setItem("otp_sent_at", String(Date.now()));
     setCountdown(RESEND_SECONDS);
     setDigits(Array(OTP_LENGTH).fill(""));
@@ -214,18 +240,17 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
 
           {/* Buttons */}
           <div className="mt-10 md:mt-12 flex gap-3 md:gap-5 w-full">
+            {variant === "reset" && (
+              <Button
+                text={t("Back")}
+                onPress={() => router.back()}
+                className="flex-1 !bg-white !text-[#222222] hover:!bg-[#F8F8F8]"
+              />
+            )}
             <Button
-              text={t("Back")}
-              onPress={() => router.back()}
-              className={`flex-1 ${variant === "reset"
-                ? "!bg-white !text-[#222222] hover:!bg-[#F8F8F8]"
-                : "!bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
-                }`}
-            />
-            <Button
-              text={t("Next")}
+              text={loading ? "Verifying..." : t("Next")}
               onPress={handleVerify}
-              icon={<ArrowRightIcon />}
+              icon={loading ? undefined : <ArrowRightIcon />}
               className="flex-1"
             />
           </div>

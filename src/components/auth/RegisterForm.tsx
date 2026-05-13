@@ -15,6 +15,8 @@ import { COUNTRIES } from "../../constants/countries";
 import DropdownField from "../common-layout/DropdownField";
 import Link from "next/link";
 import { AUTO_GENDER, PROFILES } from "@/src/constants/profiles";
+import { register } from "../../lib/api/auth";
+import { ApiRequestError } from "../../lib/api/client";
 
 type RegisterFormProps = {
     variant?: "hero" | "modal";
@@ -48,7 +50,9 @@ export default function RegisterForm({
         name?: string;
         phone?: string;
         email?: string;
+        submit?: string;
     }>({});
+    const [loading, setLoading] = useState(false);
 
     const HERO_BTN_ICON_COLOR =
         "text-[#B31B38] group-hover:text-[#8E162D] group-active:text-[#6F1023] transition-colors duration-150";
@@ -92,12 +96,54 @@ export default function RegisterForm({
         return Object.keys(nextErrors).length === 0;
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!validate()) return;
-        const code = countryCode.match(/\(\+\d+\)/)?.[0] ?? countryCode;
-        const params = new URLSearchParams({ phone, countryCode: code, email });
-        sessionStorage.setItem("otp_sent_at", String(Date.now()));
-        router.push(`/verify-otp?${params.toString()}`);
+        const code = countryCode.match(/\+\d+/)?.[0] ?? countryCode;
+        setLoading(true);
+        setErrors((prev) => ({ ...prev, submit: undefined }));
+        try {
+            // const res = await register({
+            //     profileType: profileFor.toLowerCase(),
+            //     gender: gender.toLowerCase() as "male" | "female",
+            //     name: fullName.trim(),
+            //     phone: phone.trim(),
+            //     countryCode: code,
+            //     email: email.trim(),
+            // });
+            // sessionStorage.setItem("inai_reg_key", res.registrationKey);
+            // sessionStorage.setItem("otp_sent_at", String(Date.now()));
+            // const params = new URLSearchParams({ phone, countryCode: code, email });
+            // router.replace(`/verify-otp?${params.toString()}`);
+            const message = encodeURIComponent(
+                `Hello, I would like to create my profile.
+
+Profile For: ${profileFor || "-"}
+Gender: ${gender || "-"}
+Name: ${fullName.trim() || "-"}
+Phone: ${code} ${phone.trim() || "-"}
+Email: ${email.trim() || "-"}`
+            );
+
+            window.open(`https://wa.me/94750207507?text=${message}`, "_blank", "noopener,noreferrer");
+            return;
+        } catch (err) {
+            if (err instanceof ApiRequestError) {
+                const msg = err.message.toLowerCase();
+                if (msg.includes('email already exists')) {
+                    setErrors((prev) => ({ ...prev, submit: "An account with this email already exists. Try logging in." }));
+                } else if (msg.includes('phone number already exists')) {
+                    setErrors((prev) => ({ ...prev, submit: "An account with this phone number already exists. Try logging in." }));
+                } else if (msg.includes('not eligible')) {
+                    setErrors((prev) => ({ ...prev, submit: "This account is not eligible for registration. Please contact support." }));
+                } else {
+                    setErrors((prev) => ({ ...prev, submit: err.message }));
+                }
+            } else {
+                setErrors((prev) => ({ ...prev, submit: "Registration failed. Please try again." }));
+            }
+        } finally {
+            setLoading(false);
+        }
     };
 
     const body = (
@@ -118,7 +164,7 @@ export default function RegisterForm({
                         className="shrink-0 transition hover:opacity-80 cursor-pointer"
                         aria-label="Close"
                     >
-                       <CloseCircleIcon className="h-8 w-8 transition-transform duration-200 hover:scale-110 active:scale-95 " />
+                        <CloseCircleIcon className="h-8 w-8 transition-transform duration-200 hover:scale-110 active:scale-95 " />
                     </button>
                 </div>
             ) : (
@@ -215,9 +261,14 @@ export default function RegisterForm({
                 error={errors.email}
             />
 
+            {errors.submit && (
+                <p className="text-[12px] text-[#B31B38]">{errors.submit}</p>
+            )}
+
             <div className="flex flex-col gap-5">
                 <button
                     type="button"
+                    disabled={loading}
                     onClick={handleSubmit}
                     className="group relative mt-2 flex w-full items-center justify-center py-3 text-[14px] font-semibold text-white transition-all active:scale-[0.99] md:text-[16px] cursor-pointer"
                 >
@@ -231,8 +282,8 @@ export default function RegisterForm({
                     />
 
                     <span className="relative z-20 flex select-none items-center gap-2 px-4">
-                        {t("Create_my_free_profile")}
-                        <ArrowRightIcon />
+                        {loading ? "Please wait..." : t("Create_my_free_profile")}
+                        {!loading && <ArrowRightIcon />}
                     </span>
                 </button>
                 <div className="flex flex-col gap-2">

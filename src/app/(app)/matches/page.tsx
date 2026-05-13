@@ -2,12 +2,15 @@
 
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import ToggleTabs from "../../../components/common-layout/ToggleTabs";
 import ProfileCard from "../../../components/app/ProfileCard";
 import ProfileCardSkeleton from "../../../components/app/skeleton-layout/ProfileCardSkeleton";
 import Pagination from "../../../components/more/Pagination";
 import PartnerPreferenceModal from "../../../components/app/PartnerPreferenceModal";
-import { dummyProfiles } from "../../../data/dummyProfiles";
+import { getProfiles } from "../../../lib/api/profiles";
+import type { BrowseProfile } from "../../../types/user";
+import type { Profile } from "../../../types/profile";
 
 const TABS = [
   { label: "Best match", value: "best" },
@@ -17,46 +20,60 @@ const TABS = [
 
 const CARDS_PER_PAGE = 10;
 
-function matchesQuery(profile: (typeof dummyProfiles)[0], q: string): boolean {
-  const s = q.toLowerCase();
-  return (
-    profile.name.toLowerCase().includes(s) ||
-    profile.location.toLowerCase().includes(s) ||
-    profile.education.toLowerCase().includes(s) ||
-    profile.work.toLowerCase().includes(s) ||
-    profile.country.toLowerCase().includes(s) ||
-    profile.religion.toLowerCase().includes(s) ||
-    profile.caste.toLowerCase().includes(s) ||
-    profile.height.toLowerCase().includes(s) ||
-    String(profile.age).includes(s) ||
-    profile.id.toLowerCase().includes(s)
-  );
+function calculateAge(dateOfBirth?: string): number {
+  if (!dateOfBirth) return 0;
+  const born = new Date(dateOfBirth);
+  const today = new Date();
+  let age = today.getFullYear() - born.getFullYear();
+  if (
+    today.getMonth() < born.getMonth() ||
+    (today.getMonth() === born.getMonth() && today.getDate() < born.getDate())
+  ) age--;
+  return age;
+}
+
+function toCardProfile(p: BrowseProfile): Profile {
+  return {
+    id: p.id,
+    name: p.name,
+    age: calculateAge(p.dateOfBirth),
+    location: p.city ?? "",
+    education: p.education ?? "",
+    country: p.country ?? "",
+    work: p.occupation ?? "",
+    religion: p.religion ?? "",
+    height: p.heightCm ? `${p.heightCm} cm` : "",
+    caste: p.caste ?? "",
+    isVerified: p.trustBadge ?? false,
+    isElite: p.isElite,
+    isNew: false,
+    isViewed: p.isViewed ?? false,
+    photo: p.photoUrl,
+    isPrivate: p.photoAccess === "locked",
+    isShortlisted: p.isShortlisted,
+  };
 }
 
 function MatchesContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const query = searchParams.get("q")?.trim() ?? "";
 
   const [showWelcome, setShowWelcome] = useState(() => searchParams.get("welcome") === "1");
   const [activeTab, setActiveTab] = useState("best");
   const [currentPage, setCurrentPage] = useState(1);
-  const isLoading = false; // set true when fetching from backend
 
-  const byTab =
-    activeTab === "elite"
-      ? dummyProfiles.filter((p) => p.isElite)
-      : activeTab === "viewed"
-        ? dummyProfiles.filter((p) => p.isViewed)
-        : dummyProfiles;
+  const filters: Record<string, string | number> = { page: currentPage, limit: CARDS_PER_PAGE };
+  if (activeTab === "elite") filters.isElite = "true";
+  if (activeTab === "viewed") filters.isViewed = "true";
 
-  const filtered = query ? byTab.filter((p) => matchesQuery(p, query)) : byTab;
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["profiles", activeTab, currentPage],
+    queryFn: () => getProfiles(filters),
+    staleTime: 5 * 60 * 1000, // keep in cache 5 min — no re-fetch on tab switch
+  });
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / CARDS_PER_PAGE));
-  const paginated = filtered.slice(
-    (currentPage - 1) * CARDS_PER_PAGE,
-    currentPage * CARDS_PER_PAGE
-  );
+  const profiles = data?.profiles.map(toCardProfile) ?? [];
+  const hasMore = data?.hasMore ?? false;
 
   function handleTabChange(value: string) {
     setActiveTab(value);
@@ -72,31 +89,35 @@ function MatchesContent() {
     <>
       <PartnerPreferenceModal isOpen={showWelcome} onClose={handleCloseWelcome} variant="onboarding" />
       <main className="min-h-screen bg-[#F8F5F2]">
-        {/* Toggle bar */}
         <div className="sticky top-[74px] z-10 w-full bg-white border-t border-[#EEEEEE]">
           <div className="flex justify-center items-center py-3 px-4">
             <ToggleTabs tabs={TABS} activeTab={activeTab} onTabChange={handleTabChange} />
           </div>
         </div>
 
-        {/* Cards section */}
         <div className="px-4 lg:px-8 pt-[27px] pb-4 flex flex-col gap-6 max-w-[1024px] mx-auto">
           {isLoading ? (
             Array.from({ length: 3 }).map((_, i) => <ProfileCardSkeleton key={i} />)
-          ) : paginated.length > 0 ? (
-            paginated.map((profile) => <ProfileCard key={profile.id} profile={profile} />)
+          ) : isError ? (
+            <div className="flex flex-col items-center justify-center py-24 text-center">
+              <p className="font-poppins text-[16px] font-medium text-[#B31B38]">
+                Failed to load profiles. Please try again.
+              </p>
+            </div>
+          ) : profiles.length > 0 ? (
+            profiles.map((profile) => <ProfileCard key={profile.id} profile={profile} />)
           ) : (
             <div className="flex flex-col items-center justify-center py-24 text-center">
               <p className="font-poppins text-[16px] font-medium text-[#888888]">
-                {query ? `No results for "${query}"` : "No profiles found in this category."}
+                No profiles found in this category.
               </p>
             </div>
           )}
 
-          {!isLoading && filtered.length > CARDS_PER_PAGE && (
+          {!isLoading && hasMore && (
             <Pagination
               currentPage={currentPage}
-              totalPages={totalPages}
+              totalPages={currentPage + 1}
               onPageChange={setCurrentPage}
             />
           )}

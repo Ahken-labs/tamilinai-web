@@ -40,16 +40,16 @@ export default function FAQSection() {
   const toggle = (i: number) => setOpenIndex(openIndex === i ? null : i);
 
   return (
-    <section className="w-full bg-light font-poppins px-5 md:px-10 xl:px-[120px] my-15 md:my-20 lg:my-30">
+    <section className="w-full bg-light font-poppins px-5 md:px-10 xl:px-[120px] my-12 md:my-18 lg:my-30">
 
       {/* Title */}
       <h2 className="font-bold text-dark text-center leading-[150%]
-        font-40">
+        font-32">
         {t("Your_Questions_Answered")}
       </h2>
 
       {/* FAQ list */}
-      <div className="mt-10 max-w-[900px] mx-auto">
+      <div className="mt-6 md:mt-8 lg:mt-10 max-w-[900px] mx-auto">
         {FAQS.map((faq, i) => (
           <FAQItem
             key={i}

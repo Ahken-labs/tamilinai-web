@@ -236,6 +236,8 @@ export default function UserProfilePage() {
                   height={266}
                   priority
                   className="h-full w-full object-cover"
+                  draggable={false}
+                  onContextMenu={(e) => e.preventDefault()}
                 />
               </div>
               {/* Union below image */}

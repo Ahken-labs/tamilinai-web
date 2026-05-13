@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Profile } from "../../types/profile";
-import { useShortlist } from "../../context/ShortlistContext";
 import {
   ProfileVerifiedBadgeIcon,
   EliteCrownIcon,
@@ -21,7 +22,7 @@ import {
   ShieldLockIcon,
 } from "../../assets/Icons";
 import Button from "../common-layout/Button";
-import { useRouter } from "next/navigation";
+import { shortlistProfile, unshortlistProfile } from "../../lib/api/profiles";
 
 interface ProfileCardProps {
   profile: Profile;
@@ -43,9 +44,27 @@ const TAG_STYLES: Record<string, string> = {
 
 export default function ProfileCard({ profile }: ProfileCardProps) {
   const router = useRouter();
-  const { isShortlisted, toggle } = useShortlist();
-  const shortlisted = isShortlisted(profile.id);
+  const [shortlisted, setShortlisted] = useState(profile.isShortlisted ?? false);
+  const [shortlistPending, setShortlistPending] = useState(false);
   const tags = getTags(profile);
+
+  async function handleShortlist() {
+    if (shortlistPending) return;
+    const next = !shortlisted;
+    setShortlisted(next); // optimistic
+    setShortlistPending(true);
+    try {
+      if (next) {
+        await shortlistProfile(profile.id);
+      } else {
+        await unshortlistProfile(profile.id);
+      }
+    } catch {
+      setShortlisted(!next); // revert on error
+    } finally {
+      setShortlistPending(false);
+    }
+  }
 
   const detailRows = [
     [
@@ -67,7 +86,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
   ];
 
   return (
-    <div className={`w-full select-none max-w-[944px] p-4 mx-auto rounded-[32px] bg-white 
+    <div className={`w-full select-none max-w-[944px] p-4 mx-auto rounded-[32px] bg-white
       ${profile.isElite ? "shadow-[0_4px_40px_0_rgba(255,140,60,0.18)]" : "shadow-none"} overflow-hidden`}>
       <div className="flex flex-col min-[840px]:flex-row">
         {/* Photo */}
@@ -79,15 +98,15 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
             className="object-cover"
             sizes="(max-width: 840px) 100vw, 220px"
             priority={false}
+            draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
           />
           {(!profile.photo || profile.isPrivate) && (
             <>
-              {/* smoke gradient */}
               <div
                 className="absolute bottom-0 left-0 right-0 h-[25%] pointer-events-none"
                 style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.00) 0%, #FFF 80%)" }}
               />
-              {/* label / icon */}
               <div className="absolute bottom-2.5 left-0 right-0 flex justify-center">
                 {profile.isPrivate ? (
                   <ShieldLockIcon />
@@ -100,6 +119,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
             </>
           )}
         </div>
+
         {/* Details */}
         <div className="flex-1 ml-0 min-[840px]:ml-5 pt-5 min-[840px]:pt-0 min-w-0">
           {/* Name + badge + tags */}
@@ -121,7 +141,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
                   {tag.label}
                 </span>
               ))}
-            </div >
+            </div>
           </div>
 
           {/* ID */}
@@ -150,10 +170,10 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
             <Button
               className="basis-full [@media(min-width:450px)]:basis-[calc(50%-0.375rem)] [@media(min-width:690px)]:basis-[calc(33.333%-0.5rem)] [@media(min-width:838px)]:basis-[calc(50%-0.375rem)] [@media(min-width:940px)]:basis-[calc(33.333%-0.5rem)]"
               text="View Full Profile"
-              onPress={() => router.push("/user-profile")}
+              onPress={() => router.push(`/user-profile?id=${profile.id}`)}
             />
             <Button
-              onPress={() => toggle(profile.id)}
+              onPress={handleShortlist}
               className="basis-full flex-1 [@media(min-width:450px)]:basis-[calc(50%-0.375rem)] [@media(min-width:690px)]:basis-[calc(33.333%-0.5rem)] [@media(min-width:838px)]:basis-[calc(50%-0.375rem)] [@media(min-width:940px)]:basis-[calc(33.333%-0.5rem)] !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
               text={shortlisted ? "Remove" : "Shortlist"}
               iconLeft={

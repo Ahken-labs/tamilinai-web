@@ -7,6 +7,9 @@ import Button from "../common-layout/Button";
 import InputBox from "../common-layout/InputBox";
 import FormCardLayout from "../common-layout/FormCardLayout";
 import { useLang } from "@/src/context/LangContext";
+import { createPassword, resetPassword } from "../../lib/api/auth";
+import { useAuth } from "../../hooks/useAuth";
+import { ApiRequestError } from "../../lib/api/client";
 
 type Props = {
     variant?: "register" | "reset";
@@ -15,6 +18,7 @@ type Props = {
 export default function CreatePasswordForm({ variant = "register" }: Props) {
     const { t } = useLang();
     const router = useRouter();
+    const { saveSession } = useAuth();
 
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -23,6 +27,8 @@ export default function CreatePasswordForm({ variant = "register" }: Props) {
 
     const [passwordError, setPasswordError] = useState("");
     const [confirmPasswordError, setConfirmPasswordError] = useState("");
+    const [submitError, setSubmitError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const [passwordFocused, setPasswordFocused] = useState(false);
     const [confirmFocused, setConfirmFocused] = useState(false);
@@ -70,8 +76,9 @@ export default function CreatePasswordForm({ variant = "register" }: Props) {
         password.length > 0 ||
         submitted;
 
-    const handleContinue = () => {
+    const handleContinue = async () => {
         setSubmitted(true);
+        setSubmitError("");
 
         if (!password.trim()) {
             setPasswordError("*Password is Required");
@@ -92,7 +99,27 @@ export default function CreatePasswordForm({ variant = "register" }: Props) {
         }
         setPasswordError("");
         setConfirmPasswordError("");
-        router.push(variant === "reset" ? "/login" : "/basic-details");
+
+        const tempToken = sessionStorage.getItem("inai_temp_token") ?? "";
+        setLoading(true);
+        try {
+            if (variant === "reset") {
+                await resetPassword({ tempToken, password });
+                sessionStorage.removeItem("inai_temp_token");
+                sessionStorage.removeItem("inai_reset_identifier");
+                router.replace("/login");
+            } else {
+                const res = await createPassword({ tempToken, password });
+                sessionStorage.removeItem("inai_temp_token");
+                saveSession(res);
+                router.replace("/basic-details");
+            }
+        } catch (err) {
+            const message = err instanceof ApiRequestError ? err.message : "Something went wrong. Please try again.";
+            setSubmitError(message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handlePasswordBlur = () => {
@@ -111,10 +138,13 @@ export default function CreatePasswordForm({ variant = "register" }: Props) {
             title={variant === "reset" ? t("Create_a_new_password") : t("Create_your_password")}
             subtitle={variant === "reset" ? t("Reset_new_password_subtitle") : t("Create_new_password_subtitle")}
             footer={
-                <div >
+                <div>
+                    {submitError && (
+                        <p className="mb-3 text-[12px] text-[#B31B38]">{submitError}</p>
+                    )}
                     <Button
-                        text={variant === "reset" ? t("Save_new_password") : t("Continue")}
-                        icon={<ArrowRightIcon />}
+                        text={loading ? "Please wait..." : (variant === "reset" ? t("Save_new_password") : t("Continue"))}
+                        icon={loading ? undefined : <ArrowRightIcon />}
                         onPress={handleContinue}
                         className="flex w-full"
                     />

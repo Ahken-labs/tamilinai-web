@@ -29,7 +29,7 @@ const ALL_CLOSED: Record<OpenKey, boolean> = {
   country: false, city: false, citizenship: false,
 };
 
-const STORAGE_KEY = "tamilinai_personal";
+const STORAGE_KEY = "inai_setup_personal";
 
 export default function PersonalDetailsForm() {
   const router = useRouter();

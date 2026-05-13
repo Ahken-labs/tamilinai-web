@@ -5,16 +5,17 @@ export interface RegisterPayload {
   phone: string;
   countryCode: string;
   email: string;
+  channel?: 'sms' | 'email';
 }
 
 export interface VerifyOtpPayload {
-  identifier: string;
   otp: string;
-  method: "sms" | "email";
+  registrationKey?: string;
+  identifier?: string;
 }
 
 export interface CreatePasswordPayload {
-  token: string;
+  tempToken: string;
   password: string;
 }
 
@@ -25,23 +26,23 @@ export interface LoginPayload {
 
 export interface ForgotPasswordPayload {
   identifier: string;
-  method: "sms" | "email";
+  method: 'sms' | 'email';
 }
 
 export interface ResetPasswordPayload {
-  token: string;
+  tempToken: string;
   password: string;
-}
-
-export interface AuthTokens {
-  accessToken: string;
-  refreshToken: string;
 }
 
 export interface AuthUser {
   id: string;
+  displayId: string;
   name: string;
-  email: string;
-  phone: string;
-  profileComplete: boolean;
+  isElite: boolean;
+  isProfileComplete: boolean;
+}
+
+export interface AuthResponse {
+  accessToken: string;
+  user: AuthUser;
 }

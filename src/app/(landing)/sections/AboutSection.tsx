@@ -5,20 +5,23 @@ import RegisterForm from "@/src/components/auth/RegisterForm";
 import { useLang } from "@/src/context/LangContext";
 import Image from "next/image";
 import { useState } from "react";
+import { CommunityIcon, Logo, StepFamilyIcon, TamilLetterIcon } from "@/src/assets/Icons";
 
-// ─── Data ───────
 const TRUST_CARDS = [
   {
-    title: "Diaspora_Connected",
-    desc: "Bridging_the_gap_between_Tamils_​​living_in_Jaffna_Vanni_Batticaloa_and_the_United_Kingdom_Canada_and_Europe",
+    title: "Exclusively_SriLankan_Tamil",
+    desc: "Not_an_Tamil_platform_not_a_panTamil_platform",
+    Icon: TamilLetterIcon,
   },
   {
-    title: "Parents_First_Choice",
-    desc: "Built_with_family_values_in_mind_making_it_safe_for_parents_to_search_for_their_children",
+    title: "One_united_community",
+    desc: "We_welcome_SriLankan_Tamil_families_from_every_region_of_Sri_Lanka_Jaffna_Kilinochchi_Mullaitivu_Vavuniya_Trincomalee_Batticaloa_Kandy_Colombo_and_beyond",
+    Icon: CommunityIcon,
   },
   {
-    title: "100_Verified_Profiles",
-    desc: "Every_single_profile_is_manually_verified_using_government_IDs_before_going_live",
+    title: "Familyfirst_design",
+    desc: "Share_profiles_with_parents_Involve_your_family_in_the_process_Because_Tamil_marriage_is_a_family_decision_and_our_platform_respects_that",
+    Icon: StepFamilyIcon,
   },
 ] as const;
 
@@ -37,12 +40,26 @@ export default function AboutSection() {
           background: "linear-gradient(180deg, #FFF7F0 0%, #FFEBEB 100%)",
         }}
       >
-        <div className="flex flex-col items-center px-5 pb-14 md:pb-18 lg:pb-20 ">
+        <div className="flex flex-col items-center px-5 pb-10 sm:pb-12 md:pb-14 lg:pb-18">
 
+          <h2
+            className="font-bold text-center leading-[150%] text-dark1
+              font-32 lg:mt-15 md:mt-14 mt-12"
+          >
+            {t("Your_profile_stays_under_your_control")}
+          </h2>
+          <div className="mt-4">
+            <p className="font-normal leading-[150%] text-dark text-center max-w-[730px] font-16" >
+              {t("We_built_privacy_into_every_part_of_Inai_lk_not_as_a_feature_you_activate")}
+            </p>
+            <p className="font-normal leading-[150%] text-dark text-center max-w-[730px] font-16" >
+              {t("but_as_the_foundation_of_how_the_platform_works")}
+            </p>
+          </div>
           {/* Phone image — simple CSS skeleton via bg + opacity trick */}
           <div
-            className="relative mt-15 md:mt-20 mx-auto w-full"
-            style={{ maxWidth: 565}}
+            className="relative mx-auto w-full mt-6 md:mt-8 lg:mt-10"
+            style={{ maxWidth: 565 }}
           >
             {/* Skeleton: just a rounded bg that disappears once image loads */}
             {!imageLoaded && (
@@ -63,58 +80,88 @@ export default function AboutSection() {
               }}
             />
           </div>
-
-          {/* Headline */}
-          <h2
-            className="font-bold text-center leading-[150%] text-dark1
-              font-40 sm:mt-10 md:mt-10 mt-8"
-          >
-            {t("Absolute_Privacy_Control")}
-          </h2>
-
-          {/* Body */}
-          <p
-            className="font-normal leading-[150%] text-dark
-              text-center max-w-[730px] font-16 mt-6"
-          >
-            {t("At_Tamilinai_you_have_100_control_over_who_views_your_profile_and_photos_Our_SafeView_technology_ensures_your_identity_is_protected_until_you_choose_to_share_it")}
-          </p>
-
+          <div className="mt-6 md:mt-8 lg:mt-10 flex flex-col items-center gap-5">
+            <PrivacyCard
+              title={t("Your_contact_details_are_private")}
+              desc={t("No_one_can_see_your_phone_number_or_email_until_a_mutual_match")}
+              badge={t("Always_on")}
+            />
+            <PrivacyCard
+              title={t("Your_photo_only_who_you_allow")}
+              desc={t("Choose_who_sees_your_photo_everyone_only_people_whose_interest")}
+              badge={t("You_decide")}
+            />
+          </div>
           {/* CTA */}
           <Button
-            text={t("Start_your_journey")}
-            className="mt-6 uppercase"
+            text={t("Create_my_profile")}
+            className="lg:mt-10 md:mt-8 mt-6"
             onPress={() => setOpenForm(true)}
-
           />
         </div>
       </section>
 
 
-      <section className="w-full bg-light font-poppins px-5 md:px-10 xl:px-[120px]">
-
-        {/* Section title */}
+      <section className="pt-14 md:pt-16 lg:pt-20 w-full bg-light font-poppins  lg:px-10">
+        <h3 className="font-16 text-dark font-medium text-center">{t("Why_Inai")}</h3>
         <h2
-          className="font-bold text-[#222222] text-center
-            text-[20px] sm:text-[28px] md:text-[32px] lg:text-[40px] mt-12 md:mt-20 lg:mt-30 mb-6 md:mb-10"
-          style={{
-            lineHeight: "44.48px",
-            letterSpacing: "0.64px",
-          }}
-        >
-          {t("Why_Our_Community_Trusts_Us")}
+          className="font-bold text-dark1 text-center font-32 mt-1 md:mt-2 max-w-[320px] md:max-w-[480px] lg:max-w-[600px] mx-auto" >
+          {t("The_only_platform_built_exclusively_for_SriLankan_Tamils")}
         </h2>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-5 md:gap-10">
-          {TRUST_CARDS.map((card, i) => (
-            <TrustCard
-              key={i}
-              title={t(card.title)}
-              desc={t(card.desc)}
-              // 3rd card spans full width on mobile only
-              className={i === 2 ? "col-span-2 md:col-span-1" : ""}
+        <div className="mt-4 mx-auto max-w-[1400px] md:mt-6 flex flex-col lg:grid lg:grid-cols-2 lg:gap-5">
+          {/* Left */}
+          <div className="h-full rounded-[16px] mx-auto md:max-w-[640px] lg:max-w-[690px] lg:bg-[#FFF6F0] lg:p-17 flex flex-col items-center lg:items-start px-4 sm:px-6 md:px-10">
+            <Logo className="w-10 h-10" />
+
+            <p className="mt-4 lg:mt-6 font-16 text-dark">
+              {t("About_Parah1")}
+              <br /><br />
+              {t("About_Parah2")}
+            </p>
+
+            <div className="hidden lg:block">
+              <Button
+                text={t("Join_today")}
+                onPress={() => setOpenForm(true)}
+                className="mt-6"
+              />
+            </div>
+          </div>
+
+          {/* Right */}
+          <div className="hidden lg:flex flex-col gap-5 h-full">
+            {TRUST_CARDS.map((card, i) => (
+              <TrustCard
+                key={i}
+                title={t(card.title)}
+                desc={t(card.desc)}
+                Icon={card.Icon}
+              />
+            ))}
+          </div>
+
+          <div className="lg:hidden flex lg:hidden mt-8 md:px-6 sm:px-5 px-4 gap-4 overflow-x-auto no-scrollbar">
+            {TRUST_CARDS.map((card, i) => (
+              <div
+                key={i}
+                className="w-[312px] shrink-0 flex"
+              >
+                <TrustCard
+                  title={t(card.title)}
+                  desc={t(card.desc)}
+                  Icon={card.Icon}
+                />
+              </div>
+            ))}
+          </div>
+          <div className="lg:hidden mt-5 mx-auto">
+            <Button
+              text={t("Join_today")}
+              onPress={() => setOpenForm(true)}
             />
-          ))}
+          </div>
+
         </div>
         <RegisterForm
           variant="modal"
@@ -126,32 +173,62 @@ export default function AboutSection() {
   );
 }
 
-// ─── Trust card ────────────
 function TrustCard({
   title,
   desc,
   className = "",
+  Icon,
 }: {
   title: string;
   desc: string;
   className?: string;
+  Icon?: React.ComponentType<{ className?: string }>;
 }) {
   return (
-    <div
-      className={`flex flex-col rounded-[16px] md:rounded-[32px] py-5 md:py-8 lg:py-10 px-3 md:px-5 lg:px-6 bg-cartbox1 ${className}`}
-    >
-      <span
-        className="font-semibold leading-[150%] text-dark
-         font-24"
-      >
+    <div className={`flex flex-col  rounded-[16px] p-4 bg-cartbox2 ${className}`} >
+      {Icon && (
+        <div className="mb-2">
+          <Icon className="w-6 h-6" />
+        </div>
+      )}
+
+      <span className="font-semibold leading-[150%] text-dark font-16">
         {title}
       </span>
-      <span
-        className="font-normal leading-[150%] text-dark
-          font-20 mt-4"
-      >
+
+      <span className="font-normal leading-[150%] text-dark font-16 mt-2 lg:pr-4">
         {desc}
       </span>
+    </div>
+  );
+}
+
+function PrivacyCard({
+  title,
+  desc,
+  badge,
+}: {
+  title: string;
+  desc: string;
+  badge: string;
+}) {
+  return (
+    <div className="w-full max-w-[460px] rounded-[16px] bg-light p-4">
+
+      <h2 className="font-16 font-semibold text-dark text-center">
+        {title}
+      </h2>
+
+      <p className="mt-2 font-16 text-dark text-center leading-[150%]">
+        {desc}
+      </p>
+
+      <div className="mt-3 flex justify-center">
+        <div className="rounded-[48px] bg-[#FFDED3] px-3 py-1 font-16">
+          {badge}
+        </div>
+      </div>
+
     </div>
   );
 }

@@ -67,10 +67,10 @@ function PhotoSection({ interest }: { interest: Interest }) {
     return (
       <div className="relative flex-shrink-0 w-[94px] h-14">
         <div className="absolute left-0 top-0 w-14 h-14 rounded-full overflow-hidden border-2 border-white z-20 bg-[#D9D9D9]">
-          <Image src={leftPhoto} fill className="object-cover" alt="my profile" sizes="56px" />
+          <Image src={leftPhoto} fill className="object-cover" alt="my profile" sizes="56px" draggable={false} onContextMenu={(e) => e.preventDefault()} />
         </div>
         <div className="absolute left-[38px] md:left-[38px] top-0 w-14 h-14 rounded-full overflow-hidden border-2 border-white z-10 bg-[#D9D9D9]">
-          <Image src={rightPhoto} fill className="object-cover" alt="their profile" sizes="56px" />
+          <Image src={rightPhoto} fill className="object-cover" alt="their profile" sizes="56px" draggable={false} onContextMenu={(e) => e.preventDefault()} />
         </div>
         <div className="absolute bottom-0 left-[52px] -translate-x-1/2 z-30">
           <AcceptedCheckBadge />
@@ -90,7 +90,7 @@ function PhotoSection({ interest }: { interest: Interest }) {
   return (
     <div className="relative flex-shrink-0 w-14 h-14">
       <div className="relative w-full h-full rounded-full overflow-hidden bg-[#D9D9D9]">
-        <Image src={photo} fill className={`object-cover${isSkipped ? " grayscale" : ""}`} alt={interest.profileName} sizes="56px" />
+        <Image src={photo} fill className={`object-cover${isSkipped ? " grayscale" : ""}`} alt={interest.profileName} sizes="56px" draggable={false} onContextMenu={(e) => e.preventDefault()} />
       </div>
       <div className={`absolute bottom-0 ${cornerClass}`}>{badge}</div>
     </div>

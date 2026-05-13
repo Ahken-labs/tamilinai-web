@@ -41,6 +41,18 @@
   }
 }
 
+@keyframes trust-marquee {
+  0% {
+    transform: translate3d(0,0,0);
+  }
+  100% {
+    transform: translate3d(-50%,0,0);
+  }
+}
+.animate-trust-marquee {
+  animation: trust-marquee 12s linear infinite;
+  will-change: transform;
+}
 .animate-shake {
   animation: shake 0.45s ease;
 }
@@ -118,6 +130,9 @@
 .font-32 {
   font-size: 18px;
 }
+.font-28 {
+  font-size: 16px;
+}
 .font-24 {
   font-size: 15px;
 }
@@ -139,6 +154,9 @@
     font-size: 26px;
   }
   .font-32 {
+    font-size: 20px;
+  }
+  .font-28 {
     font-size: 20px;
   }
   .font-24 {
@@ -165,6 +183,9 @@
   .font-32 {
     font-size: 26px;
   }
+  .font-28 {
+    font-size: 22px;
+  }
   .font-24 {
     font-size: 20px;
   }
@@ -188,6 +209,9 @@
   }
   .font-32 {
     font-size: 32px;
+  }
+  .font-28 {
+  font-size: 28px;
   }
   .font-24 {
     font-size: 24px;

@@ -1,56 +1,67 @@
 "use client";
 import { FlowerIcon, GlobeIcon, TrustPrivacyIcon, TrustVerifiedIcon } from "@/src/assets/Icons";
 import RegisterForm from "@/src/components/auth/RegisterForm";
+import Button from "@/src/components/common-layout/Button";
 import { useLang } from "@/src/context/LangContext";
 import Image from "next/image";
+import { useState } from "react";
 
 
 export default function HeroSection() {
     const { t } = useLang();
     const form = <RegisterForm variant="hero" />;
+    const [openForm, setOpenForm] = useState(false);
 
     return (
         <section className="w-full bg-light font-poppins">
-            {/* ── Image + content wrapper ── */}
             <div className="mx-3 sm:mx-4 md:mx-5 lg:mx-10 xl:mx-[40px]">
-
-                {/* ── Image + overlay ── */}
-                <div
-                    className="relative w-full overflow-hidden rounded-[60px]
-            h-[320px] sm:h-[360px] md:h-[380px] lg:h-[850px] select-none"
-                >
+                <div className="relative w-full overflow-hidden rounded-[60px]
+                h-[513px] md:h-[462px] lg:h-[850px] select-none" >
                     <Image
                         src="/images/hero_image.png"
                         alt="Tamil matrimony couple"
                         fill priority
-                        className="object-cover object-center"
+                        className="object-cover object-[25%_20%] md:object-[30%_100%] lg:object-center md:translate-y-0 translate-y-[-80px]"
                         sizes="(max-width: 1024px) 100vw, 1400px"
                     />
 
                     {/* Gradient overlay */}
                     <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(38,2,3,0.9)_0%,rgba(230,39,99,0.3)_50%,#260203_100%)]" />
 
-                    {/* Content inside the overlay — badge + (desktop-only form) + headline */}
-                    <div
-                        className="absolute inset-0 flex flex-col justify-between"
-                        style={{ padding: "40px 40px" }}
-                    >
-                        {/* Top row: badge left + form right (form hidden on mobile/tablet) */}
+                    <div className="absolute inset-0 flex flex-col justify-between pt-6 lg:pt-10 pb-6 lg:pb-10 px-6 md:px-10">
                         <div className="flex justify-between items-center h-full">
-
                             {/* Trust badge */}
-                            <div className="flex flex-col justify-between h-full w-full">
+                            <div className="flex flex-col justify-between items-center lg:items-start h-full w-full">
                                 <TrustBadge />
+                                <div className="relative mx-auto lg:mx-0 text-center lg:text-left">
+                                    {/* background shadow */}
+                                    <div className="absolute inset-x-[-24px] md:top-[-32px] top-[-62px] left-[-200px] right-[-200px] bottom-[-24px]
+                                                    rounded-[32px] lg:hidden 
+                                                    bg-[linear-gradient(180deg,rgba(38,2,3,0)_0%,rgba(38,2,3,0.95)_50%,#260203_100%)]
+                                                    blur-[14px] z-0" />
+                                    <div className=" max-w-[640px]">
 
-                                {/* Bottom text */}
-                                <div className="mr-2">
-                                    <h1 className="mb-2 font-semibold leading-[1.5] text-light font-32">
-                                        {t("Find_your_Tamil_life_partner_wherever_in_the_world_you_are")}
-                                    </h1>
-                                    <p className="font-16 leading-[1.5] text-white/85">
-                                        {t("Sri_Lankan_Tamil_matrimony_site_trusted_by_families_in_Sri_Lanka_London_Toronto_and_Sydney_verified_profiles")}
-                                    </p>
+                                        <div className="relative z-10">
+                                            <h1 className="font-semibold text-light font-32">
+                                                {t("Inai_lk_Sri_Lankan_Tamil_matrimony")}
+                                            </h1>
+
+                                            <h1 className="mb-2 font-medium italic text-light font-32">
+                                                {t("wherever_you_are")}
+                                            </h1>
+
+                                            <p className="font-16 leading-[1.5] text-white">
+                                                {t("hero_section_parah")}
+                                            </p>
+
+                                            <div className="lg:hidden">
+                                                <Button className="mt-2 w-full" text={t("Find_your_matches")}
+                                                    onPress={() => setOpenForm(true)} />
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
+
                             </div>
                             {/* Form — desktop only, right side */}
                             <div className="hidden lg:block w-[400px] shrink-0">
@@ -68,68 +79,85 @@ export default function HeroSection() {
             </div>
 
             {/* ── Trust bar ── */}
-            <div className="lg:pt-15 pt-10 px-6">
+            <div className="lg:pt-15 lg:pb-15 pt-10 py-8 border-b border-[#D8D8D8]">
                 <div className="max-w-[1260px] mx-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-6">
-
-                        {/* 1 */}
-                        <div className="flex items-center justify-center md:col-span-2 lg:col-span-1">
-                            <TrustItem
-                                icon={<TrustVerifiedIcon />}
-                                text={t("Verified_Profiles")}
-                            />
-                        </div>
-
-                        {/* 2 */}
+                    {/* Desktop */}
+                    <div className="hidden lg:grid grid-cols-3 gap-x-10 gap-y-6">
                         <div className="flex items-center justify-center">
-                            <TrustItem
-                                icon={<GlobeIcon className="w-6 h-6 text-dark shrink-0" />}
-                                text={t("Global_Tamil_Network")}
-                            />
+                            <TrustItem icon={<TrustVerifiedIcon />}
+                                text={t("Verified_Profiles")} />
                         </div>
-
-                        {/* 3 */}
                         <div className="flex items-center justify-center">
-                            <TrustItem
-                                icon={<TrustPrivacyIcon />}
-                                text={t("Absolute_Data_Privacy")}
-                            />
+                            <TrustItem icon={<GlobeIcon className="w-6 h-6 text-dark shrink-0" />}
+                                text={t("12_countries")} />
                         </div>
+                        <div className="flex items-center justify-center">
+                            <TrustItem icon={<TrustPrivacyIcon />}
+                                text={t("Free_to_join")} />
+                        </div>
+                    </div>
 
+                    {/* Mobile / tablet marquee */}
+                    <div className="lg:hidden overflow-hidden">
+                        <div className="flex w-max animate-trust-marquee">
+                            {/* Track 1 */}
+                            <div className="flex items-center gap-[48px] pr-[48px] shrink-0">
+                                <TrustItem icon={<TrustVerifiedIcon />}
+                                    text={t("Verified_Profiles")} />
+                                <TrustItem icon={<GlobeIcon className="w-6 h-6 text-dark shrink-0" />}
+                                    text={t("12_countries")} />
+                                <TrustItem icon={<TrustPrivacyIcon />}
+                                    text={t("Free_to_join")} />
+                            </div>
+                            {/* Track 2 */}
+                            <div className="flex items-center gap-[48px] pr-[48px] shrink-0">
+                                <TrustItem icon={<TrustVerifiedIcon />}
+                                    text={t("Verified_Profiles")} />
+                                <TrustItem icon={<GlobeIcon className="w-6 h-6 text-dark shrink-0" />}
+                                    text={t("12_countries")} />
+                                <TrustItem icon={<TrustPrivacyIcon />}
+                                    text={t("Free_to_join")} />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <RegisterForm
+                variant="modal"
+                open={openForm}
+                onClose={() => setOpenForm(false)}
+            />
 
         </section>
     );
 }
 
-// ─── TrustBadge ───────────────────────────────────────────────────────────────
 function TrustBadge() {
     const { t } = useLang();
     return (
-        <div className="flex items-center">
-            <FlowerIcon className="mr-3 shrink-0 h-[48px] w-[24px] md:h-[72px] md:w-[37px]" />
+        <div className="flex justify-center lg:justify-start items-center">
+            <FlowerIcon className="mr-2 shrink-0 h-12 w-6 md:h-12 md:w-6" />
             <div className="flex flex-col">
-                <p className="font-medium leading-[1.5] text-light font-24 text-center">
-                    {t("2026_MOST_TRUSTED")}
+                <p className="font-medium leading-[1.5] text-light lg:text-[18px] md:text-[16px] text-[14px] text-center">
+                    {t("Built_exclusively_for")}
                 </p>
-                <p className="font-medium leading-[1.5] text-light font-24">
-                    {t("Eelam_Tamil_Matrimony")}
+                <p className="font-medium leading-[1.5] text-light lg:text-[18px] md:text-[16px] text-[14px] text-center">
+                    {t("Sri_Lankan_Tamils")}
                 </p>
             </div>
-            <FlowerIcon className="ml-3 shrink-0 scale-x-[-1] h-[48px] w-[24px] md:h-[72px] md:w-[37px]" />
+            <FlowerIcon className="ml-2 shrink-0 scale-x-[-1] h-12 w-6 md:h-12 md:w-6" />
         </div>
     );
 }
 
-// ─── TrustItem ────────────────────────────────────────────────────────────────
 function TrustItem({ icon, text }: { icon: React.ReactNode; text: string }) {
     return (
-        <div className="flex items-start justify-center gap-3 text-left md:text-left max-w-[420px] mx-auto">
-            <div className="shrink-0">{icon}</div>
-
-            <span className="leading-[1.6] break-words">
+        <div className="flex shrink-0 items-center gap-3 min-w-max">
+            <div className="shrink-0">
+                {icon}
+            </div>
+            <span className="leading-none whitespace-nowrap">
                 {text}
             </span>
         </div>

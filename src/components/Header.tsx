@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useLang } from "../context/LangContext";
-import { ChevronIcon, Logo} from "../assets/Icons";
+import { ChevronIcon, Logo, TamilLanguageIcon } from "../assets/Icons";
 import Link from "next/link";
 
 const LANGUAGES = [
@@ -12,13 +12,23 @@ const LANGUAGES = [
 
 export default function Header() {
   const { lang, setLang, t } = useLang();
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+
+  const [desktopOpen, setDesktopOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const desktopRef = useRef<HTMLDivElement>(null);
+  const mobileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const close = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      if (desktopRef.current && !desktopRef.current.contains(e.target as Node)) {
+        setDesktopOpen(false);
+      }
+      if (mobileRef.current && !mobileRef.current.contains(e.target as Node)) {
+        setMobileOpen(false);
+      }
     };
+
     document.addEventListener("mousedown", close);
     return () => document.removeEventListener("mousedown", close);
   }, []);
@@ -27,120 +37,106 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/60 backdrop-blur-sm">
-      <div className="max-w-[1920px] mx-auto flex items-center justify-between px-5 md:px-10 xl:px-[120px] h-[76px]">
+      <div className="mx-auto flex h-[68px] lg:h-[76px] max-w-[1920px] items-center justify-between px-4 lg:px-10 xl:px-[120px]">
         {/* Logo */}
         <div className="flex items-center gap-2">
-          <Logo />
-          <span className="font-tamil font-semibold text-[20px] lg:text-[22px] leading-[1.5] tracking-[0.7px] text-dark">
-            இணை.com
+          <Logo className="w-9 lg:w-10 h-9 lg:h-10" />
+          <span className="font-tamil text-[16px] md:text-[18px] lg:text-[20px] font-semibold leading-[1.5] tracking-[0.7px] text-dark">
+            இணை.lk
           </span>
         </div>
 
         {/* Desktop right */}
-        <div className="hidden md:flex items-center">
-          <span className="font-poppins font-medium text-[16px] text-dark">
+        <div className="hidden items-center lg:flex">
+          <span className="font-poppins text-[16px] font-medium text-dark">
             {t("Already_a_member")}
           </span>
-
-          <Link
-            href="/login"
-            prefetch
-            className="font-poppins cursor-pointer font-medium text-[16px] text-[#B31B38] ml-4 select-none
-    rounded border border-[#B31B38] hover:bg-[#B31B38] hover:text-white transition-colors duration-150"
-            style={{ paddingTop: 4, paddingBottom: 4, paddingLeft: 24, paddingRight: 24, borderRadius: 8, borderWidth: 1.4 }}
-          >
-            {t("Log_In")}
-          </Link>
+          <LoginButton className="ml-4 hidden lg:flex" />
 
           {/* Language selector */}
-          <div ref={ref} className="relative ml-11">
-            <div onClick={() => setOpen(!open)} className="flex items-center gap-2 cursor-pointer select-none">
-              <span className="font-tamil font-medium text-[16px] text-dark">
+          <div ref={desktopRef} className="relative ml-11">
+            <button
+              type="button"
+              onClick={() => setDesktopOpen(!desktopOpen)}
+              className="flex items-center gap-2 cursor-pointer select-none"
+            >
+              <span className="font-tamil text-[16px] font-medium text-dark">
                 {currentLang.label}
               </span>
-              <ChevronIcon open={open} />
-            </div>
+              <ChevronIcon open={desktopOpen} />
+            </button>
 
-            {open && (
-              <div className="absolute right-0 mt-2 w-[148px] bg-white border border-[#f0e8ea] rounded-lg shadow-lg overflow-hidden z-50">
-                {LANGUAGES.map((l) => (
-                  <div
-                    key={l.value}
-                    onClick={() => { setLang(l.value); setOpen(false); }}
-                    className={`px-5 py-3 font-tamil text-[15px] font-medium cursor-pointer transition-colors
-                      ${lang === l.value ? "text-[#B31B38] bg-[#fdf0f2]" : "text-dark hover:bg-[#fdf0f2] hover:text-[#B31B38]"}`}
-                  >
-                    {l.label}
-                  </div>
-                ))}
-              </div>
-            )}
+            <LanguageDropdown
+              open={desktopOpen}
+              lang={lang}
+              setLang={setLang}
+              close={() => setDesktopOpen(false)}
+            />
           </div>
         </div>
 
-        {/* Mobile */}
-        <MobileMenu currentLang={currentLang} lang={lang} setLang={setLang} t={t} />
+        {/* Mobile right: login + language icon */}
+        <div className="flex items-center gap-3 md:gap-4 lg:hidden">
+          <LoginButton className="flex lg:hidden" />
+
+          <div ref={mobileRef} className="relative">
+            <button
+              type="button"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="cursor-pointer flex items-center justify-center rounded-full select-none"
+              aria-label="Toggle language"
+            >
+              <TamilLanguageIcon />
+            </button>
+
+            <LanguageDropdown
+              open={mobileOpen}
+              lang={lang}
+              setLang={setLang}
+              close={() => setMobileOpen(false)}
+            />
+          </div>
+        </div>
       </div>
     </header>
   );
 }
-function MobileMenu({
-  currentLang, lang, setLang, t,
-}: {
-  currentLang: { label: string; value: "en" | "ta" };
-  lang: "en" | "ta";
-  setLang: (l: "en" | "ta") => void;
-  t: (key: keyof typeof import("../assets/translation.json")["en"]) => string;
+
+function LanguageDropdown({ open, lang, setLang, close, }: {
+  open: boolean; lang: "en" | "ta"; setLang: (l: "en" | "ta") => void;
+  close: () => void;
 }) {
-  const [menu, setMenu] = useState(false);
-  const [langOpen, setLangOpen] = useState(false);
+  if (!open) return null;
 
   return (
-    <>
-      <button onClick={() => setMenu(!menu)} className="md:hidden flex flex-col justify-center cursor-pointer select-none gap-[5px] p-1" aria-label="Toggle menu">
-        <span className="block w-6 h-[2px] bg-[#222222] rounded" style={{ transition: "transform 0.2s", transform: menu ? "translateY(7px) rotate(45deg)" : "none" }} />
-        <span className="block w-6 h-[2px] bg-[#222222] rounded" style={{ transition: "opacity 0.2s", opacity: menu ? 0 : 1 }} />
-        <span className="block w-6 h-[2px] bg-[#222222] rounded" style={{ transition: "transform 0.2s", transform: menu ? "translateY(-7px) rotate(-45deg)" : "none" }} />
-      </button>
+    <div className="absolute right-0 z-50 mt-2 w-[148px] overflow-hidden rounded-[16px] border border-[#f0e8ea] bg-white p-1 shadow-lg">
+      {LANGUAGES.map((l) => (
+        <button key={l.value} type="button" onClick={() => {
+          setLang(l.value); close();
+        }}
+          className={`my-0.5 w-full rounded-[8px] px-5 py-2 text-left font-tamil text-[15px] font-medium transition-colors ${lang === l.value
+            ? "bg-[#fdf0f2] text-[#B31B38]"
+            : "text-dark hover:bg-[#EAEAEA] hover:text-dark"
+            }`} >
+          {l.label}
+        </button>
+      ))}
+    </div>
+  );
+}
 
-      {menu && (
-        // <div className="fixed top-[76px] left-0 right-0 bg-white/98 backdrop-blur-md shadow-lg flex flex-col gap-5 p-6 md:hidden z-50">
-        <div
-          className={`fixed  border-t border-[#EEE] top-[76px] left-0 right-0 z-50 bg-white/98 backdrop-blur-md shadow-lg 
-            flex flex-col gap-5 p-6 md:hidden transition-all duration-300 ease-in-out 
-            ${menu ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none"} `}
-        >
-          <span className="font-poppins font-medium text-[16px] text-dark">{t("Already_a_member")}</span>
-
-          <Link
-            href="/login"
-            prefetch
-            onClick={() => setMenu(false)}
-            className="font-poppins select-none font-medium text-[16px] text-[#B31B38] border border-[#B31B38] rounded w-full hover:bg-[#B31B38] hover:text-white transition-colors cursor-pointer text-center"
-            style={{ paddingTop: 8, paddingBottom: 8 }}
-          >
-            {t("Log_In")}
-          </Link>
-          <div onClick={() => setLangOpen(!langOpen)} className="flex items-center justify-between cursor-pointer select-none">
-            <span className="font-tamil font-medium text-[16px] text-dark">{currentLang.label}</span>
-            <ChevronIcon open={langOpen} />
-          </div>
-
-          {langOpen && (
-            <div className="border border-[#f0e8ea] rounded-lg overflow-hidden">
-              {LANGUAGES.map((l) => (
-                <div key={l.value}
-                  onClick={() => { setLang(l.value); setMenu(false); setLangOpen(false); }}
-                  className={`px-4 py-3 font-tamil text-[15px] font-medium cursor-pointer transition-colors
-                    ${lang === l.value ? "bg-[#fdf0f2] text-[#B31B38]" : "text-dark hover:bg-[#fdf0f2] hover:text-[#B31B38]"}`}
-                >
-                  {l.label}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-    </>
+function LoginButton({ className = "", }: {
+  className?: string;
+}) {
+  const { t } = useLang();
+  return (
+    <Link
+      href="/login"
+      prefetch
+      className={`cursor-pointer select-none items-center justify-center rounded border border-[#B31B38] 
+        font-poppins text-[14px] md:text-[16px] font-medium text-[#B31B38] transition-colors duration-150 hover:bg-[#B31B38] hover:text-white 
+        ${className} py-1 px-4 rounded-[8px] border-[1.4px]`} >
+      {t("Log_In")}
+    </Link>
   );
 }

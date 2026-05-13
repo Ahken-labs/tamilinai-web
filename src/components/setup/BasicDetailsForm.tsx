@@ -14,7 +14,7 @@ import { filterItems } from "../../utils/formUtils";
 import { useDOBState } from "../../hooks/useDOBState";
 import { MARITAL_OPTIONS, HEIGHTS, WEIGHTS } from "@/src/constants/profiles";
 
-const STORAGE_KEY = "tamilinai_basic";
+const STORAGE_KEY = "inai_setup_basic";
 
 function getSavedBasicDetails() {
   if (typeof window === "undefined") return {};

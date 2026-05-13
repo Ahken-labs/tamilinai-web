@@ -1,13 +1,13 @@
 import AppHeader from "../../components/AppHeader";
 import Footer from "../../components/Footer";
-import { ShortlistProvider } from "../../context/ShortlistContext";
+import AuthGuard from "../../components/AuthGuard";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ShortlistProvider>
+    <AuthGuard>
       <AppHeader />
       {children}
       <Footer variant="app" />
-    </ShortlistProvider>
+    </AuthGuard>
   );
 }
