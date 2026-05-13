@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { FaWhatsapp } from "react-icons/fa";
 import { useLang } from "@/src/context/LangContext";
-import { UnionDesignIcon, UnionFullIcon } from "@/src/assets/Icons";
+import {  UnionFullIcon } from "@/src/assets/Icons";
 
 const WHATSAPP_NUMBER = "+94762360948";
 

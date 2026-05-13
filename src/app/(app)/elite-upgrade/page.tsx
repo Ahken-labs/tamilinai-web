@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Button from "@/src/components/common-layout/Button";
-import { CheckboxIcon, CheckmarkIcon, EliteCrownIcon, ProfileIcon, ProfileVisibilityIcon, ResponseIcon, SmsIcon, StepPreferencesIcon, StepProfileIcon } from "@/src/assets/Icons";
+import { CheckboxIcon, CheckmarkIcon, EliteCrownIcon, ProfileVisibilityIcon, ResponseIcon, StepPreferencesIcon } from "@/src/assets/Icons";
 import { GoHeartFill } from "react-icons/go";
 import { FaWhatsapp } from "react-icons/fa";
 import Link from "next/link";

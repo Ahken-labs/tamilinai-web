@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import {
     ArrowRightIcon,
     CloseCircleIcon,
@@ -15,7 +15,7 @@ import { COUNTRIES } from "../../constants/countries";
 import DropdownField from "../common-layout/DropdownField";
 import Link from "next/link";
 import { AUTO_GENDER, PROFILES } from "@/src/constants/profiles";
-import { register } from "../../lib/api/auth";
+// import { register } from "../../lib/api/auth";
 import { ApiRequestError } from "../../lib/api/client";
 
 type RegisterFormProps = {
@@ -30,7 +30,7 @@ export default function RegisterForm({
     onClose,
 }: RegisterFormProps) {
     const { t } = useLang();
-    const router = useRouter();
+    // const router = useRouter();
 
     const [mounted, setMounted] = useState(variant === "hero" ? true : open);
     const [animateIn, setAnimateIn] = useState(open);

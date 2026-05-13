@@ -104,8 +104,8 @@ export default function ContactSection() {
                         className="mt-2 font-medium text-dark1 italic text-center leading-[150%] 
                     font-28
                     max-w-[328px] md:max-w-[640px] mx-auto" >
-                        <span className="block">"{t("More_than_just_matchmaking")}</span>
-                        <span className="block">{t("We_are_your_bridge_to_home")}"</span>
+                        <span className="block">&ldquo;{t("More_than_just_matchmaking")}</span>
+                        <span className="block">{t("We_are_your_bridge_to_home")}&rdquo;</span>
 
                     </h2>
                     <p className="mt-5 font-16 leading-[150%] text-dark font-normal text-center">
