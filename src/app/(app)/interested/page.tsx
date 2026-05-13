@@ -81,16 +81,22 @@ export default function InterestedPage() {
           </div>
         ) : items.length > 0 ? (
           <div className="max-w-[926px] mx-auto rounded-[20px] overflow-hidden">
-            {items.map((
-              // item, idx
-            ) => (
-              <div></div>
-              // <InterestCard
-              //   key={item.id}
-              //   interest={item}
-              //   isLast={idx === items.length - 1}
-              // />
-            ))}
+            {/* {items.map((item, idx) => (
+              <InterestCard
+                key={item.id}
+                interest={item}
+                isLast={idx === items.length - 1}
+              />
+            ))} */}
+            {items.map((_, idx) => (
+  <div key={idx} />
+  
+  // <InterestCard
+  //   key={item.id}
+  //   interest={item}
+  //   isLast={idx === items.length - 1}
+  // />
+))}
           </div>
         ) : (
           <div className="flex justify-center py-24">
