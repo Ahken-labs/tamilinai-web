@@ -89,7 +89,7 @@ function FAQItem({
           cursor-pointer md:py-4 lg:py-5 py-4 group"
       >
         <span className="font-normal text-dark2 leading-[150%]
-          text-[14px] md:text-[16px] lg:text-[20px]">
+          text-[15px] md:text-[16px] lg:text-[20px]">
           {question}
         </span>
 
@@ -108,7 +108,7 @@ function FAQItem({
         style={{ maxHeight: isOpen ? 400 : 0 }}
       >
         <p className="font-normal text-secondary2 leading-[150%]
-          font-16 md:pb-10 pb-8">
+          text-[14px] lg:text-[16px] md:pb-10 pb-8">
           {answer}
         </p>
       </div>

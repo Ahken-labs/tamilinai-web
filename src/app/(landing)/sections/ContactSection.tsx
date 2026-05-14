@@ -37,14 +37,14 @@ export default function ContactSection() {
         <section className="w-full bg-light overflow-hidden font-poppins mt-14 md:mt-16 lg:mt-20">
             <div className="mx-4 sm:mx-6 md:mx-10">
                 <h1 className="font-32 font-bold text-dark1 text-center mx-auto max-w-[260px] sm:max-w-[300px] md:max-w-[390px] lg:max-w-[420px]">{t("The_SriLankan_Tamil_diaspora_is_our_home_too")}</h1>
-                <p className="mt-2 md:mt-4 lg:mt-6 font-16 text-dark text-center md:max-w-[640px] lg:max-w-[800px] mx-auto">{t("Wherever_life_has_taken_your_family_Inai_connects_you_with_Eelam_Tamil_partners_who_share_your_heritage_across_every_country_every_city_every_timezone")}</p>
+                <p className="mt-3 md:mt-4 lg:mt-6 md:text-[16px] text-[15px] text-dark text-center md:max-w-[640px] lg:max-w-[800px] mx-auto">{t("Wherever_life_has_taken_your_family_Inai_connects_you_with_Eelam_Tamil_partners_who_share_your_heritage_across_every_country_every_city_every_timezone")}</p>
 
                 <div className="mt-5 md:mt-6 lg:mt-8 flex flex-wrap justify-center gap-2 mx-auto md:max-w-[640px] lg:max-w-[800px] ">
                     {COUNTRIES.map((country, i) => (
                         <div
                             key={i}
                             className={`rounded-[48px] bg-[#F0F0F0] px-3 py-1
-                                font-14 text-dark whitespace-nowrap
+                                lg:text-[16px] sm:text-[14px] text-[13px] text-dark whitespace-nowrap
                                 ${i > 9 && country !== "+ More" ? "hidden lg:block" : ""}`}>
                             {country}
                         </div>
@@ -53,6 +53,7 @@ export default function ContactSection() {
                 <div className="justify-center flex mt-5 lg:mt-8">
                     <Button
                         text={t("Find_Matches")}
+                        className="!md:text-[16px] !text-[15px]"
                         onPress={() => setOpenForm(true)}
                     />
                 </div>
@@ -97,7 +98,7 @@ export default function ContactSection() {
                             priority
                         />
                     </div>
-                    <p className="font-16 font-medium text-dark">
+                    <p className="md:text-[16px] text-[15px] font-medium text-dark">
                         {t("Our_story")}
                     </p>
                     <h2
@@ -108,13 +109,13 @@ export default function ContactSection() {
                         <span className="block">{t("We_are_your_bridge_to_home")}&rdquo;</span>
 
                     </h2>
-                    <p className="mt-5 font-16 leading-[150%] text-dark font-normal text-center">
+                    <p className="mt-5 md:text-[16px] text-[15px] leading-[150%] text-dark font-normal text-center">
                         {t("vision_parah1")} <br /><br />
                         {t("vision_parah2")}
                     </p>
                     <Button
                         text={t("Begin_your_journey")}
-                        className="mt-5"
+                        className="mt-5 !md:text-[16px] !text-[15px]"
                         onPress={() => setOpenForm(true)}
                     />
                     <div className="scale-y-[-1] lg:hidden flex justify-center mt-5">
@@ -134,7 +135,7 @@ export default function ContactSection() {
                     onClose={() => setOpenForm(false)}
                 />
             </div>
-            <div className="mt-10 lg:mt-18 font-tamil text-dark font-20 mx-auto text-center">
+            <div className="mt-10 lg:mt-18 font-tamil text-dark lg:text-[20px] md:text-[18px] text-[16px] mx-auto text-center">
                 தமிழால் இணைவதால்,<br />
                 தமிழ் மணங்களை இணைப்பதால்,<br />
                 இணைகளை இணைப்பதால்,<br />

@@ -287,7 +287,7 @@ Email: ${email.trim() || "-"}`
                     </span>
                 </button>
                 <div className="flex flex-col gap-2">
-                    <p className="text-center text-[10px] md:text-[12px] leading-[1.5] text-secondary1">
+                    <p className="text-center text-[11px] sm:text-[12px] md:text-[14px] leading-[1.5] text-secondary1">
                         {t("Takes_2_minutes_Your_data_is_never_shared_without_your_permission")}
                     </p>
                     {variant === "modal" && (

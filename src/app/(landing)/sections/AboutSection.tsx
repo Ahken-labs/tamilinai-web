@@ -49,10 +49,10 @@ export default function AboutSection() {
             {t("Your_profile_stays_under_your_control")}
           </h2>
           <div className="mt-4">
-            <p className="font-normal leading-[150%] text-dark text-center max-w-[730px] font-16" >
+            <p className="text-[15px] md:text-[16px] font-normal leading-[150%] text-dark text-center max-w-[730px]" >
               {t("We_built_privacy_into_every_part_of_Inai_lk_not_as_a_feature_you_activate")}
             </p>
-            <p className="font-normal leading-[150%] text-dark text-center max-w-[730px] font-16" >
+            <p className="text-[15px] md:text-[16px] font-normal leading-[150%] text-dark text-center max-w-[730px]" >
               {t("but_as_the_foundation_of_how_the_platform_works")}
             </p>
           </div>
@@ -95,7 +95,7 @@ export default function AboutSection() {
           {/* CTA */}
           <Button
             text={t("Create_my_profile")}
-            className="lg:mt-10 md:mt-8 mt-6"
+            className="lg:mt-10 md:mt-8 mt-6 !md:text-[16px] !text-[15px]"
             onPress={() => setOpenForm(true)}
           />
         </div>
@@ -103,7 +103,7 @@ export default function AboutSection() {
 
 
       <section className="pt-14 md:pt-16 lg:pt-20 w-full bg-light font-poppins  lg:px-10">
-        <h3 className="font-16 text-dark font-medium text-center">{t("Why_Inai")}</h3>
+        <h3 className="md:text-[16px] text-[15px] text-dark font-medium text-center">{t("Why_Inai")}</h3>
         <h2
           className="font-bold text-dark1 text-center font-32 mt-1 md:mt-2 max-w-[320px] md:max-w-[480px] lg:max-w-[600px] mx-auto" >
           {t("The_only_platform_built_exclusively_for_SriLankan_Tamils")}
@@ -114,7 +114,7 @@ export default function AboutSection() {
           <div className="h-full rounded-[16px] mx-auto md:max-w-[640px] lg:max-w-[690px] lg:bg-[#FFF6F0] lg:p-17 flex flex-col items-center lg:items-start px-4 sm:px-6 md:px-10">
             <Logo className="w-10 h-10" />
 
-            <p className="mt-4 lg:mt-6 font-16 text-dark">
+            <p className="mt-4 lg:mt-6 text-[15px] md:text-[16px] text-dark">
               {t("About_Parah1")}
               <br /><br />
               {t("About_Parah2")}
@@ -124,7 +124,7 @@ export default function AboutSection() {
               <Button
                 text={t("Join_today")}
                 onPress={() => setOpenForm(true)}
-                className="mt-6"
+                className="mt-6 !md:text-[16px] !text-[15px]"
               />
             </div>
           </div>
@@ -158,6 +158,7 @@ export default function AboutSection() {
           <div className="lg:hidden mt-5 mx-auto">
             <Button
               text={t("Join_today")}
+              className="!md:text-[16px] !text-[15px]"
               onPress={() => setOpenForm(true)}
             />
           </div>
@@ -192,11 +193,11 @@ function TrustCard({
         </div>
       )}
 
-      <span className="font-semibold leading-[150%] text-dark font-16">
+      <span className="font-semibold leading-[150%] text-dark md:text-[16px] text-[15px]">
         {title}
       </span>
 
-      <span className="font-normal leading-[150%] text-dark font-16 mt-2 lg:pr-4">
+      <span className="font-normal leading-[150%] text-dark lg:text-[16px] text-[14px] mt-2 lg:pr-4">
         {desc}
       </span>
     </div>
@@ -215,16 +216,16 @@ function PrivacyCard({
   return (
     <div className="w-full max-w-[460px] rounded-[16px] bg-light p-4">
 
-      <h2 className="font-16 font-semibold text-dark text-center">
+      <h2 className="md:text-[18px] text-[16px] font-semibold text-dark text-center">
         {title}
       </h2>
 
-      <p className="mt-2 font-16 text-dark text-center leading-[150%]">
+      <p className="mt-2 md:text-[16px] text-[15px] text-dark text-center leading-[150%]">
         {desc}
       </p>
 
       <div className="mt-3 flex justify-center">
-        <div className="rounded-[48px] bg-[#FFDED3] px-3 py-1 font-16">
+        <div className="md:text-[16px] text-[15px] rounded-[48px] bg-[#FFDED3] px-3 py-1">
           {badge}
         </div>
       </div>

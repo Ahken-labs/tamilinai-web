@@ -19,7 +19,7 @@ export function HelpSection() {
       {/* Background Design */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         {/* Mobile + md: left side, half visible */}
-        <div className="absolute left-[-75%] sm:left-[-35%] md:left-[-35%] lg:left-[0%] top-[60px] lg:top-[0px]">
+        <div className="absolute left-[-75%] sm:left-[-35%] md:left-[-35%] lg:left-[0%] top-[85px] lg:top-[0px]">
           <div className="relative">
             <UnionFullIcon className="w-[620px] md:w-[720px] lg:w-[570px] h-auto opacity-100" />
             <div className="absolute inset-0 lg:bg-gradient-to-l bg-gradient-to-b from-[#FFF7F0] via-[#FFF7F0]/35 to-transparent blur-3xm lg:blur-3xl" />
@@ -48,7 +48,7 @@ export function HelpSection() {
             className="font-bold text-dark font-32">
             {t("Need_Help_Finding_a_Match")}
           </h2>
-          <p className="mt-2 text-dark font-16 max-w-[330px] md:max-w-[510px] lg-max-w-none" >
+          <p className="mt-2 text-dark text-[15px] lg:text-[16px] max-w-[330px] md:max-w-[510px] lg-max-w-none" >
             {t("Chat_with_Tamilinais_friendly_support_team_for_profile_creation_photo_uploads_or_personalized_matchmaking_assistance")}
           </p>
 
@@ -65,7 +65,7 @@ export function HelpSection() {
                 rounded-[31px]
                 text-[#222222]
                 bg-[#fff]
-               text-[14px] md:text-[16px] font-medium
+               text-[15px] md:text-[16px] font-medium
                 transition hover:bg-[#075E54] hover:text-white
               "
             >

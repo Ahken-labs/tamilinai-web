@@ -94,7 +94,7 @@ export default function HowItWorksSection() {
           <div className="mt-6 md:mt-8 lg:mt-10 flex justify-center">
             <Button
               text={t("Register_for_free")}
-              className="px-16"
+              className="px-16 !md:text-[16px] !text-[15px]"
               onPress={() => setOpenForm(true)}
             />
           </div>
@@ -139,11 +139,11 @@ function StepRow({
 
       {/* Text */}
       <div className="flex flex-col">
-        <span className="font-20 font-medium leading-[1.4] text-dark">
+        <span className="text-[16px] lg:text-[20px] font-medium leading-[1.4] text-dark">
           {title}
         </span>
 
-        <span className="mt-1 font-16 leading-[1.5] text-secondary4">
+        <span className="mt-1 text-[14px] lg:text-[16px] leading-[1.5] text-secondary4">
           {desc}
         </span>
       </div>
