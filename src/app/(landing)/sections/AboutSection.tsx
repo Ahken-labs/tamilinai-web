@@ -58,7 +58,7 @@ export default function AboutSection() {
           </div>
           {/* Phone image — simple CSS skeleton via bg + opacity trick */}
           <div
-            className="relative mx-auto w-full mt-6 md:mt-8 lg:mt-10"
+            className="relative mx-auto border-b-2 border-[#FFDED3]/50 w-full mt-6 md:mt-8 lg:mt-10"
             style={{ maxWidth: 565 }}
           >
             {/* Skeleton: just a rounded bg that disappears once image loads */}

@@ -50,7 +50,7 @@ export default function HeroSection() {
                                                 {t("wherever_you_are")}
                                             </h1>
 
-                                            <p className="font-16 leading-[1.5] text-white">
+                                            <p className="lg:text-[16px] text-[14px] leading-[1.5] text-white">
                                                 {t("hero_section_parah")}
                                             </p>
 

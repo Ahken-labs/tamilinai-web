@@ -11,7 +11,7 @@ export function HelpSection() {
   const { t } = useLang();
   return (
     <section
-      className="relative w-full overflow-hidden mt-10 lg:mt-18"
+      className="relative w-full overflow-hidden mt-10 lg:mt-18 font-poppins"
       style={{
         background: "linear-gradient(180deg, #FFF7F0 0%, #FFEBEB 100%)",
       }}

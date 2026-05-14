@@ -147,7 +147,7 @@ Email: ${email.trim() || "-"}`
     };
 
     const body = (
-        <div className="flex flex-col gap-6 px-4 md:px-6 pb-6 pt-6 md:pt-8">
+        <div className="flex flex-col gap-6 px-4 md:px-6 pb-6 pt-6 md:pt-8 max-w-[640px] mx-auto">
             {variant === "modal" ? (
                 <div className="flex items-start justify-between gap-4">
                     <div className="flex flex-col">
@@ -310,7 +310,7 @@ Email: ${email.trim() || "-"}`
     if (variant === "hero") {
         return (
             <div className="w-full flex justify-center">
-                <div className="w-full max-w-[800px] lg:w-[400px] rounded-[20px] bg-white shadow-[0px_2px_16px_0px_rgba(0,0,0,0.12)]">
+                <div className="w-full lg:w-[400px] rounded-[20px] bg-white shadow-[0px_2px_16px_0px_rgba(0,0,0,0.12)]">
                     {body}
                 </div>
             </div>
