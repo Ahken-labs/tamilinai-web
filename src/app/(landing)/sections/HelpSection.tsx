@@ -5,7 +5,7 @@ import { FaWhatsapp } from "react-icons/fa";
 import { useLang } from "@/src/context/LangContext";
 import {  UnionFullIcon } from "@/src/assets/Icons";
 
-const WHATSAPP_NUMBER = "+94762360948";
+const WHATSAPP_NUMBER = "+94750207507";
 
 export function HelpSection() {
   const { t } = useLang();
@@ -48,7 +48,7 @@ export function HelpSection() {
             className="font-bold text-dark font-32">
             {t("Need_Help_Finding_a_Match")}
           </h2>
-          <p className="mt-2 text-dark text-[15px] lg:text-[16px] max-w-[330px] md:max-w-[510px] lg-max-w-none" >
+          <p className="mt-2 text-dark text-[15px] lg:text-[16px] max-w-[330px] md:max-w-[510px] mx-auto lg-max-w-none" >
             {t("Chat_with_Tamilinais_friendly_support_team_for_profile_creation_photo_uploads_or_personalized_matchmaking_assistance")}
           </p>
 
