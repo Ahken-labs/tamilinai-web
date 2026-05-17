@@ -20,6 +20,7 @@ import {
 import Image from "next/image";
 import { getProgressWidth } from "../utils/getProgressWidth";
 import PartnerPreferenceModal from "./app/PartnerPreferenceModal";
+import LogoutPopup from "./app/LogoutPopup";
 
 const trustBadge = false;
 const isElite = false;
@@ -37,6 +38,7 @@ export default function AppHeader() {
   const photo = "/images/no_photo.png";
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [openModal, setOpenModal] = useState<null | "search" | "edit">(null);
+  const [logoutOpen, setLogoutOpen] = useState(false);
 
   // Lock body scroll when mobile drawer is open
   useEffect(() => {
@@ -173,7 +175,7 @@ export default function AppHeader() {
                       ...(trustBadge || isElite ? [] : [{ text: "Upgrade to Elite", Icon: EliteIcon, href: "/elite-upgrade" }]),
                       { text: "Edit partner preference", Icon: HeartIcon, onClick: () => { setSettingsOpen(false); setOpenModal("edit"); } },
                       { text: "Account settings", Icon: SettingIcon, href: "/account-settings" },
-                      { text: "Logout", Icon: LogoutIcon, onClick: () => { setSettingsOpen(false); } },
+                      { text: "Logout", Icon: LogoutIcon, onClick: () => { setSettingsOpen(false); setLogoutOpen(true); } },
                     ].map(({ text, Icon, href, onClick }) =>
                       href ? (
                         <Link
@@ -390,6 +392,7 @@ export default function AppHeader() {
                 Icon: LogoutIcon,
                 onClick: () => { closeMobile(); },
                 danger: true,
+              onClick: () => { closeMobile(); setLogoutOpen(true); },
               },
             ].map(({ text, Icon, href, onClick, danger }) =>
               href ? (
@@ -434,6 +437,8 @@ export default function AppHeader() {
         onClose={() => setOpenModal(null)}
         variant={openModal ?? "edit"}
       />
+
+      <LogoutPopup isOpen={logoutOpen} onClose={() => setLogoutOpen(false)} />
     </>
   );
 }

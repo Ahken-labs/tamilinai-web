@@ -1,4 +1,5 @@
 import OtpForm from "../../../components/auth/OtpForm";
+import FlowGuard from "../../../components/guards/FlowGuard";
 
 export default async function Page({
   searchParams,
@@ -6,5 +7,9 @@ export default async function Page({
   searchParams: Promise<{ phone?: string; countryCode?: string; email?: string }>;
 }) {
   const params = await searchParams;
-  return <OtpForm variant="reset" searchParams={params} />;
+  return (
+    <FlowGuard requiredKey="inai_reset_identifier">
+      <OtpForm variant="reset" searchParams={params} />
+    </FlowGuard>
+  );
 }

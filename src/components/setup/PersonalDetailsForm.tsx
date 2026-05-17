@@ -15,6 +15,7 @@ import {
   CASTE_OPTIONS_CHRISTIAN,
 } from "@/src/constants/profiles";
 import { COUNTRY_OPTIONS } from "@/src/constants/location";
+import { savePersonalDetails } from "../../lib/api/user";
 
 function filterItems(items: string[], query: string) {
   if (!query || items.includes(query)) return items;
@@ -107,6 +108,10 @@ export default function PersonalDetailsForm() {
 
     persist();
     router.push("/photo-upload");
+
+    // Fire in background — user is already navigating forward
+    savePersonalDetails({ education, occupation, religion, caste, country, city, citizenship })
+      .catch(() => { /* user can re-enter in profile */ });
   }
 
   return (

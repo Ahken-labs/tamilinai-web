@@ -4,8 +4,7 @@ import Image from "next/image";
 import { FaWhatsapp } from "react-icons/fa";
 import { useLang } from "@/src/context/LangContext";
 import {  UnionFullIcon } from "@/src/assets/Icons";
-
-const WHATSAPP_NUMBER = "+94750207507";
+import { CONTACT } from "@/src/lib/contact";
 
 export function HelpSection() {
   const { t } = useLang();
@@ -55,7 +54,7 @@ export function HelpSection() {
           {/* CTA WhatsApp */}
           <div className="mt-10 lg:mt-6">
             <a
-              href={`https://wa.me/${WHATSAPP_NUMBER.replace("+", "")}`}
+              href={CONTACT.whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="

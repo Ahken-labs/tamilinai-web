@@ -1,0 +1,15 @@
+export const CONTACT = {
+  whatsappNumber: "94750207507",
+  get whatsappUrl() {
+    return `https://wa.me/${this.whatsappNumber}`;
+  },
+  socials: {
+    facebook: "https://www.facebook.com/share/18QWf8Lxp1/",
+    twitter: "https://x.com/Inai_lk",
+    instagram: "https://www.instagram.com/inai.lk/",
+  },
+  company: {
+    name: "Ahken Nexus (Pvt) Ltd.",
+    website: "https://ahkenlabs.com/",
+  },
+} as const;

@@ -13,8 +13,21 @@ import { validateDOB } from "../../utils/dateUtils";
 import { filterItems } from "../../utils/formUtils";
 import { useDOBState } from "../../hooks/useDOBState";
 import { MARITAL_OPTIONS, HEIGHTS, WEIGHTS } from "@/src/constants/profiles";
+import { saveBasicDetails } from "../../lib/api/user";
 
 const STORAGE_KEY = "inai_setup_basic";
+
+const MONTH_TO_NUM: Record<string, string> = {
+  January: "01", February: "02", March: "03", April: "04",
+  May: "05", June: "06", July: "07", August: "08",
+  September: "09", October: "10", November: "11", December: "12",
+};
+const MARITAL_STATUS_MAP: Record<string, string> = {
+  Unmarried: "unmarried",
+  "Widow/Widower": "widow_widower",
+  Divorced: "divorced",
+  Separated: "separated",
+};
 
 function getSavedBasicDetails() {
   if (typeof window === "undefined") return {};
@@ -83,6 +96,17 @@ export default function BasicDetailsForm() {
     } catch { /* storage unavailable */ }
 
     router.push("/personal-details");
+
+    // Fire in background — user is already navigating forward
+    const mm = MONTH_TO_NUM[birthMonth] ?? birthMonth;
+    saveBasicDetails({
+      dateOfBirth: `${birthYear}-${mm}-${birthDay.padStart(2, "0")}`,
+      maritalStatus: MARITAL_STATUS_MAP[maritalStatus] ?? maritalStatus.toLowerCase(),
+      heightCm: parseInt(height, 10) || undefined,
+      weightKg: parseInt(weight, 10) || undefined,
+      hasPhysicalChallenge: physicalChallenge === "yes",
+      disabilityType: physicalChallenge === "yes" ? disability : undefined,
+    }).catch(() => { /* user can re-enter in profile */ });
   };
 
   return (

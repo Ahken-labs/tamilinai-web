@@ -9,7 +9,7 @@ import FormCardLayout from "../common-layout/FormCardLayout";
 import { useLang } from "@/src/context/LangContext";
 import { createPassword, resetPassword } from "../../lib/api/auth";
 import { useAuth } from "../../hooks/useAuth";
-import { ApiRequestError } from "../../lib/api/client";
+import { ApiError } from "../../lib/api/client";
 
 type Props = {
     variant?: "register" | "reset";
@@ -101,25 +101,38 @@ export default function CreatePasswordForm({ variant = "register" }: Props) {
         setConfirmPasswordError("");
 
         const tempToken = sessionStorage.getItem("inai_temp_token") ?? "";
-        setLoading(true);
-        try {
-            if (variant === "reset") {
+
+        if (variant === "reset") {
+            setLoading(true);
+            try {
                 await resetPassword({ tempToken, password });
                 sessionStorage.removeItem("inai_temp_token");
                 sessionStorage.removeItem("inai_reset_identifier");
                 router.replace("/login");
-            } else {
-                const res = await createPassword({ tempToken, password });
-                sessionStorage.removeItem("inai_temp_token");
-                saveSession(res);
-                router.replace("/basic-details");
+            } catch (err) {
+                const message = err instanceof ApiError ? err.message : "Something went wrong. Please try again.";
+                setSubmitError(message);
+                setLoading(false);
             }
-        } catch (err) {
-            const message = err instanceof ApiRequestError ? err.message : "Something went wrong. Please try again.";
-            setSubmitError(message);
-        } finally {
-            setLoading(false);
+            return;
         }
+
+        // Register: navigate immediately, create account in background.
+        // inai_setup_start guards basic-details and survives page refreshes within
+        // the same browser session, so slow users won't be kicked out if they refresh.
+        sessionStorage.setItem("inai_setup_start", "1");
+        setLoading(true); // prevents double-click; component unmounts on navigate
+        router.replace("/basic-details");
+
+        createPassword({ tempToken, password })
+            .then((res) => {
+                sessionStorage.removeItem("inai_temp_token");
+                // Keep inai_setup_start — SetupGuard needs it for page refreshes
+                saveSession(res);
+            })
+            .catch(() => {
+                // silent — user is on basic-details; token check at submit will catch failure
+            });
     };
 
     const handlePasswordBlur = () => {

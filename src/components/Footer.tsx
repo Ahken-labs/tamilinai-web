@@ -10,6 +10,8 @@ import RegisterForm from "./auth/RegisterForm";
 
 import translations from "../assets/translation.json";
 import PrivacyPopup from "./footer/PrivacyPopup";
+import { CONTACT } from "../lib/contact";
+import TermsPopup from "./footer/TermsPopup";
 
 type FooterVariant = "landing" | "app";
 
@@ -34,7 +36,7 @@ const NAV_RIGHT = [
 const SOCIALS = [
   {
     label: "Facebook",
-    href: "https://facebook.com",
+    href: CONTACT.socials.facebook,
     icon: (isApp: boolean) => (
       <div
         className={`w-4 h-4 rounded-full flex items-end justify-center ${isApp ? "bg-[#464646]" : "bg-white"
@@ -49,17 +51,17 @@ const SOCIALS = [
   },
   {
     label: "WhatsApp",
-    href: "https://wa.me/94762360948",
+    href: CONTACT.whatsappUrl,
     icon: <FaWhatsapp size={17} />,
   },
   {
     label: "Twitter / X",
-    href: "https://twitter.com",
+    href: CONTACT.socials.twitter,
     icon: <FaXTwitter size={15} />,
   },
   {
     label: "Instagram",
-    href: "https://instagram.com",
+    href: CONTACT.socials.instagram,
     icon: <FaInstagram size={15} />,
   },
 ];
@@ -76,6 +78,7 @@ export default function Footer({ variant = "landing" }: FooterProps) {
 
   const isApp = variant === "app";
   const [openPrivacy, setOpenPrivacy] = useState(false);
+  const [openTerms, setOpenTerms] = useState(false);
 
   const textClass = isApp ? "text-[#464646] hover:text-[#222]" : "text-white hover:opacity-70";
   const navLinkClass = `font-poppins font-normal lg:text-[18x] md:md:-[16px] text-[15px] leading-[200%] ${textClass} transition-opacity duration-150 block`;
@@ -137,7 +140,7 @@ export default function Footer({ variant = "landing" }: FooterProps) {
                   type="button"
                   onClick={() => {
                     if (key === "privacy") setOpenPrivacy(true);
-                    // later: terms, blog etc
+                    if (key === "terms") setOpenTerms(true);
                   }}
                   className={`cursor-pointer text-left ${navLinkClass}`}
                 >
@@ -165,7 +168,15 @@ export default function Footer({ variant = "landing" }: FooterProps) {
               {isApp ? (
                 <>
                   <span className={`font-poppins font-normal font-14 ${textClass}`}>
-                    © 2026 Ahken Nexus (Pvt) Ltd.
+                    © 2026{" "}
+                    <a
+                      href={CONTACT.company.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="no-underline hover:opacity-70 transition-opacity"
+                    >
+                      {CONTACT.company.name}
+                    </a>
                   </span>
 
                   <Dot isApp={isApp} />
@@ -178,7 +189,15 @@ export default function Footer({ variant = "landing" }: FooterProps) {
                 </>
               ) : (
                 <span className={`font-poppins font-normal text-[14px] ${textClass}`}>
-                  © 2026 Ahken Nexus (Pvt) Ltd.
+                  © 2026{" "}
+                  <a
+                    href={CONTACT.company.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="no-underline hover:opacity-70 transition-opacity"
+                  >
+                    {CONTACT.company.name}
+                  </a>
                 </span>
               )}
             </div>
@@ -230,6 +249,10 @@ export default function Footer({ variant = "landing" }: FooterProps) {
       <PrivacyPopup
         isOpen={openPrivacy}
         onClose={() => setOpenPrivacy(false)}
+      />
+      <TermsPopup
+        isOpen={openTerms}
+        onClose={() => setOpenTerms(false)}
       />
     </footer>
   );

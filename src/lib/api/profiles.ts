@@ -1,4 +1,4 @@
-import { apiCall } from './client';
+import { http } from './client';
 import type { BrowseProfile, ProfileDetail } from '../../types/user';
 
 export interface ProfileFilters {
@@ -28,30 +28,30 @@ export function getProfiles(filters?: ProfileFilters): Promise<ProfilesResponse>
     });
   }
   const query = params.toString();
-  return apiCall(`/api/profiles${query ? `?${query}` : ''}`);
+  return http(`/api/profiles${query ? `?${query}` : ''}`);
 }
 
 export function getProfile(userId: string): Promise<ProfileDetail> {
-  return apiCall(`/api/profiles/${userId}`);
+  return http(`/api/profiles/${userId}`);
 }
 
 export function getShortlisted(page?: number): Promise<ProfilesResponse> {
   const query = page ? `?page=${page}` : '';
-  return apiCall(`/api/profiles/shortlisted${query}`);
+  return http(`/api/profiles/shortlisted${query}`);
 }
 
 export function shortlistProfile(userId: string): Promise<{ message: string }> {
-  return apiCall(`/api/profiles/${userId}/shortlist`, { method: 'POST' });
+  return http(`/api/profiles/${userId}/shortlist`, { method: 'POST' });
 }
 
 export function unshortlistProfile(userId: string): Promise<{ message: string }> {
-  return apiCall(`/api/profiles/${userId}/shortlist`, { method: 'DELETE' });
+  return http(`/api/profiles/${userId}/shortlist`, { method: 'DELETE' });
 }
 
 export function requestPhotoAccess(userId: string): Promise<{ message: string }> {
-  return apiCall(`/api/profiles/${userId}/request-photo`, { method: 'POST' });
+  return http(`/api/profiles/${userId}/request-photo`, { method: 'POST' });
 }
 
 export function revealContact(userId: string): Promise<{ phone?: string; countryCode?: string; email?: string }> {
-  return apiCall(`/api/profiles/${userId}/contact`, { method: 'POST' });
+  return http(`/api/profiles/${userId}/contact`, { method: 'POST' });
 }

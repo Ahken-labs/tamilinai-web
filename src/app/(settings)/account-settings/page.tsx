@@ -1,7 +1,8 @@
 "use client";
 
-import { ChevronRightIcon, DeleteIcon, PasswordLockIcon, PrivacyPolicyIcon, SleepIcon } from "@/src/assets/Icons";
+import { ChevronRightIcon, DeleteIcon, EliteIcon, PasswordLockIcon, PrivacyPolicyIcon, SleepIcon, TermsIcon } from "@/src/assets/Icons";
 import ChangePasswordPopup from "@/src/components/auth/ChangePasswordPopup";
+import TermsPopup from "@/src/components/footer/TermsPopup";
 import PrivacyPolicy from "@/src/components/more/PrivacySection";
 import Link from "next/link";
 import { useState } from "react";
@@ -19,6 +20,11 @@ const SETTINGS: SettingItem[] = [
         subtitle: "Update your password to keep your account secure.",
     },
     {
+        icon: EliteIcon,
+        title: "Subscription & Billing",
+        subtitle: "Manage your plan, payments, and invoices.",
+    },
+    {
         icon: SleepIcon,
         title: "Take a break",
         subtitle: "Hide your profile temporarily while you take a break from your search.",
@@ -28,10 +34,16 @@ const SETTINGS: SettingItem[] = [
         title: "Close account",
         subtitle: "Permanently remove your profile and all your data.",
     },
+    {
+        icon: TermsIcon,
+        title: "Terms & conditions",
+        subtitle: "Guidelines and legal agreements for using Inai.lk.",
+    },
 ];
 
 export default function SettingsPage() {
     const [openPasswordPopup, setOpenPasswordPopup] = useState(false);
+    const [openTermsPopup, setOpenTermsPopup] = useState(false);
 
     return (
         <div className="pb-6 font-poppins min-h-screen bg-[#F8F5F2]">
@@ -93,7 +105,15 @@ export default function SettingsPage() {
                         return (
                             <div
                                 key={title}
-                                onClick={() => setOpenPasswordPopup(true)}
+                                onClick={() => {
+                                    if (title === "Change password") {
+                                        setOpenPasswordPopup(true);
+                                    }
+
+                                    if (title === "Terms & conditions") {
+                                        setOpenTermsPopup(true);
+                                    }
+                                }}
                                 className="cursor-pointer"
                             >
                                 {content}
@@ -114,6 +134,10 @@ export default function SettingsPage() {
             <ChangePasswordPopup
                 isOpen={openPasswordPopup}
                 onClose={() => setOpenPasswordPopup(false)}
+            />
+            <TermsPopup
+                isOpen={openTermsPopup}
+                onClose={() => setOpenTermsPopup(false)}
             />
         </div>
     );

@@ -1,6 +1,6 @@
 import AppHeader from "../../components/AppHeader";
 import Footer from "../../components/Footer";
-import AuthGuard from "../../components/AuthGuard";
+import AuthGuard from "../../components/guards/AuthGuard";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (

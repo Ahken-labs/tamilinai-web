@@ -10,8 +10,7 @@ import { SecurityIcon, CheckmarkIcon, CameraIcon, CheckboxIcon } from "@/src/ass
 import { useLang } from "@/src/context/LangContext";
 import { countWords } from "@/src/utils/wordCount";
 import PrivacyPopup from "../footer/PrivacyPopup";
-import { apiUpload } from "../../lib/api/client";
-import { ApiRequestError } from "../../lib/api/client";
+import { submitProfileSetup } from "../../lib/api/user";
 
 const MAX_WORDS = 60;
 
@@ -77,6 +76,7 @@ function clearDraftData() {
   try {
     sessionStorage.removeItem("inai_setup_basic");
     sessionStorage.removeItem("inai_setup_personal");
+    sessionStorage.removeItem("inai_setup_start");
   } catch { /* storage unavailable */ }
 }
 
@@ -90,8 +90,6 @@ export default function PhotoUploadForm() {
   const [aboutMe, setAboutMe] = useState("");
   const [agreed, setAgreed] = useState(true);
   const [showError, setShowError] = useState(false);
-  const [submitError, setSubmitError] = useState("");
-  const [loading, setLoading] = useState(false);
   const [openPrivacy, setOpenPrivacy] = useState(false);
 
   const wordCount = countWords(aboutMe);
@@ -109,28 +107,24 @@ export default function PhotoUploadForm() {
     if (countWords(val) <= MAX_WORDS) setAboutMe(val);
   }
 
-  async function submitSetup(skipPhoto: boolean) {
+  function submitSetup(skipPhoto: boolean) {
     if (!agreed) {
       setShowError(true);
       return;
     }
     if (!skipPhoto && !hasPhoto) return;
 
-    setLoading(true);
-    setSubmitError("");
-    try {
-      const basic = JSON.parse(sessionStorage.getItem("inai_setup_basic") ?? "{}") as Record<string, string>;
-      const personal = JSON.parse(sessionStorage.getItem("inai_setup_personal") ?? "{}") as Record<string, string>;
-      const fd = buildSetupFormData(basic, personal, aboutMe, skipPhoto ? undefined : (photoFile ?? undefined));
-      await apiUpload("/api/user/profile/setup", fd);
-      clearDraftData();
-      router.replace("/settings/partner-preferences");
-    } catch (err) {
-      const message = err instanceof ApiRequestError ? err.message : "Something went wrong. Please try again.";
-      setSubmitError(message);
-    } finally {
-      setLoading(false);
-    }
+    // Build FormData now before navigating (component unmounts on navigate)
+    const basic = JSON.parse(sessionStorage.getItem("inai_setup_basic") ?? "{}") as Record<string, string>;
+    const personal = JSON.parse(sessionStorage.getItem("inai_setup_personal") ?? "{}") as Record<string, string>;
+    const fd = buildSetupFormData(basic, personal, aboutMe, skipPhoto ? undefined : (photoFile ?? undefined));
+
+    router.replace("/matches?welcome=1");
+
+    // Fire in background — user is already navigating forward
+    submitProfileSetup(fd)
+      .then(() => clearDraftData())
+      .catch(() => { /* user can re-enter details in profile */ });
   }
 
   const bullets = [
@@ -147,7 +141,7 @@ export default function PhotoUploadForm() {
         <>
           <div className="flex gap-5 w-full">
             <Button
-              text={loading ? "Saving..." : t("Skip")}
+              text={t("Skip")}
               onPress={() => submitSetup(true)}
               className={`flex-1 ${!agreed
                 ? "!bg-[#FFF] !text-[#999]"
@@ -155,17 +149,13 @@ export default function PhotoUploadForm() {
               }`}
             />
             <Button
-              text={loading ? "Saving..." : t("Save")}
+              text={t("Save")}
               onPress={() => submitSetup(false)}
               className={`flex-1 ${!agreed || !hasPhoto
                 ? "!bg-[#BBBBBB] hover:!bg-[#BBBBBB] active:!bg-[#BBBBBB]"
                 : ""}`}
             />
           </div>
-
-          {submitError && (
-            <p className="mt-2 text-[12px] text-[#B31B38]">{submitError}</p>
-          )}
 
           <div className="mt-8 flex gap-3 md:gap-4 items-start">
             <button onClick={() => {

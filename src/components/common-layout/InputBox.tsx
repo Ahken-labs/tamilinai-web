@@ -12,7 +12,7 @@ interface InputBoxProps {
   suffix?: ReactNode;
   onFocus?: () => void;
   onBlur?: () => void;
-  compact?: boolean; // 40px height, plain placeholder — matches compact DropdownField
+  compact?: boolean;
 }
 
 export default function InputBox({

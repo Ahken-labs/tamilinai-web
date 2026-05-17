@@ -1,4 +1,4 @@
-import { apiCall } from './client';
+import { http } from './client';
 import type { AppNotification } from '../../types/notification';
 
 export interface NotificationsResponse {
@@ -8,13 +8,13 @@ export interface NotificationsResponse {
 }
 
 export function getNotifications(page = 1): Promise<NotificationsResponse> {
-  return apiCall(`/api/user/notifications?page=${page}`);
+  return http(`/api/user/notifications?page=${page}`);
 }
 
 export function markNotificationRead(notifId: string): Promise<void> {
-  return apiCall(`/api/user/notifications/${notifId}/read`, { method: 'PATCH' });
+  return http(`/api/user/notifications/${notifId}/read`, { method: 'PATCH' });
 }
 
 export function markAllNotificationsRead(): Promise<void> {
-  return apiCall('/api/user/notifications/read-all', { method: 'PATCH' });
+  return http('/api/user/notifications/read-all', { method: 'PATCH' });
 }

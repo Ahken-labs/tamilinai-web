@@ -1,6 +1,6 @@
 import "./globals.css";
 import { LangProvider } from "../context/LangContext";
-import QueryProvider from "../components/QueryProvider";
+import QueryProvider from "../providers/QueryProvider";
 import SeoSchema from "./SeoSchema";
 
 export const metadata = {

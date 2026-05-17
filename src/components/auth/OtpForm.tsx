@@ -6,11 +6,11 @@ import { ArrowRightIcon, ChevronIcon } from "../../assets/Icons";
 import Button from "../common-layout/Button";
 import NewToInaiCart from "./NewToInaiCart";
 import { useLang } from "../../context/LangContext";
-import { verifyOtp, resendOtp } from "../../lib/api/auth";
-import { ApiRequestError } from "../../lib/api/client";
+import { verifyOtp, resendOtp, forgotPassword } from "../../lib/api/auth";
+import { ApiError } from "../../lib/api/client";
 
 const OTP_LENGTH = 6;
-const RESEND_SECONDS = 60;
+const RESEND_SECONDS = 300;
 
 type OtpFormProps = {
   variant?: "register" | "reset";
@@ -29,7 +29,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
   const countryCode = searchParams?.countryCode ?? "";
   const email = searchParams?.email ?? "";
 
-  const [method, setMethod] = useState<"sms" | "email">(phone ? "sms" : "email");
+  const [method, setMethod] = useState<"sms" | "email">(variant === "register" ? "email" : (phone ? "sms" : "email"));
   const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const [error, setError] = useState("");
   const [shake, setShake] = useState(false);
@@ -114,7 +114,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
         router.replace("/reset-password");
       }
     } catch (err) {
-      const message = err instanceof ApiRequestError ? err.message : t("Invalid_OTP_Please_try_again");
+      const message = err instanceof ApiError ? err.message : t("Invalid_OTP_Please_try_again");
       setError(message);
       triggerShake();
       setDigits(Array(OTP_LENGTH).fill(""));
@@ -126,10 +126,14 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
 
   const handleResend = async () => {
     if (countdown > 0) return;
-    const identifier = phone || email;
-    const method: "sms" | "email" = phone ? "sms" : "email";
     try {
-      await resendOtp(identifier, method);
+      if (variant === "register") {
+        const registrationKey = sessionStorage.getItem("inai_reg_key") ?? "";
+        await resendOtp(registrationKey, method);
+      } else {
+        const identifier = sessionStorage.getItem("inai_reset_identifier") ?? "";
+        await forgotPassword({ identifier, method: "email" });
+      }
     } catch {
       // silently ignore resend errors
     }
@@ -158,7 +162,11 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
 
           {/* Title */}
           <h1 className="font-24 font-semibold text-dark leading-[150%]">
-            {variant === "reset" ? t("Enter_your_reset_code") : t("Verify_your_phone")}
+            {variant === "reset"
+              ? t("Enter_your_reset_code")
+              : method === "email"
+              ? t("Verify_your_email")
+              : t("Verify_your_phone")}
           </h1>
 
           {/* Description */}

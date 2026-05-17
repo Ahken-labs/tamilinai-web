@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
     ArrowRightIcon,
     CloseCircleIcon,
@@ -15,8 +15,8 @@ import { COUNTRIES } from "../../constants/countries";
 import DropdownField from "../common-layout/DropdownField";
 import Link from "next/link";
 import { AUTO_GENDER, PROFILES } from "@/src/constants/profiles";
-// import { register } from "../../lib/api/auth";
-import { ApiRequestError } from "../../lib/api/client";
+import { register } from "../../lib/api/auth";
+import { ApiError } from "../../lib/api/client";
 
 type RegisterFormProps = {
     variant?: "hero" | "modal";
@@ -30,7 +30,7 @@ export default function RegisterForm({
     onClose,
 }: RegisterFormProps) {
     const { t } = useLang();
-    // const router = useRouter();
+    const router = useRouter();
 
     const [mounted, setMounted] = useState(variant === "hero" ? true : open);
     const [animateIn, setAnimateIn] = useState(open);
@@ -102,44 +102,33 @@ export default function RegisterForm({
         setLoading(true);
         setErrors((prev) => ({ ...prev, submit: undefined }));
         try {
-            // const res = await register({
-            //     profileType: profileFor.toLowerCase(),
-            //     gender: gender.toLowerCase() as "male" | "female",
-            //     name: fullName.trim(),
-            //     phone: phone.trim(),
-            //     countryCode: code,
-            //     email: email.trim(),
-            // });
-            // sessionStorage.setItem("inai_reg_key", res.registrationKey);
-            // sessionStorage.setItem("otp_sent_at", String(Date.now()));
-            // const params = new URLSearchParams({ phone, countryCode: code, email });
-            // router.replace(`/verify-otp?${params.toString()}`);
-            const message = encodeURIComponent(
-                `Hello, I would like to create my profile.
-
-Profile For: ${profileFor || "-"}
-Gender: ${gender || "-"}
-Name: ${fullName.trim() || "-"}
-Phone: ${code} ${phone.trim() || "-"}
-Email: ${email.trim() || "-"}`
-            );
-
-            window.open(`https://wa.me/94750207507?text=${message}`, "_blank", "noopener,noreferrer");
-            return;
+            const res = await register({
+                profileType: profileFor.toLowerCase(),
+                gender: gender.toLowerCase() as "male" | "female",
+                name: fullName.trim(),
+                phone: phone.trim(),
+                countryCode: code,
+                email: email.trim(),
+                channel: "email",
+            });
+            sessionStorage.setItem("inai_reg_key", res.registrationKey);
+            sessionStorage.setItem("otp_sent_at", String(Date.now()));
+            const params = new URLSearchParams({ phone, countryCode: code, email: email.trim() });
+            router.replace(`/verify-otp?${params.toString()}`);
         } catch (err) {
-            if (err instanceof ApiRequestError) {
+            if (err instanceof ApiError) {
                 const msg = err.message.toLowerCase();
                 if (msg.includes('email already exists')) {
-                    setErrors((prev) => ({ ...prev, submit: "An account with this email already exists. Try logging in." }));
-                } else if (msg.includes('phone number already exists')) {
-                    setErrors((prev) => ({ ...prev, submit: "An account with this phone number already exists. Try logging in." }));
+                    setErrors((prev) => ({ ...prev, email: "*An account with this email already exists. Try logging in." }));
+                } else if (msg.includes('phone') && msg.includes('already exists')) {
+                    setErrors((prev) => ({ ...prev, phone: "*This number already exists." }));
                 } else if (msg.includes('not eligible')) {
-                    setErrors((prev) => ({ ...prev, submit: "This account is not eligible for registration. Please contact support." }));
+                    setErrors((prev) => ({ ...prev, submit: "*This account is not eligible for registration. Please contact support." }));
                 } else {
                     setErrors((prev) => ({ ...prev, submit: err.message }));
                 }
             } else {
-                setErrors((prev) => ({ ...prev, submit: "Registration failed. Please try again." }));
+                setErrors((prev) => ({ ...prev, submit: "*Registration failed. Please try again." }));
             }
         } finally {
             setLoading(false);

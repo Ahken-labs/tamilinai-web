@@ -11,45 +11,64 @@ import Link from "next/link";
 import FormCardLayout from "../common-layout/FormCardLayout";
 import { login } from "../../lib/api/auth";
 import { useAuth } from "../../hooks/useAuth";
-import { ApiRequestError } from "../../lib/api/client";
+import { ApiError } from "../../lib/api/client";
 
 export default function LoginForm() {
   const { t } = useLang();
   const router = useRouter();
   const { saveSession } = useAuth();
+
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{ identifier?: string; password?: string; submit?: string }>({});
   const [loading, setLoading] = useState(false);
 
+  const [identifierError, setIdentifierError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
   const handleLogin = async () => {
-    const nextErrors: { identifier?: string; password?: string } = {};
-    if (!identifier.trim()) nextErrors.identifier = t("Fill_all_the_Input_fields");
-    if (!password.trim()) nextErrors.password = t("Password_is_required");
-    setErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0) return;
+    // Frontend empty check
+    let hasError = false;
+    if (!identifier.trim()) {
+      setIdentifierError(t("Fill_all_the_Input_fields"));
+      hasError = true;
+    }
+    if (!password.trim()) {
+      setPasswordError(t("Password_is_required"));
+      hasError = true;
+    }
+    if (hasError) return;
 
     setLoading(true);
-    setErrors({});
+    setIdentifierError("");
+    setPasswordError("");
+
     try {
       const res = await login({ identifier: identifier.trim(), password });
       saveSession(res);
       router.replace("/matches");
     } catch (err) {
-      if (err instanceof ApiRequestError) {
-        const msg = err.message.toLowerCase();
-        if (msg.includes('invalid credentials') || msg.includes('invalid value')) {
-          setErrors({ submit: "Incorrect email/phone or password. Please try again." });
-        } else if (msg.includes('suspended') || msg.includes('blocked')) {
-          setErrors({ submit: "Your account has been suspended. Please contact support." });
-        } else if (msg.includes('closed')) {
-          setErrors({ submit: "This account has been permanently closed." });
-        } else {
-          setErrors({ submit: err.message });
+      if (err instanceof ApiError) {
+        switch (err.code) {
+          case "USER_NOT_FOUND":
+            setIdentifierError("*Account not found. Create a new account instead.");
+            break;
+          case "WRONG_PASSWORD":
+            setPasswordError("*Incorrect password.");
+            break;
+          case "SUSPENDED":
+          case "CLOSED":
+            setPasswordError(err.message);
+            break;
+          default:
+            if (err.status === 0 || err.message.toLowerCase().includes("network") || err.message.toLowerCase().includes("fetch")) {
+              setPasswordError("*Network error. Please try again shortly.");
+            } else {
+              setPasswordError("*Something went wrong. Please try again.");
+            }
         }
       } else {
-        setErrors({ submit: "Login failed. Please try again." });
+        setPasswordError("*Network error. Please try again shortly.");
       }
     } finally {
       setLoading(false);
@@ -57,72 +76,69 @@ export default function LoginForm() {
   };
 
   return (
-    <>
-      <FormCardLayout
-        title={t("Welcome_back")}
-        subtitle={t("Keep_your_Inai_account_secure")}
-        footer={
-          <>
-            {errors.submit && (
-              <p className="mb-3 text-[12px] text-[#B31B38]">{errors.submit}</p>
-            )}
-            <Button
-              text={loading ? "Please wait..." : t("Log_In")}
-              icon={loading ? undefined : <ArrowRightIcon />}
-              onPress={handleLogin}
-              className="w-full"
-            />
-
-            <div className="mt-6 md:mt-8 flex justify-center">
-              <Link
-                href="/forgot-password"
-                prefetch
-                className="text-primary font-18 font-normal leading-[150%] cursor-pointer hover:opacity-70 select-none"
-              >
-                {t("Forgotten_password")}
-              </Link>
-            </div>
-          </>
-        }
-        bottom={<NewToInaiCart />} 
-      >
-           <div className="mt-7 sm:mt-10 md:mt-12">
-             <InputBox
-              value={identifier}
-              onChange={(val) => {
-                setIdentifier(val);
-                setErrors((prev) => ({ ...prev, identifier: undefined, submit: undefined }));
-              }}
-              label={t("Mobile_or_email")}
-              className="bg-[#F2F2F2] border-[#F2F2F2]"
-              error={errors.identifier}
-            />
+    <FormCardLayout
+      title={t("Welcome_back")}
+      subtitle={t("Keep_your_Inai_account_secure")}
+      footer={
+        <>
+          <Button
+            text={loading ? "Please wait..." : t("Log_In")}
+            icon={loading ? undefined : <ArrowRightIcon />}
+            onPress={handleLogin}
+            className="w-full"
+          />
+          <div className="mt-6 md:mt-8 flex justify-center">
+            <Link
+              href="/forgot-password"
+              prefetch
+              className="text-primary font-18 font-normal leading-[150%] cursor-pointer hover:opacity-70 select-none"
+            >
+              {t("Forgotten_password")}
+            </Link>
           </div>
+        </>
+      }
+      bottom={<NewToInaiCart />}
+    >
+      <div className="mt-7 sm:mt-10 md:mt-12">
+        <InputBox
+          value={identifier}
+          onChange={(val) => {
+            setIdentifier(val);
+            setIdentifierError("");
+          }}
+          label={t("Mobile_or_email")}
+          className="bg-[#F2F2F2] border-[#F2F2F2]"
 
-          <div className="mt-6 md:mt-8">
-            <InputBox
-              value={password}
-              onChange={(val) => {
-                setPassword(val);
-                setErrors((prev) => ({ ...prev, password: undefined, submit: undefined }));
-              }}
-              label={t("Password")}
-              type={showPassword ? "text" : "password"}
-              className="bg-[#F2F2F2] border-[#F2F2F2]"
-              error={errors.password}
-              suffix={
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((v) => !v)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                  className="cursor-pointer"
-                >
-                  {showPassword ? <EyeOnIcon /> : <EyeOffIcon />}
-                </button>
-              }
-            />
-          </div>
-      </FormCardLayout>
-    </>
+          error={identifierError}
+        />
+      </div>
+
+      <div className="mt-6 md:mt-8">
+        <InputBox
+          value={password}
+          onChange={(val) => {
+            setPassword(val);
+            setPasswordError("");
+          }}
+          label={t("Password")}
+          type={showPassword ? "text" : "password"}
+          className="bg-[#F2F2F2] border-[#F2F2F2]"
+
+          error={passwordError}
+          suffix={
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              className="cursor-pointer"
+            >
+              {showPassword ? <EyeOnIcon /> : <EyeOffIcon />}
+            </button>
+          }
+        />
+      </div>
+    </FormCardLayout>
   );
 }
+

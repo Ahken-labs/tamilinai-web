@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useLang } from "../context/LangContext";
 import { ChevronIcon, Logo, TamilLanguageIcon } from "../assets/Icons";
-import Link from "next/link";
 
 const LANGUAGES = [
   { label: "ஆங்கிலம்", value: "en" as const },
@@ -125,18 +125,26 @@ function LanguageDropdown({ open, lang, setLang, close, }: {
   );
 }
 
-function LoginButton({ className = "", }: {
-  className?: string;
-}) {
+function LoginButton({ className = "" }: { className?: string }) {
   const { t } = useLang();
+  const router = useRouter();
+
+  function handleLogin() {
+    const token = typeof window !== "undefined"
+      ? localStorage.getItem("tamilinai_access_token")
+      : null;
+    router.push(token ? "/matches" : "/login");
+  }
+
   return (
-    <Link
-      href="/login"
-      prefetch
-      className={`cursor-pointer select-none items-center justify-center rounded border border-[#B31B38] 
-        font-poppins text-[14px] md:text-[16px] font-medium text-[#B31B38] transition-colors duration-150 hover:bg-[#B31B38] hover:text-white 
-        ${className} py-1 px-4 rounded-[8px] border-[1.4px]`} >
+    <button
+      type="button"
+      onClick={handleLogin}
+      className={`cursor-pointer select-none items-center justify-center rounded border border-[#B31B38]
+        font-poppins text-[14px] md:text-[16px] font-medium text-[#B31B38] transition-colors duration-150 hover:bg-[#B31B38] hover:text-white
+        ${className} py-1 px-4 rounded-[8px] border-[1.4px]`}
+    >
       {t("Log_In")}
-    </Link>
+    </button>
   );
 }

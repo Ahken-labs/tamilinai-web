@@ -15,6 +15,31 @@ import {
 } from "../../constants/profiles";
 import { countWords } from "../../utils/wordCount";
 import { COUNTRY_OPTIONS } from "@/src/constants/location";
+import { getPartnerPreferences, savePartnerPreferences } from "../../lib/api/user";
+import type { PartnerPreferences } from "../../types/user";
+
+const PREF_CACHE_KEY = "inai_partner_pref";
+
+function getCachedPrefs(): PartnerPreferences | null {
+  try {
+    const raw = sessionStorage.getItem(PREF_CACHE_KEY);
+    return raw ? (JSON.parse(raw) as PartnerPreferences) : null;
+  } catch { return null; }
+}
+function setCachedPrefs(prefs: PartnerPreferences): void {
+  try { sessionStorage.setItem(PREF_CACHE_KEY, JSON.stringify(prefs)); } catch { /* unavailable */ }
+}
+
+// Height conversion: "5'4"" ↔ cm
+function ftInToCm(val: string): number | undefined {
+  const m = val.match(/^(\d+)'(\d+)"$/);
+  if (!m) return undefined;
+  return Math.round(parseInt(m[1]) * 30.48 + parseInt(m[2]) * 2.54);
+}
+function cmToFtIn(cm: number): string {
+  const totalIn = Math.round(cm / 2.54);
+  return `${Math.floor(totalIn / 12)}'${totalIn % 12}"`;
+}
 
 // ── Static option lists ───────────────────────────────────────────────────
 
@@ -98,25 +123,83 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
   const [drinking, setDrinking] = useState("Open to all");
   const [aboutPartner, setAboutPartner] = useState("");
 
+  // Apply saved preferences onto component state
+  function applyPrefs(prefs: PartnerPreferences) {
+    if (prefs.minAgeYears) setAgeMin(String(prefs.minAgeYears));
+    if (prefs.maxAgeYears) setAgeMax(String(prefs.maxAgeYears));
+    if (prefs.minHeightCm) setHeightMin(cmToFtIn(prefs.minHeightCm));
+    if (prefs.maxHeightCm) setHeightMax(cmToFtIn(prefs.maxHeightCm));
+    if (prefs.maritalStatuses?.[0]) setMarital(prefs.maritalStatuses[0]);
+    if (prefs.physicalBuilds?.[0]) setPhysical(prefs.physicalBuilds[0]);
+    if (prefs.educationLevels?.length) setEduTags(prefs.educationLevels);
+    if (prefs.countries?.length) setCountries(prefs.countries);
+    if (prefs.castes?.length) setCastes(prefs.castes);
+    if (prefs.religions?.[0]) setReligion(prefs.religions[0]);
+    if (prefs.dietHabits?.[0]) setFood(prefs.dietHabits[0]);
+    if (prefs.smokingHabits?.[0]) setSmoking(prefs.smokingHabits[0]);
+    if (prefs.drinkingHabits?.[0]) setDrinking(prefs.drinkingHabits[0]);
+  }
+
+  // Build API payload from current state
+  function buildPayload(): PartnerPreferences {
+    const p: PartnerPreferences = {};
+    if (ageMin) p.minAgeYears = parseInt(ageMin);
+    if (ageMax) p.maxAgeYears = parseInt(ageMax);
+    const minCm = heightMin ? ftInToCm(heightMin) : undefined;
+    const maxCm = heightMax ? ftInToCm(heightMax) : undefined;
+    if (minCm) p.minHeightCm = minCm;
+    if (maxCm) p.maxHeightCm = maxCm;
+    if (marital !== "Open to all") p.maritalStatuses = [marital];
+    if (physical !== "Open to all") p.physicalBuilds = [physical];
+    if (religion !== "Open to all") p.religions = [religion];
+    if (food !== "Open to all") p.dietHabits = [food];
+    if (smoking !== "Open to all") p.smokingHabits = [smoking];
+    if (drinking !== "Open to all") p.drinkingHabits = [drinking];
+    // Education: only save if a subset is selected (all = open to all)
+    if (eduTags.length > 0 && eduTags.length < EDUCATION_OPTIONS.length) p.educationLevels = eduTags;
+    if (countries.length > 0) p.countries = countries;
+    if (castes.length > 0) p.castes = castes;
+    return p;
+  }
+
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
+    document.body.style.overflow = isOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
   }, [isOpen]);
 
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // Reset to defaults on every open so cancelled changes don't persist
+    setAgeMin(""); setAgeMax(""); setAgeError("");
+    setHeightMin(""); setHeightMax(""); setHeightError("");
+    setMarital("Unmarried"); setPhysical("Open to all");
+    setEduTags(EDUCATION_OPTIONS); setCountries([]); setCastes([]);
+    setReligion("Open to all"); setFood("Open to all");
+    setSmoking("Open to all"); setDrinking("Open to all");
+    setAboutPartner("");
+
+    // sessionStorage cache hit → instant population
+    const cached = getCachedPrefs();
+    if (cached) { applyPrefs(cached); return; }
+
+    // Cache miss → fetch from API, then cache
+    getPartnerPreferences()
+      .then((prefs) => { setCachedPrefs(prefs); applyPrefs(prefs); })
+      .catch(() => { /* keep defaults */ });
+  }, [isOpen]);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
   const wordCount = countWords(aboutPartner);
-  if (!isOpen) return null;
+  if (!isOpen || typeof window === "undefined") return null;
 
   function handleSave() {
-    let err = false;
-    if (!ageMin || !ageMax) { setAgeError("* Please select age range"); err = true; } else setAgeError("");
-    if (!heightMin || !heightMax) { setHeightError("* Please select height range"); err = true; } else setHeightError("");
-    if (err) { scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" }); return; }
+    // All fields optional — no validation errors
+    setAgeError(""); setHeightError("");
+    const payload = buildPayload();
+    setCachedPrefs(payload);                               // update cache immediately
+    savePartnerPreferences(payload).catch(() => { });       // write to DB in background
     onClose();
   }
   function handleAboutChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -179,7 +262,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
               className="ml-auto shrink-0 cursor-pointer"
               aria-label="Close"
             >
-             <CloseCircleIcon className="h-8 w-8 transition-transform duration-200 hover:scale-110 active:scale-95 " />
+              <CloseCircleIcon className="h-8 w-8 transition-transform duration-200 hover:scale-110 active:scale-95 " />
             </button>
           </div>
         )}
@@ -276,7 +359,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
               {/* Background & lifestyle */}
               <div className={`mt-3 md:mt-4 lg:mt-5 border-t border-[#EAEAEA]`}>
                 {lifestyleCollapsible && (
-                  
+
                   <button
                     type="button"
                     onClick={() => setIsLifestyleOpen((o) => !o)}
@@ -324,7 +407,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
                         showAll
                         typeable
                       />
-                       <span className="font-14 ml-1">Click to edit</span>
+                      <span className="font-14 ml-1">Click to edit</span>
                     </FormRow>
                     <FormRow label="Religion" required className="-mt-2 py-3 md:py-4 lg:py-5">
                       <div className="flex flex-wrap mt-3 md:mt-2">
@@ -342,7 +425,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
                         showAll
                         typeable
                       />
-                       <span className="font-14 ml-1">Click to edit</span>
+                      <span className="font-14 ml-1">Click to edit</span>
                     </FormRow>
                     {/* Food/Smoking/Drinking grouped — no dividers between them */}
                     <div>
