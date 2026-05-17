@@ -390,9 +390,8 @@ export default function AppHeader() {
               {
                 text: "Logout",
                 Icon: LogoutIcon,
-                onClick: () => { closeMobile(); },
+                onClick: () => { closeMobile(); setLogoutOpen(true); },
                 danger: true,
-              onClick: () => { closeMobile(); setLogoutOpen(true); },
               },
             ].map(({ text, Icon, href, onClick, danger }) =>
               href ? (
