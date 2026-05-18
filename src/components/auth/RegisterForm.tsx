@@ -112,7 +112,7 @@ export default function RegisterForm({
                 channel: "email",
             });
             sessionStorage.setItem("inai_reg_key", res.registrationKey);
-            sessionStorage.setItem("otp_sent_at", String(Date.now()));
+            sessionStorage.setItem("otp_email_sent_at", String(Date.now()));
             const params = new URLSearchParams({ phone, countryCode: code, email: email.trim() });
             router.replace(`/verify-otp?${params.toString()}`);
         } catch (err) {
