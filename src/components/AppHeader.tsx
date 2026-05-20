@@ -21,9 +21,28 @@ import Image from "next/image";
 import { getProgressWidth } from "../utils/getProgressWidth";
 import PartnerPreferenceModal from "./app/PartnerPreferenceModal";
 import LogoutPopup from "./app/LogoutPopup";
+import { getMe } from "../lib/api/user";
+import type { Me } from "../types/user";
+import { getProfilePhotoSrc } from "../utils/profilePhoto";
 
-const trustBadge = false;
-const isElite = false;
+const ME_CACHE_KEY = "inai_me_cache";
+
+function readCache(): Me | null {
+  try {
+    const raw = localStorage.getItem(ME_CACHE_KEY);
+    return raw ? (JSON.parse(raw) as Me) : null;
+  } catch { return null; }
+}
+
+function writeCache(me: Me): void {
+  try { localStorage.setItem(ME_CACHE_KEY, JSON.stringify(me)); } catch { /* unavailable */ }
+}
+
+export function readMeCache(): Me | null { return readCache(); }
+export function writeMeCache(me: Me): void { writeCache(me); }
+export function invalidateMeCache(): void {
+  try { localStorage.removeItem(ME_CACHE_KEY); } catch { /* unavailable */ }
+}
 
 const NAV_TABS = [
   { labelKey: "Matches" as const, href: "/matches", Icon: MatchesIcon },
@@ -35,10 +54,39 @@ const NAV_TABS = [
 export default function AppHeader() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const photo = "/images/no_photo.png";
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [openModal, setOpenModal] = useState<null | "search" | "edit">(null);
   const [logoutOpen, setLogoutOpen] = useState(false);
+
+  const [me, setMe] = useState<Me | null>(null);
+
+  // Load from cache instantly after mount, then refresh from API in background
+  useEffect(() => {
+    const cached = readCache();
+    if (cached) setMe(cached);
+    const token = localStorage.getItem("tamilinai_access_token");
+    if (!token) return;
+    getMe()
+      .then((data) => { writeCache(data); setMe(data); })
+      .catch(() => { /* keep cached data */ });
+  }, []);
+
+  // Re-fetch me whenever my-profile page signals a successful save
+  useEffect(() => {
+    const handler = () => {
+      const cached = readCache();
+      if (cached) setMe(cached); // instant update from cache
+    };
+    window.addEventListener("me-updated", handler);
+    return () => window.removeEventListener("me-updated", handler);
+  }, []);
+
+  const trustBadge = me?.trustBadge ?? false;
+  const isElite = me?.isElite ?? false;
+  const score = me?.profileCompletionScore ?? 0;
+  const displayName = me?.name ?? "";
+  const displayId = me?.displayId ?? "";
+  const photo = getProfilePhotoSrc(me?.profile?.photoUrl, me?.profile?.photoStatus, me?.gender);
 
   // Lock body scroll when mobile drawer is open
   useEffect(() => {
@@ -84,9 +132,11 @@ export default function AppHeader() {
                 <Link
                   key={href}
                   href={href}
-                  className={`flex flex-col items-center pb-1 gap-0.5 border-b-[2.4px] transition-colors duration-150 ${active ? "border-[#222222]" : "border-transparent"}`}
+                  className={`relative flex flex-col items-center pb-1 gap-0.5 border-b-[2.4px] transition-colors duration-150 ${active ? "border-[#222222]" : "border-transparent"}`}
                 >
-                  <Icon className={`w-5 lg:w-6 h-5 lg:h-6 shrink-0 transition-colors duration-150 ${active ? "text-[#222222]" : "text-[#888888]"}`} />
+                  <div className="relative">
+                    <Icon className={`w-5 lg:w-6 h-5 lg:h-6 shrink-0 transition-colors duration-150 ${active ? "text-[#222222]" : "text-[#888888]"}`} />
+                  </div>
                   <span className={`font-16 font-normal leading-[150%] transition-colors duration-150 ${active ? "text-dark" : "text-secondary"}`}>
                     {(labelKey) as string}
                   </span>
@@ -119,9 +169,9 @@ export default function AppHeader() {
                       <span className="font-14 font-semibold text-[#525252] leading-none">Profile points</span>
                       <div className="flex items-center gap-2">
                         <div className="w-[52px] h-2 bg-white rounded-[19px] overflow-hidden">
-                          <div className="h-full bg-[#B31B38] rounded-[19px]" style={{ width: `${getProgressWidth(80)}%` }} />
+                          <div className="h-full bg-[#B31B38] rounded-[19px] transition-[width] duration-700 ease-in-out" style={{ width: `${getProgressWidth(score)}%` }} />
                         </div>
-                        <span className="font-16 font-normal text-[#B31B38] leading-none">80%</span>
+                        <span className="font-16 font-normal text-[#B31B38] leading-none">{score}%</span>
                       </div>
                     </>
                   ) : !isElite ? (
@@ -144,8 +194,8 @@ export default function AppHeader() {
               >
                 <div className="flex flex-col items-start gap-2">
                   <div className="w-full">
-                    <div className="overflow-hidden text-ellipsis text-dark font-18 font-medium leading-[150%]">username</div>
-                    <div className="text-dark font-16 font-normal leading-[150%]">(IN247)</div>
+                    <div className="overflow-hidden text-ellipsis text-dark font-18 font-medium leading-[150%]">{displayName}</div>
+                    <div className="text-dark font-16 font-normal leading-[150%]">({displayId})</div>
                   </div>
                   <div className="h-px self-stretch bg-[#EAEAEA]" />
                   {!trustBadge ? (
@@ -267,8 +317,8 @@ export default function AppHeader() {
               <Image src={photo} fill className="object-cover" alt="my profile" sizes="40px" />
             </div>
             <div className="min-w-0">
-              <div className="text-[15px] font-semibold text-[#222222] leading-tight truncate">username</div>
-              <div className="text-[13px] font-normal text-[#888888] leading-tight">(IN247)</div>
+              <div className="text-[15px] font-semibold text-[#222222] leading-tight truncate">{displayName}</div>
+              <div className="text-[13px] font-normal text-[#888888] leading-tight">({displayId})</div>
             </div>
           </div>
           {/* Close button */}
@@ -291,12 +341,12 @@ export default function AppHeader() {
             <div className="px-4 py-3.5 border-b border-[#F0F0F0]">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[12px] font-semibold text-[#525252] uppercase tracking-wide">Profile points</span>
-                <span className="text-[13px] font-semibold text-[#B31B38]">80%</span>
+                <span className="text-[13px] font-semibold text-[#B31B38]">{score}%</span>
               </div>
               <div className="w-full h-2 bg-[#EBEBEB] rounded-[19px] overflow-hidden">
                 <div
-                  className="h-full bg-[#B31B38] rounded-[19px]"
-                  style={{ width: `${getProgressWidth(80)}%` }}
+                  className="h-full bg-[#B31B38] rounded-[19px] transition-[width] duration-700 ease-in-out"
+                  style={{ width: `${getProgressWidth(score)}%` }}
                 />
               </div>
             </div>
@@ -353,10 +403,12 @@ export default function AppHeader() {
                     active ? "bg-[#fdf0f2]" : "hover:bg-[#F7F7F7]"
                   }`}
                 >
-                  <Icon
-                    className="w-[18px] h-[18px] shrink-0"
-                    style={{ color: active ? "#B31B38" : "#888888" }}
-                  />
+                  <div className="relative shrink-0">
+                    <Icon
+                      className="w-[18px] h-[18px]"
+                      style={{ color: active ? "#B31B38" : "#888888" }}
+                    />
+                  </div>
                   <span
                     className={`text-[14px] leading-[150%] flex-1 ${
                       active ? "text-[#222222] font-semibold" : "text-[#6B6B6B] font-normal"

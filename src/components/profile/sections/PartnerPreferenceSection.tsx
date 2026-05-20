@@ -17,20 +17,51 @@ import {
 import { COUNTRY_GROUPS } from "@/src/constants/location";
 import { filterItems } from "../../../utils/formUtils";
 import { countWords } from "../../../utils/wordCount";
+import { DRAFT_KEYS } from "@/src/constants/profileDraftKeys";
+import type { PartnerPreferences } from "@/src/types/user";
 
-const leftWidth = "w-[100px] sm:w-[120px] md:w-[140px] lg:w-[250px]"
-// Static option lists
+const KEY = DRAFT_KEYS.partner;
+const MODAL_CACHE_KEY = "inai_partner_pref";
+
+// Convert API-format prefs (saved by modal or fetched from backend) → section display format
+function convertApiToDisplay(prefs: PartnerPreferences): Record<string, unknown> {
+  return {
+    ageMin: prefs.ageMin ? String(prefs.ageMin) : "",
+    ageMax: prefs.ageMax ? String(prefs.ageMax) : "",
+    heightMin: prefs.heightMinCm ? `${prefs.heightMinCm} cm` : "",
+    heightMax: prefs.heightMaxCm ? `${prefs.heightMaxCm} cm` : "",
+    marital: prefs.maritalStatuses?.[0] ?? "Unmarried",
+    physical: prefs.physicalStatuses?.[0] ?? "Open to all",
+    edu: prefs.educationLevels?.length ? prefs.educationLevels : EDUCATION_OPTIONS,
+    countries: prefs.countries ?? [],
+    religion: prefs.religions?.[0] ?? "Open to all",
+    castes: prefs.castes ?? [],
+    food: prefs.foodHabits?.[0] ?? "Open to all",
+    smoking: prefs.smokingHabits?.[0] ?? "Open to all",
+    drinking: prefs.drinkingHabits?.[0] ?? "Open to all",
+    aboutPartner: prefs.aboutPartner ?? "",
+  };
+}
+
+function getDraft() {
+  try {
+    // 1. Section's own draft (unsaved edits take priority)
+    const r = sessionStorage.getItem(KEY);
+    if (r) return JSON.parse(r);
+    // 2. Fall back to what the modal saved (onboarding / search popup)
+    const modal = sessionStorage.getItem(MODAL_CACHE_KEY);
+    if (modal) return convertApiToDisplay(JSON.parse(modal) as PartnerPreferences);
+    return null;
+  } catch { return null; }
+}
+
+function mergeDraft(partial: Record<string, unknown>, onDirty: () => void) {
+  try { sessionStorage.setItem(KEY, JSON.stringify({ ...getDraft(), ...partial })); onDirty(); } catch {}
+}
+
+const leftWidth = "w-[100px] sm:w-[120px] md:w-[140px] lg:w-[250px]";
 const AGE_OPTIONS = Array.from({ length: 53 }, (_, i) => String(18 + i));
-
-const HEIGHT_OPTIONS: string[] = (() => {
-  const opts: string[] = [];
-  for (let ft = 4; ft <= 7; ft++) {
-    const max = ft === 7 ? 0 : 11;
-    for (let inch = 0; inch <= max; inch++) opts.push(`${ft}'${inch}"`);
-  }
-  return opts;
-})();
-
+const HEIGHT_OPTIONS: string[] = Array.from({ length: 81 }, (_, i) => `${140 + i} cm`);
 const PHYSICAL_OPTIONS = ["Open to all", "Normal", "Physically challenged"];
 const FOOD_OPTIONS = ["Open to all", "Vegetarian", "Non vegetarian"];
 const SMOKING_OPTIONS = ["Open to all", "Okay", "No"];
@@ -42,11 +73,8 @@ const RELIGION_CASTE_MAP: Record<string, string[]> = {
 };
 const MAX_ABOUT_WORDS = 60;
 
-// RadioGroup
 function RadioGroup({ options, value, onChange }: {
-  options: string[];
-  value: string;
-  onChange: (v: string) => void;
+  options: string[]; value: string; onChange: (v: string) => void;
 }) {
   return (
     <div className="flex flex-wrap gap-4 md:gap-5 mt-3 md:mt-2">
@@ -60,27 +88,13 @@ function RadioGroup({ options, value, onChange }: {
   );
 }
 
-// Shared popup shell 
-function SelectionPopup({
-  title,
-  subtitle,
-  onClose,
-  children,
-  onConfirm,
-  confirmLabel,
-}: {
-  title: string;
-  subtitle: string;
-  onClose: () => void;
-  children: React.ReactNode;
-  onConfirm: () => void;
-  confirmLabel: string;
+function SelectionPopup({ title, subtitle, onClose, children, onConfirm, confirmLabel }: {
+  title: string; subtitle: string; onClose: () => void;
+  children: React.ReactNode; onConfirm: () => void; confirmLabel: string;
 }) {
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4">
       <div className="flex max-h-[90vh] w-full max-w-[920px] flex-col overflow-hidden rounded-[16px] bg-white shadow-2xl">
-
-        {/* Fixed header */}
         <div className="shrink-0 px-4 md:px-5 pt-4 md:pt-5 pb-2">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0 flex-1">
@@ -92,33 +106,21 @@ function SelectionPopup({
             </button>
           </div>
         </div>
-
-        {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto border-t border-[#EAEAEA] px-4 md:px-5 py-3 md:py-4">
           {children}
         </div>
-
-        {/* Fixed footer */}
         <div className="flex justify-end gap-4 md:gap-5 border-t border-[#EAEAEA] px-4 md:px-5 py-3 md:py-4 shrink-0">
           <div className="w-full" />
           <Button text={confirmLabel} onPress={onConfirm} className="w-full" />
         </div>
-
       </div>
     </div>,
     document.body
   );
 }
 
-// ── Country popup ─────────────────────────────────────────────────────────────
-function CountryPopup({
-  initialSelected,
-  onClose,
-  onConfirm,
-}: {
-  initialSelected: string[];
-  onClose: () => void;
-  onConfirm: (items: string[]) => void;
+function CountryPopup({ initialSelected, onClose, onConfirm }: {
+  initialSelected: string[]; onClose: () => void; onConfirm: (items: string[]) => void;
 }) {
   const [draft, setDraft] = useState<string[]>(initialSelected);
   const [search, setSearch] = useState("");
@@ -154,7 +156,6 @@ function CountryPopup({
           ))}
         </div>
       )}
-
       <div className="flex items-center gap-2 rounded-[41px] bg-[#E0E0E0] px-2 py-2">
         <SearchIcon className="h-4 md:h-5 w-4 md:w-5 shrink-0 text-[#525252]" />
         <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search countries"
@@ -165,9 +166,7 @@ function CountryPopup({
           </button>
         )}
       </div>
-
       <hr className="my-4 border-t border-[#D8D8D8]" />
-
       <div className="flex flex-col gap-5 md:gap-6">
         {shownGroups.map((group, index) => (
           <div key={group.heading} className="flex flex-col gap-3 md:gap-4">
@@ -179,8 +178,7 @@ function CountryPopup({
                   <button key={item} type="button" onClick={() => toggle(item)}
                     className={`rounded-[28px] px-3 py-2.5 font-16 font-normal leading-[125%] transition-colors cursor-pointer ${active
                       ? "border border-[rgba(179,27,56,0.25)] bg-[#FFF0F3] text-[#656565]"
-                      : "bg-[#F0F0F0] text-[#656565] hover:bg-[#EAEAEA]"
-                      }`}>
+                      : "bg-[#F0F0F0] text-[#656565] hover:bg-[#EAEAEA]"}`}>
                     {item}
                   </button>
                 );
@@ -194,84 +192,83 @@ function CountryPopup({
   );
 }
 
-// ── Main component ────────────────────────────────────────────────────────────
-export default function PartnerPreferenceSection() {
-  // Age
-  const [ageMin, setAgeMin] = useState("");
-  const [ageMax, setAgeMax] = useState("");
+// Called as a useState lazy initializer — only runs on first client render.
+// Safe because PartnerPreferenceSection only ever mounts client-side ({open && body}).
+function getInitialDraft(): Record<string, unknown> {
+  if (typeof window === "undefined") return {};
+  return getDraft() ?? {};
+}
+
+export default function PartnerPreferenceSection({ onDirty }: { onDirty?: () => void }) {
+  const sync = (partial: Record<string, unknown>) => mergeDraft(partial, onDirty ?? (() => {}));
+
+  // useState(fn) — fn runs once on mount, reads sessionStorage on the client
+  const [init] = useState(getInitialDraft);
+
+  const [ageMin, setAgeMin] = useState<string>((init.ageMin as string) ?? "");
+  const [ageMax, setAgeMax] = useState<string>((init.ageMax as string) ?? "");
   const [ageMinOpen, setAgeMinOpen] = useState(false);
   const [ageMaxOpen, setAgeMaxOpen] = useState(false);
 
-  // Height
-  const [heightMin, setHeightMin] = useState("");
-  const [heightMax, setHeightMax] = useState("");
+  const [heightMin, setHeightMin] = useState<string>((init.heightMin as string) ?? "");
+  const [heightMax, setHeightMax] = useState<string>((init.heightMax as string) ?? "");
   const [heightMinOpen, setHeightMinOpen] = useState(false);
   const [heightMaxOpen, setHeightMaxOpen] = useState(false);
 
-  // About
-  const [aboutPartner, setAboutPartner] = useState("");
-
-  // Background & lifestyle
-  const [marital, setMarital] = useState("Unmarried");
-  const [physical, setPhysical] = useState("Open to all");
-  const [edu, setEdu] = useState<string[]>(EDUCATION_OPTIONS);
+  const [aboutPartner, setAboutPartner] = useState<string>((init.aboutPartner as string) ?? "");
+  const [marital, setMarital] = useState<string>((init.marital as string) || "Unmarried");
+  const [physical, setPhysical] = useState<string>((init.physical as string) || "Open to all");
+  const [edu, setEdu] = useState<string[]>(Array.isArray(init.edu) && (init.edu as string[]).length ? (init.edu as string[]) : EDUCATION_OPTIONS);
   const [eduOpen, setEduOpen] = useState(false);
-  const [countries, setCountries] = useState<string[]>([]);
+  const [countries, setCountries] = useState<string[]>(Array.isArray(init.countries) ? (init.countries as string[]) : []);
   const [countryPopupOpen, setCountryPopupOpen] = useState(false);
-  const [religion, setReligion] = useState("Open to all");
-  const [castes, setCastes] = useState<string[]>([]);
+  const [religion, setReligion] = useState<string>((init.religion as string) || "Open to all");
+  const [castes, setCastes] = useState<string[]>(Array.isArray(init.castes) ? (init.castes as string[]) : []);
   const [casteOpen, setCasteOpen] = useState(false);
-  const [food, setFood] = useState("Open to all");
-  const [smoking, setSmoking] = useState("Open to all");
-  const [drinking, setDrinking] = useState("Open to all");
+  const [food, setFood] = useState<string>((init.food as string) || "Open to all");
+  const [smoking, setSmoking] = useState<string>((init.smoking as string) || "Open to all");
+  const [drinking, setDrinking] = useState<string>((init.drinking as string) || "Open to all");
 
   const wordCount = countWords(aboutPartner);
-
-  const casteOptions = religion === "Open to all"
-    ? CASTE_OPTIONS
-    : (RELIGION_CASTE_MAP[religion] ?? CASTE_OPTIONS);
+  const casteOptions = religion === "Open to all" ? CASTE_OPTIONS : (RELIGION_CASTE_MAP[religion] ?? CASTE_OPTIONS);
 
   function handleAboutChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    if (countWords(e.target.value) <= MAX_ABOUT_WORDS) setAboutPartner(e.target.value);
+    if (countWords(e.target.value) <= MAX_ABOUT_WORDS) {
+      setAboutPartner(e.target.value);
+      sync({ aboutPartner: e.target.value });
+    }
   }
 
   return (
     <div className="pt-3 md:pt-4">
-
-      {/* Age & height range */}
-      <h2 className="font-18 font-medium text-dark leading-[150%] pb-4 md:pb-5">
-        Age &amp; height range
-      </h2>
+      <h2 className="font-18 font-medium text-dark leading-[150%] pb-4 md:pb-5">Age &amp; height range</h2>
 
       <div className="flex flex-col gap-6">
         <FormRow leftWidth={leftWidth} label="Age" required>
           <div className="flex items-center gap-2 md:gap-4">
             <DropdownField typeable compact placeholder="Min" value={ageMin} open={ageMinOpen} setOpen={setAgeMinOpen}
-              onSelect={setAgeMin} items={filterItems(AGE_OPTIONS, ageMin)} className="flex-1" dropdownClassName="max-h-[200px]" />
+              onSelect={v => { setAgeMin(v); sync({ ageMin: v }); }} items={filterItems(AGE_OPTIONS, ageMin)} className="flex-1" dropdownClassName="max-h-[200px]" />
             <span className="font-16 font-medium text-dark shrink-0">to</span>
             <DropdownField typeable compact placeholder="Max" value={ageMax} open={ageMaxOpen} setOpen={setAgeMaxOpen}
-              onSelect={setAgeMax} items={filterItems(AGE_OPTIONS, ageMax)} className="flex-1" dropdownClassName="max-h-[200px]" />
+              onSelect={v => { setAgeMax(v); sync({ ageMax: v }); }} items={filterItems(AGE_OPTIONS, ageMax)} className="flex-1" dropdownClassName="max-h-[200px]" />
           </div>
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Height" required>
           <div className="flex items-center gap-2 md:gap-4">
-            <DropdownField typeable compact placeholder="Min" value={heightMin} open={heightMinOpen} setOpen={setHeightMinOpen}
-              onSelect={setHeightMin} items={filterItems(HEIGHT_OPTIONS, heightMin)} className="flex-1" dropdownClassName="max-h-[200px]" />
+            <DropdownField typeable compact placeholder="Min cm" value={heightMin} open={heightMinOpen} setOpen={setHeightMinOpen}
+              onSelect={v => { setHeightMin(v); sync({ heightMin: v }); }} items={filterItems(HEIGHT_OPTIONS, heightMin)} className="flex-1" dropdownClassName="max-h-[200px]" />
             <span className="font-16 font-medium text-dark shrink-0">to</span>
-            <DropdownField typeable compact placeholder="Max" value={heightMax} open={heightMaxOpen} setOpen={setHeightMaxOpen}
-              onSelect={setHeightMax} items={filterItems(HEIGHT_OPTIONS, heightMax)} className="flex-1" dropdownClassName="max-h-[200px]" />
+            <DropdownField typeable compact placeholder="Max cm" value={heightMax} open={heightMaxOpen} setOpen={setHeightMaxOpen}
+              onSelect={v => { setHeightMax(v); sync({ heightMax: v }); }} items={filterItems(HEIGHT_OPTIONS, heightMax)} className="flex-1" dropdownClassName="max-h-[200px]" />
           </div>
         </FormRow>
       </div>
 
       <hr className="my-6 md:my-8 border-t border-[#EAEAEA]" />
 
-      {/* ── About my partner ──────────────────────────────────────── */}
       <div className="flex flex-col gap-2">
-        <span className="font-16 font-medium text-dark leading-[150%]">
-          About my partner (optional)
-        </span>
+        <span className="font-16 font-medium text-dark leading-[150%]">About my partner (optional)</span>
         <textarea
           value={aboutPartner}
           onChange={handleAboutChange}
@@ -284,19 +281,15 @@ export default function PartnerPreferenceSection() {
 
       <hr className="my-6 md:my-8 border-t border-[#EAEAEA]" />
 
-      {/* ── Background & lifestyle ────────────────────────────────── */}
-      <h2 className="font-18 font-medium text-dark leading-[150%]">
-        Background &amp; lifestyle
-      </h2>
+      <h2 className="font-18 font-medium text-dark leading-[150%]">Background &amp; lifestyle</h2>
 
       <div className="divide-y divide-[#EAEAEA]">
-
         <FormRow leftWidth={leftWidth} label="Marital history" required className="py-4 md:py-5">
-          <RadioGroup options={[...MARITAL_OPTIONS, "Open to all"]} value={marital} onChange={setMarital} />
+          <RadioGroup options={[...MARITAL_OPTIONS, "Open to all"]} value={marital} onChange={v => { setMarital(v); sync({ marital: v }); }} />
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Physical status" required className="py-4 md:py-5">
-          <RadioGroup options={PHYSICAL_OPTIONS} value={physical} onChange={setPhysical} />
+          <RadioGroup options={PHYSICAL_OPTIONS} value={physical} onChange={v => { setPhysical(v); sync({ physical: v }); }} />
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Education" required className="py-4 md:py-5">
@@ -304,7 +297,7 @@ export default function PartnerPreferenceSection() {
             placeholder="Select education levels"
             options={EDUCATION_OPTIONS}
             selected={edu}
-            onChange={setEdu}
+            onChange={v => { setEdu(v); sync({ edu: v }); }}
             open={eduOpen}
             setOpen={setEduOpen}
             showAll
@@ -318,7 +311,7 @@ export default function PartnerPreferenceSection() {
             placeholder="Show all"
             options={countries}
             selected={countries}
-            onChange={setCountries}
+            onChange={v => { setCountries(v); sync({ countries: v }); }}
             open={false}
             setOpen={() => setCountryPopupOpen(true)}
             showAll
@@ -327,7 +320,7 @@ export default function PartnerPreferenceSection() {
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Religion" required className="py-4 md:py-5">
-          <RadioGroup options={RELIGION_PREF} value={religion} onChange={setReligion} />
+          <RadioGroup options={RELIGION_PREF} value={religion} onChange={v => { setReligion(v); sync({ religion: v }); }} />
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Cast or denomination" required className="py-4 md:py-5">
@@ -335,7 +328,7 @@ export default function PartnerPreferenceSection() {
             placeholder="Show all"
             options={casteOptions}
             selected={castes}
-            onChange={setCastes}
+            onChange={v => { setCastes(v); sync({ castes: v }); }}
             open={casteOpen}
             setOpen={setCasteOpen}
             showAll
@@ -345,24 +338,22 @@ export default function PartnerPreferenceSection() {
 
         <div>
           <FormRow leftWidth={leftWidth} label="Food habits" required className="py-4 md:py-5">
-            <RadioGroup options={FOOD_OPTIONS} value={food} onChange={setFood} />
+            <RadioGroup options={FOOD_OPTIONS} value={food} onChange={v => { setFood(v); sync({ food: v }); }} />
           </FormRow>
           <FormRow leftWidth={leftWidth} label="Smoking habits" required className="py-4 md:py-5">
-            <RadioGroup options={SMOKING_OPTIONS} value={smoking} onChange={setSmoking} />
+            <RadioGroup options={SMOKING_OPTIONS} value={smoking} onChange={v => { setSmoking(v); sync({ smoking: v }); }} />
           </FormRow>
           <FormRow leftWidth={leftWidth} label="Drinking habits" required className="py-4 md:py-5">
-            <RadioGroup options={DRINKING_OPTIONS} value={drinking} onChange={setDrinking} />
+            <RadioGroup options={DRINKING_OPTIONS} value={drinking} onChange={v => { setDrinking(v); sync({ drinking: v }); }} />
           </FormRow>
         </div>
-
       </div>
 
-      {/* Popups */}
       {countryPopupOpen && (
         <CountryPopup
           initialSelected={countries}
           onClose={() => setCountryPopupOpen(false)}
-          onConfirm={setCountries}
+          onConfirm={v => { setCountries(v); sync({ countries: v }); }}
         />
       )}
     </div>

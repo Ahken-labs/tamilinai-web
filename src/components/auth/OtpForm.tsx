@@ -41,6 +41,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
   );
   const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const [error, setError] = useState("");
+  const [isExpired, setIsExpired] = useState(false);
   const [shake, setShake] = useState(false);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -103,7 +104,15 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
     setTimeout(() => setShake(false), 500);
   };
 
+  function setErrorMsg(msg: string) {
+    setError(msg);
+    if (msg.toLowerCase().includes("expired") || msg.toLowerCase().includes("start again")) {
+      setIsExpired(true);
+    }
+  }
+
   const handleVerify = async () => {
+    if (isExpired) { router.replace("/"); return; }
     const otp = digits.join("");
     if (otp.length < OTP_LENGTH) {
       setError(t("Please_enter_the_complete_OTP"));
@@ -128,7 +137,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
       }
     } catch (err) {
       const message = err instanceof ApiError ? err.message : t("Invalid_OTP_Please_try_again");
-      setError(message);
+      setErrorMsg(message);
       triggerShake();
       setDigits(Array(OTP_LENGTH).fill(""));
       inputRefs.current[0]?.focus();
@@ -139,6 +148,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
 
   // Switching to SMS sends OTP immediately (first time only — no waiting)
   const handleSwitchToSms = async () => {
+    if (isExpired) { router.replace("/"); return; }
     setMethod("sms");
     setDigits(Array(OTP_LENGTH).fill(""));
     setError("");
@@ -147,12 +157,17 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
     try {
       const registrationKey = sessionStorage.getItem("inai_reg_key") ?? "";
       await resendOtp(registrationKey, "sms");
-    } catch { /* silently ignore */ }
-    sessionStorage.setItem("otp_sms_sent_at", String(Date.now()));
-    setSmsCountdown(RESEND_SECONDS);
+      sessionStorage.setItem("otp_sms_sent_at", String(Date.now()));
+      setSmsCountdown(RESEND_SECONDS);
+    } catch (err) {
+      const msg = err instanceof ApiError ? err.message : "Failed to send WhatsApp OTP. Please try again.";
+      setErrorMsg(msg);
+      setMethod("email"); // revert back to email if SMS failed
+    }
   };
 
   const handleSwitchToEmail = () => {
+    if (isExpired) { router.replace("/"); return; }
     setMethod("email");
     setDigits(Array(OTP_LENGTH).fill(""));
     setError("");
@@ -160,6 +175,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
   };
 
   const handleResend = async () => {
+    if (isExpired) { router.replace("/"); return; }
     if (countdown > 0) return;
     try {
       if (variant === "register") {
@@ -256,7 +272,10 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
 
           {/* Error */}
           {error && (
-            <p className="mt-3 text-[12px] text-primary">{error}</p>
+            <p className="mt-3 text-[12px] text-primary">
+              {error}
+              {isExpired && " Click any button to go back and start over."}
+            </p>
           )}
 
           {/* Success */}
@@ -296,7 +315,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
               />
             )}
             <Button
-              text={loading ? "Verifying..." : t("Next")}
+              text={isExpired ? "Start over" : (loading ? "Verifying..." : t("Next"))}
               onPress={handleVerify}
               icon={loading ? undefined : <ArrowRightIcon />}
               className="flex-1"

@@ -3,8 +3,11 @@ export type InterestStatus = 'pending' | 'accepted' | 'declined' | 'withdrawn';
 
 export interface SentInterest {
   receiverId: string;
+  displayId?: string;
   name: string;
+  gender?: string;
   photoUrl?: string;
+  photoAccess?: string;
   status: InterestStatus;
   viewStatus?: string;
   sendCount: number;
@@ -17,8 +20,11 @@ export interface SentInterest {
 
 export interface ReceivedInterest {
   senderId: string;
+  displayId?: string;
   name: string;
+  gender?: string;
   photoUrl?: string;
+  photoAccess?: string;
   status: InterestStatus;
   viewStatus?: string;
   sendCount: number;
@@ -41,8 +47,12 @@ export type InterestCardStatus =
 
 export interface Interest {
   id: string;
+  displayId?: string;
   profileName: string;
   profilePhoto?: string;
+  gender?: string;
+  isPhotoPrivate?: boolean;
+  myPhoto?: string;
   date: string;
   status: InterestCardStatus;
   isNew?: boolean;
@@ -59,17 +69,22 @@ function formatDate(isoDate: string): string {
   }
 }
 
-export function sentInterestToCard(s: SentInterest): Interest {
+export function sentInterestToCard(s: SentInterest, myPhoto?: string): Interest {
   let cardStatus: InterestCardStatus;
   if (s.status === "accepted") cardStatus = "accepted_by_them";
   else if (s.status === "declined") cardStatus = "skipped_by_them";
-  else if (s.isReminderDue) cardStatus = "sent_reminder";
+  // sent_reminder = 3-day window passed (isReminderDue) OR reminder already sent (viewStatus)
+  else if (s.isReminderDue || s.viewStatus === "sent_reminder") cardStatus = "sent_reminder";
   else cardStatus = "sent_interest";
 
   return {
     id: s.receiverId,
+    displayId: s.displayId,
     profileName: s.name,
+    gender: s.gender,
     profilePhoto: s.photoUrl,
+    isPhotoPrivate: s.photoAccess === "locked",
+    myPhoto,
     date: formatDate(s.lastSentAt),
     status: cardStatus,
     isNew: s.isNew,
@@ -77,17 +92,21 @@ export function sentInterestToCard(s: SentInterest): Interest {
   };
 }
 
-export function receivedInterestToCard(r: ReceivedInterest): Interest {
+export function receivedInterestToCard(r: ReceivedInterest, myPhoto?: string): Interest {
   let cardStatus: InterestCardStatus;
   if (r.status === "accepted") cardStatus = "accepted_by_me";
   else if (r.status === "declined") cardStatus = "declined_by_me";
-  else if (r.isNew) cardStatus = "received_reminder";
+  else if (r.sendCount > 1) cardStatus = "received_reminder";
   else cardStatus = "received_interest";
 
   return {
     id: r.senderId,
+    displayId: r.displayId,
     profileName: r.name,
+    gender: r.gender,
     profilePhoto: r.photoUrl,
+    isPhotoPrivate: r.photoAccess === "locked",
+    myPhoto,
     date: formatDate(r.lastSentAt),
     status: cardStatus,
     isNew: r.isNew,

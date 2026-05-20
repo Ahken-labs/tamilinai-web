@@ -1,7 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
+import ProtectedPhoto from "../common-layout/ProtectedPhoto";
 import { FaWhatsapp } from "react-icons/fa6";
+import { useRouter } from "next/navigation";
 
 import Button from "@/src/components/common-layout/Button";
 import {
@@ -10,13 +13,19 @@ import {
     NotificationIcon,
     SendInterestMsgIcon,
     ShortlistedIcon,
+    ShortlistIcon,
+    ShortlistRemoveIcon,
 } from "@/src/assets/Icons";
 import { CgClose } from "react-icons/cg";
 import { RiArrowGoBackLine } from "react-icons/ri";
+import { sendInterest, withdrawInterest, respondToInterest } from "@/src/lib/api/interests";
+import { shortlistProfile, unshortlistProfile } from "@/src/lib/api/profiles";
+import { ApiError } from "@/src/lib/api/client";
 
 type StatusType = "sent" | "received" | "declined";
 
 type MatchInterestCardProps = {
+    profileId: string;
     profileName: string;
     myName?: string;
     status: StatusType;
@@ -24,6 +33,10 @@ type MatchInterestCardProps = {
     isAccepted: boolean;
     sendCount?: number;
     receivedCount?: number;
+    isShortlisted?: boolean;
+    lastSentAt?: string | null;
+    isReminderDue?: boolean;
+    onAction?: () => void;
 };
 
 const DEFAULT_INTEREST =
@@ -41,6 +54,7 @@ const NON_ELITE_CONGRATS =
     "Congratulations! You are both a mutual match. Don't keep her waiting - make the first move and start your beautiful journey together.";
 
 export default function MatchInterestCard({
+    profileId,
     profileName,
     myName = "username",
     status,
@@ -48,7 +62,45 @@ export default function MatchInterestCard({
     isAccepted,
     sendCount = 0,
     receivedCount = 1,
+    isShortlisted: initialShortlisted = false,
+    lastSentAt,
+    isReminderDue = false,
+    onAction,
 }: MatchInterestCardProps) {
+    const router = useRouter();
+    const [pending, setPending] = useState(false);
+    const [shortlisted, setShortlisted] = useState(initialShortlisted);
+    const [shortlistPending, setShortlistPending] = useState(false);
+
+    async function handleShortlist() {
+        if (shortlistPending) return;
+        const next = !shortlisted;
+        setShortlisted(next);
+        setShortlistPending(true);
+        try {
+            if (next) await shortlistProfile(profileId);
+            else await unshortlistProfile(profileId);
+        } catch (err) {
+            if (err instanceof ApiError && err.status === 409) return; // already in desired state
+            setShortlisted(!next); // revert on real error
+        } finally {
+            setShortlistPending(false);
+        }
+    }
+
+    async function act(fn: () => Promise<unknown>) {
+        if (pending) return;
+        setPending(true);
+        try {
+            await fn();
+            onAction?.();
+        } catch (err) {
+            // 409 = already in this state — refresh profile so UI reflects real state
+            if (err instanceof ApiError && err.status === 409) onAction?.();
+        } finally {
+            setPending(false);
+        }
+    }
     const interestText = DEFAULT_INTEREST.replace("{name}", profileName);
     const incomingText = DEFAULT_INTEREST.replace("{name}", myName);
 
@@ -67,9 +119,10 @@ export default function MatchInterestCard({
                 max-[633px]:flex-col 
                 max-[520px]:flex-row 
                 max-[513px]:flex-col">
-                    <Button text="Explore more profiles" className="flex-1" />
+                    <Button text="Explore more profiles" className="flex-1" onPress={() => router.push("/matches")} />
                     <Button
-                        text="Change mind"
+                        text={pending ? "..." : "Change mind"}
+                        onPress={() => act(() => respondToInterest(profileId, "accepted"))}
                         iconLeft={<RiArrowGoBackLine className="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5" />}
                         className="flex-1 !bg-[#FFF] border border-[#B31B38] !text-[#B31B38] hover:!bg-gray-50 active:!bg-gray-100"
                     />
@@ -101,17 +154,28 @@ export default function MatchInterestCard({
                   md:mt-[25px] md:gap-4"
                     >
                         <Button className="!font-medium w-full"
-                            text="Send Interest" iconLeft={<SendInterestMsgIcon className="h-4 w-4 md:h-5 md:w-5" />}
+                            text={pending ? "Sending..." : "Send Interest"}
+                            onPress={() => act(() => sendInterest(profileId))}
+                            iconLeft={<SendInterestMsgIcon className="h-4 w-4 md:h-5 md:w-5" />}
                         />
-                        <Button className="!font-medium w-full !text-[#B31B38] border border-[#B31B38] !bg-[#FFE9E2] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
-                            text="Add to shortlist" iconLeft={<ShortlistedIcon className="h-4 w-4 md:h-5 md:w-5" />}
+                        <Button
+                            onPress={handleShortlist}
+                            className="!font-medium w-full !text-[#B31B38] border border-[#B31B38] !bg-[#FFE9E2] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
+                            text={shortlisted ? "Remove" : "Add to shortlist"}
+                            iconLeft={shortlisted
+                                ? <ShortlistRemoveIcon className="h-4 w-4 md:h-5 md:w-5" />
+                                : <ShortlistIcon className="h-4 w-4 md:h-5 md:w-5" />
+                            }
                         />
                     </div>
                 </CardShell>
             );
         }
 
-        if (sendCount === 1) {
+        if (sendCount === 1 && !isReminderDue) {
+            // First interest sent, 3-day wait not yet over — show countdown
+            const reminderAt = lastSentAt ? new Date(new Date(lastSentAt).getTime() + 3 * 24 * 60 * 60 * 1000) : null;
+            const countdownText = reminderAt ? formatCountdown(reminderAt) : null;
             return (
                 <CardShell>
                     <SectionTitle title={`You sent a priority interest to ${profileName}`} />
@@ -122,18 +186,20 @@ export default function MatchInterestCard({
                             bubbles={[interestText]}
                         />
                     </div>
-
                     <div className="mt-5 text-center font-poppins font-16 font-medium leading-[150%] text-dark">
                         Interest sent · Awaiting response.
                     </div>
-                    <div className="mt-1 text-center font-poppins font-16 font-normal leading-[150%] text-primary">
-                        You can send a reminder in 1 day, 23 hours.
-                    </div>
+                    {countdownText && (
+                        <div className="mt-1 text-center font-poppins font-16 font-normal leading-[150%] text-primary">
+                            You can send a reminder in {countdownText}.
+                        </div>
+                    )}
                 </CardShell>
             );
         }
 
-        if (sendCount === 2) {
+        if (sendCount === 1 && isReminderDue) {
+            // 3 days passed — show Send reminder button
             return (
                 <CardShell>
                     <SectionTitle title={`You sent a priority interest to ${profileName}`} />
@@ -144,14 +210,13 @@ export default function MatchInterestCard({
                             bubbles={[interestText]}
                         />
                     </div>
-
                     <div className="mt-5 text-center font-poppins font-16 font-medium leading-[150%] text-dark">
                         Interest sent · Awaiting response.
                     </div>
-
                     <div className="mt-3 flex justify-center">
                         <Button
-                            text="Send reminder"
+                            text={pending ? "Sending..." : "Send reminder"}
+                            onPress={() => act(() => sendInterest(profileId))}
                             iconLeft={<NotificationIcon className="h-4 w-4 md:h-5 md:w-5" />}
                             className="!font-medium"
                         />
@@ -160,6 +225,7 @@ export default function MatchInterestCard({
             );
         }
 
+        // sendCount >= 2 — reminder already sent, no more actions
         return (
             <CardShell>
                 <SectionTitle title={`You sent a priority interest to ${profileName}`} />
@@ -170,7 +236,6 @@ export default function MatchInterestCard({
                         bubbles={[interestText, FOLLOW_UP]}
                     />
                 </div>
-
                 <div className="mt-5 text-center font-poppins font-16 font-medium leading-[150%] text-dark">
                     Reminder sent · Awaiting response.
                 </div>
@@ -255,9 +320,15 @@ export default function MatchInterestCard({
                 </div>
 
                 <div className="mt-5 flex gap-4 max-[520px]:flex-col">
-                    <Button text="Accept" iconLeft={<CheckmarkIcon className="w-4 sm:w-4.5 md:w-5 lg:w-6 h-4 sm:h-4.5 md:h-5 lg:h-6" />} className="flex-1" />
                     <Button
-                        text="Decline"
+                        text={pending ? "..." : "Accept"}
+                        onPress={() => act(() => respondToInterest(profileId, "accepted"))}
+                        iconLeft={<CheckmarkIcon className="w-4 sm:w-4.5 md:w-5 lg:w-6 h-4 sm:h-4.5 md:h-5 lg:h-6" />}
+                        className="flex-1"
+                    />
+                    <Button
+                        text={pending ? "..." : "Decline"}
+                        onPress={() => act(() => respondToInterest(profileId, "declined"))}
                         iconLeft={<CgClose className="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5" />}
                         className="flex-1 !bg-[#FFF] border border-[#B31B38] !text-[#B31B38] hover:!bg-gray-50 active:!bg-gray-100"
                     />
@@ -391,17 +462,27 @@ function MessageBubble({
 
 function Avatar({ src }: { src: string }) {
     return (
-        <div className="shrink-0">
-            <Image
+        <div className="shrink-0 relative h-8 sm:h-10 md:h-12 lg:h-14 w-8 sm:w-10 md:w-12 lg:w-14 rounded-full overflow-hidden bg-[#D9D9D9]">
+            <ProtectedPhoto
                 src={src}
                 alt="profile"
-                width={56}
-                height={56}
-                className="h-8 sm:h-10 md:h-12 lg:h-14 w-8 sm:w-10 md:w-12 lg:w-14 rounded-full object-cover bg-[#D9D9D9]"
-                priority={false}
+                fill
+                className="object-cover"
+                sizes="56px"
+                watermark=""
             />
         </div>
     );
+}
+
+function formatCountdown(until: Date): string {
+    const msLeft = until.getTime() - Date.now();
+    if (msLeft <= 0) return "0 hours";
+    const totalHours = Math.floor(msLeft / (1000 * 60 * 60));
+    const days = Math.floor(totalHours / 24);
+    const hours = totalHours % 24;
+    if (days > 0) return `${days} day${days !== 1 ? "s" : ""}, ${hours} hour${hours !== 1 ? "s" : ""}`;
+    return `${hours} hour${hours !== 1 ? "s" : ""}`;
 }
 
 function PartyIcon({ className = "h-14 md:h-18 w-14 md:w-18" }: { className?: string }) {

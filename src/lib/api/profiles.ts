@@ -17,6 +17,8 @@ export interface ProfileFilters {
 export interface ProfilesResponse {
   profiles: BrowseProfile[];
   page: number;
+  total: number;
+  totalPages: number;
   hasMore: boolean;
 }
 
@@ -35,9 +37,8 @@ export function getProfile(userId: string): Promise<ProfileDetail> {
   return http(`/api/profiles/${userId}`);
 }
 
-export function getShortlisted(page?: number): Promise<ProfilesResponse> {
-  const query = page ? `?page=${page}` : '';
-  return http(`/api/profiles/shortlisted${query}`);
+export function getShortlisted(page = 1, limit = 10): Promise<ProfilesResponse> {
+  return http(`/api/profiles/shortlisted?page=${page}&limit=${limit}`);
 }
 
 export function shortlistProfile(userId: string): Promise<{ message: string }> {
@@ -50,6 +51,14 @@ export function unshortlistProfile(userId: string): Promise<{ message: string }>
 
 export function requestPhotoAccess(userId: string): Promise<{ message: string }> {
   return http(`/api/profiles/${userId}/request-photo`, { method: 'POST' });
+}
+
+export function respondPhotoAccess(userId: string, action: 'accept' | 'decline'): Promise<{ message: string }> {
+  return http(`/api/profiles/${userId}/photo-access`, { method: 'PATCH', body: JSON.stringify({ action }) });
+}
+
+export function declinePhotoRequest(requesterId: string): Promise<{ message: string }> {
+  return http(`/api/profiles/photo-requests/${requesterId}/decline`, { method: 'POST' });
 }
 
 export function revealContact(userId: string): Promise<{ phone?: string; countryCode?: string; email?: string }> {

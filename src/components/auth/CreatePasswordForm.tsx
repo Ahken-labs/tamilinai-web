@@ -117,9 +117,10 @@ export default function CreatePasswordForm({ variant = "register" }: Props) {
             return;
         }
 
-        // Register: navigate immediately, create account in background.
+        // Register: clear any stale setup drafts from a previous registration, then navigate.
         // inai_setup_start guards basic-details and survives page refreshes within
         // the same browser session, so slow users won't be kicked out if they refresh.
+        ["inai_setup_basic", "inai_setup_personal", "inai_setup_about"].forEach(k => sessionStorage.removeItem(k));
         sessionStorage.setItem("inai_setup_start", "1");
         setLoading(true); // prevents double-click; component unmounts on navigate
         router.replace("/basic-details");

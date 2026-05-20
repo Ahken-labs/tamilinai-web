@@ -1,24 +1,32 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import {
   AboutMeIcon, EliteCrownIcon, ProfileVerifiedBadgeIcon, UnionDesignIcon,
   GlobeIcon, InterestLockIcon, ChevronIcon, CameraIcon,
-  ProfileBoxIcon,
-  WorkBriefcaseIcon,
-  StepFamilyIcon,
-  CasteCircleIcon,
-  LocationPinIcon,
-  WineGlassIcon,
-  PaintBrushIcon,
-  HeartIcon,
+  ProfileBoxIcon, WorkBriefcaseIcon, StepFamilyIcon, CasteCircleIcon,
+  LocationPinIcon, WineGlassIcon, PaintBrushIcon, HeartIcon,
+  CheckmarkIcon, ChevronRightIcon,
 } from "@/src/assets/Icons";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Button from "@/src/components/common-layout/Button";
-import { getMe } from "@/src/lib/api/user";
-import type { Me } from "@/src/types/user";
+import {
+  getMe, uploadPhoto, savePersonalDetails, saveBasicDetails,
+  saveCareerDetails, saveFamilyDetails, saveLifestyleDetails, savePartnerPreferences,
+  getPartnerPreferences,
+} from "@/src/lib/api/user";
+import { readMeCache, writeMeCache, invalidateMeCache } from "@/src/components/AppHeader";
+import { getProfilePhotoSrc } from "@/src/utils/profilePhoto";
+import { getCachedOwnPhoto, setCachedOwnPhoto, clearCachedOwnPhoto } from "@/src/utils/ownPhotoCache";
+import {
+  nn, parseCm, parseKg, formatDOB,
+  MARITAL_TO_BE, BUILD_TO_BE, DIET_TO_BE, SMOKE_TO_BE, DRINK_TO_BE, RESIDENT_TO_BE,
+} from "@/src/utils/profileMappers";
+import type { Me, PersonalDetailsPayload, LifestyleDetailsPayload } from "@/src/types/user";
 import { BiPhoneCall } from "react-icons/bi";
 import ToggleTabs from "@/src/components/common-layout/ToggleTabs";
+import PhotoCropModal from "@/src/components/app/PhotoCropModal";
 import ContactInfoSection from "@/src/components/profile/sections/ContactInfoSection";
 import BasicInfoSection from "@/src/components/profile/sections/BasicInfoSection";
 import CareerEducationSection from "@/src/components/profile/sections/CareerEducationSection";
@@ -34,59 +42,388 @@ const TABS = [
   { label: "Preview my profile", value: "preview_my_profile" },
 ];
 
+// ─── Session draft keys ────────────────────────────────────────────────────────
+import { DRAFT_KEYS } from "@/src/constants/profileDraftKeys";
+export { DRAFT_KEYS } from "@/src/constants/profileDraftKeys";
+
+const ABOUT_ME_KEY = DRAFT_KEYS.about;
+
+function readDraft<T>(key: string): T | null {
+  try { const r = sessionStorage.getItem(key); return r ? JSON.parse(r) as T : null; } catch { return null; }
+}
+
+function hasSectionDrafts(): boolean {
+  const keys = [DRAFT_KEYS.basic, DRAFT_KEYS.career, DRAFT_KEYS.family, DRAFT_KEYS.religion,
+    DRAFT_KEYS.location, DRAFT_KEYS.lifestyle, DRAFT_KEYS.hobbies, DRAFT_KEYS.partner];
+  return keys.some(k => sessionStorage.getItem(k) !== null);
+}
+
+function clearAllDrafts() {
+  Object.values(DRAFT_KEYS).forEach(k => sessionStorage.removeItem(k));
+}
+
+function isAccountNew(createdAt: string): boolean {
+  return Date.now() - new Date(createdAt).getTime() < 30 * 24 * 60 * 60 * 1000;
+}
+
+function getFirstIncomplete(me: Me | null): string {
+  if (!me) return "contact";
+  const p = me.profile;
+  if ([me.isPhoneVerified, me.isEmailVerified].filter(Boolean).length < 2) return "contact";
+  // basic: 7 or 8 fields — same as buildSections
+  const _hasPhys = p?.hasPhysicalChallenge === true;
+  const _basicFields: unknown[] = [p?.dateOfBirth, p?.maritalStatus, nn(p?.heightCm), nn(p?.weightKg), true /* hasPhysicalChallenge: No is valid */, p?.physicalBuild, (p?.languagesSpoken?.length ?? 0) > 0];
+  if (_hasPhys) _basicFields.push(!!p?.disabilityType);
+  if (_basicFields.filter(Boolean).length < _basicFields.length) return "basic";
+  // career: 5 fields
+  if ([p?.education, p?.educationDetail, p?.occupation, p?.sector, nn(p?.monthlyIncome),
+  ].filter(Boolean).length < 5) return "career";
+  // family: 6 fields
+  if ([p?.fatherOccupation, p?.motherOccupation,
+    nn(p?.brotherCount), nn(p?.brothersMarried), nn(p?.sisterCount), nn(p?.sistersMarried),
+  ].filter(Boolean).length < 6) return "family";
+  if ([p?.religion, p?.caste].filter(Boolean).length < 2) return "religion";
+  if ([p?.country, p?.city, p?.citizenship, p?.residentStatus].filter(Boolean).length < 4) return "location";
+  if ([p?.dietHabit, p?.smokingHabit, p?.drinkingHabit].filter(Boolean).length < 3) return "lifestyle";
+  if (!(p?.hobbies?.length)) return "hobbies";
+  return "partner";
+}
+
 export default function MyProfilePage() {
   const [activeTab, setActiveTab] = useState("edit_profile");
   const [me, setMe] = useState<Me | null>(null);
 
+  // Photo crop state
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
+  const [pendingPhoto, setPendingPhoto] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  // About Me draft (sessionStorage-backed)
+  const [aboutMe, setAboutMe] = useState("");
+  const [aboutMeDirty, setAboutMeDirty] = useState(false);
+
+  // Saving
+  const [saving, setSaving] = useState(false);
+  // True when any section has written a draft to sessionStorage
+  const [draftsExist, setDraftsExist] = useState(false);
+  // Incremented on every onDirty call so buildSections re-reads sessionStorage even when draftsExist is already true
+  const [draftTick, setDraftTick] = useState(0);
+  // Incremented after Done to force section remount with fresh me data
+  const [sectionRevision, setSectionRevision] = useState(0);
+
+  // Section refs for auto-scroll
+  const sectionsRef = useRef<HTMLDivElement>(null);
+  const [openSectionId, setOpenSectionId] = useState<string>("contact");
+
+  const handleDirty = useCallback(() => { setDraftsExist(true); setDraftTick(t => t + 1); }, []);
+
+  // Load me (cache first, then fresh)
   useEffect(() => {
-    getMe().then(setMe).catch(() => {});
+    // Check session drafts immediately (handles page reload with pending drafts)
+    setDraftsExist(hasSectionDrafts());
+
+    const cached = readMeCache();
+    if (cached) {
+      setMe(cached);
+      setOpenSectionId(getFirstIncomplete(cached));
+      setAboutMe(sessionStorage.getItem(ABOUT_ME_KEY) ?? cached.profile?.aboutMe ?? "");
+    }
+
+    // Use cached own photo URL if still valid (avoids R2 GET on every page visit)
+    const cachedPhoto = getCachedOwnPhoto();
+    if (!cachedPhoto) {
+      // Cache miss or expired — fetch fresh me to get new presigned URL
+      getMe().then((data) => {
+        writeMeCache(data);
+        setMe(data);
+        if (data.profile?.photoUrl) setCachedOwnPhoto(data.profile.photoUrl);
+        setOpenSectionId(prev => prev === "contact" ? getFirstIncomplete(data) : prev);
+        if (!sessionStorage.getItem(ABOUT_ME_KEY)) setAboutMe(data.profile?.aboutMe ?? "");
+      }).catch(() => {});
+    } else {
+      // Cache hit — still call getMe for profile data but skip photo refetch
+      getMe().then((data) => {
+        writeMeCache(data);
+        // Only update cached photo if it changed (new upload happened elsewhere)
+        if (data.profile?.photoUrl && data.profile.photoUrl !== cachedPhoto) {
+          setCachedOwnPhoto(data.profile.photoUrl);
+        }
+        setMe(data);
+        setOpenSectionId(prev => prev === "contact" ? getFirstIncomplete(data) : prev);
+        if (!sessionStorage.getItem(ABOUT_ME_KEY)) setAboutMe(data.profile?.aboutMe ?? "");
+      }).catch(() => {});
+    }
+
+    // Pre-cache partner prefs so computePartnerCompleted shows correct count immediately
+    if (!sessionStorage.getItem("inai_partner_pref")) {
+      getPartnerPreferences().then((prefs) => {
+        try { sessionStorage.setItem("inai_partner_pref", JSON.stringify(prefs)); } catch { /* unavailable */ }
+        setDraftTick(t => t + 1);
+      }).catch(() => {});
+    }
   }, []);
 
   const trustBadge = me?.trustBadge ?? false;
   const isElite = me?.isElite ?? false;
-  const displayName = me?.name ?? "username";
+  const displayName = me?.name ?? "";
   const displayId = me?.displayId ?? "";
-  const photoUrl = me?.profile?.photoUrl ?? null;
+  const photoStatus = me?.profile?.photoStatus ?? null;
+  const photoSrc = previewUrl ?? getProfilePhotoSrc(me?.profile?.photoUrl, photoStatus, me?.gender, true);
+  const hasPhoto = !!(me?.profile?.photoUrl || pendingPhoto);
+  const isNew = me?.createdAt ? isAccountNew(me.createdAt) : false;
 
-  function handleTabChange(value: string) {
-    setActiveTab(value);
-  }
+  const hasPendingChanges = pendingPhoto !== null || aboutMeDirty || draftsExist;
+
+  // File picker handler
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    setCropSrc(url);
+    e.target.value = "";
+  };
+
+  // After crop confirmed
+  const handleCropConfirm = useCallback((file: File, url: string) => {
+    setPendingPhoto(file);
+    setPreviewUrl(url);
+    setCropSrc(null);
+  }, []);
+
+  // About Me change
+  const handleAboutMeChange = (value: string) => {
+    setAboutMe(value);
+    sessionStorage.setItem(ABOUT_ME_KEY, value);
+    setAboutMeDirty(value !== (me?.profile?.aboutMe ?? ""));
+  };
+
+  // Scroll to first incomplete section + open it
+  const scrollToAddDetails = () => {
+    sectionsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    // Open "basic" as the first profile-filling section
+    setOpenSectionId("basic");
+  };
+
+  // Done: save everything from sessionStorage drafts + photo + about me
+  const handleDone = async () => {
+    if (!hasPendingChanges) return;
+    setSaving(true);
+
+    // Compare two values — arrays compared sorted, null/undefined treated the same
+    const diff = (a: unknown, b: unknown): boolean => {
+      const norm = (v: unknown) => (v === null || v === undefined ? null : v);
+      const na = norm(a); const nb = norm(b);
+      if (Array.isArray(na) && Array.isArray(nb))
+        return JSON.stringify([...na].sort()) !== JSON.stringify([...nb].sort());
+      return na !== nb;
+    };
+
+    try {
+      const saves: Promise<unknown>[] = [];
+      const bp = me?.profile;
+
+      if (pendingPhoto) {
+        clearCachedOwnPhoto(); // invalidate cache so new photo URL gets cached after upload
+        saves.push(uploadPhoto(pendingPhoto));
+      }
+
+      // ── Personal: aboutMe + religion + caste + country + city + citizenship ──
+      const personalPayload: PersonalDetailsPayload = {};
+      if (aboutMeDirty && diff(aboutMe, bp?.aboutMe)) personalPayload.aboutMe = aboutMe;
+
+      const rd = readDraft<{ religion: string; caste: string }>(DRAFT_KEYS.religion);
+      if (rd) {
+        if (rd.religion && diff(rd.religion, bp?.religion)) personalPayload.religion = rd.religion;
+        if (rd.caste && diff(rd.caste, bp?.caste)) personalPayload.caste = rd.caste;
+      }
+
+      const ld = readDraft<{ countryLivingIn: string; city: string; citizenship: string; residentStatus: string }>(DRAFT_KEYS.location);
+      if (ld) {
+        if (ld.countryLivingIn && diff(ld.countryLivingIn, bp?.country)) personalPayload.country = ld.countryLivingIn;
+        if (ld.city && diff(ld.city, bp?.city)) personalPayload.city = ld.city;
+        if (ld.citizenship && diff(ld.citizenship, bp?.citizenship)) personalPayload.citizenship = ld.citizenship;
+      }
+
+      if (Object.keys(personalPayload).length) saves.push(savePersonalDetails(personalPayload));
+
+      // ── Basic (dateOfBirth, marital, height, weight, physicalChallenge, disability) ──
+      const bd = readDraft<{ birthYear: string; birthMonth: string; birthDay: string; maritalStatus: string; height: string; weight: string; physicalChallenge: string; disability: string; physBuild: string; languages: string[] }>(DRAFT_KEYS.basic);
+      if (bd) {
+        const dob      = formatDOB(bd.birthYear, bd.birthMonth, bd.birthDay) ?? bp?.dateOfBirth;
+        const marital  = bd.maritalStatus ? (MARITAL_TO_BE[bd.maritalStatus] ?? bd.maritalStatus) : bp?.maritalStatus;
+        const heightCm = bd.height ? parseCm(bd.height) : bp?.heightCm;
+        const weightKg = bd.weight ? parseKg(bd.weight) : bp?.weightKg;
+        const hasPhys  = bd.physicalChallenge !== undefined ? bd.physicalChallenge === "yes" : (bp?.hasPhysicalChallenge ?? false);
+        const disType  = hasPhys ? (bd.disability || bp?.disabilityType || undefined) : undefined;
+
+        const basicChanged =
+          diff(dob, bp?.dateOfBirth) ||
+          diff(marital, bp?.maritalStatus) ||
+          diff(heightCm, bp?.heightCm) ||
+          diff(weightKg, bp?.weightKg) ||
+          diff(hasPhys, bp?.hasPhysicalChallenge ?? false) ||
+          (hasPhys && diff(disType, bp?.disabilityType));
+
+        if (basicChanged && dob && marital) saves.push(saveBasicDetails({
+          dateOfBirth: dob,
+          maritalStatus: marital as Parameters<typeof saveBasicDetails>[0]["maritalStatus"],
+          heightCm,
+          weightKg,
+          hasPhysicalChallenge: hasPhys,
+          disabilityType: disType,
+        }));
+      }
+
+      // ── Lifestyle: physBuild + languages (from basic draft) + diet/smoke/drink + residentStatus + hobbies ──
+      const lifestylePayload: LifestyleDetailsPayload = {};
+
+      if (bd?.physBuild) {
+        const physBuildBE = BUILD_TO_BE[bd.physBuild];
+        if (physBuildBE && diff(physBuildBE, bp?.physicalBuild)) lifestylePayload.physicalBuild = physBuildBE;
+      }
+      if (bd?.languages?.length && diff(bd.languages, bp?.languagesSpoken ?? ["Tamil"])) {
+        lifestylePayload.languagesSpoken = bd.languages;
+      }
+
+      const lsd = readDraft<{ dietHabit: string; smokingHabit: string; drinkingHabit: string }>(DRAFT_KEYS.lifestyle);
+      if (lsd) {
+        const dietBE  = lsd.dietHabit  ? (DIET_TO_BE[lsd.dietHabit]   ?? undefined) : undefined;
+        const smokeBE = lsd.smokingHabit ? (SMOKE_TO_BE[lsd.smokingHabit] ?? undefined) : undefined;
+        const drinkBE = lsd.drinkingHabit ? (DRINK_TO_BE[lsd.drinkingHabit] ?? undefined) : undefined;
+        if (dietBE  && diff(dietBE,  bp?.dietHabit))    lifestylePayload.dietHabit    = dietBE;
+        if (smokeBE && diff(smokeBE, bp?.smokingHabit)) lifestylePayload.smokingHabit = smokeBE;
+        if (drinkBE && diff(drinkBE, bp?.drinkingHabit)) lifestylePayload.drinkingHabit = drinkBE;
+      }
+      if (ld?.residentStatus) {
+        const resBE = RESIDENT_TO_BE[ld.residentStatus] ?? ld.residentStatus;
+        if (diff(resBE, bp?.residentStatus)) lifestylePayload.residentStatus = resBE;
+      }
+
+      const hd = readDraft<{ hobbies: string[] }>(DRAFT_KEYS.hobbies);
+      if (hd?.hobbies && diff(hd.hobbies, bp?.hobbies)) lifestylePayload.hobbies = hd.hobbies;
+
+      if (Object.keys(lifestylePayload).length) saves.push(saveLifestyleDetails(lifestylePayload));
+
+      // ── Career ────────────────────────────────────────────────────────────
+      const cd = readDraft<{ education: string; educationDetail: string; occupation: string; sector: string; currency: string; monthlyIncome: string }>(DRAFT_KEYS.career);
+      if (cd) {
+        const careerPayload: Parameters<typeof saveCareerDetails>[0] = {};
+        const income   = cd.monthlyIncome ? Number(cd.monthlyIncome) : undefined;
+        const currency = cd.currency ? cd.currency.substring(0, 3) : undefined;
+        if (cd.education    && diff(cd.education,    bp?.education))      careerPayload.education      = cd.education;
+        if (cd.educationDetail && diff(cd.educationDetail, bp?.educationDetail)) careerPayload.educationDetail = cd.educationDetail;
+        if (cd.occupation   && diff(cd.occupation,   bp?.occupation))     careerPayload.occupation     = cd.occupation;
+        if (cd.sector       && diff(cd.sector,       bp?.sector))         careerPayload.sector         = cd.sector;
+        if (income  !== undefined && diff(income,    bp?.monthlyIncome))  careerPayload.monthlyIncome  = income;
+        if (currency && diff(currency, bp?.incomeCurrency))               careerPayload.incomeCurrency = currency;
+        if (Object.keys(careerPayload).length) saves.push(saveCareerDetails(careerPayload));
+      }
+
+      // ── Family ────────────────────────────────────────────────────────────
+      const fd = readDraft<{ fatherOccupation: string; motherOccupation: string; brothers: string; brothersMarried: string; sisters: string; sistersMarried: string }>(DRAFT_KEYS.family);
+      if (fd) {
+        const familyPayload: Parameters<typeof saveFamilyDetails>[0] = {};
+        const bc  = fd.brothers !== ""       ? Number(fd.brothers)        : undefined;
+        const bm  = fd.brothersMarried !== "" ? Number(fd.brothersMarried) : undefined;
+        const sc  = fd.sisters !== ""         ? Number(fd.sisters)         : undefined;
+        const sm  = fd.sistersMarried !== ""  ? Number(fd.sistersMarried)  : undefined;
+        if (fd.fatherOccupation && diff(fd.fatherOccupation, bp?.fatherOccupation)) familyPayload.fatherOccupation = fd.fatherOccupation;
+        if (fd.motherOccupation && diff(fd.motherOccupation, bp?.motherOccupation)) familyPayload.motherOccupation = fd.motherOccupation;
+        if (bc !== undefined && diff(bc, bp?.brotherCount))     familyPayload.brotherCount    = bc;
+        if (bm !== undefined && diff(bm, bp?.brothersMarried))  familyPayload.brothersMarried = bm;
+        if (sc !== undefined && diff(sc, bp?.sisterCount))      familyPayload.sisterCount     = sc;
+        if (sm !== undefined && diff(sm, bp?.sistersMarried))   familyPayload.sistersMarried  = sm;
+        if (Object.keys(familyPayload).length) saves.push(saveFamilyDetails(familyPayload));
+      }
+
+      // ── Partner prefs ─────────────────────────────────────────────────────
+      const ppd = readDraft<Record<string, unknown>>(DRAFT_KEYS.partner);
+      if (ppd) saves.push(savePartnerPreferences(ppd as Parameters<typeof savePartnerPreferences>[0]));
+
+      if (saves.length === 0) {
+        // Nothing actually changed — just clear drafts and return
+        clearAllDrafts();
+        setDraftsExist(false);
+        setAboutMeDirty(false);
+        return;
+      }
+
+      await Promise.all(saves.map((p, i) => p.catch((e: unknown) => { console.error(`Save[${i}] failed:`, e); throw e; })));
+
+      // Clear all drafts
+      clearAllDrafts();
+      setDraftsExist(false);
+      setPendingPhoto(null);
+      setAboutMeDirty(false);
+
+      // Re-fetch and notify AppHeader to update score
+      invalidateMeCache();
+      const fresh = await getMe();
+      writeMeCache(fresh);
+      if (fresh.profile?.photoUrl) setCachedOwnPhoto(fresh.profile.photoUrl);
+      setMe(fresh);
+      window.dispatchEvent(new CustomEvent("me-updated"));
+      if (fresh.profile?.photoUrl) setPreviewUrl(null);
+      if (!sessionStorage.getItem(ABOUT_ME_KEY)) setAboutMe(fresh.profile?.aboutMe ?? "");
+
+      // Force section remount so they display fresh saved values
+      setSectionRevision(r => r + 1);
+      // If profile now complete, switch to preview
+      if (fresh.isProfileComplete) setActiveTab("preview_my_profile");
+    } catch (err) { console.error("Done save failed:", err); }
+    finally { setSaving(false); }
+  };
+
   return (
-    <main className="min-h-screen bg-[#F8F5F2] font-poppins select-none pb-0">
-      {/* Header */}
+    <main className="min-h-screen bg-[#F8F5F2] font-poppins select-none pb-4">
+      {/* Tab bar */}
       <div className="sticky top-[74px] z-30 w-full border-t border-[#EEEEEE] bg-white">
         <div className="flex justify-center px-4 lg:px-10 py-3">
-          <ToggleTabs tabs={TABS} activeTab={activeTab} onTabChange={handleTabChange} />
+          <ToggleTabs tabs={TABS} activeTab={activeTab} onTabChange={setActiveTab} />
         </div>
       </div>
 
       {/* Body */}
       <div className="mt-5 md:mt-7 flex justify-center px-4 md:px-10">
         <div className="flex w-full max-w-[1160px] flex-col items-center min-[520px]:items-start min-[520px]:flex-row gap-5 sm:gap-7 lg:gap-10">
-          {/* Sticky Image */}
+
+          {/* Sticky photo column */}
           <div className="shrink-0 min-[520px]:sticky min-[520px]:top-[168px]">
             <div className="relative h-[133px] sm:h-[160px] md:h-[213px] lg:h-[266px] w-[100px] sm:w-[120px] md:w-[160px] lg:w-[200px]">
-              {/* Image */}
               <div className="relative z-10 h-[133px] sm:h-[160px] md:h-[213px] lg:h-[266px] overflow-hidden rounded-[16px] bg-[#D9D9D9]">
                 <Image
-                  src={photoUrl ?? "/images/no_photo.png"}
+                  src={photoSrc}
                   alt="profile"
                   width={200}
-                  height={266}
+                  height={300}
                   priority
+                  draggable={false}
+                  onContextMenu={(e) => e.preventDefault()}
                   className="h-full w-full object-cover"
                 />
               </div>
-              <div className="absolute left-1/2 -translate-x-1/2 z-10 bottom-[-18px] min-[520px]:bottom-0">
-                <Button
-                  text="Edit"
-                  className="max-[520px]:py-2 min-[520px]:py-2 min-[767px]:px-10 min-[520px]:px-6 md:py-3"
-                  iconLeft={
-                    <CameraIcon className="w-3 sm:w-4 md:w-4.5 h-3 sm:h-4 md:h-4.5" />
-                  }
-                />
-              </div>
-              {/* Union below image */}
+
+              {/* Hidden file input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+
+              {activeTab !== "preview_my_profile" && (
+                <div className="absolute left-1/2 -translate-x-1/2 z-10 bottom-[-18px] min-[520px]:bottom-0">
+                  <Button
+                    text={hasPhoto ? "Edit" : "Upload"}
+                    onPress={() => fileInputRef.current?.click()}
+                    className="max-[520px]:py-2 min-[520px]:py-2 min-[767px]:px-10 min-[520px]:px-6 md:py-3"
+                    iconLeft={<CameraIcon className="w-3 sm:w-4 md:w-4.5 h-3 sm:h-4 md:h-4.5" />}
+                  />
+                </div>
+              )}
+
               <div className="mt-[-2px] w-[60px] md:w-[92px] lg:w-[105px] mx-auto">
                 <UnionDesignIcon className="rotate-270 -translate-y-16 md:-translate-y-32 lg:-translate-y-36.5" />
                 <UnionDesignIcon className="rotate-90 -translate-y-29 md:-translate-y-52 lg:-translate-y-59.5" />
@@ -94,124 +431,178 @@ export default function MyProfilePage() {
             </div>
           </div>
 
-          {/* Detail Body */}
+          {/* Detail column */}
           <div className="flex-1 min-w-0 w-full">
-            <h1 className="font-24 font-semibold text-dark">
-              My profile
-            </h1>
-            {/* Top Row */}
+            <h1 className="font-24 font-semibold text-dark">My profile</h1>
+
+            {/* Name + badge + tag row */}
             <div className="mt-4 md:mt-6 flex items-center justify-between gap-4 flex-wrap">
               <div className="flex items-center gap-1 md:gap-2">
-                <h1 className="text-dark text-[14px] md:text-[18px] font-medium leading-[150%]">
+                <h2 className="text-dark text-[14px] md:text-[18px] font-medium leading-[150%]">
                   {displayName}
-                </h1>
+                </h2>
                 {trustBadge && (
                   <ProfileVerifiedBadgeIcon className="h-4 sm:h-5 lg:h-6 w-4 sm:w-5 lg:w-6 shrink-0" />
                 )}
               </div>
 
-              {/* Status Tag */}
+              {/* One tag: Elite has priority, then New (< 30 days), else nothing */}
               {isElite ? (
                 <div className="flex items-center gap-1 rounded-[38px] bg-[#FFDED3] px-2 py-[2px]">
                   <EliteCrownIcon className="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5 shrink-0" />
-                  <span className="text-[#A97216] font-16 font-normal leading-[150%]">
-                    Elite
-                  </span>
+                  <span className="text-[#A97216] font-16 font-normal leading-[150%]">Elite</span>
                 </div>
-              ) : (
+              ) : isNew ? (
                 <div className="flex items-center rounded-[38px] bg-[#D5ECFF] px-3 py-[2px]">
-                  <span className="font-16 font-normal leading-[150%] text-[#5D5D5D]">
-                    New
-                  </span>
+                  <span className="font-16 font-normal leading-[150%] text-[#5D5D5D]">New</span>
                 </div>
-              )}
+              ) : null}
             </div>
 
-            {/* ID */}
-            <div className="md:mt-0.5 text-dark font-16 font-normal leading-[150%]">
-              {displayId}
-            </div>
-            {/* Photo visible toggle*/}
-            <PhotoVisibilityDropdown />
-            <div className="mt-6 md:mt-8 bg-[#FFE9E2] rounded-[16px] p-4 md:p-5">
-              <div className="flex items-center">
-                <Image
-                  src="/icons/trust_Badge.png"
-                  alt=""
-                  width={36}
-                  height={40}
-                  className="h-10 w-9 shrink-0"
-                />
-                <p className="ml-2 md:ml-3 text-dark font-16">Get a Trust Badge by completing 3 quick tasks to show members you are real and trustworthy.</p>
+            {/* Inai ID */}
+            <div className="md:mt-0.5 text-dark font-16 font-normal leading-[150%]">{displayId}</div>
+
+            {/* Photo visibility */}
+            {me && <PhotoVisibilityRow photoStatus={photoStatus} initialVisibility="public" />}
+
+            {/* Trust badge section — hidden once badge earned */}
+            {me && !trustBadge && (
+              <TrustBadgeCard
+                me={me}
+                onAddDetails={scrollToAddDetails}
+              />
+            )}
+
+            {/* About Me */}
+            <div className="mt-6 md:mt-8 rounded-[16px] bg-light p-4 md:p-5">
+              <div className="flex items-center gap-2 text-dark md:gap-3">
+                <AboutMeIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />
+                <h2 className="font-20 font-semibold">About Me</h2>
               </div>
-
-              <div className="ml-10.5 flex flex-col font-16 text-dark gap-1.5 md:gap-2 mt-1.5">
-                <span>1. Verify your mobile number</span>
-                <span>2. Verify your email address</span>
-                <span>3. Reach 90% profile completion points</span>
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="mt-6 md:mt-8 space-y-6 md:mt-8 md:space-y-8">
-              <div className="rounded-[16px] bg-light p-4 md:p-5">
-                <div className="flex items-center gap-2 text-dark md:gap-3">
-                  <AboutMeIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />
-                  <h2 className="font-20 font-semibold">About Me</h2>
-                </div>
-                <div className="my-3 border-t border-[#EAEAEA] md:my-4" />
+              <div className="my-3 border-t border-[#EAEAEA] md:my-4" />
+              {activeTab === "preview_my_profile" ? (
+                <p className="font-16 text-dark leading-[150%] whitespace-pre-wrap">
+                  {aboutMe || <span className="text-[#B31B38]">A few words about yourself, your values, what you&apos;re looking for.</span>}
+                </p>
+              ) : (
                 <div>
                   <div className="rounded-[12px] border border-[rgba(179,27,56,0.25)] bg-[#FFF0F3]">
-                    <textarea placeholder="A few words about yourself, your values, what you're looking for."
-                      className="h-20 w-full resize-none bg-transparent p-3 font-16 text-dark outline-none placeholder:text-[#B31B38] " />
+                    <textarea
+                      value={aboutMe}
+                      onChange={(e) => handleAboutMeChange(e.target.value)}
+                      placeholder="A few words about yourself, your values, what you're looking for."
+                      className="h-20 w-full resize-none bg-transparent p-3 font-16 text-dark outline-none placeholder:text-[#B31B38]"
+                    />
                   </div>
                   <span className="mt-[5px] md:mt-[7px] block text-secondary4 font-14">
                     Keep it genuine — families read this
                   </span>
                 </div>
-              </div>
-              {/* boxes */}
-              <ExpandableSections />
+              )}
+            </div>
 
+            {/* Expandable sections */}
+            <div ref={sectionsRef} className="mt-6 md:mt-8 space-y-4 md:space-y-6">
+              {activeTab === "preview_my_profile" ? (
+                <ExpandableSections
+                  me={me}
+                  openId={openSectionId}
+                  onOpenChange={setOpenSectionId}
+                  onDirty={handleDirty}
+                  revision={sectionRevision}
+                  draftTick={draftTick}
+                  isPreview
+                />
+              ) : (
+                <ExpandableSections
+                  me={me}
+                  openId={openSectionId}
+                  onOpenChange={setOpenSectionId}
+                  onDirty={handleDirty}
+                  revision={sectionRevision}
+                  draftTick={draftTick}
+                />
+              )}
             </div>
           </div>
         </div>
       </div>
 
-      <div className="mt-10 md:mt-20 justify-center border-t border-[#EAEAEA] bg-[rgba(255,255,255,0.60)]  shadow-[0_0_20px_rgba(0,0,0,0.04)]">
-        <div className="mx-auto justify-center px-4 md:px-10 py-2 md:py-3">
-          <div className="flex max-w-[1160px] mx-auto">
-            <div className="flex-1" />
-
-            <Button
-              text="Done"
-              className="flex-1"
-            />
+      {/* Done button — scrolls with page, sits at bottom of content */}
+      {hasPendingChanges && activeTab === "edit_profile" && (
+        <div className="mt-10 md:mt-20 border-t border-[#EAEAEA] bg-[rgba(255,255,255,0.60)] shadow-[0_0_20px_rgba(0,0,0,0.04)]">
+          <div className="mx-auto px-4 md:px-10 py-2 md:py-3">
+            <div className="flex max-w-[1160px] mx-auto">
+              <div className="flex-1" />
+              <Button
+                text={saving ? "Saving…" : "Done"}
+                onPress={handleDone}
+                className="flex-1"
+              />
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Crop modal */}
+      {cropSrc && (
+        <PhotoCropModal
+          imageSrc={cropSrc}
+          onConfirm={handleCropConfirm}
+          onClose={() => setCropSrc(null)}
+        />
+      )}
     </main>
   );
 }
 
+// ─── Photo visibility row ──────────────────────────────────────────────────────
+
 const PHOTO_VISIBILITY_OPTIONS = [
-  { value: "all", label: "All Inai members", type: "globe" },
-  { value: "accepted", label: "Accepted interest only", type: "lock" },
+  { value: "public", label: "All Inai members", type: "globe" },
+  { value: "locked", label: "Accepted interest only", type: "lock" },
 ] as const;
+type VisibilityValue = "public" | "locked";
 
-type PhotoVisibilityValue = (typeof PHOTO_VISIBILITY_OPTIONS)[number]["value"];
-
-function PhotoVisibilityDropdown() {
+function PhotoVisibilityRow({
+  photoStatus,
+  initialVisibility,
+}: {
+  photoStatus: string | null | undefined;
+  initialVisibility: VisibilityValue;
+}) {
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState<PhotoVisibilityValue>("all");
+  const [selected, setSelected] = useState<VisibilityValue>(initialVisibility);
 
-  const selectedOption = PHOTO_VISIBILITY_OPTIONS.find((item) => item.value === selected) ?? PHOTO_VISIBILITY_OPTIONS[0];
+  if (!photoStatus) return null; // no photo uploaded at all
+
+  if (photoStatus === "pending") {
+    return (
+      <div className="mt-2 md:mt-3 font-16 text-dark flex items-center gap-2">
+        <span>Photo visibility</span>
+        <span className="text-[#A97216] font-medium">Under review</span>
+      </div>
+    );
+  }
+
+  if (photoStatus === "rejected") {
+    return (
+      <div className="mt-2 md:mt-3 font-16 text-dark flex items-center gap-2">
+        <span>Photo visibility</span>
+        <span className="text-[#B31B38] font-medium">Photo rejected — please upload a new one</span>
+      </div>
+    );
+  }
+
+  // Approved — show the toggle dropdown
+  const selectedOption = PHOTO_VISIBILITY_OPTIONS.find((o) => o.value === selected) ?? PHOTO_VISIBILITY_OPTIONS[0];
 
   return (
     <div className="relative inline-flex items-center gap-2 mt-2 md:mt-3">
       <div className="font-16 text-dark">Photo visibility</div>
-
-      <button type="button" onClick={() => setOpen((v) => !v)}
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
         className="cursor-pointer px-2 py-1 flex items-center gap-1 md:gap-2 rounded-full bg-light"
       >
         {selectedOption.type === "globe" ? (
@@ -224,20 +615,22 @@ function PhotoVisibilityDropdown() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 z-40 inline-flex flex-col gap-2 rounded-[16px] bg-white px-1 md:px-2 py-3 md:py-4 shadow-[0_0_16px_0_rgba(0,0,0,0.08)] origin-top-right">
+        <div className="absolute left-[90px] top-full mt-2 z-40 inline-flex flex-col gap-2 rounded-[16px] bg-white px-1 md:px-2 py-3 md:py-4 shadow-[0_0_16px_0_rgba(0,0,0,0.08)] origin-top-left">
           {PHOTO_VISIBILITY_OPTIONS.map((item) => {
             const active = selected === item.value;
             return (
-              <button key={item.value} type="button" onClick={() => { setSelected(item.value); setOpen(false); }}
-                className={`cursor-pointer flex items-center gap-2 rounded-[8px] px-2 py-1 transition-colors duration-150 ${active ? "bg-[#FFF0F3]" : "hover:bg-[#EAEAEA]"}`}
+              <button
+                key={item.value}
+                type="button"
+                onClick={() => { setSelected(item.value); setOpen(false); }}
+                className={`cursor-pointer flex items-center gap-2 rounded-[8px] px-2 py-1 transition-colors duration-150 whitespace-nowrap ${active ? "bg-[#FFF0F3]" : "hover:bg-[#EAEAEA]"}`}
               >
                 {item.type === "globe" ? (
                   <GlobeIcon className={`h-3 w-3 md:h-4 md:w-4 ${active ? "text-primary" : "text-dark"}`} />
                 ) : (
                   <InterestLockIcon stroke={active ? "#B31B38" : "#222"} className="h-3 w-3 md:h-4 md:w-4" />
                 )}
-
-                <span className={`font-16 font-normal leading-[150%] ${active ? "text-primary" : "text-dark"}`} >
+                <span className={`font-16 font-normal leading-[150%] ${active ? "text-primary" : "text-dark"}`}>
                   {item.label}
                 </span>
               </button>
@@ -249,7 +642,74 @@ function PhotoVisibilityDropdown() {
   );
 }
 
+// ─── Trust badge card ──────────────────────────────────────────────────────────
 
+function TrustBadgeCard({ me, onAddDetails }: { me: Me; onAddDetails: () => void }) {
+  const isPhoneVerified = me.isPhoneVerified;
+  const isEmailVerified = me.isEmailVerified;
+  const isProfileVerified = me.profileCompletionScore >= 90;
+
+  return (
+    <div className="mt-6 md:mt-8 bg-[#FFE9E2] rounded-[16px] p-4 md:p-5">
+      <div className="flex items-center">
+        <Image src="/icons/trust_Badge.png" alt="" width={36} height={40} className="h-10 w-9 shrink-0" />
+        <p className="ml-2 md:ml-3 text-dark font-16">
+          Get a Trust Badge by completing 3 quick tasks to show members you are real and trustworthy.
+        </p>
+      </div>
+
+      <div className="gap-1.5 md:gap-2 mt-1.5 flex flex-col">
+        {/* Phone */}
+        <div className="ml-10.5 flex justify-between font-16">
+          <span className="text-dark">1. Verify your mobile number</span>
+          {isPhoneVerified ? (
+            <div className="text-[#656565] flex items-center">
+              Verified <CheckmarkIcon className="md:w-6 md:h-6 w-4 h-4 ml-1" />
+            </div>
+          ) : (
+            <Link href="/verify-identity?method=phone" className="text-[#B31B38] flex items-center hover:underline">
+              Verify now <ChevronRightIcon className="w-4 h-4" />
+            </Link>
+          )}
+        </div>
+
+        {/* Email */}
+        <div className="ml-10.5 flex justify-between font-16">
+          <span className="text-dark">2. Verify your email address</span>
+          {isEmailVerified ? (
+            <div className="text-[#656565] flex items-center">
+              Verified <CheckmarkIcon className="md:w-6 md:h-6 w-4 h-4 ml-1" />
+            </div>
+          ) : (
+            <Link href="/verify-identity?method=email" className="text-[#B31B38] flex items-center hover:underline">
+              Verify now <ChevronRightIcon className="w-4 h-4" />
+            </Link>
+          )}
+        </div>
+
+        {/* Profile score */}
+        <div className="ml-10.5 flex justify-between font-16">
+          <span className="text-dark">3. Reach 90% profile completion points</span>
+          {isProfileVerified ? (
+            <div className="text-[#656565] flex items-center">
+              Verified <CheckmarkIcon className="md:w-6 md:h-6 w-4 h-4 ml-1" />
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={onAddDetails}
+              className="text-[#B31B38] flex items-center hover:underline cursor-pointer"
+            >
+              Add details <ChevronRightIcon className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Expandable sections ───────────────────────────────────────────────────────
 
 type SectionItem = {
   id: string;
@@ -258,98 +718,210 @@ type SectionItem = {
   completed: number;
   total: number;
   body: React.ReactNode;
-  defaultOpen?: boolean;
 };
 
-const sections: SectionItem[] = [
-  {
-    id: "contact",
-    title: "Contact information",
-    icon: <BiPhoneCall strokeWidth={0.5} className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
-    completed: 1,
-    total: 2,
-    body: <ContactInfoSection />,
-  },
-  {
-    id: "basic",
-    title: "Basic Info",
-    icon: <ProfileBoxIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
-    completed: 6,
-    total: 7,
-    body: <BasicInfoSection />,
-  },
-  {
-    id: "career",
-    title: "Career & Education",
-    icon: <WorkBriefcaseIcon strokeWidth={2} className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
-    completed: 2,
-    total: 5,
-    body: <CareerEducationSection />,
-  },
-  {
-    id: "family",
-    title: "Family Background",
-    icon: <StepFamilyIcon strokeWidth="4" className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
-    completed: 0,
-    total: 7,
-    body: <FamilyBackgroundSection />,
-  },
-  {
-    id: "religion",
-    title: "Religion and Caste",
-    icon: <CasteCircleIcon strokeWidth="2" className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
-    completed: 2,
-    total: 2,
-    body: <ReligionCasteSection />,
-  },
-  {
-    id: "location",
-    title: "Location",
-    icon: <LocationPinIcon strokeWidth="2" className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
-    completed: 2,
-    total: 2,
-    body: <LocationSection />,
-  },
-  {
-    id: "lifestyle",
-    title: "Lifestyle",
-    icon: <WineGlassIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
-    completed: 0,
-    total: 3,
-    body: <LifestyleSection />,
-  },
-  {
-    id: "hobbies",
-    title: "Interests & Hobbies",
-    icon: <PaintBrushIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
-    completed: 0,
-    total: 10,
-    body: <InterestsHobbiesSection />,
-  },
-  {
-    id: "partner",
-    title: "Partner preference",
-    icon: <HeartIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
-    completed: 11,
-    total: 12,
-    body: <PartnerPreferenceSection />,
-  },
-];
+function computePartnerCompleted(): number {
+  try {
+    const raw = sessionStorage.getItem(DRAFT_KEYS.partner);
+    let ppd: Record<string, unknown> = {};
+    if (raw) {
+      ppd = JSON.parse(raw);
+    } else {
+      const modal = sessionStorage.getItem("inai_partner_pref");
+      if (modal) {
+        const p = JSON.parse(modal);
+        ppd = {
+          ageMin: p.ageMin ? String(p.ageMin) : "",
+          ageMax: p.ageMax ? String(p.ageMax) : "",
+          heightMin: p.heightMinCm ? `${p.heightMinCm} cm` : "",
+          heightMax: p.heightMaxCm ? `${p.heightMaxCm} cm` : "",
+          marital: p.maritalStatuses?.[0] ?? "Unmarried",
+          physical: p.physicalStatuses?.[0] ?? "Open to all",
+          edu: p.educationLevels?.length ? p.educationLevels : ["filled"],
+          countries: p.countries ?? [],
+          religion: p.religions?.[0] ?? "Open to all",
+          castes: p.castes ?? [],
+          food: p.foodHabits?.[0] ?? "Open to all",
+          smoking: p.smokingHabits?.[0] ?? "Open to all",
+          drinking: p.drinkingHabits?.[0] ?? "Open to all",
+          aboutPartner: "",
+        };
+      }
+    }
+    return ([
+      !!(ppd.ageMin && ppd.ageMax),
+      !!(ppd.heightMin && ppd.heightMax),
+      !!(ppd.marital ?? "Unmarried"),
+      !!(ppd.physical ?? "Open to all"),
+      true, // edu: empty = show all = filled
+      true, // countries: empty = show all = filled
+      !!(ppd.religion ?? "Open to all"),
+      true, // castes: empty = show all = filled
+      !!(ppd.food ?? "Open to all"),
+      !!(ppd.smoking ?? "Open to all"),
+      !!(ppd.drinking ?? "Open to all"),
+      !!ppd.aboutPartner,
+    ] as boolean[]).filter(Boolean).length;
+  } catch { return 0; }
+}
 
-function ExpandableSections() {
-  const [openId, setOpenId] = useState<string>("contact");
+function buildSections(me: Me | null, onDirty: () => void, partnerCompleted: number, revision: number, _draftTick = 0): SectionItem[] {
+  const p = me?.profile;
+  const key = `${me?.id ?? "loading"}_${revision}`;
+
+  const contactComplete = [me?.isPhoneVerified, me?.isEmailVerified].filter(Boolean).length;
+
+  // Basic: dob, marital, height, weight, hasPhysicalChallenge, physBuild, languages (7 or 8)
+  // _draftTick=0 means we're in SSR/pre-mount — skip sessionStorage to avoid hydration mismatch
+  const bd = (_draftTick > 0 ? (() => { try { const r = sessionStorage.getItem(DRAFT_KEYS.basic); return r ? JSON.parse(r) : null; } catch { return null; } })() : null) as Record<string, unknown> | null;
+  const liveHasPhys = bd?.physicalChallenge !== undefined ? bd.physicalChallenge === "yes" : (p?.hasPhysicalChallenge === true);
+  const liveHeight = bd?.height ?? (p?.heightCm ? `${p.heightCm} cm` : "");
+  const liveWeight = bd?.weight ?? (p?.weightKg ? `${p.weightKg} kg` : "");
+  const liveMarital = bd?.maritalStatus ?? p?.maritalStatus;
+  const liveDOB = bd?.birthYear ? `${bd.birthYear}-${bd.birthMonth}-${bd.birthDay}` : p?.dateOfBirth;
+  const livePhysBuild = bd?.physBuild ?? p?.physicalBuild;
+  // Section defaults to ["Tamil"] when API returns null, so treat null as filled
+  const liveLangs = (bd?.languages as string[] | undefined) ?? p?.languagesSpoken ?? ["Tamil"];
+  const liveDisability = bd?.disability ?? p?.disabilityType;
+  const hasPhysChallenge = liveHasPhys;
+  const basicFields: unknown[] = [
+    liveDOB, liveMarital, !!liveHeight, !!liveWeight,
+    true, // hasPhysicalChallenge itself: always filled (No is a valid answer)
+    livePhysBuild, (liveLangs?.length ?? 0) > 0,
+  ];
+  if (hasPhysChallenge) basicFields.push(!!liveDisability);
+  const basicComplete = basicFields.filter(Boolean).length;
+  const basicTotal = hasPhysChallenge ? 8 : 7;
+
+  // Career: education, educationDetail, occupation, sector, monthlyIncome (5)
+  const careerComplete = [
+    p?.education, p?.educationDetail, p?.occupation, p?.sector, nn(p?.monthlyIncome),
+  ].filter(Boolean).length;
+
+  // Family: fatherOcc, motherOcc, brotherCount, brothersMarried, sisterCount, sistersMarried (6)
+  const familyComplete = [
+    p?.fatherOccupation, p?.motherOccupation,
+    nn(p?.brotherCount), nn(p?.brothersMarried), nn(p?.sisterCount), nn(p?.sistersMarried),
+  ].filter(Boolean).length;
+
+  // Location: country, city, citizenship, residentStatus (4)
+  const locationComplete = [p?.country, p?.city, p?.citizenship, p?.residentStatus].filter(Boolean).length;
+
+  // Lifestyle: diet, smoking, drinking (3)
+  const lifestyleComplete = [p?.dietHabit, p?.smokingHabit, p?.drinkingHabit].filter(Boolean).length;
+
+  return [
+    {
+      id: "contact",
+      title: "Contact information",
+      icon: <BiPhoneCall strokeWidth={0.5} className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
+      completed: contactComplete,
+      total: 2,
+      body: me ? <ContactInfoSection me={me} /> : null,
+    },
+    {
+      id: "basic",
+      title: "Basic Info",
+      icon: <ProfileBoxIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
+      completed: basicComplete,
+      total: basicTotal,
+      body: <BasicInfoSection key={key} me={me} onDirty={onDirty} />,
+    },
+    {
+      id: "career",
+      title: "Career & Education",
+      icon: <WorkBriefcaseIcon strokeWidth={2} className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
+      completed: careerComplete,
+      total: 5,
+      body: <CareerEducationSection key={key} me={me} onDirty={onDirty} />,
+    },
+    {
+      id: "family",
+      title: "Family Background",
+      icon: <StepFamilyIcon strokeWidth="4" className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
+      completed: familyComplete,
+      total: 6,
+      body: <FamilyBackgroundSection key={key} me={me} onDirty={onDirty} />,
+    },
+    {
+      id: "religion",
+      title: "Religion and Caste",
+      icon: <CasteCircleIcon strokeWidth="2" className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
+      completed: [p?.religion, p?.caste].filter(Boolean).length,
+      total: 2,
+      body: <ReligionCasteSection key={key} me={me} onDirty={onDirty} />,
+    },
+    {
+      id: "location",
+      title: "Location",
+      icon: <LocationPinIcon strokeWidth="2" className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
+      completed: locationComplete,
+      total: 4,
+      body: <LocationSection key={key} me={me} onDirty={onDirty} />,
+    },
+    {
+      id: "lifestyle",
+      title: "Lifestyle",
+      icon: <WineGlassIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
+      completed: lifestyleComplete,
+      total: 3,
+      body: <LifestyleSection key={key} me={me} onDirty={onDirty} />,
+    },
+    {
+      id: "hobbies",
+      title: "Interests & Hobbies",
+      icon: <PaintBrushIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
+      completed: (p?.hobbies?.length ?? 0) > 0 ? 1 : 0,
+      total: 1,
+      body: <InterestsHobbiesSection key={key} me={me} onDirty={onDirty} />,
+    },
+    {
+      id: "partner",
+      title: "Partner preference",
+      icon: <HeartIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
+      completed: partnerCompleted,
+      total: 12,
+      body: <PartnerPreferenceSection key={key} onDirty={onDirty} />,
+    },
+  ];
+}
+
+function ExpandableSections({
+  me,
+  openId,
+  onOpenChange,
+  onDirty,
+  isPreview = false,
+  revision = 0,
+  draftTick = 0,
+}: {
+  me: Me | null;
+  openId: string;
+  onOpenChange: (id: string) => void;
+  onDirty: () => void;
+  isPreview?: boolean;
+  revision?: number;
+  draftTick?: number;
+}) {
+  // mounted gates sessionStorage reads — prevents SSR/client hydration mismatch
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  const [partnerCompleted, setPartnerCompleted] = useState(0);
+  useEffect(() => { if (mounted) setPartnerCompleted(computePartnerCompleted()); }, [revision, mounted, draftTick]);
+  const sections = buildSections(me, onDirty, partnerCompleted, revision, mounted ? draftTick : 0);
 
   return (
-    <div className="space-y-4 md:space-y-6">
+    <>
       {sections.map((section) => (
         <ExpandableSection
           key={section.id}
           section={section}
-          open={openId === section.id}
-          onToggle={() => setOpenId((prev) => (prev === section.id ? "" : section.id))}
+          open={isPreview ? true : openId === section.id}
+          onToggle={() => onOpenChange(openId === section.id ? "" : section.id)}
+          isPreview={isPreview}
         />
       ))}
-    </div>
+    </>
   );
 }
 
@@ -357,45 +929,49 @@ function ExpandableSection({
   section,
   open,
   onToggle,
+  isPreview = false,
 }: {
   section: SectionItem;
   open: boolean;
   onToggle: () => void;
+  isPreview?: boolean;
 }) {
-  const statusText = section.completed >= section.total ? "completed" : `${section.completed}/${section.total} completed`;
+  const allDone = section.completed >= section.total;
+  const statusText = allDone ? "Completed" : `${section.completed}/${section.total} completed`;
 
   return (
     <div className="font-poppins rounded-[16px] bg-light">
-      <button
-        type="button"
-        onClick={onToggle}
-        className="flex w-full cursor-pointer items-center justify-between px-4 md:px-5 pt-4 md:pt-5 pb-3 md:pb-4"
-      >
-        <div className="flex items-center gap-2 md:gap-3">
-          {section.icon}
-          <span className="text-left font-20 font-semibold leading-[150%] text-dark">
-            {section.title}
-          </span>
+      {isPreview ? (
+        <div className="flex w-full items-center justify-between px-4 md:px-5 pt-4 md:pt-5 pb-3 md:pb-4">
+          <div className="flex items-center gap-2 md:gap-3">
+            {section.icon}
+            <span className="font-20 font-semibold leading-[150%] text-dark">{section.title}</span>
+          </div>
+          <span className="font-16 font-medium leading-[150%] text-secondary4">{statusText}</span>
         </div>
+      ) : (
+        <button
+          type="button"
+          onClick={onToggle}
+          className="flex w-full cursor-pointer items-center justify-between px-4 md:px-5 pt-4 md:pt-5 pb-3 md:pb-4"
+        >
+          <div className="flex items-center gap-2 md:gap-3">
+            {section.icon}
+            <span className="text-left font-20 font-semibold leading-[150%] text-dark">
+              {section.title}
+            </span>
+          </div>
 
-        <div className="flex items-center gap-1 md:gap-2">
-          <span className="font-16 font-medium leading-[150%] text-secondary4">
-            {statusText}
-          </span>
-          {section.completed < section.total && (
-            <div className="h-2 md:h-3 w-2 md:w-3 rounded-full bg-[#B31B38]" />
-          )}
-          <ChevronIcon
-            open={open}
-            stroke="#B31B38"
-            strokeWidth={1.5}
-            className="h-3 md:h-4 w-3 md:w-4"
-          />
-        </div>
-      </button>
+          <div className="flex items-center gap-1 md:gap-2">
+            <span className="font-16 font-medium leading-[150%] text-secondary4">{statusText}</span>
+            {!allDone && <div className="h-2 md:h-3 w-2 md:w-3 rounded-full bg-[#B31B38]" />}
+            <ChevronIcon open={open} stroke="#B31B38" strokeWidth={1.5} className="h-3 md:h-4 w-3 md:w-4" />
+          </div>
+        </button>
+      )}
 
       {open && (
-        <div className="px-4 md:px-5 pb-4 md:pb-5 pt-1 md:pt-2">
+        <div className={`px-4 md:px-5 pb-4 md:pb-5 pt-1 md:pt-2${isPreview ? " pointer-events-none select-none" : ""}`}>
           {section.body}
         </div>
       )}

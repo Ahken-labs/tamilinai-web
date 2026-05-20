@@ -30,29 +30,11 @@ function setCachedPrefs(prefs: PartnerPreferences): void {
   try { sessionStorage.setItem(PREF_CACHE_KEY, JSON.stringify(prefs)); } catch { /* unavailable */ }
 }
 
-// Height conversion: "5'4"" ↔ cm
-function ftInToCm(val: string): number | undefined {
-  const m = val.match(/^(\d+)'(\d+)"$/);
-  if (!m) return undefined;
-  return Math.round(parseInt(m[1]) * 30.48 + parseInt(m[2]) * 2.54);
-}
-function cmToFtIn(cm: number): string {
-  const totalIn = Math.round(cm / 2.54);
-  return `${Math.floor(totalIn / 12)}'${totalIn % 12}"`;
-}
-
 // ── Static option lists ───────────────────────────────────────────────────
 
 const AGE_OPTIONS = Array.from({ length: 53 }, (_, i) => String(18 + i));
 
-const HEIGHT_OPTIONS: string[] = (() => {
-  const opts: string[] = [];
-  for (let ft = 4; ft <= 7; ft++) {
-    const max = ft === 7 ? 0 : 11;
-    for (let inch = 0; inch <= max; inch++) opts.push(`${ft}'${inch}"`);
-  }
-  return opts;
-})();
+const HEIGHT_OPTIONS: string[] = Array.from({ length: 81 }, (_, i) => `${140 + i} cm`);
 
 const PHYSICAL_OPTIONS = ["Open to all", "Normal", "Physically challenged"];
 const FOOD_OPTIONS = ["Open to all", "Vegetarian", "Non vegetarian"];
@@ -94,6 +76,8 @@ interface Props {
 }
 
 export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onboarding" }: Props) {
+  const originalPrefs = useRef<PartnerPreferences | null>(null);
+
   const [ageMin, setAgeMin] = useState("");
   const [ageMax, setAgeMax] = useState("");
   const [heightMin, setHeightMin] = useState("");
@@ -125,40 +109,42 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
 
   // Apply saved preferences onto component state
   function applyPrefs(prefs: PartnerPreferences) {
-    if (prefs.minAgeYears) setAgeMin(String(prefs.minAgeYears));
-    if (prefs.maxAgeYears) setAgeMax(String(prefs.maxAgeYears));
-    if (prefs.minHeightCm) setHeightMin(cmToFtIn(prefs.minHeightCm));
-    if (prefs.maxHeightCm) setHeightMax(cmToFtIn(prefs.maxHeightCm));
+    if (prefs.ageMin) setAgeMin(String(prefs.ageMin));
+    if (prefs.ageMax) setAgeMax(String(prefs.ageMax));
+    if (prefs.heightMinCm) setHeightMin(`${prefs.heightMinCm} cm`);
+    if (prefs.heightMaxCm) setHeightMax(`${prefs.heightMaxCm} cm`);
     if (prefs.maritalStatuses?.[0]) setMarital(prefs.maritalStatuses[0]);
-    if (prefs.physicalBuilds?.[0]) setPhysical(prefs.physicalBuilds[0]);
+    if (prefs.physicalStatuses?.[0]) setPhysical(prefs.physicalStatuses[0]);
     if (prefs.educationLevels?.length) setEduTags(prefs.educationLevels);
     if (prefs.countries?.length) setCountries(prefs.countries);
     if (prefs.castes?.length) setCastes(prefs.castes);
     if (prefs.religions?.[0]) setReligion(prefs.religions[0]);
-    if (prefs.dietHabits?.[0]) setFood(prefs.dietHabits[0]);
+    if (prefs.foodHabits?.[0]) setFood(prefs.foodHabits[0]);
     if (prefs.smokingHabits?.[0]) setSmoking(prefs.smokingHabits[0]);
     if (prefs.drinkingHabits?.[0]) setDrinking(prefs.drinkingHabits[0]);
+    if (prefs.aboutPartner) setAboutPartner(prefs.aboutPartner);
   }
 
   // Build API payload from current state
   function buildPayload(): PartnerPreferences {
     const p: PartnerPreferences = {};
-    if (ageMin) p.minAgeYears = parseInt(ageMin);
-    if (ageMax) p.maxAgeYears = parseInt(ageMax);
-    const minCm = heightMin ? ftInToCm(heightMin) : undefined;
-    const maxCm = heightMax ? ftInToCm(heightMax) : undefined;
-    if (minCm) p.minHeightCm = minCm;
-    if (maxCm) p.maxHeightCm = maxCm;
-    if (marital !== "Open to all") p.maritalStatuses = [marital];
-    if (physical !== "Open to all") p.physicalBuilds = [physical];
-    if (religion !== "Open to all") p.religions = [religion];
-    if (food !== "Open to all") p.dietHabits = [food];
-    if (smoking !== "Open to all") p.smokingHabits = [smoking];
-    if (drinking !== "Open to all") p.drinkingHabits = [drinking];
-    // Education: only save if a subset is selected (all = open to all)
-    if (eduTags.length > 0 && eduTags.length < EDUCATION_OPTIONS.length) p.educationLevels = eduTags;
-    if (countries.length > 0) p.countries = countries;
-    if (castes.length > 0) p.castes = castes;
+    if (ageMin) p.ageMin = parseInt(ageMin);
+    if (ageMax) p.ageMax = parseInt(ageMax);
+    const minCm = heightMin ? parseInt(heightMin) : undefined;
+    const maxCm = heightMax ? parseInt(heightMax) : undefined;
+    if (minCm) p.heightMinCm = minCm;
+    if (maxCm) p.heightMaxCm = maxCm;
+    p.maritalStatuses = [marital];
+    p.physicalStatuses = [physical];
+    p.religions = [religion];
+    p.foodHabits = [food];
+    p.smokingHabits = [smoking];
+    p.drinkingHabits = [drinking];
+    // null = "show all"; subset = user's selection
+    p.educationLevels = eduTags.length < EDUCATION_OPTIONS.length ? eduTags : null;
+    p.countries = countries.length > 0 ? countries : null;
+    p.castes = castes.length > 0 ? castes : null;
+    if (aboutPartner) p.aboutPartner = aboutPartner;
     return p;
   }
 
@@ -182,11 +168,11 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
 
     // sessionStorage cache hit → instant population
     const cached = getCachedPrefs();
-    if (cached) { applyPrefs(cached); return; }
+    if (cached) { originalPrefs.current = cached; applyPrefs(cached); return; }
 
     // Cache miss → fetch from API, then cache
     getPartnerPreferences()
-      .then((prefs) => { setCachedPrefs(prefs); applyPrefs(prefs); })
+      .then((prefs) => { originalPrefs.current = prefs; setCachedPrefs(prefs); applyPrefs(prefs); })
       .catch(() => { /* keep defaults */ });
   }, [isOpen]);
   /* eslint-enable react-hooks/set-state-in-effect */
@@ -195,11 +181,23 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
   if (!isOpen || typeof window === "undefined") return null;
 
   function handleSave() {
-    // All fields optional — no validation errors
     setAgeError(""); setHeightError("");
     const payload = buildPayload();
-    setCachedPrefs(payload);                               // update cache immediately
-    savePartnerPreferences(payload).catch(() => { });       // write to DB in background
+    const changed = JSON.stringify(payload) !== JSON.stringify(originalPrefs.current);
+    setCachedPrefs(payload);
+    if (changed) {
+      savePartnerPreferences(payload).catch(() => { });
+    }
+    onClose();
+  }
+
+  function handleSearchSave() {
+    // "Save as partner preference" in search variant — saves to backend
+    handleSave();
+  }
+
+  function handleSearch() {
+    // "Search" in search variant — only filter frontend, no backend save
     onClose();
   }
   function handleAboutChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -474,12 +472,12 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
                 <>
                   <Button
                     text="Save as partner preference"
-                    onPress={handleSave}
+                    onPress={handleSearchSave}
                     className="flex-1 !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
                   />
                   <Button
                     text="Search"
-                    onPress={handleSave}
+                    onPress={handleSearch}
                     iconLeft={<SearchIcon className="w-4 h-4 text-white" />}
                     className="flex-1"
                   />

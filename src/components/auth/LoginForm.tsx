@@ -62,13 +62,13 @@ export default function LoginForm() {
             break;
           default:
             if (err.status === 0 || err.message.toLowerCase().includes("network") || err.message.toLowerCase().includes("fetch")) {
-              setPasswordError("*Network error. Please try again shortly.");
+              setPasswordError(" Network error. Please try again shortly.");
             } else {
               setPasswordError("*Something went wrong. Please try again.");
             }
         }
       } else {
-        setPasswordError("*Network error. Please try again shortly.");
+        setPasswordError(" Network error. Please try again shortly.");
       }
     } finally {
       setLoading(false);

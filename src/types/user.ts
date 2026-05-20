@@ -55,6 +55,7 @@ export interface Me {
   isClosed: boolean;
   trustBadge: boolean;
   profileCompletionScore: number;
+  createdAt: string;
   profile: UserProfileSection;
 }
 
@@ -78,6 +79,8 @@ export interface BrowseProfile {
   photoAccess?: string;
   isViewed?: boolean;
   isShortlisted?: boolean;
+  createdAt?: string;
+  interestStatus?: 'none' | 'sent' | 'received' | 'accepted' | 'declined';
 }
 
 // Full profile detail (GET /api/profiles/:id)
@@ -90,11 +93,21 @@ export interface ProfileDetail {
   trustBadge: boolean;
   profileCompletionScore: number;
   isShortlisted: boolean;
+  isPhoneVerified?: boolean;
+  isEmailVerified?: boolean;
   phone?: string;
   countryCode?: string;
   email?: string;
+  // Interest status between current user and this profile
+  interestStatus?: 'none' | 'sent' | 'received' | 'declined';
+  interestIsAccepted?: boolean;
+  interestSendCount?: number;
+  interestReceiveCount?: number;
+  interestLastSentAt?: string | null;
+  isReminderDue?: boolean;
   profile: UserProfileSection & {
     photoAccess?: string;
+    familyOrigin?: string;
   };
 }
 
@@ -136,19 +149,47 @@ export interface PersonalDetailsPayload {
   aboutMe?: string;
 }
 
+export interface CareerDetailsPayload {
+  education?: string;
+  educationDetail?: string;
+  occupation?: string;
+  sector?: string;
+  monthlyIncome?: number;
+  incomeCurrency?: string;
+}
+
+export interface FamilyDetailsPayload {
+  fatherOccupation?: string;
+  motherOccupation?: string;
+  brotherCount?: number;
+  brothersMarried?: number;
+  sisterCount?: number;
+  sistersMarried?: number;
+}
+
+export interface LifestyleDetailsPayload {
+  physicalBuild?: string;
+  languagesSpoken?: string[];
+  dietHabit?: string;
+  smokingHabit?: string;
+  drinkingHabit?: string;
+  hobbies?: string[];
+  residentStatus?: string;
+}
+
 export interface PartnerPreferences {
-  minAgeYears?: number;
-  maxAgeYears?: number;
-  minHeightCm?: number;
-  maxHeightCm?: number;
-  maritalStatuses?: string[];
-  religions?: string[];
-  castes?: string[];
-  countries?: string[];
-  educationLevels?: string[];
-  dietHabits?: string[];
-  smokingHabits?: string[];
-  drinkingHabits?: string[];
-  physicalBuilds?: string[];
-  residentStatuses?: string[];
+  ageMin?: number | null;
+  ageMax?: number | null;
+  heightMinCm?: number | null;
+  heightMaxCm?: number | null;
+  maritalStatuses?: string[] | null;
+  religions?: string[] | null;
+  castes?: string[] | null;
+  countries?: string[] | null;
+  educationLevels?: string[] | null;
+  aboutPartner?: string | null;
+  physicalStatuses?: string[] | null;
+  foodHabits?: string[] | null;
+  smokingHabits?: string[] | null;
+  drinkingHabits?: string[] | null;
 }

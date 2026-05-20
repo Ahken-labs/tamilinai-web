@@ -858,11 +858,11 @@ export function PartyIcon({ }: IconProps) {
 }
 
 
-export function PencilIcon({ className = "w-5 h-5 shrink-0", ...props }: IconProps) {
+export function PencilIcon({ className = "w-5 h-5 shrink-0", stroke="#656565", ...props }: IconProps) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true" {...props} >
-      <path d="M13.2633 5.13916L5.05327 13.8292C4.74327 14.1592 4.44327 14.8092 4.38327 15.2592L4.01327 18.4992C3.88327 19.6692 4.72327 20.4692 5.88327 20.2692L9.10327 19.7192C9.55327 19.6392 10.1833 19.3092 10.4933 18.9692L18.7033 10.2792C20.1233 8.77916 20.7633 7.06916 18.5533 4.97916C16.3533 2.90916 14.6833 3.63916 13.2633 5.13916Z" stroke="#656565" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M11.8906 6.5907C12.3206 9.3507 14.5606 11.4607 17.3406 11.7407" stroke="#656565" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M13.2633 5.13916L5.05327 13.8292C4.74327 14.1592 4.44327 14.8092 4.38327 15.2592L4.01327 18.4992C3.88327 19.6692 4.72327 20.4692 5.88327 20.2692L9.10327 19.7192C9.55327 19.6392 10.1833 19.3092 10.4933 18.9692L18.7033 10.2792C20.1233 8.77916 20.7633 7.06916 18.5533 4.97916C16.3533 2.90916 14.6833 3.63916 13.2633 5.13916Z" stroke={stroke} strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M11.8906 6.5907C12.3206 9.3507 14.5606 11.4607 17.3406 11.7407" stroke={stroke} strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -975,6 +975,113 @@ export function UnionFullIcon({
   );
 }
 
+
+// ── Notification-specific icons ──────────────────────────────────────────────
+
+export function NotifPhotoApprovedIcon({ className = "w-6 h-6 shrink-0", ...props }: IconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" className={className} {...props}>
+      <path d="M9 10C10.1046 10 11 9.10457 11 8C11 6.89543 10.1046 6 9 6C7.89543 6 7 6.89543 7 8C7 9.10457 7.89543 10 9 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M13 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22H15C20 22 22 20 22 15V10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M16 4.99005L17.46 6.45005L21.36 2.55005" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M2.67188 18.9501L7.60187 15.6401C8.39187 15.1101 9.53187 15.1701 10.2419 15.7801L10.5719 16.0701C11.3519 16.7401 12.6119 16.7401 13.3919 16.0701L17.5519 12.5001C18.3319 11.8301 19.5919 11.8301 20.3719 12.5001L22.0019 13.9001" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+export function NotifPhotoSlashIcon({ className = "w-6 h-6 shrink-0", ...props }: IconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" className={className} {...props}>
+      <path d="M3.37 20.1C2.43 18.97 2 17.31 2 15V9C2 4 4 2 9 2H15C17.19 2 18.8 2.38 19.92 3.23" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M21.9709 7.98999C21.9909 8.30999 22.0009 8.64999 22.0009 8.99999V15C22.0009 20 20.0009 22 15.0009 22H9.00094C8.26094 22 7.58094 21.96 6.96094 21.86" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M8 10C9.10457 10 10 9.10457 10 8C10 6.89543 9.10457 6 8 6C6.89543 6 6 6.89543 6 8C6 9.10457 6.89543 10 8 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M22 2L2 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M11.4297 16.45C11.7297 16.75 12.2197 16.75 12.5197 16.45L17.5497 11.41C18.3297 10.63 19.5897 10.63 20.3697 11.41L21.9997 13.05" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+export function NotifPromoIcon({ className = "w-6 h-6 shrink-0", ...props }: IconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" className={className} {...props}>
+      <path d="M19.5 12.5C19.5 11.12 20.62 10 22 10V9C22 5 21 4 17 4H7C3 4 2 5 2 9V9.5C3.38 9.5 4.5 10.62 4.5 12C4.5 13.38 3.38 14.5 2 14.5V15C2 19 3 20 7 20H17C21 20 22 19 22 15C20.62 15 19.5 13.88 19.5 12.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M9 14.75L15 8.75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M14.9945 14.75H15.0035" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M8.99451 9.25H9.00349" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+export function NotifPhotoViewIcon({ className = "w-6 h-6 shrink-0", ...props }: IconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" className={className} {...props}>
+      <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M9 10C10.1046 10 11 9.10457 11 8C11 6.89543 10.1046 6 9 6C7.89543 6 7 6.89543 7 8C7 9.10457 7.89543 10 9 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M2.67188 18.9501L7.60187 15.6401C8.39187 15.1101 9.53187 15.1701 10.2419 15.7801L10.5719 16.0701C11.3519 16.7401 12.6119 16.7401 13.3919 16.0701L17.5519 12.5001C18.3319 11.8301 19.5919 11.8301 20.3719 12.5001L22.0019 13.9001" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+export function NotifPhotoUploadIcon({ className = "w-6 h-6 shrink-0", ...props }: IconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" className={className} {...props}>
+      <path d="M9 10C10.1046 10 11 9.10457 11 8C11 6.89543 10.1046 6 9 6C7.89543 6 7 6.89543 7 8C7 9.10457 7.89543 10 9 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M13 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22H15C20 22 22 20 22 15V10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M18 8V2L20 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M18 2L16 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M2.67188 18.9501L7.60187 15.6401C8.39187 15.1101 9.53187 15.1701 10.2419 15.7801L10.5719 16.0701C11.3519 16.7401 12.6119 16.7401 13.3919 16.0701L17.5519 12.5001C18.3319 11.8301 19.5919 11.8301 20.3719 12.5001L22.0019 13.9001" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+export function NotifPhotoDeclinedIcon({ className = "w-6 h-6 shrink-0", ...props }: IconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" className={className} {...props}>
+      <path d="M9 10C10.1046 10 11 9.10457 11 8C11 6.89543 10.1046 6 9 6C7.89543 6 7 6.89543 7 8C7 9.10457 7.89543 10 9 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M13 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22H15C20 22 22 20 22 15V10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M16.5625 6.94L20.4425 3.06" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M20.4425 6.94L16.5625 3.06" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M2.67188 18.95L7.60187 15.64C8.39187 15.11 9.53187 15.17 10.2419 15.78L10.5719 16.07C11.3519 16.74 12.6119 16.74 13.3919 16.07L17.5519 12.5C18.3319 11.83 19.5919 11.83 20.3719 12.5L22.0019 13.9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+export function NotifPhotoAddedIcon({ className = "w-6 h-6 shrink-0", ...props }: IconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" className={className} {...props}>
+      <path d="M9 10C10.1046 10 11 9.10457 11 8C11 6.89543 10.1046 6 9 6C7.89543 6 7 6.89543 7 8C7 9.10457 7.89543 10 9 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M13 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22H15C20 22 22 20 22 15V10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M15.75 5H21.25" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M18.5 7.75V2.25" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M2.67188 18.95L7.60187 15.64C8.39187 15.11 9.53187 15.17 10.2419 15.78L10.5719 16.07C11.3519 16.74 12.6119 16.74 13.3919 16.07L17.5519 12.5C18.3319 11.83 19.5919 11.83 20.3719 12.5L22.0019 13.9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+export function NotifPaymentSuccessIcon({ className = "w-6 h-6 shrink-0", ...props }: IconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" className={className} {...props}>
+      <path d="M2 8.5H13.5" stroke="currentColor" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M6 16.5H8" stroke="currentColor" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M10.5 16.5H14.5" stroke="currentColor" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M22 11.03V16.11C22 19.62 21.11 20.5 17.56 20.5H6.44C2.89 20.5 2 19.62 2 16.11V7.89C2 4.38 2.89 3.5 6.44 3.5H13.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M16.5 6L18 7.5L22 3.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+export function NotifPaymentFailedIcon({ className = "w-6 h-6 shrink-0", ...props }: IconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" className={className} {...props}>
+      <path d="M2 8.5H13.5" stroke="currentColor" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M6 16.5H8" stroke="currentColor" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M10.5 16.5H14.5" stroke="currentColor" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M22 12.03V16.11C22 19.62 21.11 20.5 17.56 20.5H6.44C2.89 20.5 2 19.62 2 16.11V7.89C2 4.38 2.89 3.5 6.44 3.5H13.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M17.3047 8.18957L21.1847 4.30957" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M21.1847 8.18957L17.3047 4.30957" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  );
+}
 
 export function TermsIcon({ className = "w-6 h-6", ...props
 }: IconProps) {

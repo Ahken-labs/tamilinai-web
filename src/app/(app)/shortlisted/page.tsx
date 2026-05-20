@@ -1,13 +1,23 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import ProfileCard from "../../../components/app/ProfileCard";
 import ProfileCardSkeleton from "../../../components/app/skeleton-layout/ProfileCardSkeleton";
 import Pagination from "../../../components/more/Pagination";
 import { getShortlisted } from "../../../lib/api/profiles";
 import type { BrowseProfile } from "../../../types/user";
 import type { Profile } from "../../../types/profile";
+import { formatHeight } from "../../../utils/heightUtils";
+
+const CARDS_PER_PAGE = 10;
+
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+
+function isNewProfile(createdAt?: string): boolean {
+  if (!createdAt) return false;
+  return Date.now() - new Date(createdAt).getTime() < THIRTY_DAYS_MS;
+}
 
 function calculateAge(dateOfBirth?: string): number {
   if (!dateOfBirth) return 0;
@@ -24,6 +34,7 @@ function calculateAge(dateOfBirth?: string): number {
 function toCardProfile(p: BrowseProfile): Profile {
   return {
     id: p.id,
+    displayId: p.displayId,
     name: p.name,
     age: calculateAge(p.dateOfBirth),
     location: p.city ?? "",
@@ -31,29 +42,48 @@ function toCardProfile(p: BrowseProfile): Profile {
     country: p.country ?? "",
     work: p.occupation ?? "",
     religion: p.religion ?? "",
-    height: p.heightCm ? `${p.heightCm} cm` : "",
+    height: formatHeight(p.heightCm),
     caste: p.caste ?? "",
     isVerified: p.trustBadge ?? false,
     isElite: p.isElite,
-    isNew: false,
+    isNew: isNewProfile(p.createdAt),
     isViewed: p.isViewed ?? false,
-    photo: p.photoUrl,
+    photo: p.photoUrl ?? undefined,
     isPrivate: p.photoAccess === "locked",
     isShortlisted: true,
+    gender: p.gender,
+    interestStatus: p.interestStatus,
   };
 }
 
 function ShortlistedContent() {
   const [currentPage, setCurrentPage] = useState(1);
+  const queryClient = useQueryClient();
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ["shortlisted", currentPage],
     queryFn: () => getShortlisted(currentPage),
-    staleTime: 5 * 60 * 1000,
+    // Always re-fetch when user navigates here — shortlist can change from other pages
+    staleTime: 0,
+    // Keep previous page data in memory briefly so back-navigation feels instant
+    gcTime: 5 * 60 * 1000,
+    // Show previous page data while fetching next page (no blank flash)
+    placeholderData: (prev) => prev,
   });
 
   const profiles = data?.profiles.map(toCardProfile) ?? [];
-  const hasMore = data?.hasMore ?? false;
+  const totalPages = data?.totalPages ?? 1;
+  const showFetchingOverlay = isFetching && !isLoading;
+
+  function handlePageChange(page: number) {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  // Called by ProfileCard when user unshortlists — invalidate so list refreshes
+  function handleUnshortlist() {
+    queryClient.invalidateQueries({ queryKey: ["shortlisted"] });
+  }
 
   return (
     <main className="min-h-screen bg-[#F8F5F2]">
@@ -66,21 +96,26 @@ function ShortlistedContent() {
               Failed to load shortlisted profiles. Please try again.
             </p>
           </div>
-        ) : profiles.length > 0 ? (
-          profiles.map((profile) => <ProfileCard key={profile.id} profile={profile} />)
-        ) : (
+        ) : profiles.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <p className="font-poppins text-[16px] font-medium text-[#888888]">
               No shortlisted profiles yet.
+              <br />- Team Inai -
             </p>
+          </div>
+        ) : (
+          <div className={showFetchingOverlay ? "opacity-60 pointer-events-none transition-opacity" : ""}>
+            {profiles.map((profile) => (
+              <ProfileCard key={profile.id} profile={profile} onUnshortlist={handleUnshortlist} />
+            ))}
           </div>
         )}
 
-        {!isLoading && hasMore && (
+        {!isLoading && !isError && totalPages > 1 && (
           <Pagination
             currentPage={currentPage}
-            totalPages={currentPage + 1}
-            onPageChange={setCurrentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
           />
         )}
       </div>

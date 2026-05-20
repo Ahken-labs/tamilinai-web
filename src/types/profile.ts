@@ -1,5 +1,6 @@
 export interface Profile {
   id: string;
+  displayId: string;
   name: string;
   age: number;
   location: string;
@@ -16,4 +17,6 @@ export interface Profile {
   photo?: string;
   isPrivate?: boolean;
   isShortlisted?: boolean;
+  gender?: string;
+  interestStatus?: 'none' | 'sent' | 'received' | 'accepted' | 'declined';
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { http } from "../../lib/api/client";
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
 
 export default function LogoutPopup({ isOpen, onClose }: Props) {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   if (!isOpen) return null;
 
@@ -19,8 +21,9 @@ export default function LogoutPopup({ isOpen, onClose }: Props) {
     } catch {
       // proceed with local logout even if server call fails
     }
-    localStorage.removeItem("tamilinai_access_token");
-    localStorage.removeItem("tamilinai_user");
+    localStorage.clear();
+    sessionStorage.clear();
+    queryClient.clear();
     router.replace("/");
   }
 

@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import ProtectedPhoto from "../common-layout/ProtectedPhoto";
+import { getCachedPhoto, setCachedPhoto } from "../../utils/othersPhotoCache";
 import { useRouter } from "next/navigation";
 import { Profile } from "../../types/profile";
 import {
@@ -23,9 +25,13 @@ import {
 } from "../../assets/Icons";
 import Button from "../common-layout/Button";
 import { shortlistProfile, unshortlistProfile } from "../../lib/api/profiles";
+import { sendInterest } from "../../lib/api/interests";
+import { ApiError } from "../../lib/api/client";
 
 interface ProfileCardProps {
   profile: Profile;
+  onUnshortlist?: () => void;
+  onInterestSent?: () => void;
 }
 
 function getTags(profile: Profile): Array<{ label: string; type: "elite" | "viewed" | "new" }> {
@@ -42,11 +48,31 @@ const TAG_STYLES: Record<string, string> = {
   new: "bg-[#D5ECFF] text-[#5D5D5D]",
 };
 
-export default function ProfileCard({ profile }: ProfileCardProps) {
+export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: ProfileCardProps) {
   const router = useRouter();
   const [shortlisted, setShortlisted] = useState(profile.isShortlisted ?? false);
   const [shortlistPending, setShortlistPending] = useState(false);
+  const [interestSent, setInterestSent] = useState(
+    () => profile.interestStatus === "sent" || profile.interestStatus === "accepted"
+  );
+  const [interestPending, setInterestPending] = useState(false);
   const tags = getTags(profile);
+
+  const placeholder = profile.gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png";
+
+  // Cache other user's photo in sessionStorage — cleared on logout
+  const [photoSrc, setPhotoSrc] = useState<string>(() => {
+    if (profile.isPrivate || !profile.photo) return placeholder;
+    return getCachedPhoto(profile.id) ?? profile.photo;
+  });
+
+  useEffect(() => {
+    if (!profile.isPrivate && profile.photo) {
+      const cached = getCachedPhoto(profile.id);
+      if (!cached) setCachedPhoto(profile.id, profile.photo);
+      setPhotoSrc(cached ?? profile.photo);
+    }
+  }, [profile.id, profile.photo, profile.isPrivate]);
 
   async function handleShortlist() {
     if (shortlistPending) return;
@@ -58,11 +84,27 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
         await shortlistProfile(profile.id);
       } else {
         await unshortlistProfile(profile.id);
+        onUnshortlist?.();
       }
     } catch {
       setShortlisted(!next); // revert on error
     } finally {
       setShortlistPending(false);
+    }
+  }
+
+  async function handleSendInterest() {
+    if (interestPending || interestSent) return;
+    setInterestPending(true);
+    try {
+      await sendInterest(profile.id);
+      setInterestSent(true);
+      onInterestSent?.();
+    } catch (err) {
+      // 409 = already sent — treat as success so button locks
+      if (err instanceof ApiError && err.status === 409) { setInterestSent(true); onInterestSent?.(); }
+    } finally {
+      setInterestPending(false);
     }
   }
 
@@ -91,16 +133,25 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
       <div className="flex flex-col min-[840px]:flex-row">
         {/* Photo */}
         <div className="relative w-full min-[840px]:w-[220px] md:min-w-[220px] h-[240px] md:h-[263px] lg:h-[293.33px] rounded-[16px] overflow-hidden bg-[#DBDBDB]/20">
-          <Image
-            src={profile.photo && !profile.isPrivate ? profile.photo : "/images/no_photo.png"}
-            alt={profile.name}
-            fill
-            className="object-cover"
-            sizes="(max-width: 840px) 100vw, 220px"
-            priority={false}
-            draggable={false}
-            onContextMenu={(e) => e.preventDefault()}
-          />
+          {profile.photo && !profile.isPrivate ? (
+            <ProtectedPhoto
+              src={photoSrc}
+              alt={profile.name}
+              fill
+              className="object-cover"
+              sizes="(max-width: 840px) 100vw, 220px"
+            />
+          ) : (
+            <Image
+              src={placeholder}
+              alt={profile.name}
+              fill
+              className="object-cover"
+              sizes="(max-width: 840px) 100vw, 220px"
+              draggable={false}
+              onContextMenu={(e) => e.preventDefault()}
+            />
+          )}
           {(!profile.photo || profile.isPrivate) && (
             <>
               <div
@@ -146,7 +197,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
 
           {/* ID */}
           <p className="mt-[3px] font-poppins font-16 text-[#888888] font-normal">
-            ID: {profile.id}
+            ID: {profile.displayId}
           </p>
 
           {/* Divider */}
@@ -185,8 +236,14 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
               }
             />
             <Button
-              className="basis-full flex-1 [@media(min-width:450px)]:basis-[calc(50%-0.375rem)] [@media(min-width:690px)]:basis-[calc(33.333%-0.5rem)] [@media(min-width:838px)]:basis-full [@media(min-width:940px)]:basis-[calc(33.333%-0.5rem)] !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
-              text="Send Interest"
+              onPress={handleSendInterest}
+              className="basis-full flex-1 [@media(min-width:450px)]:basis-[calc(50%-0.375rem)] [@media(min-width:690px)]:basis-[calc(33.333%-0.5rem)] [@media(min-width:838px)]:basis-full [@media(min-width:940px)]:basis-[calc(33.333%-0.5rem)] !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE] disabled:opacity-50"
+              text={
+                profile.interestStatus === "accepted" ? "Connected"
+                : interestSent ? "Interest Sent"
+                : interestPending ? "Sending..."
+                : "Send Interest"
+              }
               iconLeft={<SendInterestMsgIcon className="w-4 h-4 shrink-0" />}
             />
           </div>
