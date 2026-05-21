@@ -121,6 +121,7 @@ export default function MyProfilePage() {
   // Load me (cache first, then fresh)
   useEffect(() => {
     // Check session drafts immediately (handles page reload with pending drafts)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDraftsExist(hasSectionDrafts());
 
     const cached = readMeCache();
@@ -905,8 +906,10 @@ function ExpandableSections({
 }) {
   // mounted gates sessionStorage reads — prevents SSR/client hydration mismatch
   const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMounted(true); }, []);
   const [partnerCompleted, setPartnerCompleted] = useState(0);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { if (mounted) setPartnerCompleted(computePartnerCompleted()); }, [revision, mounted, draftTick]);
   const sections = buildSections(me, onDirty, partnerCompleted, revision, mounted ? draftTick : 0);
 

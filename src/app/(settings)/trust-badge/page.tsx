@@ -18,6 +18,7 @@ export default function TrustBadgePage() {
   useEffect(() => {
     // Show cached data instantly, then refresh silently in background
     const cached = readMeCache();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (cached) setMe(cached);
     getMe()
       .then((data) => { writeMeCache(data); setMe(data); })

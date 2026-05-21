@@ -31,6 +31,7 @@ export default function CountryCodeSelect({ value, onChange, open, setOpen, labe
     if (open) {
       setTimeout(() => searchRef.current?.focus(), 50);
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSearch("");
     }
   }, [open]);

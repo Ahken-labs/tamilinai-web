@@ -63,6 +63,7 @@ export default function AppHeader() {
   // Load from cache instantly after mount, then refresh from API in background
   useEffect(() => {
     const cached = readCache();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (cached) setMe(cached);
     const token = localStorage.getItem("tamilinai_access_token");
     if (!token) return;

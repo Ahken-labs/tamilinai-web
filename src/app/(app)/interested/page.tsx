@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import ToggleTabs from "../../../components/common-layout/ToggleTabs";
 import InterestCard from "../../../components/app/InterestCard";

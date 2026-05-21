@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import ProtectedPhoto from "../common-layout/ProtectedPhoto";
 import { FaWhatsapp } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
@@ -13,12 +12,11 @@ import {
     NotificationIcon,
     SendInterestMsgIcon,
     ShortlistedIcon,
-    ShortlistIcon,
     ShortlistRemoveIcon,
 } from "@/src/assets/Icons";
 import { CgClose } from "react-icons/cg";
 import { RiArrowGoBackLine } from "react-icons/ri";
-import { sendInterest, withdrawInterest, respondToInterest } from "@/src/lib/api/interests";
+import { sendInterest, respondToInterest } from "@/src/lib/api/interests";
 import { shortlistProfile, unshortlistProfile } from "@/src/lib/api/profiles";
 import { ApiError } from "@/src/lib/api/client";
 
@@ -164,7 +162,7 @@ export default function MatchInterestCard({
                             text={shortlisted ? "Remove" : "Add to shortlist"}
                             iconLeft={shortlisted
                                 ? <ShortlistRemoveIcon className="h-4 w-4 md:h-5 md:w-5" />
-                                : <ShortlistIcon className="h-4 w-4 md:h-5 md:w-5" />
+                                : <ShortlistedIcon className="h-4 w-4 md:h-5 md:w-5" />
                             }
                         />
                     </div>

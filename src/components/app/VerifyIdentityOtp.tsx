@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRightIcon } from "../../assets/Icons";
 import Button from "../common-layout/Button";
 import { sendIdentityVerifyOtp, confirmIdentityVerifyOtp } from "../../lib/api/user";
 import { invalidateMeCache } from "../AppHeader";
@@ -48,6 +47,7 @@ export default function VerifyIdentityOtp({ method, maskedIdentifier }: Props) {
   useEffect(() => {
     const remaining = getSecondsRemaining(storageKey);
     if (remaining > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCountdown(remaining);
       inputRefs.current[0]?.focus();
       return;

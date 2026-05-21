@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRightIcon } from "@/src/assets/Icons";
 import Footer from "@/src/components/Footer";
@@ -26,7 +26,7 @@ function formatTimer(seconds: number) {
 
 type Step = "request" | "otp";
 
-export default function ChangeContactPage() {
+function ChangeContactContent() {
   const router = useRouter();
   const params = useSearchParams();
   const type = params.get("type") === "email" ? "email" : "phone";
@@ -170,6 +170,7 @@ export default function ChangeContactPage() {
   }
 
   const label = type === "email" ? "Email" : "Phone number";
+
   const newValueDisplay = type === "email" ? value.trim() : `${extractCode(countryCode)} ${value.trim()}`.trim();
 
   // ── Step 1: Request ────────────────────────────────────────────────────────
@@ -301,5 +302,13 @@ export default function ChangeContactPage() {
     </FormCardLayout>
     <Footer variant="app" />
     </>
+  );
+}
+
+export default function ChangeContactPage() {
+  return (
+    <Suspense>
+      <ChangeContactContent />
+    </Suspense>
   );
 }

@@ -10,7 +10,6 @@ import type { BrowseProfile } from "../../../types/user";
 import type { Profile } from "../../../types/profile";
 import { formatHeight } from "../../../utils/heightUtils";
 
-const CARDS_PER_PAGE = 10;
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 

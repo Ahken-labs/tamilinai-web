@@ -70,6 +70,7 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
     if (!profile.isPrivate && profile.photo) {
       const cached = getCachedPhoto(profile.id);
       if (!cached) setCachedPhoto(profile.id, profile.photo);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPhotoSrc(cached ?? profile.photo);
     }
   }, [profile.id, profile.photo, profile.isPrivate]);

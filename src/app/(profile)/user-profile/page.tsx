@@ -57,7 +57,6 @@ type SectionData = {
 
 function buildSections(p: ProfileDetail, interestStatus: "sent" | "received" | "declined", onAction?: () => void): SectionData[] {
   const pr = p.profile;
-  const age = calculateAge(pr.dateOfBirth);
   const isAccepted = p.interestIsAccepted ?? false;
   const sendCount = p.interestSendCount ?? 0;
   const receivedCount = p.interestReceiveCount ?? 1;

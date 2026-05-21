@@ -11,6 +11,7 @@ import { useLang } from "@/src/context/LangContext";
 import { countWords } from "@/src/utils/wordCount";
 import PrivacyPopup from "../footer/PrivacyPopup";
 import { submitProfileSetup } from "../../lib/api/user";
+import PhotoCropModal from "../app/PhotoCropModal";
 
 const MAX_WORDS = 60;
 
@@ -87,6 +88,7 @@ export default function PhotoUploadForm() {
 
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
   const [aboutMe, setAboutMe] = useState("");
   const [agreed, setAgreed] = useState(true);
   const [showError, setShowError] = useState(false);
@@ -98,8 +100,14 @@ export default function PhotoUploadForm() {
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    e.target.value = "";
+    setCropSrc(URL.createObjectURL(file));
+  }
+
+  function handleCropConfirm(file: File, previewUrl: string) {
     setPhotoFile(file);
-    setPhotoUrl(URL.createObjectURL(file));
+    setPhotoUrl(previewUrl);
+    setCropSrc(null);
   }
 
   function handleAboutMeChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -274,6 +282,14 @@ export default function PhotoUploadForm() {
         isOpen={openPrivacy}
         onClose={() => setOpenPrivacy(false)}
       />
+
+      {cropSrc && (
+        <PhotoCropModal
+          imageSrc={cropSrc}
+          onConfirm={handleCropConfirm}
+          onClose={() => setCropSrc(null)}
+        />
+      )}
     </FormCardLayout>
   );
 }
