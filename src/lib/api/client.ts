@@ -1,4 +1,5 @@
 import API_BASE_URL from './config';
+import { clearBlobCache } from '@/src/components/common-layout/ProtectedPhoto';
 
 const BASE_URL = API_BASE_URL;
 
@@ -39,6 +40,11 @@ async function parseError(res: Response): Promise<ApiError> {
   }
 }
 
+type RefreshPayload = {
+  accessToken: string;
+  user: { id: string; displayId: string; name: string; isElite: boolean; isProfileComplete: boolean };
+};
+
 let refreshing: Promise<boolean> | null = null;
 
 async function tryRefresh(): Promise<boolean> {
@@ -50,7 +56,8 @@ async function tryRefresh(): Promise<boolean> {
         credentials: 'include',
       });
       if (!res.ok) return false;
-      const data = await res.json() as { accessToken: string; user: unknown };
+      const data = await res.json() as RefreshPayload;
+      if (!data?.accessToken || !data?.user?.id) return false;
       localStorage.setItem('tamilinai_access_token', data.accessToken);
       localStorage.setItem('tamilinai_user', JSON.stringify(data.user));
       return true;
@@ -69,6 +76,8 @@ export async function http<T>(
   _retry = true,
 ): Promise<T> {
   const isAuthRoute = path.startsWith('/api/auth/');
+  // These endpoints use 401 to signal wrong credentials, not session expiry — don't redirect.
+  const isCredentialCheck = path === '/api/user/close' || path === '/api/user/profile/password';
 
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
@@ -76,10 +85,11 @@ export async function http<T>(
     credentials: 'include',
   });
 
-  if (res.status === 401 && _retry && !isAuthRoute) {
+  if (res.status === 401 && _retry && !isAuthRoute && !isCredentialCheck) {
     const ok = await tryRefresh();
     if (ok) return http<T>(path, options, false);
     if (typeof window !== 'undefined') {
+      clearBlobCache();
       localStorage.removeItem('tamilinai_access_token');
       localStorage.removeItem('tamilinai_user');
       window.location.href = '/';
@@ -113,6 +123,7 @@ export async function httpUpload<T>(
     const ok = await tryRefresh();
     if (ok) return httpUpload<T>(path, formData, method, false);
     if (typeof window !== 'undefined') {
+      clearBlobCache();
       localStorage.removeItem('tamilinai_access_token');
       localStorage.removeItem('tamilinai_user');
       window.location.href = '/';

@@ -1,101 +1,242 @@
 "use client";
 
-import Image from "next/image";
-import { CheckboxIcon, } from "@/src/assets/Icons";
+import { CheckboxIcon } from "@/src/assets/Icons";
+import { calculateAge } from "@/src/utils/calculateAge";
+import ProtectedPhoto from "@/src/components/common-layout/ProtectedPhoto";
+import type { PartnerPreferences, UserProfileSection } from "@/src/types/user";
 
-type MatchItem = {
-    label: string;
-    value: string;
-    matched: boolean;
-};
+interface Props {
+  theirPrefs: PartnerPreferences | null | undefined;
+  theirPhotoUrl: string | null | undefined;
+  theirGender: string | undefined;
+  myPhotoUrl: string | null | undefined;
+  myGender: string | undefined;
+  myProfile: UserProfileSection;
+  isLoading: boolean;
+}
 
-const matchItems: MatchItem[] = [
-    { label: "Marital status", value: "Unmarried", matched: true },
-    { label: "Age", value: "21 - 27 yrs", matched: true },
-    { label: "Mother tongue", value: "Tamil", matched: true },
-    { label: "Physical status", value: "Normal", matched: true },
-    { label: "Eating habit", value: "Does not matter", matched: false },
-    { label: "Drinking habit", value: "Does not matter", matched: false },
-    { label: "Smoking habit", value: "Does not matter", matched: false },
-    { label: "Education", value: "Bachelors, Diploma, Higher secondary", matched: true },
-    { label: "Occupation", value: "Any", matched: true },
-    { label: "Country living in", value: "Any", matched: true },
-    { label: "Citizenship", value: "Any", matched: false },
-    { label: "Resident status", value: "Any", matched: true },
-    { label: "Religion", value: "Hindu", matched: true },
-];
+// "Open to all" or null/empty → anything matches
+function openToAll(arr: string[] | null | undefined): boolean {
+  return !arr || arr.length === 0 || arr[0] === "Open to all";
+}
 
-export default function MatchPreferencesCard() {
-    return (
-        <div className="font-poppins w-full max-w-[1160px] px-6 md:px-10 mx-auto">
-            {/* Top match box */}
-            <div className="rounded-[60px] bg-white p-2">
-                <div className="flex items-center">
-                    <div className="shrink-0">
-                        <Image
-                            src="/images/no_photo.png"
-                            alt="left profile"
-                            width={64}
-                            height={64}
-                            className="h-8 sm:h-10 md:h-14 lg:h-16 w-8 sm:w-10 md:w-14 lg:w-16 rounded-full object-cover"
-                            priority
-                        />
-                    </div>
+function displayVal(arr: string[] | null | undefined): string {
+  if (!arr || arr.length === 0) return "Any";
+  if (arr.length === 1) return arr[0];
+  return arr.join(", ");
+}
 
-                    <div className="flex flex-1 items-center">
-                        <div className="h-px flex-1 bg-[#D7D7D7]" />
-                        <span className="mx-3 sm:mx-4 shrink-0 font-16 font-semibold leading-[150%] text-primary">
-                            90% match
-                        </span>
-                        <div className="h-px flex-1 bg-[#D7D7D7]" />
-                    </div>
+function buildRows(prefs: PartnerPreferences, my: UserProfileSection) {
+  const myAge = calculateAge(my.dateOfBirth);
 
-                    <div className="shrink-0">
-                        <Image
-                            src="/images/no_photo_male.png"
-                            alt="right profile"
-                            width={64}
-                            height={64}
-                            className="h-8 sm:h-10 md:h-14 lg:h-16 w-8 sm:w-10 md:w-14 lg:w-16 rounded-full object-cover"
-                            priority
-                        />
-                    </div>
-                </div>
-            </div>
+  // Age range
+  const ageSpecified = !!(prefs.ageMin || prefs.ageMax);
+  const ageValue = ageSpecified
+    ? `${prefs.ageMin ?? "—"} – ${prefs.ageMax ?? "—"} yrs`
+    : "Any";
+  const ageMatch = !ageSpecified || (
+    myAge != null &&
+    (!prefs.ageMin || myAge >= prefs.ageMin) &&
+    (!prefs.ageMax || myAge <= prefs.ageMax)
+  );
 
-            {/* Titles */}
-            <div className="mt-4 md:mt-6 flex items-center justify-between gap-4">
-                <h2 className="font-20 font-semibold leading-[150%] text-dark">
-                    Her partner preferences
-                </h2>
-                <span className="font-20 font-semibold leading-[150%] text-dark">
-                    You
-                </span>
-            </div>
+  // Mother tongue: this platform is Tamil matrimony, always Tamil
+  const myLanguages = my.languagesSpoken ?? [];
+  const speaksTamil = myLanguages.length === 0 || myLanguages.some(l => l.toLowerCase() === "tamil");
 
-            {/* Preference rows */}
-            <div className="mt-4 md:mt-6">
-                {matchItems.map((item) => (
-                    <div
-                        key={item.label}
-                        className="flex items-center gap-0 sm:gap-2 md:gap-8 border-b border-[#D7D7D7] py-3 pr-0 pl-0"
-                    >
-                        <div className="min-w-[160px] font-16 font-normal italic leading-[150%] text-dark">
-                            {item.label}
-                        </div>
+  // Physical status: "Normal" = no challenge, "Physically challenged" = has challenge
+  const physVal = displayVal(prefs.physicalStatuses);
+  const physMatch = openToAll(prefs.physicalStatuses) || (() => {
+    const v = prefs.physicalStatuses![0];
+    if (v === "Normal") return !my.hasPhysicalChallenge;
+    if (v === "Physically challenged") return !!my.hasPhysicalChallenge;
+    return true;
+  })();
 
-                        <div className="flex-1 font-16 font-medium not-italic leading-[150%] text-dark">
-                            {item.value}
-                        </div>
-                        <div className="shrink-0">
-                            <CheckboxIcon
-                                checked={item.matched}
-                                className="h-4 sm:h-5 md:h-5.5 lg:h-6 w-4 sm:w-5 md:w-5.5 lg:w-6"
-                            />
-                        </div>
-                    </div>
-                ))}
-            </div>
+  // Marital status: stored as "Unmarried", my value stored as "unmarried"
+  const maritalVal = displayVal(prefs.maritalStatuses);
+  const maritalMatch = openToAll(prefs.maritalStatuses) ||
+    prefs.maritalStatuses!.some(v => v.toLowerCase() === (my.maritalStatus ?? "").toLowerCase());
+
+  // Eating/food habit: stored as "Vegetarian", my value as "vegetarian"
+  const foodVal = displayVal(prefs.foodHabits);
+  const foodMatch = openToAll(prefs.foodHabits) ||
+    prefs.foodHabits!.some(v => v.toLowerCase().replace(" ", "_") === (my.dietHabit ?? "").toLowerCase());
+
+  // Smoking: "No" = want non-smoker (never), "Okay" = fine with smoker (any)
+  const smokingVal = displayVal(prefs.smokingHabits);
+  const smokingMatch = openToAll(prefs.smokingHabits) || (() => {
+    const v = prefs.smokingHabits![0];
+    if (v === "No") return my.smokingHabit === "never";
+    return true; // "Okay" = fine with any
+  })();
+
+  // Drinking: "No" = never, "Light / Social" = socially/occasionally, "Okay" = any
+  const drinkingVal = displayVal(prefs.drinkingHabits);
+  const drinkingMatch = openToAll(prefs.drinkingHabits) || (() => {
+    const v = prefs.drinkingHabits![0];
+    if (v === "No") return my.drinkingHabit === "never";
+    if (v === "Light / Social") return my.drinkingHabit === "socially" || my.drinkingHabit === "occasionally";
+    return true; // "Okay" = any
+  })();
+
+  // Education: null = all, subset = specific levels
+  const eduVal = !prefs.educationLevels?.length ? "Any" : prefs.educationLevels.join(", ");
+  const eduMatch = !prefs.educationLevels?.length ||
+    prefs.educationLevels.some(v => v.toLowerCase() === (my.education ?? "").toLowerCase());
+
+  // Country
+  const countryVal = !prefs.countries?.length ? "Any" : prefs.countries.join(", ");
+  const countryMatch = !prefs.countries?.length ||
+    prefs.countries.some(v => v.toLowerCase() === (my.country ?? "").toLowerCase());
+
+  // Religion
+  const religionVal = displayVal(prefs.religions);
+  const religionMatch = openToAll(prefs.religions) ||
+    prefs.religions!.some(v => v.toLowerCase() === (my.religion ?? "").toLowerCase());
+
+  // Caste: null = any
+  const casteVal = !prefs.castes?.length ? "Any" : prefs.castes.join(", ");
+  const casteMatch = !prefs.castes?.length ||
+    prefs.castes.some(v => v.toLowerCase() === (my.caste ?? "").toLowerCase());
+
+  // Original UI order — exact
+  return [
+    { label: "Marital status",   value: maritalVal,    matched: maritalMatch },
+    { label: "Age",              value: ageValue,       matched: ageMatch },
+    { label: "Mother tongue",    value: "Tamil",        matched: speaksTamil },
+    { label: "Physical status",  value: physVal,        matched: physMatch },
+    { label: "Eating habit",     value: foodVal,        matched: foodMatch },
+    { label: "Drinking habit",   value: drinkingVal,    matched: drinkingMatch },
+    { label: "Smoking habit",    value: smokingVal,     matched: smokingMatch },
+    { label: "Education",        value: eduVal,         matched: eduMatch },
+    { label: "Occupation",       value: "Any",          matched: true },
+    { label: "Country living in",value: countryVal,     matched: countryMatch },
+    { label: "Citizenship",      value: "Any",          matched: true },
+    { label: "Resident status",  value: "Any",          matched: true },
+    { label: "Religion",         value: religionVal,    matched: religionMatch },
+    { label: "Caste",            value: casteVal,       matched: casteMatch },
+  ];
+}
+
+function calcPercentage(rows: { value: string; matched: boolean }[]): number | null {
+  const specified = rows.filter(r => r.value !== "Any");
+  if (specified.length === 0) return null;
+  return Math.round((specified.filter(r => r.matched).length / specified.length) * 100);
+}
+
+function PhotoCircle({ src, alt }: { src: string; alt: string }) {
+  return (
+    <div className="h-8 sm:h-10 md:h-14 lg:h-16 w-8 sm:w-10 md:w-14 lg:w-16 rounded-full overflow-hidden shrink-0">
+      <ProtectedPhoto
+        src={src}
+        alt={alt}
+        width={64}
+        height={64}
+        watermark=""
+        className="w-full h-full object-cover"
+      />
+    </div>
+  );
+}
+
+function SkeletonCard() {
+  return (
+    <div className="font-poppins w-full max-w-[1160px] px-6 md:px-10 mx-auto animate-pulse">
+      <div className="rounded-[60px] bg-white p-2">
+        <div className="flex items-center gap-2">
+          <div className="h-8 sm:h-10 md:h-14 lg:h-16 w-8 sm:w-10 md:w-14 lg:w-16 rounded-full bg-[#EAEAEA] shrink-0" />
+          <div className="flex-1 h-3 bg-[#EAEAEA] rounded-full mx-4" />
+          <div className="h-8 sm:h-10 md:h-14 lg:h-16 w-8 sm:w-10 md:w-14 lg:w-16 rounded-full bg-[#EAEAEA] shrink-0" />
         </div>
-    );
+      </div>
+      <div className="mt-4 md:mt-6 flex justify-between">
+        <div className="h-5 w-40 bg-[#EAEAEA] rounded" />
+        <div className="h-5 w-8 bg-[#EAEAEA] rounded" />
+      </div>
+      <div className="mt-4 md:mt-6 space-y-0">
+        {Array.from({ length: 11 }).map((_, i) => (
+          <div key={i} className="flex items-center gap-4 border-b border-[#D7D7D7] py-3">
+            <div className="h-4 w-28 bg-[#EAEAEA] rounded" />
+            <div className="flex-1 h-4 bg-[#EAEAEA] rounded" />
+            <div className="h-5 w-5 bg-[#EAEAEA] rounded" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function MatchPreferencesCard({
+  theirPrefs,
+  theirPhotoUrl,
+  theirGender,
+  myPhotoUrl,
+  myGender,
+  myProfile,
+  isLoading,
+}: Props) {
+  if (isLoading) return <SkeletonCard />;
+
+  const theirPhoto = theirPhotoUrl ?? (theirGender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png");
+  const myPhoto = myPhotoUrl ?? (myGender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png");
+  const theirPronoun = theirGender === "male" ? "His" : "Her";
+
+  // null prefs = no preferences saved yet, show all rows as "Any" (all matched)
+  const rows = buildRows(theirPrefs ?? {}, myProfile);
+  const pct = calcPercentage(rows);
+
+  return (
+    <div className="font-poppins w-full max-w-[1160px] px-6 md:px-10 mx-auto">
+      {/* Top match bar */}
+      <div className="rounded-[60px] bg-white p-2">
+        <div className="flex items-center">
+          <div className="shrink-0">
+            <PhotoCircle src={theirPhoto} alt="their profile" />
+          </div>
+          <div className="flex flex-1 items-center">
+            <div className="h-px flex-1 bg-[#D7D7D7]" />
+            <span className="mx-3 sm:mx-4 shrink-0 font-16 font-semibold leading-[150%] text-primary">
+              {pct !== null ? `${pct}% match` : "Match"}
+            </span>
+            <div className="h-px flex-1 bg-[#D7D7D7]" />
+          </div>
+          <div className="shrink-0">
+            <PhotoCircle src={myPhoto} alt="your profile" />
+          </div>
+        </div>
+      </div>
+
+      {/* Header row */}
+      <div className="mt-4 md:mt-6 flex items-center justify-between gap-4">
+        <h2 className="font-20 font-semibold leading-[150%] text-dark">
+          {theirPronoun} partner preferences
+        </h2>
+        <span className="font-20 font-semibold leading-[150%] text-dark">You</span>
+      </div>
+
+      {/* Rows */}
+      <div className="mt-4 md:mt-6">
+        {rows.map((item) => (
+          <div
+            key={item.label}
+            className="flex items-center gap-0 sm:gap-2 md:gap-8 border-b border-[#D7D7D7] py-3"
+          >
+            <div className="min-w-[140px] sm:min-w-[160px] font-16 font-normal italic leading-[150%] text-dark">
+              {item.label}
+            </div>
+            <div className="flex-1 font-16 font-medium not-italic leading-[150%] text-dark">
+              {item.value}
+            </div>
+            <div className="shrink-0">
+              <CheckboxIcon
+                checked={item.matched}
+                className="h-4 sm:h-5 md:h-5.5 lg:h-6 w-4 sm:w-5 md:w-5.5 lg:w-6"
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }

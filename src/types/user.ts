@@ -20,6 +20,7 @@ export interface UserProfileSection {
   aboutMe?: string;
   photoUrl?: string;
   photoStatus?: string;
+  photoVisibility?: 'public' | 'locked';
   physicalBuild?: string;
   languagesSpoken?: string[];
   dietHabit?: string;
@@ -105,8 +106,16 @@ export interface ProfileDetail {
   interestReceiveCount?: number;
   interestLastSentAt?: string | null;
   isReminderDue?: boolean;
+  // Photo request state
+  incomingPhotoRequest?: { type: 'access' | 'upload' } | null;
+  myPhotoUploadRequestPending?: boolean;
+  photoAccessRetryAfter?: string | null;
+  photoAccessMaxed?: boolean;
+  contactBlurred?: boolean;
+  viewerIsElite?: boolean;
+  partnerPreferences?: PartnerPreferences | null;
   profile: UserProfileSection & {
-    photoAccess?: string;
+    photoAccess?: 'locked' | 'pending' | 'accepted' | 'declined' | null;
     familyOrigin?: string;
   };
 }

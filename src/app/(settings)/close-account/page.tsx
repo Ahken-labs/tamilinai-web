@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   EliteIcon,
   MatchHeartIcon,
@@ -13,6 +15,8 @@ import Button from "@/src/components/common-layout/Button";
 import FormCardLayout from "@/src/components/common-layout/FormCardLayout";
 import StepProgress from "@/src/components/more/StepProgress";
 import InputBox from "@/src/components/common-layout/InputBox";
+import { http } from "@/src/lib/api/client";
+import { clearBlobCache } from "@/src/components/common-layout/ProtectedPhoto";
 
 export default function CloseAccountPage() {
   const OPTIONS = [
@@ -52,7 +56,8 @@ export default function CloseAccountPage() {
     },
   ];
 
-  const HARD_PASSWORD = "Pass@1234";
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [selected, setSelected] = useState<number>(0);
@@ -60,6 +65,7 @@ export default function CloseAccountPage() {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const canContinue = selected !== 5 || otherText.trim().length > 0;
 
@@ -73,15 +79,35 @@ export default function CloseAccountPage() {
     }
   }
 
-  function handleDelete() {
-    if (password !== HARD_PASSWORD) {
-      setPasswordError("*Incorrect Password");
+  async function handleDelete() {
+    if (!password.trim()) {
+      setPasswordError("*Password is required");
       return;
     }
+    const reason = selected === 5
+      ? otherText.trim()
+      : OPTIONS[selected].replace(/^[\u{1F000}-\u{1FFFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}️\s]+/u, "").trim();
 
+    setSubmitting(true);
     setPasswordError("");
-    // delete account action here
-    console.log("Delete account confirmed");
+    try {
+      await http("/api/user/close", {
+        method: "DELETE",
+        body: JSON.stringify({ currentPassword: password, reason }),
+      });
+      clearBlobCache();
+      localStorage.clear();
+      sessionStorage.clear();
+      queryClient.clear();
+      router.push("/");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message.toLowerCase() : "";
+      setPasswordError(msg.includes("incorrect") || msg.includes("password") || msg.includes("current")
+        ? "*Incorrect password"
+        : "*Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -265,8 +291,9 @@ export default function CloseAccountPage() {
                 />
               ) : (
                 <Button
-                  text="Delete my account"
+                  text={submitting ? "Deleting…" : "Delete my account"}
                   onPress={handleDelete}
+                  disabled={submitting}
                   className="flex-1"
                 />
               )}

@@ -1,42 +1,36 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import Image from "next/image";
 import ProtectedPhoto from "@/src/components/common-layout/ProtectedPhoto";
-import { getCachedPhoto, setCachedPhoto } from "@/src/utils/othersPhotoCache";
+import ProtectedImage from "@/src/components/common-layout/ProtectedImage";
 import { formatHeight } from "@/src/utils/heightUtils";
 import {
   AboutMeIcon, CakeIcon, CheckmarkIcon, ChevronRightIcon, CasteCircleIcon,
   EducationCapIcon, EliteCrownIcon, HeightRulerIcon, LocationPinIcon,
-  PaintBrushIcon, ProfileBoxIcon, ProfileVerifiedBadgeIcon, UnionDesignIcon,
+  NotifPhotoUploadIcon, PaintBrushIcon, ProfileBoxIcon, ProfileVerifiedBadgeIcon, UnionDesignIcon,
   WineGlassIcon, WorkBriefcaseIcon, StepFamilyIcon,
+  ShieldLockRedIcon,
 } from "@/src/assets/Icons";
 import { BiPhoneCall } from "react-icons/bi";
+import Button from "@/src/components/common-layout/Button";
 import MatchPreferencesCard from "@/src/components/profile/MatchPreferencesCard";
 import MatchInterestCard from "@/src/components/profile/MatchInterestCard";
+import IncomingPhotoRequestCard from "@/src/components/profile/IncomingPhotoRequestCard";
 import Match_ContactSection_Card from "@/src/components/profile/Match_ContactSection_Card";
-import { getProfile } from "@/src/lib/api/profiles";
+import { getProfile, requestPhotoAccess, requestPhotoUpload } from "@/src/lib/api/profiles";
+import { getMe } from "@/src/lib/api/user";
 import type { ProfileDetail } from "@/src/types/user";
-import UserProfileSkeleton from "@/src/components/app/skeleton-layout/UserProfileSkeleton";
-
-function calculateAge(dob?: string): number {
-  if (!dob) return 0;
-  const born = new Date(dob);
-  const today = new Date();
-  let age = today.getFullYear() - born.getFullYear();
-  if (
-    today.getMonth() < born.getMonth() ||
-    (today.getMonth() === born.getMonth() && today.getDate() < born.getDate())
-  ) age--;
-  return age;
-}
+import { UserProfileSkeletonBody } from "@/src/components/app/skeleton-layout/UserProfileSkeleton";
+import { calculateAge } from "@/src/utils/calculateAge";
+import EliteUpgradePopup, { shouldShowWeeklyNudge, markWeeklyNudgeSeen, type EliteUpgradeTrigger } from "@/src/components/common-layout/EliteUpgradePopup";
 
 function formatWeight(kg?: number): string {
   if (!kg) return "Not specified";
   return `${kg} kg`;
 }
+
 
 function formatIncome(amount?: number, currency?: string): string {
   if (!amount) return "Not specified";
@@ -55,7 +49,7 @@ type SectionData = {
   hidden?: boolean;
 };
 
-function buildSections(p: ProfileDetail, interestStatus: "sent" | "received" | "declined", onAction?: () => void): SectionData[] {
+function buildSections(p: ProfileDetail, interestStatus: "sent" | "received" | "declined", onAction?: () => void, contactBlurred?: boolean, viewerIsElite = false): SectionData[] {
   const pr = p.profile;
   const isAccepted = p.interestIsAccepted ?? false;
   const sendCount = p.interestSendCount ?? 0;
@@ -63,7 +57,7 @@ function buildSections(p: ProfileDetail, interestStatus: "sent" | "received" | "
   const lastSentAt = p.interestLastSentAt ?? null;
   const isReminderDue = p.isReminderDue ?? false;
 
-  const isElite = p.isElite;
+  const isElite = viewerIsElite;
 
   return [
     {
@@ -121,10 +115,22 @@ function buildSections(p: ProfileDetail, interestStatus: "sent" | "received" | "
           ) : null,
           left: [],
           right: [],
-          extra: (
+          extra: contactBlurred ? (
+            <div className="mt-4 rounded-[12px] bg-[#FFF8F8] border border-[#FFD6DE] px-4 py-5 flex flex-col items-center text-center gap-2">
+              <div className="text-[28px] leading-none select-none">🔒</div>
+              <p className="font-poppins font-semibold text-[14px] text-[#B31B38] leading-[150%]">
+                You&apos;ve reached your 30 profile view limit this month
+              </p>
+              <p className="font-poppins font-normal text-[13px] text-[#6B6B6B] leading-[160%]">
+                This limit resets after 30 days. For any concerns, contact us at{" "}
+                <a href="mailto:contact@inai.lk" className="text-[#B31B38] underline">contact@inai.lk</a>
+              </p>
+            </div>
+          ) : (
             <Match_ContactSection_Card
               profileId={p.id}
               profileName={p.name}
+              gender={p.gender}
               status={interestStatus}
               isElite={isElite}
               isAccepted={isAccepted}
@@ -209,49 +215,132 @@ function UserProfileContent() {
 
   function handleInterestAction() {
     queryClient.invalidateQueries({ queryKey: ["profile", id] });
-    queryClient.invalidateQueries({ queryKey: ["profiles"] });
   }
 
-  const { data: profile, isLoading, isError } = useQuery({
+  const { data: profile, isLoading, isFetching, isError } = useQuery({
     queryKey: ["profile", id],
     queryFn: () => getProfile(id),
     enabled: !!id,
-    staleTime: Infinity,
-    gcTime: Infinity,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 
-  if (isLoading) return <UserProfileSkeleton />;
+  // Hits React Query cache if AppHeader already loaded it — zero network cost
+  const { data: me, isLoading: isMeLoading } = useQuery({
+    queryKey: ["me"],
+    queryFn: getMe,
+    staleTime: 60 * 60 * 1000,
+    gcTime: 2 * 60 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
 
-  if (isError || !profile) {
-    return (
-      <main className="min-h-screen bg-[#F8F5F2] flex items-center justify-center">
-        <p className="font-poppins text-[16px] font-medium text-[#B31B38]">
-          Failed to load profile. Please try again.
-        </p>
-      </main>
-    );
-  }
+  const isBackgroundFetching = isFetching && !isLoading;
+
+  const [upgradePopupTrigger, setUpgradePopupTrigger] = useState<EliteUpgradeTrigger | null>(null);
+
+  // Show upgrade popup once per week for free users:
+  // - "contact_locked" if they're connected but not elite (most relevant)
+  // - "weekly_nudge" otherwise as a gentle reminder
+  useEffect(() => {
+    if (!profile || profile.viewerIsElite) return;
+    if (!shouldShowWeeklyNudge()) return;
+    const trigger: EliteUpgradeTrigger = isConnected ? "contact_locked" : "weekly_nudge";
+    const t = setTimeout(() => {
+      setUpgradePopupTrigger(trigger);
+      markWeeklyNudgeSeen();
+    }, 3500);
+    return () => clearTimeout(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.id]);
+
+  useEffect(() => {
+    if (!isLoading && (isError || !profile)) {
+      router.replace("/matches");
+    }
+  }, [isLoading, isError, profile, router]);
+
+  const [photoActionLoading, setPhotoActionLoading] = useState(false);
+  const [optimisticPhotoAccess, setOptimisticPhotoAccess] = useState<'locked' | 'pending' | 'accepted' | 'declined' | null | undefined>(undefined);
+  const [optimisticUploadRequested, setOptimisticUploadRequested] = useState<boolean | undefined>(undefined);
+  const [incomingDismissed, setIncomingDismissed] = useState(false);
+
+  if (isError && !isLoading && !profile) return null;
+
+  if (isLoading || !profile) return (
+    <main className="min-h-screen bg-[#F8F5F2] font-poppins select-none pb-10">
+      <div className="sticky top-[74px] z-30 w-full border-t border-[#EEEEEE] bg-white">
+        <div className="flex px-4 lg:px-10 py-3">
+          <button
+            onClick={() => router.back()}
+            className="flex items-center justify-center rounded-[40px] bg-light py-2 pl-2 pr-4 shadow-[0_0_11.1px_0_rgba(0,0,0,0.25)]"
+          >
+            <ChevronRightIcon className="mr-1 md:mr-2 w-4 md:w-5 h-4 md:h-5 rotate-180" />
+            <span className="font-16 text-dark">Back</span>
+          </button>
+        </div>
+      </div>
+      <UserProfileSkeletonBody />
+    </main>
+  );
 
   const pr = profile.profile;
   const age = calculateAge(pr.dateOfBirth);
-  const isPrivate = pr.photoAccess === "locked";
+  const resolvedPhotoAccess = optimisticPhotoAccess !== undefined ? optimisticPhotoAccess : (pr.photoAccess ?? null);
+  const resolvedUploadRequested = optimisticUploadRequested !== undefined ? optimisticUploadRequested : (profile.myPhotoUploadRequestPending ?? false);
+  const isPrivate = resolvedPhotoAccess === 'locked' || resolvedPhotoAccess === 'pending' || resolvedPhotoAccess === 'declined';
+  const accessRetryAfter = profile.photoAccessRetryAfter ? new Date(profile.photoAccessRetryAfter) : null;
+  const accessInCooldown = accessRetryAfter ? accessRetryAfter > new Date() : false;
+  const accessMaxed = profile.photoAccessMaxed ?? false;
+  const accessCooldownDaysLeft = accessRetryAfter
+    // eslint-disable-next-line react-hooks/purity
+    ? Math.max(1, Math.ceil((accessRetryAfter.getTime() - Date.now()) / (24 * 60 * 60 * 1000)))
+    : 0;
   const hasPhoto = !isPrivate && !!pr.photoUrl;
+  const noPhotoCase = !pr.photoUrl && !isPrivate;
   const placeholder = profile.gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png";
 
-  // Cache this profile's photo in sessionStorage
-  if (hasPhoto && pr.photoUrl) {
-    const cached = getCachedPhoto(profile.id);
-    if (!cached) setCachedPhoto(profile.id, pr.photoUrl);
-  }
-  const photoSrc = hasPhoto ? (getCachedPhoto(profile.id) ?? pr.photoUrl!) : placeholder;
+  const photoSrc = hasPhoto ? pr.photoUrl! : placeholder;
+  const profileId = profile.id;
 
+  async function handleRequestPhotoUpload() {
+    if (photoActionLoading) return;
+    setPhotoActionLoading(true);
+    try {
+      await requestPhotoUpload(profileId);
+      setOptimisticUploadRequested(true);
+    } catch (err) {
+      console.error('requestPhotoUpload failed:', err);
+    }
+    setPhotoActionLoading(false);
+  }
+
+  async function handleRequestPhotoAccess() {
+    if (photoActionLoading) return;
+    setPhotoActionLoading(true);
+    try {
+      await requestPhotoAccess(profileId);
+      setOptimisticPhotoAccess('pending');
+    } catch (err) {
+      console.error('requestPhotoAccess failed:', err);
+    }
+    setPhotoActionLoading(false);
+  }
+
+  const viewerIsElite = profile.viewerIsElite ?? false;
   const rawStatus = profile.interestStatus ?? "none";
   // Map 'none' → show as 'sent' with sendCount=0 (initial state)
   const interestStatus: "sent" | "received" | "declined" =
     rawStatus === "received" ? "received" : rawStatus === "declined" ? "declined" : "sent";
   const sendCount = rawStatus === "none" ? 0 : (profile.interestSendCount ?? 1);
+  // declinedByMe=true: I declined their incoming interest → "Change mind" is possible
+  // declinedByMe=false: they declined MY interest (and I never received from them) → dead end
+  const declinedByMe = rawStatus === "declined" && (profile.interestReceiveCount ?? 0) > 0;
 
-  const sections = buildSections(profile, interestStatus, handleInterestAction);
+  const sections = buildSections(profile, interestStatus, handleInterestAction, profile.contactBlurred, viewerIsElite);
+
+  const profileInterestStatus = profile.interestStatus as string | undefined;
+  const isConnected = profileInterestStatus === "accepted";
 
   return (
     <main className="min-h-screen bg-[#F8F5F2] font-poppins select-none pb-10">
@@ -281,22 +370,71 @@ function UserProfileContent() {
                     alt={profile.name}
                     fill
                     priority
-                    className="object-cover"
+                    className={`object-cover${interestStatus === "declined" ? " grayscale" : ""}`}
                     sizes="(max-width: 520px) 100px, (max-width: 768px) 120px, (max-width: 1024px) 160px, 200px"
                   />
                 ) : (
-                  <Image
+                  <ProtectedImage
                     src={placeholder}
                     alt={profile.name}
                     width={200}
                     height={266}
                     priority
-                    className="h-full w-full object-cover"
-                    draggable={false}
-                    onContextMenu={(e) => e.preventDefault()}
+                    className={`h-full w-full object-cover${interestStatus === "declined" ? " grayscale" : ""}`}
                   />
                 )}
               </div>
+              {(noPhotoCase || isPrivate) && (
+                <div className="absolute left-1/2 -translate-x-1/2 z-20 bottom-1">
+                  {noPhotoCase && !resolvedUploadRequested && (
+                    <Button
+                      text={photoActionLoading ? "loading..." : "Request photo"}
+                      onPress={handleRequestPhotoUpload}
+                      disabled={photoActionLoading}
+                      iconLeft={<NotifPhotoUploadIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 text-white" />}
+                      className="!py-1.5 !px-3 sm:!py-2 sm:!px-4 !text-[11px] sm:!text-[12px] md:!text-[13px] whitespace-nowrap"
+                    />
+                  )}
+                  {noPhotoCase && resolvedUploadRequested && (
+                    <button disabled className="inline-flex items-center justify-center rounded-full bg-[#E8E8E8] py-1.5 px-3 sm:py-2 sm:px-4 text-[11px] sm:text-[12px] md:text-[13px] font-semibold text-[#AAAAAA] whitespace-nowrap">
+                      Requested
+                    </button>
+                  )}
+                  {resolvedPhotoAccess === 'locked' && (
+                    <Button
+                      text={photoActionLoading ? "loading..." : "Request access"}
+                      onPress={handleRequestPhotoAccess}
+                      disabled={photoActionLoading}
+                      iconLeft={<ShieldLockRedIcon className="w-4 h-4 sm:w-5 sm:h-5 md:h-8 md:w-8 shrink-0"/>}
+                      className="!py-1.5 !px-2 sm:!py-2 sm:!px-2 md:!px-4 !text-[11px] sm:!text-[12px] md:!text-[13px] whitespace-nowrap"
+                    />
+                  )}
+                  {resolvedPhotoAccess === 'declined' && !accessInCooldown && !accessMaxed && (
+                    <Button
+                      text={photoActionLoading ? "loading..." : "Request access"}
+                      onPress={handleRequestPhotoAccess}
+                      disabled={photoActionLoading}
+                      iconLeft={<ShieldLockRedIcon className="w-4 h-4 sm:w-5 sm:h-5 md:h-8 md:w-8 shrink-0"/>}
+                      className="!py-1.5 !px-2 sm:!py-2 sm:!px-2 md:!px-4 !text-[11px] sm:!text-[12px] md:!text-[13px] whitespace-nowrap"
+                    />
+                  )}
+                  {resolvedPhotoAccess === 'declined' && accessInCooldown && (
+                    <button disabled className="inline-flex items-center justify-center rounded-full bg-[#E8E8E8] py-1.5 px-3 sm:py-2 sm:px-4 text-[11px] sm:text-[12px] md:text-[13px] font-semibold text-[#AAAAAA] whitespace-nowrap">
+                      Try again in {accessCooldownDaysLeft}d
+                    </button>
+                  )}
+                  {resolvedPhotoAccess === 'declined' && accessMaxed && (
+                    <button disabled className="inline-flex items-center justify-center rounded-full bg-[#E8E8E8] py-1.5 px-3 sm:py-2 sm:px-4 text-[11px] sm:text-[12px] md:text-[13px] font-semibold text-[#AAAAAA] whitespace-nowrap">
+                      Request limit reached
+                    </button>
+                  )}
+                  {resolvedPhotoAccess === 'pending' && (
+                    <button disabled className="inline-flex items-center justify-center rounded-full bg-[#E8E8E8] py-1.5 px-3 sm:py-2 sm:px-4 text-[11px] sm:text-[12px] md:text-[13px] font-semibold text-[#AAAAAA] whitespace-nowrap">
+                      Requested
+                    </button>
+                  )}
+                </div>
+              )}
               <div className="mt-[-2px] w-[60px] md:w-[92px] lg:w-[105px] mx-auto">
                 <UnionDesignIcon className="rotate-270 -translate-y-16 md:-translate-y-32 lg:-translate-y-36.5" />
                 <UnionDesignIcon className="rotate-90 -translate-y-29 md:-translate-y-52 lg:-translate-y-59.5" />
@@ -337,7 +475,7 @@ function UserProfileContent() {
             <div className="mt-4 flex flex-col gap-3 sm:mt-6 lg:mt-8">
               <QuickRow
                 leftIcon={CakeIcon}
-                leftText={age ? `${age} years` : "Age not specified"}
+                leftText={age != null && age > 0 ? `${age} years` : "Age not specified"}
                 rightText={profile.isPhoneVerified ? "WhatsApp verified" : undefined}
               />
               <QuickRow
@@ -351,19 +489,47 @@ function UserProfileContent() {
 
             {/* Content */}
             <div className="mt-6 space-y-4 md:mt-8 md:space-y-6">
-              <MatchInterestCard
-                profileId={profile.id}
-                profileName={profile.name}
-                status={interestStatus}
-                isElite={profile.isElite}
-                isAccepted={profile.interestIsAccepted ?? false}
-                sendCount={sendCount}
-                receivedCount={profile.interestReceiveCount ?? 1}
-                isShortlisted={profile.isShortlisted}
-                lastSentAt={profile.interestLastSentAt}
-                isReminderDue={profile.isReminderDue ?? false}
-                onAction={handleInterestAction}
-              />
+              {isBackgroundFetching ? (
+                <>
+                  <div className="rounded-[16px] bg-light p-4 md:p-5 animate-pulse">
+                    <div className="h-4 w-1/3 bg-[#EAEAEA] rounded mb-3" />
+                    <div className="h-px bg-[#EAEAEA] mb-4" />
+                    <div className="h-10 bg-[#EAEAEA] rounded mb-3" />
+                    <div className="h-9 w-40 bg-[#EAEAEA] rounded mx-auto" />
+                  </div>
+                  <div className="rounded-[16px] bg-light p-4 md:p-5 animate-pulse h-24" />
+                </>
+              ) : (
+                <>
+                  <MatchInterestCard
+                    profileId={profile.id}
+                    profileName={profile.name}
+                    gender={profile.gender}
+                    status={interestStatus}
+                    isElite={viewerIsElite}
+                    isAccepted={profile.interestIsAccepted ?? false}
+                    sendCount={sendCount}
+                    receivedCount={profile.interestReceiveCount ?? 1}
+                    isShortlisted={profile.isShortlisted}
+                    lastSentAt={profile.interestLastSentAt}
+                    isReminderDue={profile.isReminderDue ?? false}
+                    declinedByMe={declinedByMe}
+                    phone={viewerIsElite ? profile.phone : undefined}
+                    onAction={handleInterestAction}
+                  />
+                  {profile.incomingPhotoRequest && !incomingDismissed && (
+                    <IncomingPhotoRequestCard
+                      profileId={profileId}
+                      profileName={profile.name}
+                      type={profile.incomingPhotoRequest.type}
+                      onDismiss={() => {
+                        setIncomingDismissed(true);
+                        handleInterestAction();
+                      }}
+                    />
+                  )}
+                </>
+              )}
               {sections.filter((s) => !s.hidden).map((section) => (
                 <SectionCard key={section.title} section={section} />
               ))}
@@ -372,8 +538,24 @@ function UserProfileContent() {
         </div>
       </div>
       <div className="my-10 md:my-13 lg:mt-15">
-        <MatchPreferencesCard />
+        <MatchPreferencesCard
+          theirPrefs={profile.partnerPreferences}
+          theirPhotoUrl={profile.profile?.photoUrl}
+          theirGender={profile.gender}
+          myPhotoUrl={me?.profile?.photoUrl}
+          myGender={me?.gender}
+          myProfile={me?.profile ?? {}}
+          isLoading={isMeLoading}
+        />
       </div>
+
+      {/* Elite upgrade popup — daily limit, contact locked, or weekly nudge */}
+      {upgradePopupTrigger && (
+        <EliteUpgradePopup
+          trigger={upgradePopupTrigger}
+          onClose={() => setUpgradePopupTrigger(null)}
+        />
+      )}
     </main>
   );
 }

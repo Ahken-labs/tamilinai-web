@@ -5,10 +5,17 @@ export function getMe(): Promise<Me> {
   return http('/api/user/me');
 }
 
-export function updateMe(payload: { name?: string }): Promise<Me> {
+export function updateMe(payload: { name?: string }): Promise<{ message: string }> {
   return http('/api/user/me', {
     method: 'PATCH',
     body: JSON.stringify(payload),
+  });
+}
+
+export function updatePhotoVisibility(visibility: 'public' | 'locked'): Promise<{ message: string }> {
+  return http('/api/user/profile/photo-visibility', {
+    method: 'PATCH',
+    body: JSON.stringify({ visibility }),
   });
 }
 

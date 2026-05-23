@@ -1,27 +1,13 @@
-// Own photo cached in localStorage — persists until logout (localStorage.clear()) or new upload
-// Presigned URLs expire after 1 hour, so we store the expiry from the URL itself.
-// If expired, caller should refetch getMe() to get a fresh URL.
+// Own photo cached in localStorage — persists until logout (localStorage.clear()) or new upload.
+// Presigned URLs expire after 1 hour; we parse expiry from the URL and add a 5-min buffer.
+
+import { parsePresignedExpiry } from "./photoUrlExpiry";
 
 const KEY = "inai_own_photo";
 
 interface CachedPhoto {
   url: string;
-  expiresAt: number; // parsed from X-Amz-Expires + X-Amz-Date in the presigned URL
-}
-
-function parseExpiry(url: string): number {
-  try {
-    const u = new URL(url);
-    const date = u.searchParams.get("X-Amz-Date") ?? ""; // e.g. 20260520T114328Z
-    const expires = Number(u.searchParams.get("X-Amz-Expires") ?? "3600");
-    // Parse ISO-like date: YYYYMMDDTHHmmssZ
-    const iso = `${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)}T${date.slice(9, 11)}:${date.slice(11, 13)}:${date.slice(13, 15)}Z`;
-    const issuedAt = new Date(iso).getTime();
-    if (isNaN(issuedAt)) throw new Error("bad date");
-    return issuedAt + expires * 1000 - 5 * 60 * 1000; // 5 min buffer before true expiry
-  } catch {
-    return Date.now() + 55 * 60 * 1000; // fallback: 55 min from now
-  }
+  expiresAt: number;
 }
 
 export function getCachedOwnPhoto(): string | null {
@@ -35,10 +21,23 @@ export function getCachedOwnPhoto(): string | null {
 
 export function setCachedOwnPhoto(url: string): void {
   try {
-    localStorage.setItem(KEY, JSON.stringify({ url, expiresAt: parseExpiry(url) } satisfies CachedPhoto));
-  } catch { /* unavailable */ }
+    localStorage.setItem(KEY, JSON.stringify({ url, expiresAt: parsePresignedExpiry(url) } satisfies CachedPhoto));
+  } catch { /* storage unavailable */ }
 }
 
 export function clearCachedOwnPhoto(): void {
-  try { localStorage.removeItem(KEY); } catch { /* unavailable */ }
+  try { localStorage.removeItem(KEY); } catch { /* ignore */ }
+}
+
+/**
+ * Returns the cached own photo URL if still valid.
+ * If the cache is empty/expired but a fresh presigned URL is provided, caches it and returns it.
+ * Eliminates repeat R2 requests for the user's own photo within a session.
+ */
+export function getOrCacheOwnPhoto(presignedUrl: string | null | undefined): string | null {
+  if (!presignedUrl) return null;
+  const cached = getCachedOwnPhoto();
+  if (cached) return cached;
+  setCachedOwnPhoto(presignedUrl);
+  return presignedUrl;
 }

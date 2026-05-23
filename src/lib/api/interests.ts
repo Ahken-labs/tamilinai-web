@@ -11,7 +11,7 @@ export function withdrawInterest(receiverId: string): Promise<{ message: string 
 
 export function respondToInterest(
   senderId: string,
-  action: 'accepted' | 'declined'
+  action: 'accept' | 'decline'
 ): Promise<{ message: string }> {
   return http(`/api/interests/${senderId}/respond`, {
     method: 'PATCH',

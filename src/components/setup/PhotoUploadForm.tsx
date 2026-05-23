@@ -9,6 +9,7 @@ import FormCardLayout from "../common-layout/FormCardLayout";
 import { SecurityIcon, CheckmarkIcon, CameraIcon, CheckboxIcon } from "@/src/assets/Icons";
 import { useLang } from "@/src/context/LangContext";
 import { countWords } from "@/src/utils/wordCount";
+import { validateAboutMe, splitHighlight } from "@/src/utils/aboutMeValidation";
 import PrivacyPopup from "../footer/PrivacyPopup";
 import { submitProfileSetup } from "../../lib/api/user";
 import PhotoCropModal from "../app/PhotoCropModal";
@@ -90,6 +91,7 @@ export default function PhotoUploadForm() {
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [cropSrc, setCropSrc] = useState<string | null>(null);
   const [aboutMe, setAboutMe] = useState("");
+  const [aboutMeError, setAboutMeError] = useState<{ message: string; offendingWord: string } | null>(null);
   const [agreed, setAgreed] = useState(true);
   const [showError, setShowError] = useState(false);
   const [openPrivacy, setOpenPrivacy] = useState(false);
@@ -110,9 +112,11 @@ export default function PhotoUploadForm() {
     setCropSrc(null);
   }
 
-  function handleAboutMeChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    const val = e.target.value;
-    if (countWords(val) <= MAX_WORDS) setAboutMe(val);
+  function handleAboutMeChange(val: string) {
+    if (countWords(val) <= MAX_WORDS) {
+      setAboutMe(val);
+      setAboutMeError(validateAboutMe(val));
+    }
   }
 
   function submitSetup(skipPhoto: boolean) {
@@ -266,15 +270,21 @@ export default function PhotoUploadForm() {
         <p className="font-16 font-medium text-dark">{t("About_me")}</p>
         <textarea
           value={aboutMe}
-          onChange={handleAboutMeChange}
+          onChange={(e) => handleAboutMeChange(e.target.value)}
           placeholder={t("About_me_placeholder")}
-          className="w-full mt-3 rounded-[12px] border border-[#767676]
-          font-16 font-normal text-dark placeholder:text-[#656565] resize-none outline-none
-          focus:border-[#B31B38] transition-colors h-[160px] md:h-[199px] p-3 sm:p-4"
+          className={`w-full mt-3 rounded-[12px] border font-16 font-normal text-dark placeholder:text-[#656565] resize-none outline-none focus:border-[#B31B38] transition-colors h-[160px] md:h-[199px] p-3 sm:p-4 ${aboutMeError ? "border-[#B31B38]" : "border-[#767676]"}`}
         />
-        <div className="flex text-secondary4 font-14 justify-between mt-1">
-          <span>{t("Keep_it_genuine")}</span>
-          <span>{wordCount} {t("Word_count")}</span>
+        <div className="flex font-14 justify-between mt-1 gap-2">
+          <span className={aboutMeError ? "text-[#B31B38] font-medium flex-1" : "text-secondary4"}>
+            {aboutMeError
+              ? splitHighlight(aboutMeError.message, aboutMeError.offendingWord).map((seg, i) =>
+                  seg.highlight
+                    ? <span key={i} className="underline decoration-[0.5px] underline-offset-2">{seg.text}</span>
+                    : <span key={i}>{seg.text}</span>
+                )
+              : t("Keep_it_genuine")}
+          </span>
+          <span className="text-secondary4 shrink-0">{wordCount} {t("Word_count")}</span>
         </div>
       </div>
 

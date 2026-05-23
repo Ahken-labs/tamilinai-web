@@ -23,7 +23,7 @@ function mergeDraft(partial: Record<string, unknown>, onDirty: () => void) {
   try {
     sessionStorage.setItem(KEY, JSON.stringify({ ...getDraft(), ...partial }));
     onDirty();
-  } catch {}
+  } catch { }
 }
 
 // ── Language data ─────────────────────────────────────────────────────────────
@@ -109,6 +109,8 @@ export default function BasicInfoSection({ me, onDirty }: Props) {
   const { birthYear, birthMonth, birthDay, setBirthDay, setMonth, setYear, filtYears, filtMonths, filtDays, dobOpen, setDobFieldOpen } =
     useDOBState({ year: saved?.birthYear ?? dob.year, month: saved?.birthMonth ?? dob.month, day: saved?.birthDay ?? dob.day });
 
+  const serverName = me?.name ?? "";
+  const [name, setName] = useState(saved?.name ?? serverName);
   const [maritalStatus, setMaritalStatus] = useState(saved?.maritalStatus ?? MARITAL_FROM_BE[p?.maritalStatus ?? ""] ?? "Unmarried");
   const [height, setHeight] = useState(saved?.height ?? toCmDisplay(p?.heightCm));
   const [weight, setWeight] = useState(saved?.weight ?? toKgDisplay(p?.weightKg));
@@ -125,13 +127,27 @@ export default function BasicInfoSection({ me, onDirty }: Props) {
 
   const sync = useCallback((partial: Record<string, unknown>) => mergeDraft(partial, onDirty), [onDirty]);
 
-  const wrappedSetYear = (y: string) => { setYear(y); sync({ birthYear: y }); };
-  const wrappedSetMonth = (m: string) => { setMonth(m); sync({ birthMonth: m }); };
-  const wrappedSetDay = (d: string) => { setBirthDay(d); sync({ birthDay: d }); };
+  // Always write all three DOB fields together so formatDOB never gets partial data
+  const wrappedSetYear = (y: string) => { setYear(y); sync({ birthYear: y, birthMonth, birthDay }); };
+  const wrappedSetMonth = (m: string) => { setMonth(m); sync({ birthYear, birthMonth: m, birthDay }); };
+  const wrappedSetDay = (d: string) => { setBirthDay(d); sync({ birthYear, birthMonth, birthDay: d }); };
 
   return (
     <div className="pt-3 md:pt-4 font-poppins">
       <div className="flex flex-col gap-6 md:gap-8">
+        <FormRow leftWidth={leftWidth} required label="Name" align="center">
+          <input
+            value={name}
+            onChange={e => { setName(e.target.value); sync({ name: e.target.value }); }}
+            onBlur={() => {
+              const trimmed = name.trim();
+              const invalid = !trimmed || trimmed.length < 3 || /^\d+$/.test(trimmed);
+              if (invalid) { setName(serverName); sync({ name: serverName }); }
+              else if (trimmed !== name) { setName(trimmed); sync({ name: trimmed }); }
+            }}
+            placeholder="Your name"
+            className="flex h-[40px] w-full items-center rounded-[12px] border border-[#F2F2F2] bg-[#F2F2F2] px-4 font-16 text-dark outline-none placeholder:text-[#525252]" />
+        </FormRow>
         <FormRow leftWidth={leftWidth} label="Date of birth" required>
           <div className="flex gap-4 flex-wrap">
             <DropdownField typeable compact placeholder="Year" value={birthYear} open={dobOpen.year} setOpen={setDobFieldOpen("year")} onSelect={wrappedSetYear} items={filtYears} dropdownClassName="max-h-[300px]" className="flex-1" />

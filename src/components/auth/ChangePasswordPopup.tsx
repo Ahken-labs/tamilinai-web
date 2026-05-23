@@ -6,13 +6,12 @@ import { createPortal } from "react-dom";
 import { CloseCircleIcon, EyeOffIcon, EyeOnIcon } from "../../assets/Icons";
 import InputBox from "../common-layout/InputBox";
 import Button from "../common-layout/Button";
+import { http } from "../../lib/api/client";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
 };
-
-const HARD_PASSWORD = "Pass@1234";
 
 export default function ChangePasswordPopup({ isOpen, onClose }: Props) {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -22,6 +21,8 @@ export default function ChangePasswordPopup({ isOpen, onClose }: Props) {
   const [currentPasswordError, setCurrentPasswordError] = useState("");
   const [newPasswordError, setNewPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
+  const [submitting, setSubmitting] = useState(false);
 
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -88,20 +89,9 @@ export default function ChangePasswordPopup({ isOpen, onClose }: Props) {
 
   function handleCurrentPasswordBlur() {
     if (currentPasswordTimer.current) clearTimeout(currentPasswordTimer.current);
-
     currentPasswordTimer.current = setTimeout(() => {
-      if (!currentPassword.trim()) {
-        setCurrentPasswordError("*Current password is required");
-        return;
-      }
-
-      if (currentPassword !== HARD_PASSWORD) {
-        setCurrentPasswordError("*Incorrect current password");
-        return;
-      }
-
-      setCurrentPasswordError("");
-    }, 3000);
+      if (!currentPassword.trim()) setCurrentPasswordError("*Current password is required");
+    }, 300);
   }
 
   function handleNewPasswordBlur() {
@@ -115,16 +105,13 @@ export default function ChangePasswordPopup({ isOpen, onClose }: Props) {
     setConfirmFocused(false);
   }
 
-  function handleUpdatePassword() {
+  async function handleUpdatePassword() {
     setSubmitted(true);
 
     let hasError = false;
 
     if (!currentPassword.trim()) {
       setCurrentPasswordError("*Current password is required");
-      hasError = true;
-    } else if (currentPassword !== HARD_PASSWORD) {
-      setCurrentPasswordError("*Incorrect current password");
       hasError = true;
     } else {
       setCurrentPasswordError("");
@@ -135,6 +122,9 @@ export default function ChangePasswordPopup({ isOpen, onClose }: Props) {
       hasError = true;
     } else if (!allRulesMet) {
       setNewPasswordError("*Password does not meet requirements");
+      hasError = true;
+    } else if (newPassword === currentPassword) {
+      setNewPasswordError("*New password must be different from current password");
       hasError = true;
     } else {
       setNewPasswordError("");
@@ -152,7 +142,24 @@ export default function ChangePasswordPopup({ isOpen, onClose }: Props) {
 
     if (hasError) return;
 
-    onClose();
+    setSubmitting(true);
+    try {
+      await http("/api/user/profile/password", {
+        method: "PATCH",
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      onClose();
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Something went wrong";
+      setCurrentPasswordError(msg.toLowerCase().includes("incorrect") || msg.toLowerCase().includes("current")
+        ? `*${msg}`
+        : "");
+      if (!msg.toLowerCase().includes("incorrect") && !msg.toLowerCase().includes("current")) {
+        setNewPasswordError(`*${msg}`);
+      }
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return createPortal(
@@ -287,8 +294,9 @@ export default function ChangePasswordPopup({ isOpen, onClose }: Props) {
           <div className="mt-8 flex w-full gap-4 sm:mt-10 md:mt-12">
             <div className="flex-1" />
             <Button
-              text="Update password"
+              text={submitting ? "Updating…" : "Update password"}
               onPress={handleUpdatePassword}
+              disabled={submitting}
               className="flex-1"
             />
           </div>

@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import ProtectedImage from "../../../components/common-layout/ProtectedImage";
 import {
   ChevronRightIcon,
   EliteCrownIcon,
@@ -20,7 +20,6 @@ import {
   NotifPaymentFailedIcon,
 } from "@/src/assets/Icons";
 import { getNotifications, markNotificationRead } from "../../../lib/api/notifications";
-import { respondPhotoAccess, declinePhotoRequest } from "../../../lib/api/profiles";
 import { getProfilePhotoSrc } from "../../../utils/profilePhoto";
 import { readMeCache } from "../../../components/AppHeader";
 import type { AppNotification } from "../../../types/notification";
@@ -28,24 +27,38 @@ import NotificationSkeleton from "../../../components/app/skeleton-layout/Notifi
 
 const SKELETON_COUNT = 5;
 
-// ── CTA config per notification type ────────────────────────────────────────
+// ── Time helper ──────────────────────────────────────────────────────────────
+
+function timeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60_000);
+  if (mins < 1) return "Just now";
+  if (mins < 60) return `${mins} min ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days} day${days > 1 ? "s" : ""} ago`;
+  return `${Math.floor(days / 7)} week${Math.floor(days / 7) > 1 ? "s" : ""} ago`;
+}
+
+// ── CTA config per notification type ─────────────────────────────────────────
 
 function getCtaConfig(type: string, fromUserId?: string): { label: string; href: string } {
   const profileHref = fromUserId ? `/user-profile?id=${fromUserId}` : "/matches";
   switch (type) {
-    case "welcome":               return { label: "Complete profile",  href: "/my-profile" };
-    case "photo_under_review":    return { label: "Complete",          href: "/my-profile" };
+    case "welcome":               return { label: "View",              href: "/matches" };
+    case "photo_under_review":    return { label: "My profile",        href: "/my-profile" };
     case "photo_approved":        return { label: "See matches",       href: "/matches" };
     case "photo_rejected":        return { label: "Upload photo",      href: "/my-profile" };
     case "trust_badge_reminder":  return { label: "Complete",          href: "/my-profile" };
     case "photo_access_accepted": return { label: "View photo",        href: profileHref };
     case "photo_access_declined": return { label: "View profile",      href: profileHref };
     case "photo_access_requested":return { label: "Review request",    href: profileHref };
-    case "photo_requested":       return { label: "Upload photo",      href: "/my-profile" };
+    case "photo_requested":       return { label: "Upload photo",      href: profileHref };
     case "photo_added":           return { label: "View photo",        href: profileHref };
     case "photo_request_declined":return { label: "View profile",      href: profileHref };
     case "payment_failed":        return { label: "Retry payment",     href: "/elite-upgrade" };
-    case "payment_success":       return { label: "Explore features",  href: "/matches" };
+    case "payment_success":       return { label: "Explore",           href: "/matches" };
     case "interest_received":     return { label: "View",              href: "/interested" };
     case "interest_accepted":     return { label: "View match",        href: "/interested" };
     case "interest_declined":     return { label: "View",              href: "/interested" };
@@ -54,8 +67,8 @@ function getCtaConfig(type: string, fromUserId?: string): { label: string; href:
     case "elite_expiring_3d":
     case "elite_expired":         return { label: "Renew",             href: "/elite-upgrade" };
     case "promo":                 return { label: "Claim offer",       href: "/elite-upgrade" };
-    case "profile_viewed":        return { label: "View",              href: "/my-profile" };
-    case "birthday":              return { label: "View",              href: "/matches" };
+    case "profile_viewed":        return { label: "See all viewers",   href: "/my-profile" };
+    case "birthday":              return { label: "View matches",      href: "/matches" };
     default:                      return { label: "View",              href: "/matches" };
   }
 }
@@ -99,45 +112,42 @@ function NotifAvatar({ item }: { item: AppNotification }) {
     );
   }
 
-  if (item.type === "photo_under_review") {
+  if (item.type === "photo_under_review" || item.type === "photo_approved") {
     const src = getProfilePhotoSrc(me?.profile?.photoUrl, "approved", me?.gender, true);
     return (
-      <Image
+      <ProtectedImage
         src={src}
         alt="Your photo"
         width={56}
         height={56}
-        draggable={false}
-        onContextMenu={(e) => e.preventDefault()}
         className="h-10 w-10 md:h-14 md:w-14 shrink-0 rounded-full object-cover bg-[#FFDED3]"
       />
     );
   }
 
   if (item.type === "photo_rejected") {
-    const src = getProfilePhotoSrc(null, null, me?.gender);
+    const placeholder = me?.gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png";
     return (
-      <Image
-        src={src}
+      <ProtectedImage
+        src={placeholder}
         alt="Photo"
         width={56}
         height={56}
-        draggable={false}
-        onContextMenu={(e) => e.preventDefault()}
         className="h-10 w-10 md:h-14 md:w-14 shrink-0 rounded-full object-cover bg-[#FFDED3]"
+        style={{ filter: "blur(4.75px)" }}
       />
     );
   }
 
-  if (item.fromUser?.photoUrl) {
+  if (item.fromUser) {
+    const photoSrc = item.fromUser.photoUrl
+      ?? (item.fromUser.gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png");
     return (
-      <Image
-        src={item.fromUser.photoUrl}
+      <ProtectedImage
+        src={photoSrc}
         alt={item.fromUser.name ?? ""}
         width={56}
         height={56}
-        draggable={false}
-        onContextMenu={(e) => e.preventDefault()}
         className="h-10 w-10 md:h-14 md:w-14 shrink-0 rounded-full object-cover bg-[#FFDED3]"
       />
     );
@@ -150,74 +160,7 @@ function NotifAvatar({ item }: { item: AppNotification }) {
   );
 }
 
-// ── Inline action buttons (photo_access_requested / photo_requested) ─────────
-
-const ACTION_BTN = "cursor-pointer font-16 font-normal leading-[150%] px-3 py-1.5 rounded-[8px]";
-
-function InlineActions({
-  item,
-  onDone,
-}: {
-  item: AppNotification;
-  onDone: () => void;
-}) {
-  const router = useRouter();
-  const fromId = item.fromUser?.id;
-
-  if (item.type === "photo_access_requested" && fromId) {
-    return (
-      <div className="mt-3 flex gap-2">
-        <button
-          className={`${ACTION_BTN} bg-[#B31B38] text-white`}
-          onClick={async (e) => {
-            e.stopPropagation();
-            await respondPhotoAccess(fromId, "accept").catch(() => {});
-            onDone();
-          }}
-        >
-          Accept
-        </button>
-        <button
-          className={`${ACTION_BTN} border border-[#B31B38] text-[#B31B38]`}
-          onClick={async (e) => {
-            e.stopPropagation();
-            await respondPhotoAccess(fromId, "decline").catch(() => {});
-            onDone();
-          }}
-        >
-          Decline
-        </button>
-      </div>
-    );
-  }
-
-  if (item.type === "photo_requested" && fromId) {
-    return (
-      <div className="mt-3 flex gap-2">
-        <button
-          className={`${ACTION_BTN} bg-[#B31B38] text-white`}
-          onClick={(e) => { e.stopPropagation(); onDone(); router.push("/my-profile"); }}
-        >
-          Upload photo
-        </button>
-        <button
-          className={`${ACTION_BTN} border border-[#B31B38] text-[#B31B38]`}
-          onClick={async (e) => {
-            e.stopPropagation();
-            await declinePhotoRequest(fromId).catch(() => {});
-            onDone();
-          }}
-        >
-          Decline
-        </button>
-      </div>
-    );
-  }
-
-  return null;
-}
-
-// ── Row ──────────────────────────────────────────────────────────────────────
+// Row
 
 function NotificationRow({
   item,
@@ -252,21 +195,22 @@ function NotificationRow({
           <div className="truncate text-dark font-18 font-medium leading-[150%]">
             {item.title}
           </div>
-          {item.subtitle ? (
-            <div className="mt-1 md:mt-1.5 line-clamp-2 text-secondary3 font-16 font-normal leading-[150%]">
-              {item.subtitle}
-            </div>
-          ) : null}
-          <InlineActions item={item} onDone={() => { markRead(); }} />
+          <div className="mt-1 md:mt-1.5 line-clamp-2 text-secondary3 font-16 font-normal leading-[150%]">
+            {item.type === "welcome"
+              ? item.subtitle
+              : item.subtitle
+                ? `${item.subtitle} • ${timeAgo(item.createdAt)}`
+                : timeAgo(item.createdAt)}
+          </div>
         </div>
       </div>
 
       <button
-        onClick={(e) => { e.stopPropagation(); navigate(); }}
+        onClick={navigate}
         className="flex shrink-0 cursor-pointer items-center gap-0.5 md:gap-1.5"
       >
-        {!item.isRead ? <div className="h-3 w-3 rounded-full bg-[#B31B38]" /> : <div className="h-3 w-3" />}
-        <span className="text-primary font-16 font-normal leading-[150%] whitespace-nowrap">
+        {!item.isRead ? <div className="h-2 md:h-3 w-2 md:w-3 rounded-full bg-[#B31B38]" /> : <div className="h-2 md:h-3 w-2 md:w-3" />}
+        <span className="text-primary font-16 font-normal mb-0.5 leading-[150%] whitespace-nowrap">
           {label}
         </span>
         <ChevronRightIcon className="h-4 w-4 md:h-6 md:w-6 text-[#B31B38]" />
@@ -280,12 +224,17 @@ function NotificationRow({
 export default function NotificationsPage() {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isFetching, isError } = useQuery({
     queryKey: ["notifications"],
     queryFn: getNotifications,
-    staleTime: 0,
-    gcTime: 5 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
+
+  const isBackgroundFetching = isFetching && !isLoading;
+
+  // SSE lives in AppHeader (always connected) — no duplicate connection needed here
 
   function handleRead(id: string) {
     queryClient.setQueryData<AppNotification[]>(["notifications"], (old) =>
@@ -294,6 +243,12 @@ export default function NotificationsPage() {
     markNotificationRead(id).catch(() => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
     });
+    // Sync unread dot in other open tabs
+    try {
+      const ch = new BroadcastChannel("inai_notifications");
+      ch.postMessage({ type: "notifications_read" });
+      ch.close();
+    } catch { /* unsupported */ }
   }
 
   return (
@@ -319,11 +274,13 @@ export default function NotificationsPage() {
             </p>
           </div>
         ) : (
-          data
-            .filter((n) => !n.type.startsWith("interest"))
-            .map((item) => (
-              <NotificationRow key={item.id} item={item} onRead={handleRead} />
-            ))
+          <div className={isBackgroundFetching ? "opacity-60 pointer-events-none transition-opacity" : ""}>
+            {data
+              .filter((n) => !n.type.startsWith("interest"))
+              .map((item) => (
+                <NotificationRow key={item.id} item={item} onRead={handleRead} />
+              ))}
+          </div>
         )}
       </div>
     </main>

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import ProtectedImage from "@/src/components/common-layout/ProtectedImage";
 import Link from "next/link";
 import {
   AboutMeIcon, EliteCrownIcon, ProfileVerifiedBadgeIcon, UnionDesignIcon,
@@ -14,11 +15,10 @@ import Button from "@/src/components/common-layout/Button";
 import {
   getMe, uploadPhoto, savePersonalDetails, saveBasicDetails,
   saveCareerDetails, saveFamilyDetails, saveLifestyleDetails, savePartnerPreferences,
-  getPartnerPreferences,
+  getPartnerPreferences, updateMe, updatePhotoVisibility,
 } from "@/src/lib/api/user";
 import { readMeCache, writeMeCache, invalidateMeCache } from "@/src/components/AppHeader";
 import { getProfilePhotoSrc } from "@/src/utils/profilePhoto";
-import { getCachedOwnPhoto, setCachedOwnPhoto, clearCachedOwnPhoto } from "@/src/utils/ownPhotoCache";
 import {
   nn, parseCm, parseKg, formatDOB,
   MARITAL_TO_BE, BUILD_TO_BE, DIET_TO_BE, SMOKE_TO_BE, DRINK_TO_BE, RESIDENT_TO_BE,
@@ -44,6 +44,8 @@ const TABS = [
 
 // ─── Session draft keys ────────────────────────────────────────────────────────
 import { DRAFT_KEYS } from "@/src/constants/profileDraftKeys";
+import { validateAboutMe, splitHighlight } from "@/src/utils/aboutMeValidation";
+
 export { DRAFT_KEYS } from "@/src/constants/profileDraftKeys";
 
 const ABOUT_ME_KEY = DRAFT_KEYS.about;
@@ -70,9 +72,9 @@ function getFirstIncomplete(me: Me | null): string {
   if (!me) return "contact";
   const p = me.profile;
   if ([me.isPhoneVerified, me.isEmailVerified].filter(Boolean).length < 2) return "contact";
-  // basic: 7 or 8 fields — same as buildSections
+  // basic: 8 or 9 fields — same as buildSections
   const _hasPhys = p?.hasPhysicalChallenge === true;
-  const _basicFields: unknown[] = [p?.dateOfBirth, p?.maritalStatus, nn(p?.heightCm), nn(p?.weightKg), true /* hasPhysicalChallenge: No is valid */, p?.physicalBuild, (p?.languagesSpoken?.length ?? 0) > 0];
+  const _basicFields: unknown[] = [me?.name, p?.dateOfBirth, p?.maritalStatus, nn(p?.heightCm), nn(p?.weightKg), true /* hasPhysicalChallenge: No is valid */, p?.physicalBuild, (p?.languagesSpoken?.length ?? 0) > 0];
   if (_hasPhys) _basicFields.push(!!p?.disabilityType);
   if (_basicFields.filter(Boolean).length < _basicFields.length) return "basic";
   // career: 5 fields
@@ -102,6 +104,7 @@ export default function MyProfilePage() {
   // About Me draft (sessionStorage-backed)
   const [aboutMe, setAboutMe] = useState("");
   const [aboutMeDirty, setAboutMeDirty] = useState(false);
+  const [aboutMeError, setAboutMeError] = useState<{ message: string; offendingWord: string } | null>(null);
 
   // Saving
   const [saving, setSaving] = useState(false);
@@ -114,6 +117,7 @@ export default function MyProfilePage() {
 
   // Section refs for auto-scroll
   const sectionsRef = useRef<HTMLDivElement>(null);
+  const aboutMeRef = useRef<HTMLDivElement>(null);
   const [openSectionId, setOpenSectionId] = useState<string>("contact");
 
   const handleDirty = useCallback(() => { setDraftsExist(true); setDraftTick(t => t + 1); }, []);
@@ -131,35 +135,19 @@ export default function MyProfilePage() {
       setAboutMe(sessionStorage.getItem(ABOUT_ME_KEY) ?? cached.profile?.aboutMe ?? "");
     }
 
-    // Use cached own photo URL if still valid (avoids R2 GET on every page visit)
-    const cachedPhoto = getCachedOwnPhoto();
-    if (!cachedPhoto) {
-      // Cache miss or expired — fetch fresh me to get new presigned URL
-      getMe().then((data) => {
-        writeMeCache(data);
-        setMe(data);
-        if (data.profile?.photoUrl) setCachedOwnPhoto(data.profile.photoUrl);
-        setOpenSectionId(prev => prev === "contact" ? getFirstIncomplete(data) : prev);
-        if (!sessionStorage.getItem(ABOUT_ME_KEY)) setAboutMe(data.profile?.aboutMe ?? "");
-      }).catch(() => {});
-    } else {
-      // Cache hit — still call getMe for profile data but skip photo refetch
-      getMe().then((data) => {
-        writeMeCache(data);
-        // Only update cached photo if it changed (new upload happened elsewhere)
-        if (data.profile?.photoUrl && data.profile.photoUrl !== cachedPhoto) {
-          setCachedOwnPhoto(data.profile.photoUrl);
-        }
-        setMe(data);
-        setOpenSectionId(prev => prev === "contact" ? getFirstIncomplete(data) : prev);
-        if (!sessionStorage.getItem(ABOUT_ME_KEY)) setAboutMe(data.profile?.aboutMe ?? "");
-      }).catch(() => {});
-    }
+    getMe().then((data) => {
+      writeMeCache(data);
+      setMe(data);
+      setOpenSectionId(prev => prev === "contact" ? getFirstIncomplete(data) : prev);
+      if (!sessionStorage.getItem(ABOUT_ME_KEY)) setAboutMe(data.profile?.aboutMe ?? "");
+    }).catch(() => {});
 
     // Pre-cache partner prefs so computePartnerCompleted shows correct count immediately
-    if (!sessionStorage.getItem("inai_partner_pref")) {
+    const existingPref = sessionStorage.getItem("inai_partner_pref");
+    const prefExpired = existingPref ? (() => { try { const p = JSON.parse(existingPref); return p.expiresAt && Date.now() > p.expiresAt; } catch { return false; } })() : true;
+    if (!existingPref || prefExpired) {
       getPartnerPreferences().then((prefs) => {
-        try { sessionStorage.setItem("inai_partner_pref", JSON.stringify(prefs)); } catch { /* unavailable */ }
+        try { sessionStorage.setItem("inai_partner_pref", JSON.stringify({ data: prefs, expiresAt: Date.now() + 30 * 60 * 1000 })); } catch { /* unavailable */ }
         setDraftTick(t => t + 1);
       }).catch(() => {});
     }
@@ -195,8 +183,13 @@ export default function MyProfilePage() {
   // About Me change
   const handleAboutMeChange = (value: string) => {
     setAboutMe(value);
-    sessionStorage.setItem(ABOUT_ME_KEY, value);
-    setAboutMeDirty(value !== (me?.profile?.aboutMe ?? ""));
+    const err = validateAboutMe(value);
+    setAboutMeError(err);
+    // Only cache valid text — invalid drafts are never persisted
+    if (!err) {
+      sessionStorage.setItem(ABOUT_ME_KEY, value);
+      setAboutMeDirty(value !== (me?.profile?.aboutMe ?? ""));
+    }
   };
 
   // Scroll to first incomplete section + open it
@@ -208,6 +201,10 @@ export default function MyProfilePage() {
 
   // Done: save everything from sessionStorage drafts + photo + about me
   const handleDone = async () => {
+    if (aboutMeError) {
+      aboutMeRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
     if (!hasPendingChanges) return;
     setSaving(true);
 
@@ -225,7 +222,6 @@ export default function MyProfilePage() {
       const bp = me?.profile;
 
       if (pendingPhoto) {
-        clearCachedOwnPhoto(); // invalidate cache so new photo URL gets cached after upload
         saves.push(uploadPhoto(pendingPhoto));
       }
 
@@ -249,8 +245,14 @@ export default function MyProfilePage() {
       if (Object.keys(personalPayload).length) saves.push(savePersonalDetails(personalPayload));
 
       // ── Basic (dateOfBirth, marital, height, weight, physicalChallenge, disability) ──
-      const bd = readDraft<{ birthYear: string; birthMonth: string; birthDay: string; maritalStatus: string; height: string; weight: string; physicalChallenge: string; disability: string; physBuild: string; languages: string[] }>(DRAFT_KEYS.basic);
+      const bd = readDraft<{ name?: string; birthYear: string; birthMonth: string; birthDay: string; maritalStatus: string; height: string; weight: string; physicalChallenge: string; disability: string; physBuild: string; languages: string[] }>(DRAFT_KEYS.basic);
       if (bd) {
+        // ── Name ──
+        const draftName = bd.name?.trim();
+        if (draftName && draftName.length >= 3 && !/^\d+$/.test(draftName) && diff(draftName, me?.name)) {
+          saves.push(updateMe({ name: draftName }));
+        }
+
         const dob      = formatDOB(bd.birthYear, bd.birthMonth, bd.birthDay) ?? bp?.dateOfBirth;
         const marital  = bd.maritalStatus ? (MARITAL_TO_BE[bd.maritalStatus] ?? bd.maritalStatus) : bp?.maritalStatus;
         const heightCm = bd.height ? parseCm(bd.height) : bp?.heightCm;
@@ -362,7 +364,6 @@ export default function MyProfilePage() {
       invalidateMeCache();
       const fresh = await getMe();
       writeMeCache(fresh);
-      if (fresh.profile?.photoUrl) setCachedOwnPhoto(fresh.profile.photoUrl);
       setMe(fresh);
       window.dispatchEvent(new CustomEvent("me-updated"));
       if (fresh.profile?.photoUrl) setPreviewUrl(null);
@@ -393,14 +394,12 @@ export default function MyProfilePage() {
           <div className="shrink-0 min-[520px]:sticky min-[520px]:top-[168px]">
             <div className="relative h-[133px] sm:h-[160px] md:h-[213px] lg:h-[266px] w-[100px] sm:w-[120px] md:w-[160px] lg:w-[200px]">
               <div className="relative z-10 h-[133px] sm:h-[160px] md:h-[213px] lg:h-[266px] overflow-hidden rounded-[16px] bg-[#D9D9D9]">
-                <Image
+                <ProtectedImage
                   src={photoSrc}
                   alt="profile"
                   width={200}
                   height={300}
                   priority
-                  draggable={false}
-                  onContextMenu={(e) => e.preventDefault()}
                   className="h-full w-full object-cover"
                 />
               </div>
@@ -464,7 +463,7 @@ export default function MyProfilePage() {
             <div className="md:mt-0.5 text-dark font-16 font-normal leading-[150%]">{displayId}</div>
 
             {/* Photo visibility */}
-            {me && <PhotoVisibilityRow photoStatus={photoStatus} initialVisibility="public" />}
+            {me && <PhotoVisibilityRow photoStatus={photoStatus} initialVisibility={me.profile?.photoVisibility ?? "public"} />}
 
             {/* Trust badge section — hidden once badge earned */}
             {me && !trustBadge && (
@@ -475,7 +474,7 @@ export default function MyProfilePage() {
             )}
 
             {/* About Me */}
-            <div className="mt-6 md:mt-8 rounded-[16px] bg-light p-4 md:p-5">
+            <div ref={aboutMeRef} className="mt-6 md:mt-8 rounded-[16px] bg-light p-4 md:p-5">
               <div className="flex items-center gap-2 text-dark md:gap-3">
                 <AboutMeIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />
                 <h2 className="font-20 font-semibold">About Me</h2>
@@ -487,7 +486,7 @@ export default function MyProfilePage() {
                 </p>
               ) : (
                 <div>
-                  <div className="rounded-[12px] border border-[rgba(179,27,56,0.25)] bg-[#FFF0F3]">
+                  <div className={`rounded-[12px] border bg-[#FFF0F3] ${aboutMeError ? "border-[#B31B38]" : "border-[rgba(179,27,56,0.25)]"}`}>
                     <textarea
                       value={aboutMe}
                       onChange={(e) => handleAboutMeChange(e.target.value)}
@@ -495,8 +494,16 @@ export default function MyProfilePage() {
                       className="h-20 w-full resize-none bg-transparent p-3 font-16 text-dark outline-none placeholder:text-[#B31B38]"
                     />
                   </div>
-                  <span className="mt-[5px] md:mt-[7px] block text-secondary4 font-14">
-                    Keep it genuine — families read this
+                  <span className="mt-[5px] md:mt-[7px] block font-14" style={{ minHeight: "1.2em" }}>
+                    {aboutMeError
+                      ? <span className="text-[#B31B38] font-medium">
+                          {splitHighlight(aboutMeError.message, aboutMeError.offendingWord).map((seg, i) =>
+                            seg.highlight
+                              ? <span key={i} className="underline decoration-[0.5px] underline-offset-2">{seg.text}</span>
+                              : <span key={i}>{seg.text}</span>
+                          )}
+                        </span>
+                      : <span className="text-secondary4">Keep it genuine — families read this</span>}
                   </span>
                 </div>
               )}
@@ -574,6 +581,16 @@ function PhotoVisibilityRow({
 }) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<VisibilityValue>(initialVisibility);
+  const [saving, setSaving] = useState(false);
+
+  async function handleSelect(value: VisibilityValue) {
+    if (value === selected || saving) return;
+    setSelected(value);
+    setOpen(false);
+    setSaving(true);
+    try { await updatePhotoVisibility(value); } catch { setSelected(selected); }
+    finally { setSaving(false); }
+  }
 
   if (!photoStatus) return null; // no photo uploaded at all
 
@@ -603,8 +620,8 @@ function PhotoVisibilityRow({
       <div className="font-16 text-dark">Photo visibility</div>
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="cursor-pointer px-2 py-1 flex items-center gap-1 md:gap-2 rounded-full bg-light"
+        onClick={() => !saving && setOpen((v) => !v)}
+        className={`px-2 py-1 flex items-center gap-1 md:gap-2 rounded-full bg-light transition-opacity ${saving ? "opacity-50 cursor-wait" : "cursor-pointer"}`}
       >
         {selectedOption.type === "globe" ? (
           <GlobeIcon className="w-3 md:w-4 h-3 md:h-4 text-dark" />
@@ -623,7 +640,7 @@ function PhotoVisibilityRow({
               <button
                 key={item.value}
                 type="button"
-                onClick={() => { setSelected(item.value); setOpen(false); }}
+                onClick={() => handleSelect(item.value)}
                 className={`cursor-pointer flex items-center gap-2 rounded-[8px] px-2 py-1 transition-colors duration-150 whitespace-nowrap ${active ? "bg-[#FFF0F3]" : "hover:bg-[#EAEAEA]"}`}
               >
                 {item.type === "globe" ? (
@@ -772,7 +789,7 @@ function buildSections(me: Me | null, onDirty: () => void, partnerCompleted: num
 
   const contactComplete = [me?.isPhoneVerified, me?.isEmailVerified].filter(Boolean).length;
 
-  // Basic: dob, marital, height, weight, hasPhysicalChallenge, physBuild, languages (7 or 8)
+  // Basic: name, dob, marital, height, weight, hasPhysicalChallenge, physBuild, languages (8 or 9)
   // _draftTick=0 means we're in SSR/pre-mount — skip sessionStorage to avoid hydration mismatch
   const bd = (_draftTick > 0 ? (() => { try { const r = sessionStorage.getItem(DRAFT_KEYS.basic); return r ? JSON.parse(r) : null; } catch { return null; } })() : null) as Record<string, unknown> | null;
   const liveHasPhys = bd?.physicalChallenge !== undefined ? bd.physicalChallenge === "yes" : (p?.hasPhysicalChallenge === true);
@@ -785,14 +802,16 @@ function buildSections(me: Me | null, onDirty: () => void, partnerCompleted: num
   const liveLangs = (bd?.languages as string[] | undefined) ?? p?.languagesSpoken ?? ["Tamil"];
   const liveDisability = bd?.disability ?? p?.disabilityType;
   const hasPhysChallenge = liveHasPhys;
+  const liveName = (bd?.name as string | undefined) ?? me?.name;
   const basicFields: unknown[] = [
+    !!liveName,
     liveDOB, liveMarital, !!liveHeight, !!liveWeight,
     true, // hasPhysicalChallenge itself: always filled (No is a valid answer)
     livePhysBuild, (liveLangs?.length ?? 0) > 0,
   ];
   if (hasPhysChallenge) basicFields.push(!!liveDisability);
   const basicComplete = basicFields.filter(Boolean).length;
-  const basicTotal = hasPhysChallenge ? 8 : 7;
+  const basicTotal = hasPhysChallenge ? 9 : 8;
 
   // Career: education, educationDetail, occupation, sector, monthlyIncome (5)
   const careerComplete = [

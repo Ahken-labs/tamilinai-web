@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
+import { useState } from "react";
 import ProtectedPhoto from "../common-layout/ProtectedPhoto";
-import { getCachedPhoto, setCachedPhoto } from "../../utils/othersPhotoCache";
+import ProtectedImage from "../common-layout/ProtectedImage";
 import { useRouter } from "next/navigation";
 import { Profile } from "../../types/profile";
 import {
@@ -24,9 +23,11 @@ import {
   ShieldLockIcon,
 } from "../../assets/Icons";
 import Button from "../common-layout/Button";
+import EliteUpgradePopup from "../common-layout/EliteUpgradePopup";
 import { shortlistProfile, unshortlistProfile } from "../../lib/api/profiles";
 import { sendInterest } from "../../lib/api/interests";
 import { ApiError } from "../../lib/api/client";
+import { readMeCache } from "../AppHeader";
 
 interface ProfileCardProps {
   profile: Profile;
@@ -55,25 +56,16 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
   const [interestSent, setInterestSent] = useState(
     () => profile.interestStatus === "sent" || profile.interestStatus === "accepted"
   );
+  const [mutualMatch, setMutualMatch] = useState(
+    () => profile.interestStatus === "accepted"
+  );
   const [interestPending, setInterestPending] = useState(false);
+  const [showLimitPopup, setShowLimitPopup] = useState(false);
   const tags = getTags(profile);
+  const viewerIsElite = readMeCache()?.isElite ?? false;
 
   const placeholder = profile.gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png";
-
-  // Cache other user's photo in sessionStorage — cleared on logout
-  const [photoSrc, setPhotoSrc] = useState<string>(() => {
-    if (profile.isPrivate || !profile.photo) return placeholder;
-    return getCachedPhoto(profile.id) ?? profile.photo;
-  });
-
-  useEffect(() => {
-    if (!profile.isPrivate && profile.photo) {
-      const cached = getCachedPhoto(profile.id);
-      if (!cached) setCachedPhoto(profile.id, profile.photo);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setPhotoSrc(cached ?? profile.photo);
-    }
-  }, [profile.id, profile.photo, profile.isPrivate]);
+  const photoSrc = profile.isPrivate || !profile.photo ? placeholder : profile.photo;
 
   async function handleShortlist() {
     if (shortlistPending) return;
@@ -98,12 +90,13 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
     if (interestPending || interestSent) return;
     setInterestPending(true);
     try {
-      await sendInterest(profile.id);
+      const res = await sendInterest(profile.id);
       setInterestSent(true);
+      if (res.message?.includes('Mutual')) setMutualMatch(true);
       onInterestSent?.();
     } catch (err) {
-      // 409 = already sent — treat as success so button locks
       if (err instanceof ApiError && err.status === 409) { setInterestSent(true); onInterestSent?.(); }
+      else if (err instanceof ApiError && err.status === 403 && !viewerIsElite) { setShowLimitPopup(true); }
     } finally {
       setInterestPending(false);
     }
@@ -111,7 +104,7 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
 
   const detailRows = [
     [
-      { Icon: CakeIcon, value: `${profile.age} yrs` },
+      { Icon: CakeIcon, value: profile.age > 0 ? `${profile.age} yrs` : "Age not specified" },
       { Icon: LocationPinIcon, value: profile.location },
     ],
     [
@@ -129,7 +122,7 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
   ];
 
   return (
-    <div className={`w-full select-none max-w-[944px] p-4 mx-auto rounded-[32px] bg-white
+    <div className={`w-full select-none max-w-[944px] p-4 mx-auto rounded-[32px] bg-white mb-4 md:mb-6 
       ${profile.isElite ? "shadow-[0_4px_40px_0_rgba(255,140,60,0.18)]" : "shadow-none"} overflow-hidden`}>
       <div className="flex flex-col min-[840px]:flex-row">
         {/* Photo */}
@@ -143,14 +136,12 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
               sizes="(max-width: 840px) 100vw, 220px"
             />
           ) : (
-            <Image
+            <ProtectedImage
               src={placeholder}
               alt={profile.name}
               fill
               className="object-cover"
               sizes="(max-width: 840px) 100vw, 220px"
-              draggable={false}
-              onContextMenu={(e) => e.preventDefault()}
             />
           )}
           {(!profile.photo || profile.isPrivate) && (
@@ -240,7 +231,7 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
               onPress={handleSendInterest}
               className="basis-full flex-1 [@media(min-width:450px)]:basis-[calc(50%-0.375rem)] [@media(min-width:690px)]:basis-[calc(33.333%-0.5rem)] [@media(min-width:838px)]:basis-full [@media(min-width:940px)]:basis-[calc(33.333%-0.5rem)] !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE] disabled:opacity-50"
               text={
-                profile.interestStatus === "accepted" ? "Connected"
+                mutualMatch ? "Connected 🎉"
                 : interestSent ? "Interest Sent"
                 : interestPending ? "Sending..."
                 : "Send Interest"
@@ -248,6 +239,7 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
               iconLeft={<SendInterestMsgIcon className="w-4 h-4 shrink-0" />}
             />
           </div>
+          {showLimitPopup && <EliteUpgradePopup trigger="daily_limit" onClose={() => setShowLimitPopup(false)} />}
         </div>
       </div>
     </div>

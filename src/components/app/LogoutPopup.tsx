@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { http } from "../../lib/api/client";
+import { clearBlobCache } from "../common-layout/ProtectedPhoto";
 
 interface Props {
   isOpen: boolean;
@@ -21,6 +22,7 @@ export default function LogoutPopup({ isOpen, onClose }: Props) {
     } catch {
       // proceed with local logout even if server call fails
     }
+    clearBlobCache();
     localStorage.clear();
     sessionStorage.clear();
     queryClient.clear();

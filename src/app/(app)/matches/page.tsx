@@ -1,17 +1,21 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { IoCloseOutline } from "react-icons/io5";
 import ToggleTabs from "../../../components/common-layout/ToggleTabs";
 import ProfileCard from "../../../components/app/ProfileCard";
 import ProfileCardSkeleton from "../../../components/app/skeleton-layout/ProfileCardSkeleton";
 import Pagination from "../../../components/more/Pagination";
 import PartnerPreferenceModal from "../../../components/app/PartnerPreferenceModal";
 import { getProfiles } from "../../../lib/api/profiles";
+import type { ProfileFilters } from "../../../lib/api/profiles";
+import type { SearchFilters } from "../../../types/search";
 import type { BrowseProfile } from "../../../types/user";
 import type { Profile } from "../../../types/profile";
 import { formatHeight } from "../../../utils/heightUtils";
+import { calculateAge } from "../../../utils/calculateAge";
 
 const CARDS_PER_PAGE = 10;
 
@@ -28,24 +32,12 @@ function isNewProfile(createdAt?: string): boolean {
   return Date.now() - new Date(createdAt).getTime() < THIRTY_DAYS_MS;
 }
 
-function calculateAge(dateOfBirth?: string): number {
-  if (!dateOfBirth) return 0;
-  const born = new Date(dateOfBirth);
-  const today = new Date();
-  let age = today.getFullYear() - born.getFullYear();
-  if (
-    today.getMonth() < born.getMonth() ||
-    (today.getMonth() === born.getMonth() && today.getDate() < born.getDate())
-  ) age--;
-  return age;
-}
-
 function toCardProfile(p: BrowseProfile): Profile {
   return {
     id: p.id,
     displayId: p.displayId,
     name: p.name,
-    age: calculateAge(p.dateOfBirth),
+    age: calculateAge(p.dateOfBirth) ?? 0,
     location: p.city ?? "",
     education: p.education ?? "",
     country: p.country ?? "",
@@ -74,34 +66,63 @@ function MatchesContent() {
   const [activeTab, setActiveTab] = useState("best");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const queryKey = ["profiles", activeTab, currentPage];
+  const searchFilters = useMemo<SearchFilters | null>(() => {
+    const displayId = searchParams.get("displayId");
+    const country = searchParams.get("country");
+    const minAge = searchParams.get("minAge");
+    const maxAge = searchParams.get("maxAge");
+    const religion = searchParams.get("religion");
+    const maritalStatus = searchParams.get("maritalStatus");
+    if (!displayId && !country && !minAge && !maxAge && !religion && !maritalStatus) return null;
+    return {
+      displayId: displayId ?? undefined,
+      country: country ?? undefined,
+      minAge: minAge ? parseInt(minAge) : undefined,
+      maxAge: maxAge ? parseInt(maxAge) : undefined,
+      religion: religion ?? undefined,
+      maritalStatus: maritalStatus ?? undefined,
+    };
+  }, [searchParams]);
+
+  // Reset to page 1 whenever search changes
+  const searchKey = searchParams.toString();
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCurrentPage(1);
+  }, [searchKey]);
+
+  const queryKey = ["profiles", activeTab, currentPage, searchFilters];
 
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey,
     queryFn: () => {
-      const filters: Record<string, string | number> = {
+      const filters: ProfileFilters = {
         page: currentPage,
         limit: CARDS_PER_PAGE,
         sort: "newest",
       };
       if (activeTab === "elite") filters.isElite = "true";
       if (activeTab === "viewed") filters.isViewed = "true";
+      if (searchFilters?.displayId) filters.displayId = searchFilters.displayId;
+      if (searchFilters?.country) filters.country = searchFilters.country;
+      if (searchFilters?.minAge) filters.minAge = searchFilters.minAge;
+      if (searchFilters?.maxAge) filters.maxAge = searchFilters.maxAge;
+      if (searchFilters?.religion) filters.religion = searchFilters.religion;
+      if (searchFilters?.maritalStatus) filters.maritalStatus = searchFilters.maritalStatus;
       return getProfiles(filters);
     },
-    // staleTime: Infinity — once a page is loaded this session, keep it as-is.
-    // User won't see already-viewed page 1 get replaced with newer profiles
-    // when navigating back from page 2. Fresh data comes on page refresh.
-    staleTime: Infinity,
-    // Keep cached pages in memory even when not active
-    gcTime: Infinity,
+    staleTime: searchFilters ? 2 * 60 * 1000 : 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    placeholderData: (prev) => prev,
   });
 
   const profiles = data?.profiles.map(toCardProfile) ?? [];
   const totalPages = data?.totalPages ?? 1;
 
   // Prefetch next page in background as soon as current page loads
-  if (data && currentPage < totalPages) {
-    const nextFilters: Record<string, string | number> = {
+  useEffect(() => {
+    if (!data || currentPage >= totalPages || searchFilters) return;
+    const nextFilters: ProfileFilters = {
       page: currentPage + 1,
       limit: CARDS_PER_PAGE,
       sort: "newest",
@@ -109,11 +130,11 @@ function MatchesContent() {
     if (activeTab === "elite") nextFilters.isElite = "true";
     if (activeTab === "viewed") nextFilters.isViewed = "true";
     queryClient.prefetchQuery({
-      queryKey: ["profiles", activeTab, currentPage + 1],
+      queryKey: ["profiles", activeTab, currentPage + 1, null],
       queryFn: () => getProfiles(nextFilters),
-      staleTime: Infinity,
+      staleTime: 5 * 60 * 1000,
     });
-  }
+  }, [data, currentPage, totalPages, activeTab, searchFilters, queryClient]);
 
   function handleTabChange(value: string) {
     setActiveTab(value);
@@ -130,7 +151,10 @@ function MatchesContent() {
     router.replace("/matches");
   }
 
-  // Show skeletons on first load; on page change show previous data while fetching (isFetching)
+  function handleClearSearch() {
+    router.push("/matches");
+  }
+
   const showSkeletons = isLoading;
   const showFetchingOverlay = isFetching && !isLoading;
 
@@ -139,35 +163,54 @@ function MatchesContent() {
       <PartnerPreferenceModal isOpen={showWelcome} onClose={handleCloseWelcome} variant="onboarding" />
       <main className="min-h-screen bg-[#F8F5F2]">
         <div className="sticky top-[74px] z-10 w-full bg-white border-t border-[#EEEEEE]">
-          <div className="flex justify-center items-center py-3 px-4">
-            <ToggleTabs tabs={TABS} activeTab={activeTab} onTabChange={handleTabChange} />
-          </div>
+          {searchFilters ? (
+            <div className="flex items-center justify-center px-auto py-2 md:py-3">
+              <button
+                type="button"
+                onClick={handleClearSearch}
+                className="flex items-center gap-1 "
+              >
+                <span className="font-poppins font-24 font-semibold text-dark">Search results</span>
+                <IoCloseOutline className="cursor-pointer w-4 md:w-6 h-4 md:h-6 hover:bg-[#F2F2F2] rounded-full transition-colors" />
+              </button>
+            </div>
+          ) : (
+            <div className="flex justify-center items-center py-3 px-4">
+              <ToggleTabs tabs={TABS} activeTab={activeTab} onTabChange={handleTabChange} />
+            </div>
+          )}
         </div>
 
-        <div className="px-4 lg:px-8 pt-[27px] pb-4 flex flex-col gap-6 max-w-[1024px] mx-auto">
+        <div className="px-4 lg:px-8 pt-[27px] pb-4 flex flex-col gap-4 max-w-[1024px] mx-auto">
+
           {showSkeletons ? (
             Array.from({ length: 3 }).map((_, i) => <ProfileCardSkeleton key={i} />)
           ) : isError ? (
             <div className="flex flex-col items-center justify-center py-24 text-center">
-              <p className="font-poppins text-[16px] font-medium text-[#B31B38]">
-                Failed to load profiles. Please try again.
-              </p>
+              {searchFilters ? (
+                <p className="font-poppins text-[16px] font-medium text-[#888888]">
+                  No profiles match your search.<br />- Team Inai -
+                </p>
+              ) : (
+                <p className="font-poppins text-[16px] font-medium text-[#B31B38]">
+                  Failed to load profiles. Please try again.
+                </p>
+              )}
             </div>
           ) : profiles.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 text-center">
               <p className="font-poppins font-16 font-medium text-[#888888]">
-                No profiles found for this filter.
+                {searchFilters ? "No profiles match your search." : "No profiles found for this filter."}
                 <br />- Team Inai -
               </p>
             </div>
           ) : (
-            // opacity-60 while fetching next page — subtle, not a full spinner
             <div className={showFetchingOverlay ? "opacity-60 pointer-events-none transition-opacity" : ""}>
               {profiles.map((profile) => (
                 <ProfileCard
                   key={profile.id}
                   profile={profile}
-                  onInterestSent={() => queryClient.invalidateQueries({ queryKey: ["profiles"] })}
+                  onInterestSent={undefined}
                 />
               ))}
             </div>

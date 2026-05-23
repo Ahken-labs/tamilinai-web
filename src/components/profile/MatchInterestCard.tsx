@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import EliteUpgradePopup from "../common-layout/EliteUpgradePopup";
 import ProtectedPhoto from "../common-layout/ProtectedPhoto";
 import { FaWhatsapp } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
@@ -16,7 +17,7 @@ import {
 } from "@/src/assets/Icons";
 import { CgClose } from "react-icons/cg";
 import { RiArrowGoBackLine } from "react-icons/ri";
-import { sendInterest, respondToInterest } from "@/src/lib/api/interests";
+import { sendInterest, respondToInterest, unblockSender } from "@/src/lib/api/interests";
 import { shortlistProfile, unshortlistProfile } from "@/src/lib/api/profiles";
 import { ApiError } from "@/src/lib/api/client";
 
@@ -26,6 +27,7 @@ type MatchInterestCardProps = {
     profileId: string;
     profileName: string;
     myName?: string;
+    gender?: string;
     status: StatusType;
     isElite: boolean;
     isAccepted: boolean;
@@ -34,6 +36,8 @@ type MatchInterestCardProps = {
     isShortlisted?: boolean;
     lastSentAt?: string | null;
     isReminderDue?: boolean;
+    declinedByMe?: boolean;
+    phone?: string;
     onAction?: () => void;
 };
 
@@ -45,16 +49,12 @@ const FOLLOW_UP =
 
 const ACCEPT_REPLY = "Vanakkam! I have accepted your interest. Let's connect!";
 
-const ELITE_CONGRATS =
-    "Congratulations! You are both a mutual match. Don't keep her waiting - make the first move and start your beautiful journey together.";
-
-const NON_ELITE_CONGRATS =
-    "Congratulations! You are both a mutual match. Don't keep her waiting - make the first move and start your beautiful journey together.";
 
 export default function MatchInterestCard({
     profileId,
     profileName,
     myName = "username",
+    gender,
     status,
     isElite,
     isAccepted,
@@ -63,10 +63,19 @@ export default function MatchInterestCard({
     isShortlisted: initialShortlisted = false,
     lastSentAt,
     isReminderDue = false,
+    declinedByMe = false,
+    phone,
     onAction,
 }: MatchInterestCardProps) {
+    const isMale = gender === "male";
+    const she = isMale ? "He" : "She";
+    const her = isMale ? "his" : "her";
+    const placeholder = isMale ? "/images/no_photo_male.png" : "/images/no_photo.png";
     const router = useRouter();
     const [pending, setPending] = useState(false);
+    const [showLimitPopup, setShowLimitPopup] = useState(false);
+    const [mutualAccepted, setMutualAccepted] = useState(false);
+    const [changeMindMode, setChangeMindMode] = useState(false);
     const [shortlisted, setShortlisted] = useState(initialShortlisted);
     const [shortlistPending, setShortlistPending] = useState(false);
 
@@ -79,22 +88,30 @@ export default function MatchInterestCard({
             if (next) await shortlistProfile(profileId);
             else await unshortlistProfile(profileId);
         } catch (err) {
-            if (err instanceof ApiError && err.status === 409) return; // already in desired state
+            if (err instanceof ApiError && err.status === 409) {
+                onAction?.(); // already in desired state — sync parent
+                return;
+            }
             setShortlisted(!next); // revert on real error
+            onAction?.();          // sync parent so its cache reflects correct state
         } finally {
             setShortlistPending(false);
         }
     }
 
-    async function act(fn: () => Promise<unknown>) {
+    async function act(fn: () => Promise<{ message?: string } | unknown>) {
         if (pending) return;
         setPending(true);
         try {
-            await fn();
+            const res = await fn() as { message?: string } | undefined;
+            if (res && typeof res === 'object' && 'message' in res && String(res.message).includes('Mutual')) {
+                setMutualAccepted(true);
+            }
+            setChangeMindMode(false);
             onAction?.();
         } catch (err) {
-            // 409 = already in this state — refresh profile so UI reflects real state
             if (err instanceof ApiError && err.status === 409) onAction?.();
+            else if (err instanceof ApiError && err.status === 403 && !isElite) setShowLimitPopup(true);
         } finally {
             setPending(false);
         }
@@ -102,25 +119,43 @@ export default function MatchInterestCard({
     const interestText = DEFAULT_INTEREST.replace("{name}", profileName);
     const incomingText = DEFAULT_INTEREST.replace("{name}", myName);
 
-    if (status === "declined") {
+    if (status === "declined" && !changeMindMode) {
+        if (!declinedByMe) {
+            // They declined my interest — permanent dead end, no path to re-send
+            return (
+                <CardShell>
+                    <p className="font-poppins font-16 font-normal leading-[150%] text-dark">
+                        {profileName} has chosen to explore other matches.
+                    </p>
+                    <div className="mt-5">
+                        <Button text="Explore more profiles" onPress={() => router.push("/matches")} />
+                    </div>
+                </CardShell>
+            );
+        }
+
         return (
             <CardShell>
                 <p className="font-poppins font-16 font-normal leading-[150%] text-dark">
                     You have respectfully passed on {profileName}&apos;s profile. We will keep this private.
                 </p>
 
-                <div className="mt-5 flex gap-4 
-                max-[800px]:flex-col 
-                max-[767px]:flex-row 
-                max-[682px]:flex-col 
-                max-[639px]:flex-row 
-                max-[633px]:flex-col 
-                max-[520px]:flex-row 
+                <div className="mt-5 flex gap-4
+                max-[800px]:flex-col
+                max-[767px]:flex-row
+                max-[682px]:flex-col
+                max-[639px]:flex-row
+                max-[633px]:flex-col
+                max-[520px]:flex-row
                 max-[513px]:flex-col">
                     <Button text="Explore more profiles" className="flex-1" onPress={() => router.push("/matches")} />
                     <Button
-                        text={pending ? "..." : "Change mind"}
-                        onPress={() => act(() => respondToInterest(profileId, "accepted"))}
+                        text="Change mind"
+                        onPress={() => {
+                            setChangeMindMode(true);
+                            // Immediately unblock so their profile reappears in our browse — idempotent
+                            unblockSender(profileId).catch(() => {});
+                        }}
                         iconLeft={<RiArrowGoBackLine className="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5" />}
                         className="flex-1 !bg-[#FFF] border border-[#B31B38] !text-[#B31B38] hover:!bg-gray-50 active:!bg-gray-100"
                     />
@@ -129,48 +164,59 @@ export default function MatchInterestCard({
         );
     }
 
-    if (status === "sent" && !isAccepted) {
+    if ((status === "sent" && !isAccepted) || changeMindMode) {
+        // When in changeMindMode from a declined state, isReminderDue from backend is always false
+        // (backend only computes it for pending rows). Derive it from lastSentAt directly.
+        const effectiveIsReminderDue = isReminderDue || (
+            changeMindMode && status === "declined" && !!lastSentAt &&
+            // eslint-disable-next-line react-hooks/purity
+            Date.now() - new Date(lastSentAt).getTime() >= 3 * 24 * 60 * 60 * 1000
+        );
+
         if (sendCount === 0) {
             return (
-                <CardShell>
-                    <div className="flex w-full justify-between gap-3">
-                        <span className="font-16 text-dark leading-[150%]">
-                            🎉 This profile matches your preferences.
-                        </span>
-                        <div className="flex items-center">
-                            <span className="font-16 text-dark">More details</span>
-                            <ChevronRightIcon className="h-3 w-3 md:h-4 md:w-4" />
+                <>
+                    <CardShell>
+                        <div className="flex w-full justify-between gap-3">
+                            <span className="font-16 text-dark leading-[150%]">
+                                🎉 This profile matches your preferences.
+                            </span>
+                            <div className="flex items-center">
+                                <span className="font-16 text-dark">More details</span>
+                                <ChevronRightIcon className="h-3 w-3 md:h-4 md:w-4" />
+                            </div>
                         </div>
-                    </div>
-                    <div
-                        className="mt-[20px] flex gap-3 flex-row 
-                  max-[470px]:flex-col
-                  min-[520px]:flex-col
-                  min-[650px]:flex-row
-                  min-[767px]:flex-col
-                  min-[815px]:flex-row
-                  md:mt-[25px] md:gap-4"
-                    >
-                        <Button className="!font-medium w-full"
-                            text={pending ? "Sending..." : "Send Interest"}
-                            onPress={() => act(() => sendInterest(profileId))}
-                            iconLeft={<SendInterestMsgIcon className="h-4 w-4 md:h-5 md:w-5" />}
-                        />
-                        <Button
-                            onPress={handleShortlist}
-                            className="!font-medium w-full !text-[#B31B38] border border-[#B31B38] !bg-[#FFE9E2] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
-                            text={shortlisted ? "Remove" : "Add to shortlist"}
-                            iconLeft={shortlisted
-                                ? <ShortlistRemoveIcon className="h-4 w-4 md:h-5 md:w-5" />
-                                : <ShortlistedIcon className="h-4 w-4 md:h-5 md:w-5" />
-                            }
-                        />
-                    </div>
-                </CardShell>
+                        <div
+                            className="mt-[20px] flex gap-3 flex-row
+                      max-[470px]:flex-col
+                      min-[520px]:flex-col
+                      min-[650px]:flex-row
+                      min-[767px]:flex-col
+                      min-[815px]:flex-row
+                      md:mt-[25px] md:gap-4"
+                        >
+                            <Button className="!font-medium w-full"
+                                text={pending ? "Sending..." : "Send Interest"}
+                                onPress={() => act(() => sendInterest(profileId))}
+                                iconLeft={<SendInterestMsgIcon className="h-4 w-4 md:h-5 md:w-5" />}
+                            />
+                            <Button
+                                onPress={handleShortlist}
+                                className="!font-medium w-full !text-[#B31B38] border border-[#B31B38] !bg-[#FFE9E2] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
+                                text={shortlisted ? "Remove" : "Add to shortlist"}
+                                iconLeft={shortlisted
+                                    ? <ShortlistRemoveIcon className="h-4 w-4 md:h-5 md:w-5" />
+                                    : <ShortlistedIcon className="h-4 w-4 md:h-5 md:w-5" />
+                                }
+                            />
+                        </div>
+                    </CardShell>
+                    {showLimitPopup && <EliteUpgradePopup trigger="daily_limit" onClose={() => setShowLimitPopup(false)} />}
+                </>
             );
         }
 
-        if (sendCount === 1 && !isReminderDue) {
+        if (sendCount === 1 && !effectiveIsReminderDue) {
             // First interest sent, 3-day wait not yet over — show countdown
             const reminderAt = lastSentAt ? new Date(new Date(lastSentAt).getTime() + 3 * 24 * 60 * 60 * 1000) : null;
             const countdownText = reminderAt ? formatCountdown(reminderAt) : null;
@@ -180,7 +226,7 @@ export default function MatchInterestCard({
                     <div className="mt-3 md:mt-4">
                         <MessageRow
                             side="outgoing"
-                            avatarSrc="/images/no_photo.png"
+                            avatarSrc={placeholder}
                             bubbles={[interestText]}
                         />
                     </div>
@@ -196,7 +242,7 @@ export default function MatchInterestCard({
             );
         }
 
-        if (sendCount === 1 && isReminderDue) {
+        if (sendCount === 1 && effectiveIsReminderDue) {
             // 3 days passed — show Send reminder button
             return (
                 <CardShell>
@@ -204,7 +250,7 @@ export default function MatchInterestCard({
                     <div className="mt-4">
                         <MessageRow
                             side="outgoing"
-                            avatarSrc="/images/no_photo.png"
+                            avatarSrc={placeholder}
                             bubbles={[interestText]}
                         />
                     </div>
@@ -230,7 +276,7 @@ export default function MatchInterestCard({
                 <div className="mt-4 flex flex-col gap-4">
                     <MessageRow
                         side="outgoing"
-                        avatarSrc="/images/no_photo.png"
+                        avatarSrc={placeholder}
                         bubbles={[interestText, FOLLOW_UP]}
                     />
                 </div>
@@ -241,7 +287,7 @@ export default function MatchInterestCard({
         );
     }
 
-    if (status === "sent" && isAccepted) {
+    if (mutualAccepted || (status === "sent" && isAccepted)) {
         return (
             <CardShell>
                 <SectionTitle title={`🎉 ${profileName} has accepted your interest!`} />
@@ -249,13 +295,13 @@ export default function MatchInterestCard({
                 <div className="mt-4 flex flex-col gap-4">
                     <MessageRow
                         side="outgoing"
-                        avatarSrc="/images/no_photo.png"
+                        avatarSrc={placeholder}
                         bubbles={sendCount >= 2 ? [interestText, FOLLOW_UP] : [interestText]}
                     />
 
                     <MessageRow
                         side="incoming"
-                        avatarSrc="/images/no_photo.png"
+                        avatarSrc={placeholder}
                         bubbles={[ACCEPT_REPLY]}
                     />
                 </div>
@@ -267,7 +313,7 @@ export default function MatchInterestCard({
                 {isElite ? (
                     <>
                         <div className="mt-3 md:mt-4 text-center font-poppins font-16 font-normal leading-[150%] text-dark">
-                            {ELITE_CONGRATS}
+                            Congratulations! You are both a mutual match. Don&apos;t keep {her} waiting - make the first move and start your beautiful journey together.
                         </div>
 
                         <div className="mt-4 flex justify-center">
@@ -275,24 +321,29 @@ export default function MatchInterestCard({
                                 text="Chat on WhatsApp"
                                 iconLeft={<FaWhatsapp className="h-4 w-4 md:h-5 md:w-5" />}
                                 className="!font-medium"
+                                onPress={() => {
+                                    if (!phone) return;
+                                    window.open(`https://wa.me/${phone.replace(/\D/g, "")}`, "_blank");
+                                }}
                             />
                         </div>
                     </>
                 ) : (
                     <>
                         <div className="mt-4 text-center font-poppins font-16 font-medium leading-[150%] text-primary">
-                            She accepted! Upgrade to Elite to see her contact.
+                            {she} accepted! Upgrade to Elite to see {her} contact.
                         </div>
 
                         <div className="mt-4 flex justify-center">
                             <Button
                                 text="Upgrade & connect now"
                                 className="!font-medium"
+                                onPress={() => router.push("/elite-upgrade")}
                             />
                         </div>
 
                         <div className="mt-7 text-center font-poppins font-16 font-normal leading-[150%] text-dark">
-                            {NON_ELITE_CONGRATS}
+                            Congratulations! You are both a mutual match. Don&apos;t keep {her} waiting - make the first move and start your beautiful journey together.
                         </div>
                     </>
                 )}
@@ -308,7 +359,7 @@ export default function MatchInterestCard({
                 <div className="mt-4">
                     <MessageRow
                         side="incoming"
-                        avatarSrc="/images/no_photo.png"
+                        avatarSrc={placeholder}
                         bubbles={
                             receivedCount >= 2
                                 ? [incomingText, FOLLOW_UP]
@@ -320,13 +371,13 @@ export default function MatchInterestCard({
                 <div className="mt-5 flex gap-4 max-[520px]:flex-col">
                     <Button
                         text={pending ? "..." : "Accept"}
-                        onPress={() => act(() => respondToInterest(profileId, "accepted"))}
+                        onPress={() => act(() => respondToInterest(profileId, "accept"))}
                         iconLeft={<CheckmarkIcon className="w-4 sm:w-4.5 md:w-5 lg:w-6 h-4 sm:h-4.5 md:h-5 lg:h-6" />}
                         className="flex-1"
                     />
                     <Button
                         text={pending ? "..." : "Decline"}
-                        onPress={() => act(() => respondToInterest(profileId, "declined"))}
+                        onPress={() => act(() => respondToInterest(profileId, "decline"))}
                         iconLeft={<CgClose className="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5" />}
                         className="flex-1 !bg-[#FFF] border border-[#B31B38] !text-[#B31B38] hover:!bg-gray-50 active:!bg-gray-100"
                     />
@@ -342,13 +393,13 @@ export default function MatchInterestCard({
             <div className="mt-4 flex flex-col gap-4">
                 <MessageRow
                     side="incoming"
-                    avatarSrc="/images/no_photo.png"
+                    avatarSrc={placeholder}
                     bubbles={receivedCount >= 2 ? [incomingText, FOLLOW_UP] : [incomingText]}
                 />
 
                 <MessageRow
                     side="outgoing"
-                    avatarSrc="/images/no_photo.png"
+                    avatarSrc={placeholder}
                     bubbles={[ACCEPT_REPLY]}
                 />
             </div>
@@ -360,7 +411,7 @@ export default function MatchInterestCard({
             {isElite ? (
                 <>
                     <div className="mt-4 text-center font-poppins font-16 font-normal leading-[150%] text-dark">
-                        Congratulations! You are both a mutual match. Don&apos;t keep her waiting - send the first message and start your beautiful journey together.
+                        Congratulations! You are both a mutual match. Don&apos;t keep {her} waiting - send the first message and start your beautiful journey together.
                     </div>
 
                     <div className="mt-4 flex justify-center">
@@ -374,15 +425,15 @@ export default function MatchInterestCard({
             ) : (
                 <>
                     <div className="mt-3 md:mt-4 text-center font-poppins font-16 font-medium leading-[150%] text-primary">
-                        You accepted! Upgrade to Elite to see her contact.
+                        You accepted! Upgrade to Elite to see {her} contact.
                     </div>
 
                     <div className="mt-3 md:mt-4 flex justify-center">
-                        <Button text="Upgrade & connect now" className="!font-medium" />
+                        <Button text="Upgrade & connect now" className="!font-medium" onPress={() => router.push("/elite-upgrade")} />
                     </div>
 
                     <div className="mt-5 md:mt-7 text-center font-poppins font-16 font-normal leading-[150%] text-dark">
-                        Congratulations! You are both a mutual match. Don&apos;t keep her waiting - make the first message and start your beautiful journey together.
+                        Congratulations! You are both a mutual match. Don&apos;t keep {her} waiting - make the first move and start your beautiful journey together.
                     </div>
                 </>
             )}
@@ -449,7 +500,7 @@ function MessageBubble({
 }) {
     return (
         <div
-            className={`flex w-full flex-1 items-center justify-center bg-white px-2 sm:px-3 py-3 sm:py-4 md:py-5 ${radiusClass}`}
+            className={`flex w-full flex-1 items-center justify-left bg-white px-2 sm:px-3 py-3 sm:py-4 md:py-5 ${radiusClass}`}
         >
             <p className="font-poppins font-16 font-normal leading-[150%] text-dark">
                 {text}

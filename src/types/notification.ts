@@ -3,6 +3,7 @@ export type NotificationCategory = 'interest' | 'match' | 'account' | 'system' |
 export interface NotificationFromUser {
   id: string;
   name: string;
+  gender?: string;
   photoUrl?: string;
 }
 

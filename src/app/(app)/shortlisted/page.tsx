@@ -9,7 +9,7 @@ import { getShortlisted } from "../../../lib/api/profiles";
 import type { BrowseProfile } from "../../../types/user";
 import type { Profile } from "../../../types/profile";
 import { formatHeight } from "../../../utils/heightUtils";
-
+import { calculateAge } from "../../../utils/calculateAge";
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 
@@ -18,24 +18,12 @@ function isNewProfile(createdAt?: string): boolean {
   return Date.now() - new Date(createdAt).getTime() < THIRTY_DAYS_MS;
 }
 
-function calculateAge(dateOfBirth?: string): number {
-  if (!dateOfBirth) return 0;
-  const born = new Date(dateOfBirth);
-  const today = new Date();
-  let age = today.getFullYear() - born.getFullYear();
-  if (
-    today.getMonth() < born.getMonth() ||
-    (today.getMonth() === born.getMonth() && today.getDate() < born.getDate())
-  ) age--;
-  return age;
-}
-
 function toCardProfile(p: BrowseProfile): Profile {
   return {
     id: p.id,
     displayId: p.displayId,
     name: p.name,
-    age: calculateAge(p.dateOfBirth),
+    age: calculateAge(p.dateOfBirth) ?? 0,
     location: p.city ?? "",
     education: p.education ?? "",
     country: p.country ?? "",
@@ -62,11 +50,9 @@ function ShortlistedContent() {
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ["shortlisted", currentPage],
     queryFn: () => getShortlisted(currentPage),
-    // Always re-fetch when user navigates here — shortlist can change from other pages
-    staleTime: 0,
-    // Keep previous page data in memory briefly so back-navigation feels instant
-    gcTime: 5 * 60 * 1000,
-    // Show previous page data while fetching next page (no blank flash)
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: false,
     placeholderData: (prev) => prev,
   });
 

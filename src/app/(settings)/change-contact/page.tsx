@@ -51,15 +51,19 @@ function ChangeContactContent() {
   const [verifying, setVerifying] = useState(false);
   const [success, setSuccess] = useState(false);
   const [shake, setShake] = useState(false);
+  // Anchor countdown to absolute end timestamp — no drift
+  const [countdownEnd, setCountdownEnd] = useState(0);
   const [countdown, setCountdown] = useState(0);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  // Countdown tick
+  // Tick every 500ms — Date.now() lives inside effect, not render body
   useEffect(() => {
-    if (countdown <= 0) return;
-    const id = window.setTimeout(() => setCountdown(c => c - 1), 1000);
-    return () => clearTimeout(id);
-  }, [countdown]);
+    if (countdownEnd === 0) return;
+    function tick() { setCountdown(Math.max(0, Math.round((countdownEnd - Date.now()) / 1000))); }
+    tick();
+    const id = window.setInterval(tick, 500);
+    return () => clearInterval(id);
+  }, [countdownEnd]);
 
   function extractCode(raw: string) {
     return raw.match(/\+\d+/)?.[0] ?? raw;
@@ -91,7 +95,7 @@ function ChangeContactContent() {
         await requestPhoneChange(trimmed, extractCode(countryCode));
       }
       setStep("otp");
-      setCountdown(RESEND_SECONDS);
+      setCountdownEnd(Date.now() + RESEND_SECONDS * 1000);
       setTimeout(() => inputRefs.current[0]?.focus(), 100);
     } catch (err) {
       setInputError(err instanceof ApiError ? err.message : "Failed to send OTP. Please try again.");
@@ -101,14 +105,14 @@ function ChangeContactContent() {
   }
 
   async function handleResend() {
-    if (countdown > 0) return;
+    if (Date.now() < countdownEnd) return;
     try {
       if (type === "email") {
         await requestEmailChange(value.trim());
       } else {
         await requestPhoneChange(value.trim(), extractCode(countryCode));
       }
-      setCountdown(RESEND_SECONDS);
+      setCountdownEnd(Date.now() + RESEND_SECONDS * 1000);
       setDigits(Array(OTP_LENGTH).fill(""));
       setOtpError("");
       inputRefs.current[0]?.focus();
@@ -191,6 +195,7 @@ function ChangeContactContent() {
               text={requesting ? "Sending…" : "Next"}
               icon={requesting ? undefined : <ArrowRightIcon />}
               onPress={handleRequest}
+              disabled={requesting}
               className="flex-1"
             />
           </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { FaWhatsapp } from "react-icons/fa6";
 
@@ -14,6 +15,7 @@ import {
 } from "@/src/assets/Icons";
 import { sendInterest, respondToInterest } from "@/src/lib/api/interests";
 import { ApiError } from "@/src/lib/api/client";
+import EliteUpgradePopup from "@/src/components/common-layout/EliteUpgradePopup";
 
 type StatusType = "sent" | "received" | "recived" | "declined";
 
@@ -21,6 +23,7 @@ type Props = {
   profileId: string;
   profileName: string;
   myName?: string;
+  gender?: string;
   status: StatusType;
   isElite: boolean;
   isAccepted: boolean;
@@ -37,6 +40,7 @@ type Props = {
 
 export default function Match_ContactSection_Card({
   profileId,
+  gender,
   status,
   isElite,
   isAccepted,
@@ -50,6 +54,10 @@ export default function Match_ContactSection_Card({
   onAction,
 }: Props) {
   const [pending, setPending] = useState(false);
+  const isMale = gender === "male";
+  const she = isMale ? "He" : "She";
+  const she_l = isMale ? "he" : "she";
+  const her = isMale ? "his" : "her";
 
   async function act(fn: () => Promise<unknown>) {
     if (pending) return;
@@ -76,6 +84,7 @@ export default function Match_ContactSection_Card({
         lastSentAt={lastSentAt}
         isReminderDue={isReminderDue}
         pending={pending}
+        she_l={she_l}
         onSendInterest={() => act(() => sendInterest(profileId))}
         onSendReminder={() => act(() => sendInterest(profileId))}
       />
@@ -87,7 +96,7 @@ export default function Match_ContactSection_Card({
       <VisibleContactBody phone={phone} countryCode={countryCode} email={email} />
     ) : (
       <UpgradeContactBody
-        title="She accepted! Upgrade to Elite to see her contact."
+        title={`${she} accepted! Upgrade to Elite to see ${her} contact.`}
         buttonText="Upgrade & connect now"
       />
     );
@@ -98,7 +107,7 @@ export default function Match_ContactSection_Card({
       <ReceivedRequestBody
         receivedCount={receivedCount}
         pending={pending}
-        onAccept={() => act(() => respondToInterest(profileId, "accepted"))}
+        onAccept={() => act(() => respondToInterest(profileId, "accept"))}
       />
     );
   }
@@ -108,7 +117,7 @@ export default function Match_ContactSection_Card({
       <VisibleContactBody phone={phone} countryCode={countryCode} email={email} />
     ) : (
       <UpgradeContactBody
-        title="You accepted! Upgrade to Elite to see her contact."
+        title={`You accepted! Upgrade to Elite to see ${her} contact.`}
         buttonText="Upgrade & connect now"
       />
     );
@@ -132,6 +141,7 @@ function SentPendingBody({
   lastSentAt,
   isReminderDue,
   pending,
+  she_l,
   onSendInterest,
   onSendReminder,
 }: {
@@ -139,6 +149,7 @@ function SentPendingBody({
   lastSentAt?: string | null;
   isReminderDue: boolean;
   pending: boolean;
+  she_l: string;
   onSendInterest: () => void;
   onSendReminder: () => void;
 }) {
@@ -157,7 +168,7 @@ function SentPendingBody({
         <div className="flex w-full items-center justify-center rounded-[8px] bg-cartbox2 px-2 py-4 md:py-6">
           <InterestLockIcon className="mr-1 h-3 w-3 md:mr-2 md:h-4 md:w-4" />
           <p className="font-16 text-primary">
-            Contact unlocks after she accepts your interest.
+            Contact unlocks after {she_l} accepts your interest.
           </p>
         </div>
       </div>
@@ -253,46 +264,63 @@ function ReceivedRequestBody({
 }
 
 function UpgradeContactBody({ title, buttonText }: { title: string; buttonText: string }) {
+  const router = useRouter();
+  const [showPopup, setShowPopup] = useState(false);
   return (
-    <div className="pt-3 md:pt-4">
-      <div className="flex flex-col items-center rounded-[8px] bg-[linear-gradient(0deg,#FFE9E2_0%,#FFE9E2_100%),linear-gradient(270deg,#FFE0C2_0%,#FFF2D9_49.72%,#FFE0C2_99.44%)] px-4 py-6">
-        <Image src="/icons/elite_batch.png" alt="Elite" width={42} height={40} />
-        <p className="mt-3 md:mt-4 text-center font-16 font-medium leading-[150%] text-[#B31B38]">
-          {title}
-        </p>
-        <div className="mt-4">
-          <Button
-            text={buttonText}
-            className="!font-medium"
-            iconLeft={<FaWhatsapp className="h-4 w-4 md:h-5 md:w-5" />}
-          />
+    <>
+      <div className="pt-3 md:pt-4">
+        <div className="flex flex-col items-center rounded-[8px] bg-[linear-gradient(0deg,#FFE9E2_0%,#FFE9E2_100%),linear-gradient(270deg,#FFE0C2_0%,#FFF2D9_49.72%,#FFE0C2_99.44%)] px-4 py-6">
+          <Image src="/icons/elite_batch.png" alt="Elite" width={42} height={40} />
+          <p className="mt-3 md:mt-4 text-center font-16 font-medium leading-[150%] text-[#B31B38]">
+            {title}
+          </p>
+          <div className="mt-4">
+            <Button
+              text={buttonText}
+              className="!font-medium"
+              onPress={() => router.push("/elite-upgrade")}
+              iconLeft={<FaWhatsapp className="h-4 w-4 md:h-5 md:w-5" />}
+            />
+          </div>
         </div>
+
+        {/* Blurred placeholder — clicking opens Elite popup */}
+        <button
+          type="button"
+          onClick={() => setShowPopup(true)}
+          className="mt-4 md:mt-5 w-full text-left cursor-pointer"
+        >
+          <div className="flex w-full justify-between gap-6 md:gap-10 lg:gap-16">
+            <div className="text-secondary3 font-16">WhatsApp</div>
+            <span className="font-16 text-[#767676] blur-[5.3px] select-none">+94 75 020 7507</span>
+          </div>
+          <div className="mt-4 border-b border-[#EAEAEA]" />
+          <div className="mt-4 md:mt-5 flex w-full justify-between gap-6 md:gap-10 lg:gap-16">
+            <div className="text-secondary3 font-16">Email</div>
+            <span className="font-16 text-[#767676] blur-[5.3px] select-none">contact@inai.lk</span>
+          </div>
+        </button>
       </div>
 
-      {/* Blurred placeholder — never shows real data */}
-      <div className="mt-4 md:mt-5 flex w-full justify-between gap-6 md:gap-10 lg:gap-16">
-        <div className="text-secondary3 font-16">WhatsApp</div>
-        <span className="font-16 text-[#767676] blur-[5.3px] select-none">+94 75 020 7507</span>
-      </div>
-      <div className="mt-4 border-b border-[#EAEAEA]" />
-      <div className="mt-4 md:mt-5 flex w-full justify-between gap-6 md:gap-10 lg:gap-16">
-        <div className="text-secondary3 font-16">Email</div>
-        <span className="font-16 text-[#767676] blur-[5.3px] select-none">contact@inai.lk</span>
-      </div>
-    </div>
+      {showPopup && (
+        <EliteUpgradePopup trigger="contact_locked" onClose={() => setShowPopup(false)} />
+      )}
+    </>
   );
 }
 
 function VisibleContactBody({
   phone,
-  countryCode,
   email,
 }: {
   phone?: string;
   countryCode?: string;
   email?: string;
 }) {
-  const displayPhone = phone ? `${countryCode ?? ""} ${phone}`.trim() : null;
+  // phone already contains the full number (may or may not include country code prefix).
+  // Strip everything except digits and leading + for display; use digits-only for wa.me link.
+  const rawPhone = phone?.trim() ?? null;
+  const displayPhone = rawPhone ?? null;
   const displayEmail = email ?? null;
 
   return (

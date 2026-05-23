@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import { ChevronIcon, RadioCircleIcon, CloseCircleIcon, SearchIcon, PartyIcon } from "../../assets/Icons";
 import DropdownField, { MultiSelectDropdown } from "../common-layout/DropdownField";
@@ -19,15 +20,23 @@ import { getPartnerPreferences, savePartnerPreferences } from "../../lib/api/use
 import type { PartnerPreferences } from "../../types/user";
 
 const PREF_CACHE_KEY = "inai_partner_pref";
+const PREF_TTL_MS = 30 * 60 * 1000; // 30 min
 
 function getCachedPrefs(): PartnerPreferences | null {
   try {
     const raw = sessionStorage.getItem(PREF_CACHE_KEY);
-    return raw ? (JSON.parse(raw) as PartnerPreferences) : null;
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { data?: PartnerPreferences; expiresAt?: number } | PartnerPreferences;
+    if ('expiresAt' in parsed && parsed.expiresAt) {
+      if (Date.now() > parsed.expiresAt) { sessionStorage.removeItem(PREF_CACHE_KEY); return null; }
+      return (parsed as { data: PartnerPreferences; expiresAt: number }).data;
+    }
+    // legacy format (no TTL) — treat as valid, will be overwritten on next save
+    return parsed as PartnerPreferences;
   } catch { return null; }
 }
 function setCachedPrefs(prefs: PartnerPreferences): void {
-  try { sessionStorage.setItem(PREF_CACHE_KEY, JSON.stringify(prefs)); } catch { /* unavailable */ }
+  try { sessionStorage.setItem(PREF_CACHE_KEY, JSON.stringify({ data: prefs, expiresAt: Date.now() + PREF_TTL_MS })); } catch { /* unavailable */ }
 }
 
 // ── Static option lists ───────────────────────────────────────────────────
@@ -76,6 +85,7 @@ interface Props {
 }
 
 export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onboarding" }: Props) {
+  const router = useRouter();
   const originalPrefs = useRef<PartnerPreferences | null>(null);
 
   const [ageMin, setAgeMin] = useState("");
@@ -96,6 +106,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
   const [heightError, setHeightError] = useState("");
   const [isLifestyleOpen, setIsLifestyleOpen] = useState(false);
   const [activeSearchTab, setActiveSearchTab] = useState<"search" | "advanced">("advanced");
+  const [searchQuery, setSearchQuery] = useState("");
   const [marital, setMarital] = useState("Unmarried");
   const [physical, setPhysical] = useState("Open to all");
   const [eduTags, setEduTags] = useState<string[]>(EDUCATION_OPTIONS);
@@ -192,13 +203,33 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
   }
 
   function handleSearchSave() {
-    // "Save as partner preference" in search variant — saves to backend
     handleSave();
   }
 
   function handleSearch() {
-    // "Search" in search variant — only filter frontend, no backend save
+    const params = new URLSearchParams();
+    if (ageMin) params.set("minAge", ageMin);
+    if (ageMax) params.set("maxAge", ageMax);
+    if (religion !== "Open to all") params.set("religion", religion);
+    if (marital !== "Open to all") params.set("maritalStatus", marital);
+    if (countries.length === 1) params.set("country", countries[0]);
     onClose();
+    const qs = params.toString();
+    router.push(qs ? `/matches?${qs}` : "/matches");
+  }
+
+  function handleSimpleSearch() {
+    const q = searchQuery.trim();
+    if (!q) { onClose(); router.push("/matches"); return; }
+    const params = new URLSearchParams();
+    const isCountry = COUNTRY_OPTIONS.some((c) => c.toLowerCase() === q.toLowerCase());
+    if (isCountry) {
+      params.set("country", COUNTRY_OPTIONS.find((c) => c.toLowerCase() === q.toLowerCase()) ?? q);
+    } else {
+      params.set("displayId", q.toUpperCase());
+    }
+    onClose();
+    router.push(`/matches?${params.toString()}`);
   }
   function handleAboutChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     if (countWords(e.target.value) <= MAX_ABOUT_WORDS) setAboutPartner(e.target.value);
@@ -275,11 +306,17 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
                 className="flex items-center rounded-[41px] bg-[#E0E0E0]"
                 style={{ padding: "4px 4px 4px 16px" }}
               >
-                <span className="flex-1 font-poppins text-base font-normal text-[#656565] leading-[150%]">
-                  Search by ID and country
-                </span>
+                <input
+                  type="text"
+                  placeholder="Search by ID and country"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") handleSimpleSearch(); }}
+                  className="flex-1 bg-transparent font-poppins text-base font-normal text-[#222222] placeholder:text-[#656565] outline-none"
+                />
                 <button
                   type="button"
+                  onClick={handleSimpleSearch}
                   className="flex items-center justify-center h-10 px-4 rounded-full bg-[#B31B38] cursor-pointer"
                 >
                   <SearchIcon className="w-5 h-5 text-white" />

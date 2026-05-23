@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import ToggleTabs from "../../../components/common-layout/ToggleTabs";
 import InterestCard from "../../../components/app/InterestCard";
 import InterestCardSkeleton from "../../../components/app/skeleton-layout/InterestCardSkeleton";
 import { getSentInterests, getReceivedInterests } from "../../../lib/api/interests";
+import { markAllNotificationsRead } from "../../../lib/api/notifications";
 import { sentInterestToCard, receivedInterestToCard } from "../../../types/interest";
+import type { AppNotification } from "../../../types/notification";
 import { RedDotIcon } from "../../../assets/Icons";
 import { readMeCache } from "../../../components/AppHeader";
 
@@ -41,37 +44,80 @@ function EmptyState({ tab }: { tab: string }) {
   );
 }
 
-export default function InterestedPage() {
-  const [activeTab, setActiveTab] = useState("received");
+function InterestedContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState(() => {
+    const t = searchParams.get("tab");
+    return t === "sent" || t === "accepted" || t === "declined" ? t : "received";
+  });
   const queryClient = useQueryClient();
-  const myPhoto = readMeCache()?.profile?.photoUrl ?? undefined;
+  const me = readMeCache();
+  const myPhoto = me?.profile?.photoUrl ?? (me?.gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png");
 
-  const { data: sentRaw, isLoading: sentLoading } = useQuery({
+  // Clear interest notification dot when this page is visited
+  useEffect(() => {
+    queryClient.setQueryData<AppNotification[]>(["notifications"], (old) =>
+      old?.map((n) => n.category === "interest" ? { ...n, isRead: true } : n) ?? []
+    );
+    markAllNotificationsRead('interest').catch(() => {});
+  }, [queryClient]);
+
+  const { data: sentRaw, isLoading: sentLoading, isFetching: sentFetching } = useQuery({
     queryKey: ["interests", "sent"],
     queryFn: getSentInterests,
-    staleTime: 0,
-    gcTime: 5 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 
-  const { data: receivedRaw, isLoading: receivedLoading } = useQuery({
+  const { data: receivedRaw, isLoading: receivedLoading, isFetching: receivedFetching } = useQuery({
     queryKey: ["interests", "received"],
     queryFn: getReceivedInterests,
-    staleTime: 0,
-    gcTime: 5 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 
-  const sentItems = (sentRaw ?? []).map((s) => sentInterestToCard(s, myPhoto));
-  const receivedItems = (receivedRaw ?? []).map((r) => receivedInterestToCard(r, myPhoto));
+  const allSentItems = (sentRaw ?? []).map((s) => sentInterestToCard(s, myPhoto));
+  const allReceivedItems = (receivedRaw ?? []).map((r) => receivedInterestToCard(r, myPhoto));
+
+  // Sent tab: only pending (not yet responded) — accepted/declined move to their own tabs
+  const sentItems = allSentItems.filter(
+    (i) => i.status === "sent_interest" || i.status === "sent_reminder"
+  );
+
+  // Received tab: only pending (not yet responded)
+  const receivedItems = allReceivedItems.filter(
+    (i) => i.status === "received_interest" || i.status === "received_reminder"
+  );
+
+  // Accepted: accepted_by_them (from sent) + accepted_by_me (from received), deduplicated by profile ID
+  const acceptedRaw = [
+    ...allSentItems.filter((i) => i.status === "accepted_by_them"),
+    ...allReceivedItems.filter((i) => i.status === "accepted_by_me"),
+  ];
+  const seenIds = new Set<string>();
+  const acceptedItems = acceptedRaw.filter((i) => {
+    if (seenIds.has(i.id)) return false;
+    seenIds.add(i.id);
+    return true;
+  });
+
+  // Declined: declined_by_me first (change mind CTA), then skipped_by_them — deduplicated
+  const declinedRaw = [
+    ...allReceivedItems.filter((i) => i.status === "declined_by_me"),
+    ...allSentItems.filter((i) => i.status === "skipped_by_them"),
+  ];
+  const seenDeclinedIds = new Set<string>();
+  const declinedItems = declinedRaw.filter((i) => {
+    if (seenDeclinedIds.has(i.id)) return false;
+    seenDeclinedIds.add(i.id);
+    return true;
+  });
 
   const hasNewReceived = receivedItems.some((i) => i.isNew);
-  const hasNewSent = sentItems.some((i) => i.isNew || i.isReminderDue);
-
-  const acceptedItems = [...sentItems, ...receivedItems].filter(
-    (i) => i.status === "accepted_by_me" || i.status === "accepted_by_them"
-  );
-  const declinedItems = [...sentItems, ...receivedItems].filter(
-    (i) => i.status === "declined_by_me" || i.status === "skipped_by_them"
-  );
+  const hasNewSent = sentItems.some((i) => i.isReminderDue);
   const hasNewAccepted = acceptedItems.some((i) => i.isNew);
   const hasNewDeclined = declinedItems.some((i) => i.isNew);
 
@@ -92,6 +138,13 @@ export default function InterestedPage() {
     : activeTab === "sent" ? sentLoading
     : sentLoading || receivedLoading;
 
+  const isBackgroundFetching = (sentFetching || receivedFetching) && !isLoading;
+
+  function handleTabChange(value: string) {
+    setActiveTab(value);
+    router.replace(`/interested?tab=${value}`, { scroll: false });
+  }
+
   function handleAction() {
     queryClient.invalidateQueries({ queryKey: ["interests"] });
   }
@@ -100,7 +153,7 @@ export default function InterestedPage() {
     <main className="min-h-screen bg-[#F8F5F2]">
       <div className="sticky top-[74px] z-10 w-full bg-white border-t border-[#EEEEEE]">
         <div className="flex justify-center items-center py-3 px-4">
-          <ToggleTabs tabs={TABS} activeTab={activeTab} onTabChange={setActiveTab} />
+          <ToggleTabs tabs={TABS} activeTab={activeTab} onTabChange={handleTabChange} />
         </div>
       </div>
 
@@ -112,7 +165,7 @@ export default function InterestedPage() {
             ))}
           </div>
         ) : items.length > 0 ? (
-          <div className="max-w-[926px] mx-auto rounded-[20px] overflow-hidden">
+          <div className={`max-w-[926px] mx-auto rounded-[20px] overflow-hidden${isBackgroundFetching ? " opacity-60 pointer-events-none transition-opacity" : ""}`}>
             {items.map((item, idx) => (
               <InterestCard
                 key={item.id}
@@ -127,5 +180,13 @@ export default function InterestedPage() {
         )}
       </div>
     </main>
+  );
+}
+
+export default function InterestedPage() {
+  return (
+    <Suspense>
+      <InterestedContent />
+    </Suspense>
   );
 }

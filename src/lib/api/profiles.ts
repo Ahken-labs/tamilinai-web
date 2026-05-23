@@ -2,6 +2,7 @@ import { http } from './client';
 import type { BrowseProfile, ProfileDetail } from '../../types/user';
 
 export interface ProfileFilters {
+  displayId?: string;
   minAge?: number;
   maxAge?: number;
   religion?: string;
@@ -10,6 +11,9 @@ export interface ProfileFilters {
   city?: string;
   education?: string;
   maritalStatus?: string;
+  sort?: string;
+  isElite?: string;
+  isViewed?: string;
   page?: number;
   limit?: number;
 }
@@ -49,7 +53,13 @@ export function unshortlistProfile(userId: string): Promise<{ message: string }>
   return http(`/api/profiles/${userId}/shortlist`, { method: 'DELETE' });
 }
 
+// Request access to a locked (private) photo
 export function requestPhotoAccess(userId: string): Promise<{ message: string }> {
+  return http(`/api/profiles/${userId}/photo-access`, { method: 'POST' });
+}
+
+// Nudge a user who has no photo to upload one
+export function requestPhotoUpload(userId: string): Promise<{ message: string }> {
   return http(`/api/profiles/${userId}/request-photo`, { method: 'POST' });
 }
 

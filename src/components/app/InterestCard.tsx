@@ -1,13 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
+import ProtectedImage from "../common-layout/ProtectedImage";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { getCachedPhoto, setCachedPhoto } from "../../utils/othersPhotoCache";
 import { getProfilePhotoSrc } from "../../utils/profilePhoto";
 import type { Interest, InterestCardStatus } from "../../types/interest";
-import { respondToInterest, markInterestSeen } from "../../lib/api/interests";
+import { markInterestSeen } from "../../lib/api/interests";
 import {
   InterestArrowIcon,
   InterestXIcon,
@@ -65,16 +63,7 @@ function PhotoSection({ interest }: { interest: Interest }) {
   const isPrivate = interest.isPhotoPrivate;
   const rawPhoto = (!isPrivate && interest.profilePhoto) ? interest.profilePhoto : null;
 
-  // Cache their photo in sessionStorage
-  if (rawPhoto) {
-    const cached = getCachedPhoto(interest.id);
-    if (!cached) setCachedPhoto(interest.id, rawPhoto);
-  }
-  const photo = getProfilePhotoSrc(
-    rawPhoto ? (getCachedPhoto(interest.id) ?? rawPhoto) : null,
-    "approved",
-    interest.gender,
-  );
+  const photo = getProfilePhotoSrc(rawPhoto, "approved", interest.gender);
   const myPhoto = interest.myPhoto ?? "/images/no_photo.png";
   const { status } = interest;
 
@@ -84,10 +73,10 @@ function PhotoSection({ interest }: { interest: Interest }) {
     return (
       <div className="relative flex-shrink-0 w-[94px] h-14">
         <div className="absolute left-0 top-0 w-14 h-14 rounded-full overflow-hidden border-2 border-white z-20 bg-[#D9D9D9]">
-          <Image src={leftPhoto} fill className="object-cover" alt="my profile" sizes="56px" draggable={false} onContextMenu={(e) => e.preventDefault()} />
+          <ProtectedImage src={leftPhoto} fill className="object-cover" alt="my profile" sizes="56px" />
         </div>
         <div className="absolute left-[38px] top-0 w-14 h-14 rounded-full overflow-hidden border-2 border-white z-10 bg-[#D9D9D9]">
-          <Image src={rightPhoto} fill className="object-cover" alt="their profile" sizes="56px" draggable={false} onContextMenu={(e) => e.preventDefault()} />
+          <ProtectedImage src={rightPhoto} fill className="object-cover" alt="their profile" sizes="56px" />
         </div>
         <div className="absolute bottom-0 left-[52px] -translate-x-1/2 z-30">
           <AcceptedCheckBadge />
@@ -107,14 +96,12 @@ function PhotoSection({ interest }: { interest: Interest }) {
   return (
     <div className="relative flex-shrink-0 w-14 h-14">
       <div className="relative w-full h-full rounded-full overflow-hidden bg-[#D9D9D9]">
-        <Image
+        <ProtectedImage
           src={photo}
           fill
           className={`object-cover${isSkipped ? " grayscale" : ""}`}
           alt={interest.profileName}
           sizes="56px"
-          draggable={false}
-          onContextMenu={(e) => e.preventDefault()}
         />
       </div>
       <div className={`absolute bottom-0 ${cornerClass}`}>{badge}</div>
@@ -161,20 +148,13 @@ interface InterestCardProps {
 const ACTION_CLASS =
   "flex items-center gap-1.5 font-poppins font-16 font-normal text-[#B31B38] leading-[150%] whitespace-nowrap cursor-pointer disabled:opacity-50";
 
-export default function InterestCard({ interest, isLast = false, onAction }: InterestCardProps) {
+export default function InterestCard({ interest, isLast = false }: InterestCardProps) {
   const router = useRouter();
-  const [pending, setPending] = useState(false);
   const { status, id: profileId, profileName } = interest;
 
   const isSent = status === "sent_interest" || status === "sent_reminder";
   const isReceived = status === "received_interest" || status === "received_reminder";
   const isNew = interest.isNew;
-
-  async function handleAction(fn: () => Promise<unknown>) {
-    if (pending) return;
-    setPending(true);
-    try { await fn(); onAction?.(); } catch { /* keep UI, let parent retry */ } finally { setPending(false); }
-  }
 
   function goToProfile() {
     if (isNew) markInterestSeen(profileId).catch(() => {});
@@ -224,8 +204,8 @@ export default function InterestCard({ interest, isLast = false, onAction }: Int
     );
   } else if (status === "declined_by_me") {
     actionEl = (
-      <button disabled={pending} className={ACTION_CLASS} onClick={() => handleAction(() => respondToInterest(profileId, "accepted"))}>
-        Change mind
+      <button className={ACTION_CLASS} onClick={goToProfile}>
+        View profile
         <ChevronRightIcon className="w-4 sm:w-5 h-4 sm:h-5 shrink-0 text-[#B31B38]" />
       </button>
     );

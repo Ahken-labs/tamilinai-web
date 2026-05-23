@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Logo,
   SearchIcon,
@@ -18,12 +19,13 @@ import {
   SettingIcon
 } from "../assets/Icons";
 import Image from "next/image";
+import ProtectedImage from "./common-layout/ProtectedImage";
 import { getProgressWidth } from "../utils/getProgressWidth";
 import PartnerPreferenceModal from "./app/PartnerPreferenceModal";
 import LogoutPopup from "./app/LogoutPopup";
 import { getMe } from "../lib/api/user";
+import { getNotifications } from "../lib/api/notifications";
 import type { Me } from "../types/user";
-import { getProfilePhotoSrc } from "../utils/profilePhoto";
 
 const ME_CACHE_KEY = "inai_me_cache";
 
@@ -82,12 +84,91 @@ export default function AppHeader() {
     return () => window.removeEventListener("me-updated", handler);
   }, []);
 
+  // Unread notification count — shared cache with notifications page
+  const queryClient = useQueryClient();
+  const { data: hasUnread = false } = useQuery({
+    queryKey: ["notifications"],
+    queryFn: getNotifications,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    select: (data) => data.some((n) => !n.isRead && n.category !== 'interest'),
+  });
+  const { data: hasUnreadInterest = false } = useQuery({
+    queryKey: ["notifications"],
+    queryFn: getNotifications,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    select: (data) => data.some((n) => !n.isRead && n.category === 'interest'),
+  });
+
+  // Global SSE — runs on every page so new notifications arrive in real time
+  useEffect(() => {
+    const token = localStorage.getItem("tamilinai_access_token");
+    if (!token) return;
+    const BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
+    let mounted = true;
+    let controller: AbortController;
+    let retryTimer: ReturnType<typeof setTimeout>;
+    let retryDelay = 1_000;
+
+    async function connect() {
+      if (!mounted) return;
+      controller = new AbortController();
+      try {
+        const res = await fetch(`${BASE}/api/notifications/stream`, {
+          headers: { Authorization: `Bearer ${token}` },
+          signal: controller.signal,
+        });
+        if (!res.ok || !res.body) {
+          if (mounted) retryTimer = setTimeout(() => { retryDelay = Math.min(retryDelay * 2, 30_000); connect(); }, retryDelay);
+          return;
+        }
+        retryDelay = 1_000; // reset on successful connection
+        const reader = res.body.getReader();
+        const dec = new TextDecoder();
+        let buf = "";
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buf += dec.decode(value, { stream: true });
+          const lines = buf.split("\n");
+          buf = lines.pop() ?? "";
+          for (const line of lines) {
+            if (line.startsWith("data:")) {
+              queryClient.invalidateQueries({ queryKey: ["notifications"] });
+            }
+          }
+        }
+      } catch { /* aborted or network drop — retry below */ }
+      if (mounted) retryTimer = setTimeout(() => { retryDelay = Math.min(retryDelay * 2, 30_000); connect(); }, retryDelay);
+    }
+
+    connect();
+    return () => { mounted = false; controller?.abort(); clearTimeout(retryTimer); };
+  }, [queryClient]);
+
+  // Sync unread dot when another tab marks notifications as read
+  useEffect(() => {
+    let ch: BroadcastChannel;
+    try {
+      ch = new BroadcastChannel("inai_notifications");
+      ch.onmessage = (e: MessageEvent<{ type: string }>) => {
+        if (e.data?.type === "notifications_read") {
+          queryClient.invalidateQueries({ queryKey: ["notifications"] });
+        }
+      };
+    } catch { /* BroadcastChannel not supported in this environment */ }
+    return () => { try { ch?.close(); } catch { /* ignore */ } };
+  }, [queryClient]);
+
   const trustBadge = me?.trustBadge ?? false;
   const isElite = me?.isElite ?? false;
   const score = me?.profileCompletionScore ?? 0;
   const displayName = me?.name ?? "";
   const displayId = me?.displayId ?? "";
-  const photo = getProfilePhotoSrc(me?.profile?.photoUrl, me?.profile?.photoStatus, me?.gender);
+  const photo = me?.profile?.photoStatus === "approved" && me?.profile?.photoUrl
+    ? me.profile.photoUrl
+    : (me?.gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png");
 
   // Lock body scroll when mobile drawer is open
   useEffect(() => {
@@ -129,6 +210,7 @@ export default function AppHeader() {
           <nav className="hidden min-[900px]:flex items-center gap-6 lg:gap-9 flex-1 mt-0 md:mt-2 lg:mt-0 justify-center">
             {NAV_TABS.map(({ labelKey, href, Icon }) => {
               const active = pathname.startsWith(href);
+              const showDot = (!active && labelKey === "Notifications" && hasUnread) || (!active && labelKey === "Interested" && hasUnreadInterest);
               return (
                 <Link
                   key={href}
@@ -137,6 +219,7 @@ export default function AppHeader() {
                 >
                   <div className="relative">
                     <Icon className={`w-5 lg:w-6 h-5 lg:h-6 shrink-0 transition-colors duration-150 ${active ? "text-[#222222]" : "text-[#888888]"}`} />
+                    {showDot && <span className="absolute -top-0 -right-1.5 h-2 md:h-2.5 lg:h-3 w-2 md:w-2.5 lg:w-3 rounded-full bg-[#B31B38]" />}
                   </div>
                   <span className={`font-16 font-normal leading-[150%] transition-colors duration-150 ${active ? "text-dark" : "text-secondary"}`}>
                     {(labelKey) as string}
@@ -162,7 +245,7 @@ export default function AppHeader() {
                 }
               >
                 <div className="w-8 h-8 rounded-full overflow-hidden border border-white bg-[#D9D9D9] relative">
-                  <Image src={photo} fill className="object-cover" alt="my profile" sizes="32px" draggable={false} onContextMenu={(e) => e.preventDefault()} />
+                  <ProtectedImage src={photo} fill className="object-cover" alt="my profile" sizes="32px" />
                 </div>
                 <div className="flex flex-col gap-1">
                   {!trustBadge ? (
@@ -315,7 +398,7 @@ export default function AppHeader() {
                   : undefined
               }
             >
-              <Image src={photo} fill className="object-cover" alt="my profile" sizes="40px" />
+              <ProtectedImage src={photo} fill className="object-cover" alt="my profile" sizes="40px" />
             </div>
             <div className="min-w-0">
               <div className="text-[15px] font-semibold text-[#222222] leading-tight truncate">{displayName}</div>
@@ -395,6 +478,7 @@ export default function AppHeader() {
             </p>
             {NAV_TABS.map(({ labelKey, href, Icon }) => {
               const active = pathname.startsWith(href);
+              const showDot = (!active && labelKey === "Notifications" && hasUnread) || (!active && labelKey === "Interested" && hasUnreadInterest);
               return (
                 <Link
                   key={href}
@@ -409,6 +493,7 @@ export default function AppHeader() {
                       className="w-[18px] h-[18px]"
                       style={{ color: active ? "#B31B38" : "#888888" }}
                     />
+                    {showDot && <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-[#B31B38]" />}
                   </div>
                   <span
                     className={`text-[14px] leading-[150%] flex-1 ${
@@ -483,7 +568,6 @@ export default function AppHeader() {
         </div>
       </div>
 
-      {/* Shared modal */}
       <PartnerPreferenceModal
         isOpen={openModal !== null}
         onClose={() => setOpenModal(null)}

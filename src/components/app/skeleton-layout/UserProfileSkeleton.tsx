@@ -1,14 +1,6 @@
-export default function UserProfileSkeleton() {
+export function UserProfileSkeletonBody() {
   return (
-    <main className="min-h-screen bg-[#F8F5F2] animate-pulse pb-10">
-      {/* Back bar */}
-      <div className="sticky top-[74px] z-30 w-full border-t border-[#EEEEEE] bg-white">
-        <div className="flex px-4 lg:px-10 py-3">
-          <div className="h-9 w-24 rounded-[40px] bg-[#E8E8E8]" />
-        </div>
-      </div>
-
-      <div className="mt-6 md:mt-8 flex justify-center px-4 md:px-10">
+    <div className="animate-pulse mt-6 md:mt-8 flex justify-center px-4 md:px-10">
         <div className="flex w-full max-w-[1160px] flex-col items-center min-[520px]:items-start min-[520px]:flex-row gap-5 sm:gap-7 lg:gap-10">
 
           {/* Photo column */}
@@ -70,6 +62,18 @@ export default function UserProfileSkeleton() {
           </div>
         </div>
       </div>
+  );
+}
+
+export default function UserProfileSkeleton() {
+  return (
+    <main className="min-h-screen bg-[#F8F5F2] pb-10">
+      <div className="sticky top-[74px] z-30 w-full border-t border-[#EEEEEE] bg-white">
+        <div className="flex px-4 lg:px-10 py-3">
+          <div className="h-9 w-24 rounded-[40px] bg-[#E8E8E8] animate-pulse" />
+        </div>
+      </div>
+      <UserProfileSkeletonBody />
     </main>
   );
 }

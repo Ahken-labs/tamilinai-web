@@ -7,6 +7,7 @@ type ButtonProps = {
     type?: "button" | "submit";
     icon?: React.ReactNode;
     iconLeft?: React.ReactNode;
+    disabled?: boolean;
 };
 
 export default function Button({
@@ -16,11 +17,13 @@ export default function Button({
     type = "button",
     icon,
     iconLeft,
+    disabled = false,
 }: ButtonProps) {
     return (
         <button
             type={type}
             onClick={onPress}
+            disabled={disabled}
             className={`
         inline-flex items-center justify-center select-none cursor-pointer
         font-semibold text-white
@@ -33,6 +36,7 @@ export default function Button({
         bg-[#B31B38]
         hover:bg-[#8E162D]
         active:bg-[#6F1023]
+        disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none
 
         ${className}
       `}

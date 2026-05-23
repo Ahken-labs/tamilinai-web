@@ -50,7 +50,11 @@ function getDraft() {
     if (r) return JSON.parse(r);
     // 2. Fall back to what the modal saved (onboarding / search popup)
     const modal = sessionStorage.getItem(MODAL_CACHE_KEY);
-    if (modal) return convertApiToDisplay(JSON.parse(modal) as PartnerPreferences);
+    if (modal) {
+      const parsed = JSON.parse(modal) as { data?: PartnerPreferences; expiresAt?: number } | PartnerPreferences;
+      const prefs = ('expiresAt' in parsed && parsed.data) ? parsed.data : parsed as PartnerPreferences;
+      return convertApiToDisplay(prefs);
+    }
     return null;
   } catch { return null; }
 }
