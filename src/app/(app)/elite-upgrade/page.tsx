@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Button from "@/src/components/common-layout/Button";
 import { CheckboxIcon, CheckmarkIcon, EliteCrownIcon, ProfileVisibilityIcon, ResponseIcon, StepPreferencesIcon } from "@/src/assets/Icons";
 import { GoHeartFill } from "react-icons/go";
 import { FaWhatsapp } from "react-icons/fa";
+import { readMeCache } from "@/src/components/AppHeader";
+import { ELITE_PLANS, getPricing, getSavePct } from "@/src/constants/elitePlans";
 // import Link from "next/link";
 // import { CONTACT } from "@/src/lib/contact";
 
@@ -17,11 +20,28 @@ const eliteBenefits = [
 ];
 
 export default function EliteUpgradePage() {
+    const router = useRouter();
+
+    // Defer localStorage read to after mount to avoid SSR/client hydration mismatch
+    const [countryCode, setCountryCode] = useState<string | undefined>(undefined);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    useEffect(() => { setCountryCode(readMeCache()?.countryCode); }, []);
+
     const [agreed, setAgreed] = useState({
         basic: true,
         pro: true,
         max: true,
     });
+
+    const [basic, pro, max] = ELITE_PLANS;
+    const basicPricing = getPricing(basic, countryCode);
+    const proPricing   = getPricing(pro,   countryCode);
+    const maxPricing   = getPricing(max,   countryCode);
+
+    function goToCheckout(planKey: string) {
+        const autoRenew = agreed[planKey as keyof typeof agreed] ?? true;
+        router.push(`/elite-upgrade/checkout?plan=${planKey}&autoRenew=${autoRenew}`);
+    }
 
     return (
         <main className="select-none min-h-screen bg-[#F8F5F2] pb-20">
@@ -32,87 +52,68 @@ export default function EliteUpgradePage() {
 
                 <div className="mx-auto mt-4 md:mt-5 w-full">
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 items-start lg:gap-[26px] md:gap-5 gap-5">
-                        {/* Box 1 */}
+                        {/* Box 1 — Elite basic */}
                         <div className="sm:col-span-2 md:col-span-1 sm:max-w-[486px] sm:mx-auto lg:max-w-full lg:mx-0 w-full rounded-[20px] bg-white px-4 md:px-5 py-4 md:py-6 lg:mt-10 flex flex-col items-start gap-4 md:gap-5 transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_24px_rgba(0,0,0,0.08)]">
                             <div className="flex items-center gap-1 rounded-[38px] bg-[#FFDED3] px-2 py-[2px]">
                                 <EliteCrownIcon className="h-4 md:h-5 w-4 md:w-5 shrink-0 text-[#A97216]" />
                                 <span className="font-poppins font-16 font-normal leading-[150%] text-[#A97216]">
-                                    Elite basic
+                                    {basic.label}
                                 </span>
                             </div>
 
                             <div className="flex items-start gap-1">
-                                <span className="font-inter font-28 font-medium leading-[100%] text-dark">
-                                    Rs 1,725
+                                <span className="font-poppins font-28 font-medium leading-[100%] text-dark">
+                                    {basicPricing.symbol} {basicPricing.perMonth}
                                 </span>
-                                <span className="font-inter font-16 font-normal leading-[100%] text-dark">
+                                <span className="font-poppins font-16 font-normal leading-[100%] text-dark">
                                     /month
                                 </span>
                             </div>
 
-                            <div className="flex-col w-full ">
+                            <div className="flex-col w-full">
                                 <div className="flex w-full items-center justify-between">
-                                    <span className="font-inter font-16 font-normal leading-[150%] text-dark">
-                                        Total cost
-                                    </span>
-                                    <span className="font-inter font-16 font-semibold leading-[150%] text-dark">
-                                        Rs 3,450
+                                    <span className="font-poppins font-16 font-normal leading-[150%] text-dark">Total cost</span>
+                                    <span className="font-poppins font-16 font-semibold leading-[150%] text-dark">
+                                        {basicPricing.symbol} {basicPricing.total}
                                     </span>
                                 </div>
-
                                 <div className="flex w-full items-center justify-between">
-                                    <span className="font-inter font-16 font-normal leading-[150%] text-dark">
-                                        Duration
-                                    </span>
-                                    <span className="font-inter font-16 font-semibold leading-[150%] text-dark">
-                                        2 months
+                                    <span className="font-poppins font-16 font-normal leading-[150%] text-dark">Duration</span>
+                                    <span className="font-poppins font-16 font-semibold leading-[150%] text-dark">
+                                        {basic.months} months
                                     </span>
                                 </div>
                             </div>
 
-                            <Button text="Get Elite basic" iconLeft={<GoHeartFill className="w-3 md:w-4 h-3 md:h-4" />} className="w-full" />
+                            <Button text={`Get ${basic.label}`} iconLeft={<GoHeartFill className="w-3 md:w-4 h-3 md:h-4" />} className="w-full" onPress={() => goToCheckout(basic.key)} />
 
                             <div className="flex items-start gap-2 text-left">
                                 <CheckboxIcon
                                     className="w-4 sm:w-5 md:w-6 h-4 sm:h-5 md:h-6 cursor-pointer"
                                     checked={agreed.basic}
-                                    onClick={() =>
-                                        setAgreed((prev) => ({
-                                            ...prev,
-                                            basic: !prev.basic,
-                                        }))
-                                    }
+                                    onClick={() => setAgreed((prev) => ({ ...prev, basic: !prev.basic }))}
                                 />
-                                <span className="font-inter text-[14px] font-normal leading-[150%] text-[#525252]">
+                                <span className="font-poppins text-[14px] font-normal leading-[150%] text-[#525252]">
                                     Auto-renew my plan and save 25% on future renewals.
                                 </span>
                             </div>
 
                             <div className="flex flex-col gap-2 md:gap-3">
-                                <div className="flex items-start gap-1">
-                                    <CheckmarkIcon className="mt-[2px] h-4 w-4 shrink-0" />
-                                    <span className="font-inter font-16 font-normal leading-[150%] text-dark">
-                                        Boost your profile <span className="font-semibold">1 week</span>
-                                    </span>
-                                </div>
-
-                                <div className="flex items-start gap-1">
-                                    <CheckmarkIcon className="mt-[2px] h-4 w-4 shrink-0" />
-                                    <span className="font-inter font-16 font-normal leading-[150%] text-dark">
-                                        Send unlimited interest requests
-                                    </span>
-                                </div>
-
-                                <div className="flex items-start gap-1">
-                                    <CheckmarkIcon className="mt-[2px] h-4 w-4 shrink-0" />
-                                    <span className="font-inter font-16 font-normal leading-[150%] text-dark">
-                                        Connect with up to 30 inai.lk users via WhatsApp
-                                    </span>
-                                </div>
+                                {basic.features.map((f, i) => {
+                                    const parts = f.split(/\*\*(.+?)\*\*/g);
+                                    return (
+                                        <div key={i} className="flex items-start gap-1">
+                                            <CheckmarkIcon className="mt-[2px] h-4 w-4 shrink-0" />
+                                            <span className="font-poppins font-16 font-normal leading-[150%] text-dark">
+                                                {parts.map((p, j) => j % 2 === 1 ? <span key={j} className="font-semibold">{p}</span> : p)}
+                                            </span>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
 
-                        {/* Box 2 */}
+                        {/* Box 2 — Elite pro */}
                         <div className="w-full transition-all duration-300 hover:scale-[1.03]">
                             <div className="flex items-start gap-2 self-stretch rounded-t-[20px] bg-[#FFDED3] px-5 md:px-7 py-2 shadow-[0_0_20px_0_rgba(255,213,170,0.60)]">
                                 <span className="font-poppins font-16 font-medium italic leading-[150%] text-[#8D5900]">
@@ -120,203 +121,134 @@ export default function EliteUpgradePage() {
                                 </span>
                             </div>
                             <div className="w-full flex flex-col items-start gap-5 rounded-b-[32px] bg-white px-4 md:px-5 py-4 md:py-6 shadow-[0_0_20px_0_rgba(255,213,170,0.60)]">
-
                                 <div className="flex items-center gap-1 rounded-[38px] bg-[#FFDED3] px-2 py-[2px]">
                                     <EliteCrownIcon className="h-4 md:h-5 w-4 md:w-5 shrink-0 text-[#A97216]" />
                                     <span className="font-poppins font-16 font-normal leading-[150%] text-[#A97216]">
-                                        Elite pro
+                                        {pro.label}
                                     </span>
                                 </div>
                                 <div>
                                     <div className="flex items-end gap-1">
-                                        <span className="font-inter font-28 font-medium leading-[100%] text-dark">
-                                            Rs 1,483
+                                        <span className="font-poppins font-28 font-medium leading-[100%] text-dark">
+                                            {proPricing.symbol} {proPricing.perMonth}
                                         </span>
-                                        <span className="font-inter font-16 font-normal leading-[100%] text-dark">
-                                            /month
-                                        </span>
+                                        <span className="font-poppins font-16 font-normal leading-[100%] text-dark">/month</span>
                                     </div>
-
-                                    <span className="mt-2 italic font-inter font-16 leading-[100%] text-[#8D5900]">
-                                        Save 14%
+                                    <span className="mt-2 italic font-poppins font-16 leading-[100%] text-[#8D5900]">
+                                        Save {getSavePct(pro, countryCode)}%
                                     </span>
                                 </div>
 
-
-                                <div className="flex-col w-full ">
+                                <div className="flex-col w-full">
                                     <div className="flex w-full items-center justify-between">
-                                        <span className="font-inter font-16 font-normal leading-[150%] text-dark">
-                                            Total cost
-                                        </span>
-                                        <span className="font-inter font-16 font-semibold leading-[150%] text-dark">
-                                            Rs 4,450
+                                        <span className="font-poppins font-16 font-normal leading-[150%] text-dark">Total cost</span>
+                                        <span className="font-poppins font-16 font-semibold leading-[150%] text-dark">
+                                            {proPricing.symbol} {proPricing.total}
                                         </span>
                                     </div>
-
                                     <div className="flex w-full items-center justify-between">
-                                        <span className="font-inter font-16 font-normal leading-[150%] text-dark">
-                                            Duration
-                                        </span>
-                                        <span className="font-inter font-16 font-semibold leading-[150%] text-dark">
-                                            3 months
+                                        <span className="font-poppins font-16 font-normal leading-[150%] text-dark">Duration</span>
+                                        <span className="font-poppins font-16 font-semibold leading-[150%] text-dark">
+                                            {pro.months} months
                                         </span>
                                     </div>
                                 </div>
 
-                                <Button text="Get Elite pro" iconLeft={<GoHeartFill className="w-3 md:w-4 h-3 md:h-4" />} className="w-full" />
+                                <Button text={`Get ${pro.label}`} iconLeft={<GoHeartFill className="w-3 md:w-4 h-3 md:h-4" />} className="w-full" onPress={() => goToCheckout(pro.key)} />
 
-                                <div className="flex md:items-start items-center items-center gap-2 text-left" >
+                                <div className="flex md:items-start items-center gap-2 text-left">
                                     <CheckboxIcon
                                         className="w-4 sm:w-5 md:w-6 h-4 sm:h-5 md:h-6 cursor-pointer"
                                         checked={agreed.pro}
-                                        onClick={() =>
-                                            setAgreed((prev) => ({
-                                                ...prev,
-                                                pro: !prev.pro,
-                                            }))
-                                        }
+                                        onClick={() => setAgreed((prev) => ({ ...prev, pro: !prev.pro }))}
                                     />
-
-                                    <span className="font-inter text-[14px] font-normal leading-[150%] text-[#525252]">
+                                    <span className="font-poppins text-[14px] font-normal leading-[150%] text-[#525252]">
                                         Auto-renew my plan and save 25% on future renewals.
                                     </span>
                                 </div>
 
                                 <div className="flex flex-col gap-2 md:gap-3">
-                                    <div className="flex items-start gap-1">
-                                        <CheckmarkIcon className="mt-[2px] h-4 w-4 shrink-0" />
-                                        <span className="font-inter font-16 font-normal leading-[150%] text-dark">
-                                            Boost your profile <span className="font-semibold">2 weeks</span>
-                                        </span>
-                                    </div>
-
-                                    <div className="flex items-start gap-1">
-                                        <CheckmarkIcon className="mt-[2px] h-4 w-4 shrink-0" />
-                                        <span className="font-inter font-16 font-normal leading-[150%] text-dark">
-                                            Send unlimited interest requests
-                                        </span>
-                                    </div>
-
-                                    <div className="flex items-start gap-1">
-                                        <CheckmarkIcon className="mt-[2px] h-4 w-4 shrink-0" />
-                                        <span className="font-inter font-16 font-normal leading-[150%] text-dark">
-                                            Connect with up tp 60 inai.lk users via WhatsApp
-                                        </span>
-                                    </div>
-
-                                    <div className="flex items-start gap-1">
-                                        <CheckmarkIcon className="mt-[2px] h-4 w-4 shrink-0" />
-                                        <span className="font-inter font-16 font-normal leading-[150%] text-dark">
-                                            Priority customer service
-                                        </span>
-                                    </div>
+                                    {pro.features.map((f, i) => {
+                                        const parts = f.split(/\*\*(.+?)\*\*/g);
+                                        return (
+                                            <div key={i} className="flex items-start gap-1">
+                                                <CheckmarkIcon className="mt-[2px] h-4 w-4 shrink-0" />
+                                                <span className="font-poppins font-16 font-normal leading-[150%] text-dark">
+                                                    {parts.map((p, j) => j % 2 === 1 ? <span key={j} className="font-semibold">{p}</span> : p)}
+                                                </span>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>
 
-                        {/* Box 3 */}
+                        {/* Box 3 — Elite max */}
                         <div className="w-full transition-all duration-300 hover:scale-[1.03]">
                             <div className="flex items-start gap-2 self-stretch rounded-t-[20px] bg-[#FFDED3] px-5 md:px-7 py-2">
                                 <span className="font-poppins font-16 font-medium italic leading-[150%] text-[#8D5900]">
                                     Best value
                                 </span>
                             </div>
-
                             <div className="w-full flex flex-col items-start gap-5 rounded-b-[32px] bg-white px-4 md:px-5 py-4 md:py-6">
                                 <div className="flex items-center gap-1 rounded-[38px] bg-[#FFDED3] px-2 py-[2px]">
                                     <EliteCrownIcon className="h-4 md:h-5 w-4 md:w-5 shrink-0 text-[#A97216]" />
                                     <span className="font-poppins font-16 font-normal leading-[150%] text-[#A97216]">
-                                        Elite max
+                                        {max.label}
                                     </span>
                                 </div>
                                 <div>
                                     <div className="flex items-start gap-1">
-                                        <span className="font-inter font-28 font-medium leading-[100%] text-dark">
-                                            Rs 1,241
+                                        <span className="font-poppins font-28 font-medium leading-[100%] text-dark">
+                                            {maxPricing.symbol} {maxPricing.perMonth}
                                         </span>
-                                        <span className="font-inter font-16 font-normal leading-[100%] text-dark">
-                                            /month
-                                        </span>
+                                        <span className="font-poppins font-16 font-normal leading-[100%] text-dark">/month</span>
                                     </div>
-
-                                    <span className="mt-2 italic font-inter font-16 leading-[100%] text-[#8D5900]">
-                                        Save 28%
+                                    <span className="mt-2 italic font-poppins font-16 leading-[100%] text-[#8D5900]">
+                                        Save {getSavePct(max, countryCode)}%
                                     </span>
                                 </div>
 
-                                <div className="flex-col w-full ">
-
+                                <div className="flex-col w-full">
                                     <div className="flex w-full items-center justify-between">
-                                        <span className="font-inter font-16 font-normal leading-[150%] text-dark">
-                                            Total cost
-                                        </span>
-                                        <span className="font-inter font-16 font-semibold leading-[150%] text-dark">
-                                            Rs 7,450
+                                        <span className="font-poppins font-16 font-normal leading-[150%] text-dark">Total cost</span>
+                                        <span className="font-poppins font-16 font-semibold leading-[150%] text-dark">
+                                            {maxPricing.symbol} {maxPricing.total}
                                         </span>
                                     </div>
-
                                     <div className="flex w-full items-center justify-between">
-                                        <span className="font-inter font-16 font-normal leading-[150%] text-dark">
-                                            Duration
-                                        </span>
-                                        <span className="font-inter font-16 font-semibold leading-[150%] text-dark">
-                                            6 months
+                                        <span className="font-poppins font-16 font-normal leading-[150%] text-dark">Duration</span>
+                                        <span className="font-poppins font-16 font-semibold leading-[150%] text-dark">
+                                            {max.months} months
                                         </span>
                                     </div>
                                 </div>
-                                <Button text="Get Elite max" iconLeft={<GoHeartFill className="w-3 md:w-4 h-3 md:h-4" />} className="w-full" />
 
-                                <div className="flex md:items-start items-center gap-2 text-left" >
+                                <Button text={`Get ${max.label}`} iconLeft={<GoHeartFill className="w-3 md:w-4 h-3 md:h-4" />} className="w-full" onPress={() => goToCheckout(max.key)} />
+
+                                <div className="flex md:items-start items-center gap-2 text-left">
                                     <CheckboxIcon
                                         className="w-4 sm:w-5 md:w-6 h-4 sm:h-5 md:h-6 cursor-pointer"
                                         checked={agreed.max}
-                                        onClick={() =>
-                                            setAgreed((prev) => ({
-                                                ...prev,
-                                                max: !prev.max,
-                                            }))
-                                        }
+                                        onClick={() => setAgreed((prev) => ({ ...prev, max: !prev.max }))}
                                     />
-                                    <span className="font-inter text-[14px] font-normal leading-[150%] text-[#525252]">
+                                    <span className="font-poppins text-[14px] font-normal leading-[150%] text-[#525252]">
                                         Auto-renew my plan and save 25% on future renewals.
                                     </span>
                                 </div>
 
                                 <div className="flex flex-col gap-2 md:gap-3">
-                                    <div className="flex items-start gap-1">
-                                        <CheckmarkIcon className="mt-[2px] h-4 w-4 shrink-0" />
-                                        <span className="font-inter font-16 font-normal leading-[150%] text-dark">
-                                            Boost your profile <span className="font-semibold">4 weeks</span>
-                                        </span>
-                                    </div>
-
-                                    <div className="flex items-start gap-1">
-                                        <CheckmarkIcon className="mt-[2px] h-4 w-4 shrink-0" />
-                                        <span className="font-inter font-16 font-normal leading-[150%] text-dark">
-                                            Send unlimited interest requests
-                                        </span>
-                                    </div>
-
-                                    <div className="flex items-start gap-1">
-                                        <CheckmarkIcon className="mt-[2px] h-4 w-4 shrink-0" />
-                                        <span className="font-inter font-16 font-normal leading-[150%] text-dark">
-                                            Connect with up to 90 inai.lk users via WhatsApp
-                                        </span>
-                                    </div>
-
-                                    <div className="flex items-start gap-1">
-                                        <CheckmarkIcon className="mt-[2px] h-4 w-4 shrink-0" />
-                                        <span className="font-inter font-16 font-normal leading-[150%] text-dark">
-                                            Priority customer service
-                                        </span>
-                                    </div>
-
-                                    <div className="flex items-start gap-1">
-                                        <CheckmarkIcon className="mt-[2px] h-4 w-4 shrink-0" />
-                                        <span className="font-inter font-16 font-normal leading-[150%] text-dark">
-                                            Dedicated support from Inai team
-                                        </span>
-                                    </div>
+                                    {max.features.map((f, i) => {
+                                        const parts = f.split(/\*\*(.+?)\*\*/g);
+                                        return (
+                                            <div key={i} className="flex items-start gap-1">
+                                                <CheckmarkIcon className="mt-[2px] h-4 w-4 shrink-0" />
+                                                <span className="font-poppins font-16 font-normal leading-[150%] text-dark">
+                                                    {parts.map((p, j) => j % 2 === 1 ? <span key={j} className="font-semibold">{p}</span> : p)}
+                                                </span>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>

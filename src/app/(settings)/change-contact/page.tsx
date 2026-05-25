@@ -33,14 +33,16 @@ function ChangeContactContent() {
 
   const me = readMeCache();
   const currentValue = type === "email" ? (me?.email ?? "") : (me?.phone ?? "");
-  const currentDisplay = type === "email"
-    ? currentValue
-    : `${me?.countryCode ?? ""} ${currentValue}`.trim();
+  const currentDisplay = currentValue;
 
   // Step 1 — request
   const [step, setStep] = useState<Step>("request");
   const [value, setValue] = useState("");
-  const [countryCode, setCountryCode] = useState(COUNTRIES[0]);
+  const [countryCode, setCountryCode] = useState(() => {
+    const current = me?.countryCode;
+    if (!current) return COUNTRIES[0];
+    return COUNTRIES.find((c) => c.includes(`(${current})`)) ?? COUNTRIES[0];
+  });
   const [countryOpen, setCountryOpen] = useState(false);
   const [inputError, setInputError] = useState("");
   const [requesting, setRequesting] = useState(false);

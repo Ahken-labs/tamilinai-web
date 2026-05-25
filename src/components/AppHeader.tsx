@@ -25,6 +25,7 @@ import PartnerPreferenceModal from "./app/PartnerPreferenceModal";
 import LogoutPopup from "./app/LogoutPopup";
 import { getMe } from "../lib/api/user";
 import { getNotifications } from "../lib/api/notifications";
+import { getSentInterests, getReceivedInterests } from "../lib/api/interests";
 import type { Me } from "../types/user";
 
 const ME_CACHE_KEY = "inai_me_cache";
@@ -93,13 +94,21 @@ export default function AppHeader() {
     gcTime: 10 * 60 * 1000,
     select: (data) => data.some((n) => !n.isRead && n.category !== 'interest'),
   });
-  const { data: hasUnreadInterest = false } = useQuery({
-    queryKey: ["notifications"],
-    queryFn: getNotifications,
-    staleTime: 5 * 60 * 1000,
+  const { data: hasUnreadInterestSent = false } = useQuery({
+    queryKey: ["interests", "sent"],
+    queryFn: getSentInterests,
+    staleTime: 2 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
-    select: (data) => data.some((n) => !n.isRead && n.category === 'interest'),
+    select: (data) => data.some((item) => item.isNew),
   });
+  const { data: hasUnreadInterestReceived = false } = useQuery({
+    queryKey: ["interests", "received"],
+    queryFn: getReceivedInterests,
+    staleTime: 2 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    select: (data) => data.some((item) => item.isNew),
+  });
+  const hasUnreadInterest = hasUnreadInterestSent || hasUnreadInterestReceived;
 
   // Global SSE — runs on every page so new notifications arrive in real time
   useEffect(() => {
@@ -136,6 +145,8 @@ export default function AppHeader() {
           for (const line of lines) {
             if (line.startsWith("data:")) {
               queryClient.invalidateQueries({ queryKey: ["notifications"] });
+              queryClient.invalidateQueries({ queryKey: ["interests", "received"] });
+              queryClient.invalidateQueries({ queryKey: ["interests", "sent"] });
             }
           }
         }

@@ -88,6 +88,13 @@ export default function SettingsPage() {
                                 <ChevronRightIcon className="w-5 md:w-6 h-5 md:h-6" />
                             </div>
                         );
+                        if (title === "Subscription & Billing") {
+                            return (
+                                <Link key={title} href="/invoice" className="block">
+                                    {content}
+                                </Link>
+                            );
+                        }
                         if (title === "Take a break") {
                             return (
                                 <Link key={title} href="/take-a-break" className="block">

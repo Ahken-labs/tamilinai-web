@@ -1,15 +1,13 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import ToggleTabs from "../../../components/common-layout/ToggleTabs";
 import InterestCard from "../../../components/app/InterestCard";
 import InterestCardSkeleton from "../../../components/app/skeleton-layout/InterestCardSkeleton";
 import { getSentInterests, getReceivedInterests } from "../../../lib/api/interests";
-import { markAllNotificationsRead } from "../../../lib/api/notifications";
 import { sentInterestToCard, receivedInterestToCard } from "../../../types/interest";
-import type { AppNotification } from "../../../types/notification";
 import { RedDotIcon } from "../../../assets/Icons";
 import { readMeCache } from "../../../components/AppHeader";
 
@@ -55,13 +53,6 @@ function InterestedContent() {
   const me = readMeCache();
   const myPhoto = me?.profile?.photoUrl ?? (me?.gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png");
 
-  // Clear interest notification dot when this page is visited
-  useEffect(() => {
-    queryClient.setQueryData<AppNotification[]>(["notifications"], (old) =>
-      old?.map((n) => n.category === "interest" ? { ...n, isRead: true } : n) ?? []
-    );
-    markAllNotificationsRead('interest').catch(() => {});
-  }, [queryClient]);
 
   const { data: sentRaw, isLoading: sentLoading, isFetching: sentFetching } = useQuery({
     queryKey: ["interests", "sent"],
@@ -139,6 +130,7 @@ function InterestedContent() {
     : sentLoading || receivedLoading;
 
   const isBackgroundFetching = (sentFetching || receivedFetching) && !isLoading;
+
 
   function handleTabChange(value: string) {
     setActiveTab(value);

@@ -1,11 +1,11 @@
 "use client";
 
 import ProtectedImage from "../common-layout/ProtectedImage";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getProfilePhotoSrc } from "../../utils/profilePhoto";
-import type { Interest, InterestCardStatus } from "../../types/interest";
+import type { Interest, InterestCardStatus, SentInterest, ReceivedInterest } from "../../types/interest";
 import { markInterestSeen } from "../../lib/api/interests";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   InterestArrowIcon,
   InterestXIcon,
@@ -150,14 +150,27 @@ const ACTION_CLASS =
 
 export default function InterestCard({ interest, isLast = false }: InterestCardProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { status, id: profileId, profileName } = interest;
 
   const isSent = status === "sent_interest" || status === "sent_reminder";
   const isReceived = status === "received_interest" || status === "received_reminder";
   const isNew = interest.isNew;
 
+  function markSeen() {
+    if (!isNew) return;
+    // Optimistically clear isNew in both caches so dot disappears immediately
+    queryClient.setQueryData<SentInterest[]>(["interests", "sent"], (old) =>
+      old?.map((item) => item.receiverId === profileId ? { ...item, isNew: false } : item)
+    );
+    queryClient.setQueryData<ReceivedInterest[]>(["interests", "received"], (old) =>
+      old?.map((item) => item.senderId === profileId ? { ...item, isNew: false } : item)
+    );
+    markInterestSeen(profileId).catch(() => {});
+  }
+
   function goToProfile() {
-    if (isNew) markInterestSeen(profileId).catch(() => {});
+    markSeen();
     router.push(`/user-profile?id=${profileId}`);
   }
 
@@ -190,21 +203,24 @@ export default function InterestCard({ interest, isLast = false }: InterestCardP
     );
   } else if (status === "accepted_by_them" || status === "accepted_by_me") {
     actionEl = (
-      <button className={ACTION_CLASS} onClick={() => router.push(`/user-profile?id=${profileId}#contact-section`)}>
+      <button className={ACTION_CLASS} onClick={() => { markSeen(); router.push(`/user-profile?id=${profileId}#contact-section`); }}>
+        {isNew && <RedDotIcon className="w-2.5 md:w-3 h-2.5 md:h-3" />}
         Start chat
         <ChevronRightIcon className="w-4 sm:w-5 h-4 sm:h-5 shrink-0 text-[#B31B38]" />
       </button>
     );
   } else if (status === "skipped_by_them") {
     actionEl = (
-      <Link href="/matches" className={ACTION_CLASS}>
+      <button className={ACTION_CLASS} onClick={() => { markSeen(); router.push("/matches"); }}>
+        {isNew && <RedDotIcon className="w-2.5 md:w-3 h-2.5 md:h-3" />}
         View similar matches
         <ChevronRightIcon className="w-4 sm:w-5 h-4 sm:h-5 shrink-0 text-[#B31B38]" />
-      </Link>
+      </button>
     );
   } else if (status === "declined_by_me") {
     actionEl = (
       <button className={ACTION_CLASS} onClick={goToProfile}>
+        {isNew && <RedDotIcon className="w-2.5 md:w-3 h-2.5 md:h-3" />}
         View profile
         <ChevronRightIcon className="w-4 sm:w-5 h-4 sm:h-5 shrink-0 text-[#B31B38]" />
       </button>
@@ -213,14 +229,14 @@ export default function InterestCard({ interest, isLast = false }: InterestCardP
 
   return (
     <div className={`flex items-center gap-3 md:gap-4 px-3 md:px-4 py-4 md:py-6 bg-white ${!isLast ? "border-b border-[#EAEAEA]" : ""}`}>
-      {/* Photo */}
-      <button onClick={goToProfile} className="shrink-0">
+      {/* Photo — non-navigating, CTA handles navigation */}
+      <div className="shrink-0">
         <PhotoSection interest={interest} />
-      </button>
+      </div>
 
       {/* Text + mobile action */}
       <div className="flex-1 min-w-0">
-        <button onClick={goToProfile} className="text-left w-full">
+        <div className="text-left w-full">
           <p className="font-poppins font-18 font-medium text-[#222222] leading-[150%]">
             {getTitle(status, profileName)}
           </p>
@@ -234,7 +250,7 @@ export default function InterestCard({ interest, isLast = false }: InterestCardP
               </span>
             )}
           </div>
-        </button>
+        </div>
 
         {/* Action shown below text on mobile only */}
         <div className="mt-2 sm:hidden">{actionEl}</div>

@@ -58,7 +58,7 @@ function getCtaConfig(type: string, fromUserId?: string): { label: string; href:
     case "photo_added":           return { label: "View photo",        href: profileHref };
     case "photo_request_declined":return { label: "View profile",      href: profileHref };
     case "payment_failed":        return { label: "Retry payment",     href: "/elite-upgrade" };
-    case "payment_success":       return { label: "Explore",           href: "/matches" };
+    case "payment_success":       return { label: "Explore features",  href: "/matches" };
     case "interest_received":     return { label: "View",              href: "/interested" };
     case "interest_accepted":     return { label: "View match",        href: "/interested" };
     case "interest_declined":     return { label: "View",              href: "/interested" };
