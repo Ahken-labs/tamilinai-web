@@ -340,8 +340,8 @@ import Image from "next/image";
 import { getProgressWidth } from "../utils/getProgressWidth";
 import PartnerPreferenceModal from "./app/PartnerPreferenceModal";
 
-const trustBadge = true;
-const isElite = true;
+const trustBadge = false;
+const isElite = false;
 
 const NAV_TABS = [
   { labelKey: "Matches" as const, href: "/matches", Icon: MatchesIcon },
