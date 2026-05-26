@@ -15,9 +15,13 @@ export default function HomePage() {
       <section id="about">
         <AboutSection />
       </section>
-      <ContactSection />
+      <section id="contact">
+        <ContactSection />
+      </section>
       <HelpSection />
-      <FAQSection />
+      <section id="faq">
+        <FAQSection />
+      </section>
     </main>
   );
 }
