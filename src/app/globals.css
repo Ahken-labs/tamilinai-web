@@ -9,6 +9,10 @@
   --text-dark: #222222;
 }
 
+input, textarea, select {
+  font-size: max(16px, 1em);
+}
+
 
 /* Font utility classes */
 .font-arima {

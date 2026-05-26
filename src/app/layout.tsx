@@ -3,6 +3,12 @@ import { LangProvider } from "../context/LangContext";
 import QueryProvider from "../providers/QueryProvider";
 import SeoSchema from "./SeoSchema";
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export const metadata = {
   metadataBase: new URL('https://inai.lk'),
   title: {
