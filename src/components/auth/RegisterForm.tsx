@@ -180,39 +180,37 @@ export default function RegisterForm({
                 height="290px"
             />
 
-            {profileFor && (
-                <>
-                    <div className="flex flex-col gap-[2px]">
+            {profileFor && !(profileFor in AUTO_GENDER) && (
+                <div className="flex flex-col gap-[2px]">
+                    <div className="flex items-center gap-6">
+                        <span className="shrink-0 text-[14px] md:text-[16px] font-normal leading-[125%] text-[#222222]">
+                            {t("Gender")}
+                        </span>
+
                         <div className="flex items-center gap-6">
-                            <span className="shrink-0 text-[14px] md:text-[16px] font-normal leading-[125%] text-[#222222]">
-                                {t("Gender")}
-                            </span>
+                            <GenderOption
+                                label={t("Male")}
+                                checked={gender === "Male"}
+                                onClick={() => {
+                                    setGender("Male");
+                                    setErrors((prev) => ({ ...prev, gender: undefined }));
+                                }}
+                            />
 
-                            <div className="flex items-center gap-6">
-                                <GenderOption
-                                    label={t("Male")}
-                                    checked={gender === "Male"}
-                                    onClick={() => {
-                                        setGender("Male");
-                                        setErrors((prev) => ({ ...prev, gender: undefined }));
-                                    }}
-                                />
-
-                                <GenderOption
-                                    label={t("Female")}
-                                    checked={gender === "Female"}
-                                    onClick={() => {
-                                        setGender("Female");
-                                        setErrors((prev) => ({ ...prev, gender: undefined }));
-                                    }}
-                                />
-                            </div>
+                            <GenderOption
+                                label={t("Female")}
+                                checked={gender === "Female"}
+                                onClick={() => {
+                                    setGender("Female");
+                                    setErrors((prev) => ({ ...prev, gender: undefined }));
+                                }}
+                            />
                         </div>
-                        {errors.gender && (
-                            <p className="text-[12px] mt-1 text-[#B31B38]">{errors.gender}</p>
-                        )}
                     </div>
-                </>
+                    {errors.gender && (
+                        <p className="text-[12px] mt-1 text-[#B31B38]">{errors.gender}</p>
+                    )}
+                </div>
             )}
             <InputBox
                 value={fullName}

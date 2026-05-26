@@ -99,19 +99,17 @@ export default function DropdownField({
     setOpen(false);
   }
 
-  const filteredItems = value
+  const filteredItems = isFiltering
     ? [...items]
       .filter((item) =>
-        item.toLowerCase().includes(value.toLowerCase())
+        item.toLowerCase().includes((value ?? "").toLowerCase())
       )
       .sort((a, b) => {
-        const q = value.toLowerCase();
+        const q = (value ?? "").toLowerCase();
         const aStarts = a.toLowerCase().startsWith(q);
         const bStarts = b.toLowerCase().startsWith(q);
-
         if (aStarts && !bStarts) return -1;
         if (!aStarts && bStarts) return 1;
-
         return a.localeCompare(b);
       })
     : items;
