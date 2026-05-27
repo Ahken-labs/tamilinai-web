@@ -22,6 +22,7 @@ export const PROFILES = [
   "Daughter",
   "Brother",
   "Sister",
+  "Relative",
   "Friend",
 ];
 

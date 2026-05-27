@@ -15,7 +15,8 @@ const SOCIAL_PLATFORMS = [
   "facebook", "fb", "whatsapp", "wa", "instagram", "insta",
   "linkedin", "twitter", "x.com", "snapchat", "snap", "telegram",
   "tiktok", "tik tok", "youtube", "yt", "wechat", "viber",
-  "skype", "discord", "reddit", "pinterest", "tumblr", "signal",
+  "skype", "discord", "reddit", "pinterest", "tumblr", "signal", "xx", "x", "fbook",
+  "wap", "onlyfans", "wp"
 ];
 
 // Email must be checked BEFORE URL so "user@gmail.com" is caught as email not URL
