@@ -10,7 +10,7 @@
 }
 
 input, textarea, select {
-  font-size: max(16px, 1em);
+  font-size: 1rem;
 }
 
 
