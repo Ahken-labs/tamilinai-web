@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRightIcon, MailIcon, SmsIcon, WhatsAppIcon } from "../../assets/Icons";
+import { ArrowRightIcon, MailIcon,  WhatsAppIcon } from "../../assets/Icons";
 import Button from "../common-layout/Button";
 import CountryCodeSelect from "../more/CountryCodeSelect";
 import InputBox from "../common-layout/InputBox";

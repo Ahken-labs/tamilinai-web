@@ -43,6 +43,11 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Arima+Madurai:wght@700;900&family=Poppins:wght@400;500;600&family=Noto+Sans+Tamil:wght@400;500;700&display=swap" rel="stylesheet" />
+      </head>
       <body>
         <SeoSchema/>
         <QueryProvider>
