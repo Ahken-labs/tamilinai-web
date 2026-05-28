@@ -32,7 +32,7 @@ export default function Button({
         py-3
         px-10
         rounded-full
-        font-16
+        text-[14px] md:text-[16px]
         bg-[#B31B38]
         hover:bg-[#8E162D]
         active:bg-[#6F1023]

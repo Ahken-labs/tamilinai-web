@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Button from "../common-layout/Button";
+import { ChevronIcon } from "../../assets/Icons";
 import { sendIdentityVerifyOtp, confirmIdentityVerifyOtp } from "../../lib/api/user";
 import { invalidateMeCache } from "../AppHeader";
 import { ApiError } from "../../lib/api/client";
@@ -147,12 +148,21 @@ export default function VerifyIdentityOtp({ method, maskedIdentifier }: Props) {
       <div className="w-full max-w-[784px] flex flex-col items-left">
 
         {/* Card: Verify */}
-        <div className="w-full rounded-[20px] bg-light pt-6 md:pt-8 px-4 md:px-6 pb-4 md:pb-6">
-          <h1 className="font-24 font-semibold text-dark leading-[150%]">
-            {method === "phone" ? "Verify your phone" : "Verify your email"}
-          </h1>
+        <div className="w-full rounded-[16px] md:rounded-[20px] bg-light pt-6 md:pt-8 px-4 md:px-6 pb-4 md:pb-6">
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="min-[500px]:hidden flex items-center justify-center shrink-0"
+            >
+              <ChevronIcon open={false} className="w-5 h-5 rotate-90" />
+            </button>
+            <h1 className="font-24 font-semibold text-dark leading-[150%]">
+              {method === "phone" ? "Verify your phone" : "Verify your email"}
+            </h1>
+          </div>
 
-          <p className="mt-5 sm:mt-6 md:mt-8 lg:mt-10 font-18 font-normal text-dark leading-[150%]">
+          <p className="max-[500px]:mt-2 mt-4 md:mt-6 lg:mt-10 font-18 font-normal text-dark leading-[150%]">
             {method === "phone" ? "We sent a WhatsApp code to" : "We sent a code to"}{" "}
             <span className="font-semibold select-none">{maskedIdentifier}</span>.{" "}
             Enter it below to verify.
@@ -160,7 +170,7 @@ export default function VerifyIdentityOtp({ method, maskedIdentifier }: Props) {
 
           {/* OTP Boxes */}
           <div
-            className={`select-none mt-8 md:mt-12 flex gap-2 sm:gap-3 md:gap-3 ${shake ? "animate-shake" : ""}`}
+            className={`select-none mt-5 sm:mt-6 md:mt-12 flex gap-2 sm:gap-3 md:gap-3 ${shake ? "animate-shake" : ""}`}
             onPaste={handlePaste}
           >
             {digits.map((digit, i) => (
@@ -189,48 +199,48 @@ export default function VerifyIdentityOtp({ method, maskedIdentifier }: Props) {
           {error && <p className="mt-3 text-[12px] text-primary">{error}</p>}
           {success && <p className="mt-3 text-[12px] text-[#16a34a] font-medium">Verified! Redirecting…</p>}
 
-          {/* Timer + Resend */}
-          <div className="mt-3 flex">
-            <span className="font-16 font-normal text-dark leading-[150%]">
-              Code expires in <span className="font-medium">{formattedTimer}</span>
-            </span>
+          {/* Resend */}
+          <div className="mt-2 sm:mt-3">
             <button
               type="button"
               onClick={handleResend}
               disabled={countdown > 0}
-              className={`ml-3 font-16 font-medium leading-[150%] underline transition-colors select-none
+              className={`text-[14px] md:text-[16px] font-medium leading-[150%] transition-colors select-none
                 ${countdown > 0
-                  ? "text-[#B31B38] opacity-40 cursor-default"
-                  : "text-[#B31B38] cursor-pointer hover:text-[#8E162D] active:text-[#6F1023]"
+                  ? "text-[#767676] cursor-default"
+                  : "text-[#B31B38] underline cursor-pointer hover:text-[#8E162D] active:text-[#6F1023]"
                 }`}
             >
-              Resend code
+              {countdown > 0 ? `Resend code (${formattedTimer})` : "Resend code"}
             </button>
           </div>
 
           {/* Buttons */}
-          <div className="mt-10 md:mt-12 flex gap-3 md:gap-5 w-full">
-            <Button
-              text="Back"
-              onPress={() => router.back()}
-              className="flex-1 !bg-white !text-[#222222] hover:!bg-[#F8F8F8]"
-            />
-            <Button
-              text={loading ? "Verifying..." : "Done"}
-              onPress={handleVerify}
-              // icon={loading ? undefined : <ArrowRightIcon />}
-              className="flex-1"
-            />
+          <div className="max-[500px]:mt-5 mt-8 sm:mt-10 md:mt-12 flex gap-3 md:gap-5 w-full">
+            <div className="hidden min-[500px]:block flex-1">
+              <Button
+                text="Back"
+                onPress={() => router.back()}
+                className="!w-full !bg-white !text-[#222222] hover:!bg-[#F8F8F8]"
+              />
+            </div>
+            <div className="flex-1">
+              <Button
+                text={loading ? "Verifying..." : "Done"}
+                onPress={handleVerify}
+                className="!w-full"
+              />
+            </div>
           </div>
         </div>
 
         {/* Benefits card */}
-        <div className="w-full rounded-[18px] md:rounded-[20px] bg-[#EAEAEA] p-4 md:p-6 mt-8 font-16">
+        <div className="w-full rounded-[16px] md:rounded-[20px] bg-[#EAEAEA] p-4 md:p-6 mt-5 sm:mt-6 md:mt-8 text-[14px] md:text-[16px]">
           <p className="font-semibold text-dark leading-[150%]">Benefits of verification</p>
           <div className="mt-4 flex flex-col gap-2">
             {benefits.map((benefit, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <span className="text-dark mt-[3px] shrink-0">•</span>
+              <div key={i} className="flex items-center gap-2 text-[14px] md:text-[16px]">
+                <span className="text-dark shrink-0">•</span>
                 <span className="font-normal text-dark leading-[150%]">{benefit}</span>
               </div>
             ))}

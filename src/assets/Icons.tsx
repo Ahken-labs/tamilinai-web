@@ -106,7 +106,7 @@ export function GlobeIcon({ className = "w-4 h-4", ...props
 }
 
 export function ChevronIcon({ open,
-  className = "w-3.5 md:w-4 h-3 md:h-4 shrink-0 transition-transform duration-200",
+  className = "w-4 h-3.5 md:h-4 shrink-0 transition-transform duration-200",
   strokeWidth="2", stroke="#222", ...props
 }: { open: boolean } & IconProps) {
   return (

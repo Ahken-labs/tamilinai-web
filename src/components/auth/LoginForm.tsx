@@ -87,11 +87,11 @@ export default function LoginForm() {
             onPress={handleLogin}
             className="w-full"
           />
-          <div className="mt-6 md:mt-8 flex justify-center">
+          <div className="max-[500px]:mt-3 mt-6 md:mt-8 flex justify-center">
             <Link
               href="/forgot-password"
               prefetch
-              className="text-primary font-18 font-normal leading-[150%] cursor-pointer hover:opacity-70 select-none"
+              className="text-primary fonts-18 font-normal leading-[150%] cursor-pointer hover:opacity-70 select-none"
             >
               {t("Forgotten_password")}
             </Link>
@@ -100,7 +100,7 @@ export default function LoginForm() {
       }
       bottom={<NewToInaiCart />}
     >
-      <div className="mt-7 sm:mt-10 md:mt-12">
+      <div>
         <InputBox
           value={identifier}
           onChange={(val) => {
@@ -114,7 +114,7 @@ export default function LoginForm() {
         />
       </div>
 
-      <div className="mt-6 md:mt-8">
+      <div className="max-[500px]:mt-4 mt-6 md:mt-8">
         <InputBox
           value={password}
           onChange={(val) => {

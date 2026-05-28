@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRightIcon, MailIcon, SmsIcon } from "../../assets/Icons";
+import { ArrowRightIcon, MailIcon, SmsIcon, WhatsAppIcon } from "../../assets/Icons";
 import Button from "../common-layout/Button";
 import CountryCodeSelect from "../more/CountryCodeSelect";
 import InputBox from "../common-layout/InputBox";
@@ -48,7 +48,7 @@ export default function ForgotPasswordForm() {
     title={t("Reset_your_password")}
     subtitle={t("Choose_reset_method")}
     bottom={<NewToInaiCart />}
-    childrenTopMargin="mt-6"
+    childrenTopMargin="max-[500px]:mt-4 mt-6"
   >
     {/* Method selector */}
     <div className="flex gap-3 md:gap-4">
@@ -58,8 +58,8 @@ export default function ForgotPasswordForm() {
         className={`select-none cursor-pointer flex-1 flex flex-col items-center justify-center gap-0.5 py-3 md:py-4 rounded-[12px] transition-colors duration-150
           ${method === "sms" ? "bg-cartbox3 text-primary" : "bg-cartbox2 text-dark"}`}
       >
-        <SmsIcon />
-        <span className="font-16 font-normal leading-[150%]">{t("Mobile")}</span>
+        <WhatsAppIcon stroke={method === "sms" ? "#B31B38" : "#222222"} fill={method === "sms" ? "#B31B38" : "#222222"} />
+        <span className="text-[14px] md:text-[16px] font-normal leading-[150%]">{t("WhatsApp")}</span>
       </button>
 
       <button
@@ -68,15 +68,15 @@ export default function ForgotPasswordForm() {
         className={`select-none cursor-pointer flex-1 flex flex-col items-center justify-center gap-0.5 py-3 md:py-4 rounded-[12px] transition-colors duration-150
           ${method === "email" ? "bg-cartbox3 text-primary" : "bg-cartbox2 text-dark"}`}
       >
-        <MailIcon />
-        <span className="font-16 font-normal leading-[150%]">{t("Email")}</span>
+        <MailIcon className="w-5 h-5"/>
+        <span className="text-[14px] md:text-[16px] font-normal leading-[150%]">{t("Email")}</span>
       </button>
     </div>
 
     {/* Input */}
-    <div className="mt-8 md:mt-10">
+    <div className="max-[500px]:mt-4 mt-6 md:mt-8">
       {method === "sms" ? (
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col max-[500px]:gap-4 gap-6 md:gap-8">
           <CountryCodeSelect
             value={countryCode}
             onChange={setCountryCode}
@@ -112,7 +112,7 @@ export default function ForgotPasswordForm() {
     </div>
 
     {/* Send button */}
-    <div className="mt-8 md:mt-10">
+    <div className="max-[500px]:mt-4 mt-8 md:mt-10">
       <Button
         text={t("Send_reset_code")}
         icon={<ArrowRightIcon />}

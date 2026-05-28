@@ -128,7 +128,7 @@ export default function DropdownField({
                 onBlur={handleBlur}
                 onChange={(e) => { onSelect(e.target.value); setOpen(true); }}
                 onKeyDown={handleKeyDown}
-                className={`w-full min-w-8 bg-transparent font-16 outline-none placeholder:text-[#525252] ${textClassName ?? "text-dark"}`}
+                className={`w-full min-w-8 bg-transparent text-[16px] outline-none placeholder:text-[#525252] ${textClassName ?? "text-dark"}`}
               />
               <button
                 type="button"
@@ -142,7 +142,7 @@ export default function DropdownField({
             <div className="relative flex w-full items-center">
               <label
                 className={`absolute left-0 border transition-all duration-300 ease-in-out pointer-events-none select-none ${isActive
-                  ? "top-[-2px] text-[12px] text-[#525252]"
+                  ? "top-[-2px] text-[14px] text-[#525252]"
                   : "top-1/2 -translate-y-1/2 text-[14px] md:text-[16px] text-[#525252]"
                   }`}
               >
@@ -199,7 +199,7 @@ export default function DropdownField({
                   setOpen(false);
                   setFocused(false);
                 }}
-                className={`flex w-full items-center px-4 py-2 md:py-3 text-left text-[13px] md:text-[15px] transition-colors ${isSelected
+                className={`flex w-full items-center px-4 py-2 md:py-3 text-left text-[14px] md:text-[15px] transition-colors ${isSelected
                   ? "bg-[#FFF0F3] text-[#B31B38]"
                   : isSuggested
                     ? "bg-[#FFF8F9] text-[#222222] font-medium"
@@ -271,14 +271,14 @@ export function MultiSelectDropdown({
       >
         <div className="flex flex-wrap gap-2 flex-1 min-w-0">
           {selected.length === 0 ? (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-[#222222] font-16 font-normal">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-[#222222] text-[14px] md:text-[16px] font-normal">
               {placeholder}
             </span>
           ) : (
             selected.map((item) => (
               <span
                 key={item}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-[#222222] font-16 font-normal"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-[#222222] text-[14px] md:text-[16px] font-normal"
               >
                 {item}
                 <button
@@ -312,7 +312,7 @@ export function MultiSelectDropdown({
                 onChange={(e) => setSearch(e.target.value)}
                 onMouseDown={(e) => e.stopPropagation()}
                 placeholder="Search..."
-                className="w-full rounded-[8px] bg-[#F2F2F2] px-3 py-1.5 text-[13px] md:text-[15px] text-dark outline-none placeholder:text-[#525252]"
+                className="w-full rounded-[8px] bg-[#F2F2F2] px-3 py-1.5 text-[14px] md:text-[15px] text-dark outline-none placeholder:text-[#525252]"
               />
             </div>
           )}
@@ -325,7 +325,7 @@ export function MultiSelectDropdown({
                   type="button"
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => toggle(item)}
-                  className={`flex w-full items-center px-4 py-2 md:py-3 text-left text-[13px] md:text-[15px] transition-colors ${isSelected ? "bg-[#FFF0F3] text-[#B31B38]" : "text-[#222222] hover:bg-[#EAEAEA] hover:text-[#222222]"
+                  className={`flex w-full items-center px-4 py-2 md:py-3 text-left text-[14px] md:text-[15px] transition-colors ${isSelected ? "bg-[#FFF0F3] text-[#B31B38]" : "text-[#222222] hover:bg-[#EAEAEA] hover:text-[#222222]"
                     }`}
                 >
                   {item}

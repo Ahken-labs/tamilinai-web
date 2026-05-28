@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRightIcon, ChevronIcon } from "../../assets/Icons";
 import Button from "../common-layout/Button";
-import NewToInaiCart from "./NewToInaiCart";
+// import NewToInaiCart from "./NewToInaiCart";
 import { useLang } from "../../context/LangContext";
 import { verifyOtp, resendOtp, forgotPassword } from "../../lib/api/auth";
 import { ApiError } from "../../lib/api/client";
@@ -210,23 +210,32 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
   ];
 
   return (
-    <div className="w-full flex items-left justify-center px-4 py-8 bg-mvp font-poppins">
+    <div className="w-full flex items-left justify-center max-[340px]:px-2 px-4 max-[500px]:py-4 py-8 bg-mvp font-poppins min-h-[calc(100vh-140px)]">
       <div className="w-full max-w-[784px] flex flex-col items-left">
 
         {/* ── Card 1: Verify ── */}
-        <div className="w-full rounded-[20px] bg-light pt-6 md:pt-8 px-4 md:px-6 pb-4 md:pb-6">
+        <div className="w-full rounded-[16px] md:rounded-[20px] bg-light pt-6 md:pt-8 px-4 md:px-6 pb-6 md:pb-10">
 
           {/* Title */}
-          <h1 className="font-24 font-semibold text-dark leading-[150%]">
-            {variant === "reset"
-              ? t("Enter_your_reset_code")
-              : method === "email"
-              ? t("Verify_your_email")
-              : t("Verify_your_phone")}
-          </h1>
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="min-[500px]:hidden flex items-center justify-center shrink-0"
+            >
+              <ChevronIcon open={false} className="w-5 h-5 rotate-90" />
+            </button>
+            <h1 className="fonts-24 font-semibold text-dark leading-[150%]">
+              {variant === "reset"
+                ? t("Enter_your_reset_code")
+                : method === "email"
+                ? t("Verify_your_email")
+                : t("Verify_your_phone")}
+            </h1>
+          </div>
 
           {/* Description */}
-          <p className="mt-5 sm:mt-6 md:mt-8 lg:mt-10 font-18 font-normal text-dark leading-[150%]">
+          <p className="max-[500px]:mt-2 mt-4 md:mt-6 lg:mt-10 fonts-18 font-normal text-dark leading-[150%]">
             {method === "sms" ? (
               <>
                 {t("We_sent_code_to")}{" "}
@@ -244,7 +253,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
 
           {/* OTP Boxes */}
           <div
-            className={`select-none mt-8 md:mt-12 flex gap-2 sm:gap-3 md:gap-3 ${shake ? "animate-shake" : ""}`}
+            className={`select-none mt-5 sm:mt-6 md:mt-12 flex gap-1.5 sm:gap-2 md:gap-3 ${shake ? "animate-shake" : ""}`}
             onPaste={handlePaste}
           >
             {digits.map((digit, i) => (
@@ -272,7 +281,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
 
           {/* Error */}
           {error && (
-            <p className="mt-3 text-[12px] text-primary">
+            <p className="mt-3 text-[14px] text-primary">
               {error}
               {isExpired && " Click any button to go back and start over."}
             </p>
@@ -285,52 +294,50 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
             </p>
           )}
 
-          {/* Timer + Resend */}
-          <div className="mt-3 flex">
-            <span className="font-16 font-normal text-dark leading-[150%]">
-              {t("Code_expires_in")}{" "}
-              <span className="font-medium">{formattedTimer}</span>
-            </span>
+          {/* Resend */}
+          <div className="mt-2 sm:mt-3">
             <button
               type="button"
               onClick={handleResend}
               disabled={countdown > 0}
-              className={`ml-3 font-16 font-medium leading-[150%] underline transition-colors select-none
+              className={`text-[14px] md:text-[16px] font-medium leading-[150%] transition-colors select-none
                 ${countdown > 0
-                  ? "text-[#B31B38] opacity-40 cursor-default"
-                  : "text-[#B31B38] cursor-pointer hover:text-[#8E162D] active:text-[#6F1023]"
+                  ? "text-[#767676] cursor-default"
+                  : "text-[#B31B38] underline cursor-pointer hover:text-[#8E162D] active:text-[#6F1023]"
                 }`}
             >
-              {t("Resend_code")}
+              {countdown > 0 ? `${t("Resend_code")} (${formattedTimer})` : t("Resend_code")}
             </button>
           </div>
 
           {/* Buttons */}
-          <div className="mt-10 md:mt-12 flex gap-3 md:gap-5 w-full">
-            {variant === "reset" && (
+          <div className="max-[500px]:mt-5 mt-8 sm:mt-10 md:mt-12 flex gap-3 md:gap-5 w-full">
+            <div className="hidden min-[500px]:block flex-1">
               <Button
                 text={t("Back")}
                 onPress={() => router.back()}
-                className="flex-1 !bg-white !text-[#222222] hover:!bg-[#F8F8F8]"
+                className={`!w-full ${variant === "register" ? "!bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#ffe4e9]" : "!bg-white !text-[#B31B38] hover:!bg-[#F8F8F8]"}`}
               />
-            )}
-            <Button
-              text={isExpired ? "Start over" : (loading ? "Verifying..." : t("Next"))}
-              onPress={handleVerify}
-              icon={loading ? undefined : <ArrowRightIcon />}
-              className="flex-1"
-            />
+            </div>
+            <div className="flex-1">
+              <Button
+                text={isExpired ? "Start over" : (loading ? "Verifying..." : t("Next"))}
+                onPress={handleVerify}
+                icon={loading ? undefined : <ArrowRightIcon />}
+                className="!w-full"
+              />
+            </div>
           </div>
 
           {variant === "register" && (
-            <div className="mt-4 flex">
-              <span className="font-16 font-normal text-dark leading-[150%]">
+            <div className="max-[500px]:mt-2 mt-4 sm:flex">
+              <span className="text-[14px] md:text-[16px] font-normal text-dark leading-[150%] mr-2">
                 {method === "sms" ? t("Dont_receive_OTP_via_SMS") : t("Dont_receive_OTP_via_Email")}
               </span>
               <button
                 type="button"
                 onClick={method === "sms" ? handleSwitchToEmail : handleSwitchToSms}
-                className="ml-2 flex items-center font-16 font-medium text-dark underline leading-[150%] cursor-pointer hover:opacity-70 select-none"
+                className="flex items-center text-[14px] md:text-[16px] font-medium text-dark underline leading-[150%] cursor-pointer hover:opacity-70 select-none"
               >
                 {method === "sms" ? t("Verify_via_Email") : t("Verify_via_SMS")}
                 <ChevronIcon open={false} className="ml-1 w-3 h-3 md:w-4 md:h-4 rotate-270" />
@@ -340,21 +347,22 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
         </div>
 
         {variant === "register" ? (
-          <div className="w-full rounded-[18px] md:rounded-[20px] bg-[#EAEAEA] p-4 md:p-6 mt-8 font-16">
+          <div className="w-full rounded-[16px] md:rounded-[20px] bg-[#EAEAEA] p-4 md:p-6 max-[500px]:mt-5 mt-6 md:mt-8 text-[14px] md:text-[16px]">
             <p className="font-semibold text-dark leading-[150%]">
               {t("Benefits_of_verification")}
             </p>
             <div className="mt-4 flex flex-col gap-2">
               {benefits.map((benefit, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <span className="text-dark mt-[3px] shrink-0">•</span>
+                <div key={i} className="flex items-start gap-2 text-[14px] md:text-[16px]">
+                  <span className="text-dark shrink-0">•</span>
                   <span className="font-normal text-dark leading-[150%]">{benefit}</span>
                 </div>
               ))}
             </div>
            </div>
         ) : (
-          <NewToInaiCart className="mt-8" />
+          <></>
+          // <NewToInaiCart className="mt-8" />
         )}
       </div>
     </div>

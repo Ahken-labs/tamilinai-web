@@ -153,6 +153,14 @@ input, textarea, select {
   font-size: 12px;
 }
 
+/* new */
+.fonts-24 {
+  font-size: 18px;
+}
+.fonts-18 {
+  font-size: 14px;
+}
+
 @media (min-width: 640px) {
   .font-40 {
     font-size: 26px;
@@ -177,6 +185,14 @@ input, textarea, select {
   }
   .font-14 {
     font-size: 12px;
+  }
+
+    /* new */
+  .fonts-24 {
+    font-size: 20px;
+  }
+  .fonts-18 {
+    font-size: 15px;
   }
 }
 
@@ -205,6 +221,14 @@ input, textarea, select {
   .font-14 {
     font-size: 13px;
   }
+
+  /* new */
+  .fonts-24 {
+    font-size: 22px;
+  }
+  .fonts-18 {
+    font-size: 16px;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -231,6 +255,14 @@ input, textarea, select {
   }
   .font-14 {
     font-size: 14px;
+  }
+
+  /* new */
+  .fonts-24 {
+    font-size: 24px;
+  }
+  .fonts-18 {
+    font-size: 18px;
   }
 }
 

@@ -148,20 +148,23 @@ export default function CreatePasswordForm({ variant = "register" }: Props) {
     };
 
     return (
+        <>
         <FormCardLayout
             title={variant === "reset" ? t("Create_a_new_password") : t("Create_your_password")}
             subtitle={variant === "reset" ? t("Reset_new_password_subtitle") : t("Create_new_password_subtitle")}
+            paddingBottom = "max-[500px]:pb-0 pb-6 sm:pb-8 md:pb-10"
             footer={
                 <div>
-                    {submitError && (
-                        <p className="mb-3 text-[12px] text-[#B31B38]">{submitError}</p>
-                    )}
-                    <Button
-                        text={loading ? "Please wait..." : (variant === "reset" ? t("Save_new_password") : t("Continue"))}
-                        icon={loading ? undefined : <ArrowRightIcon />}
-                        onPress={handleContinue}
-                        className="flex w-full"
-                    />
+                    {/* Desktop button (>=500px) */}
+                    <div className="hidden min-[500px]:flex">
+                        <div className="flex-1"/>
+                        <Button
+                            text={loading ? "Please wait..." : (variant === "reset" ? t("Save_new_password") : t("Next"))}
+                            icon={loading ? undefined : <ArrowRightIcon />}
+                            onPress={handleContinue}
+                            className="flex-1"
+                        />
+                    </div>
                 </div>
             }
         >
@@ -189,8 +192,8 @@ export default function CreatePasswordForm({ variant = "register" }: Props) {
             />
 
             {showPasswordRules && (
-                <div className="mt-3">
-                    <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                <div className="mt-2 md:mt-3">
+                    <div className="grid grid-cols-1 min-[500px]:grid-cols-2 gap-x-4 gap-y-1">
                         {passwordRules.map((rule) => {
                             const textClass = rule.met
                                 ? "text-green"
@@ -201,7 +204,7 @@ export default function CreatePasswordForm({ variant = "register" }: Props) {
                             return (
                                 <div
                                     key={rule.key}
-                                    className={`font-14 font-normal leading-[125%] ${textClass}`}
+                                    className={`text-[14px] font-normal leading-[125%] ${textClass}`}
                                 >
                                     • {rule.label}
                                 </div>
@@ -211,7 +214,7 @@ export default function CreatePasswordForm({ variant = "register" }: Props) {
                 </div>
             )}
 
-            <div className="mt-6 md:mt-8">
+            <div className="max-[500px]:mt-4 mt-6 md:mt-8">
                 <InputBox
                     value={confirmPassword}
                     onChange={(val) => {
@@ -237,13 +240,30 @@ export default function CreatePasswordForm({ variant = "register" }: Props) {
 
                 {showMatchLine && confirmPassword.length > 0 && password.length > 0 && (
                     <div
-                        className={`mt-3 font-14 font-normal leading-[125%] ${passwordsMatch ? "text-green" : "text-primary"
+                        className={`mt-3 text-[14px] font-normal leading-[125%] ${passwordsMatch ? "text-green" : "text-primary"
                             }`}
                     >
                         • Passwords match
                     </div>
                 )}
+
+                {submitError && (
+                    <p className="mt-3 text-[14px] text-[#B31B38]">{submitError}</p>
+                )}
             </div>
         </FormCardLayout>
+
+        {/* Mobile fixed bottom button (<500px) */}
+        <div className="min-[500px]:hidden fixed bottom-0 left-0 right-0 max-[340px]:px-2 px-4 py-2"
+            style={{ background: "rgba(255, 255, 255, 0.60)", backdropFilter: "blur(11px)" }}
+        >
+            <Button
+                text={loading ? "Please wait..." : (variant === "reset" ? t("Save_new_password") : t("Next"))}
+                icon={loading ? undefined : <ArrowRightIcon />}
+                onPress={handleContinue}
+                className="!w-full"
+            />
+        </div>
+        </>
     );
 }

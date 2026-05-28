@@ -45,11 +45,11 @@ export default function InputBox({
             onChange={(e) => onChange(e.target.value)}
             onFocus={() => { setFocused(true); onFocus?.(); }}
             onBlur={() => { setFocused(false); onBlur?.(); }}
-            className="w-full bg-transparent font-16 outline-none placeholder:text-[#525252] text-dark"
+            className="w-full bg-transparent text-[14px] md:text-[16px] outline-none placeholder:text-[#525252] text-dark"
           />
           {suffix && <div className="shrink-0 ml-2 flex items-center">{suffix}</div>}
         </div>
-        {error && <p className="mt-2 text-[12px] text-[#B31B38]">{error}</p>}
+        {error && <p className="mt-2 text-[14px] text-[#B31B38]">{error}</p>}
       </div>
     );
   }
@@ -79,7 +79,7 @@ export default function InputBox({
         />
         {suffix && <div className="shrink-0 ml-2 flex items-center">{suffix}</div>}
       </div>
-      {error && <p className="mt-0.5 text-[12px] text-[#B31B38]">{error}</p>}
+      {error && <p className="mt-0.5 text-[14px] text-[#B31B38]">{error}</p>}
     </div>
   );
 }

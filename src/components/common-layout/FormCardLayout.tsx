@@ -9,6 +9,7 @@ type FormCardLayoutProps = {
   subtitleMarginTop?:string;
   bgColor?: string;
   maxwidth?: string;
+  paddingHorizontal?:string;
 };
 
 export default function FormCardLayout({
@@ -17,28 +18,29 @@ export default function FormCardLayout({
   children,
   footer,
   bottom,
-  paddingBottom = "pb-8 md:pb-10",
-  childrenTopMargin = "mt-7 sm:mt-10 md:mt-12",
-  subtitleMarginTop = "mt-5 sm:mt-6 md:mt-8 lg:mt-10",
+  paddingBottom = "pb-6 sm:pb-8 md:pb-10",
+  childrenTopMargin = "max-[500px]:mt-6 mt-8 md:mt-12",
+  subtitleMarginTop = "max-[500px]:mt-2 mt-4 md:mt-6 lg:mt-10",
   bgColor = "bg-light",
-  maxwidth = "max-w-[784px]"
+  maxwidth = "max-w-[784px]",
+  paddingHorizontal = "px-4 md:px-6"
 }: FormCardLayoutProps) {
   return (
-    <div className="w-full flex justify-center px-4 md:px-10 py-8 bg-mvp font-poppins">
+    <div className="w-full flex justify-center max-[340px]:px-2 px-4 md:px-10 max-[500px]:py-4 py-8 bg-mvp font-poppins min-h-[calc(100vh-80px)]">
       <div className={`w-full ${maxwidth} flex flex-col`}>
 
-        <div className={`w-full rounded-[20px] px-4 md:px-6 ${bgColor} ${paddingBottom}`}>
+        <div className={`w-full rounded-[16px] sm:rounded-[20px] ${paddingHorizontal} ${bgColor} ${paddingBottom}`}>
           
           {/* Title */}
           {title && (
-          <h1 className="font-24 font-semibold pt-6 md:pt-8 text-dark leading-[150%]">
+          <h1 className="fonts-24 font-semibold pt-6 md:pt-8 text-dark leading-[150%]">
             {title}
           </h1>
           )}
 
           {/* Subtitle */}
           {subtitle && (
-            <p className={ `${subtitleMarginTop} font-18 font-normal text-dark leading-[150%]`}>
+            <p className={ `${subtitleMarginTop} fonts-18 font-normal text-dark leading-[150%]`}>
               {subtitle}
             </p>
           )}
@@ -50,12 +52,12 @@ export default function FormCardLayout({
 
           {/* Footer (buttons etc.) */}
           {footer && (
-            <div className="mt-10 md:mt-12">
+            <div className="mt-6 sm:mt-8 md:mt-12">
               {footer}
             </div>
           )}
         </div>
-        {bottom && <div className="mt-8">{bottom}</div>}
+        {bottom && <div className="max-[500px]:mt-4 mt-8">{bottom}</div>}
       </div>
     </div>
   );

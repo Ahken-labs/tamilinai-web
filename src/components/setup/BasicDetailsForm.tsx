@@ -111,26 +111,37 @@ export default function BasicDetailsForm() {
 
   return (
     <>
+      {/* Mobile: StepProgress outside the card */}
+      <div className="mb-4 min-[500px]:hidden">
+      <div className="fixed top-[68px] bg-light left-0 right-0 z-40 px-4 pb-2">
+        <StepProgress currentStep={1} />
+      </div>
+      </div>
+
       <FormCardLayout
         childrenTopMargin="mt-6 md:mt-8"
+        paddingBottom="max-[500px]:pb-0 pb-8 md:pb-10"
         footer={
-          <div className="flex gap-3 md:gap-5 w-full">
+          <div className="hidden min-[500px]:flex gap-3 md:gap-5 w-full">
             <div className="flex-1" />
             <Button text={t("Next")} icon={<ArrowRightIcon />} onPress={handleNext} className="flex-1" />
           </div>
         }
       >
-        <StepProgress currentStep={1} />
+        {/* Desktop: StepProgress inside the card */}
+        <div className="hidden min-[500px]:block">
+          <StepProgress currentStep={1} />
+        </div>
 
-        <h1 className="mt-6 md:mt-8 lg:mt-10 font-24 font-semibold text-dark leading-[150%]">
+        <h1 className="mt-6 md:mt-8 lg:mt-10 fonts-24 font-semibold text-dark leading-[150%]">
           {t("Basic_details")}
         </h1>
 
-        <div className="mt-6 md:mt-8 lg:mt-10 flex flex-col gap-6 md:gap-8">
+        <div className="max-[500px]:mt-4 mt-6 md:mt-8 lg:mt-10 flex flex-col gap-6 md:gap-8">
 
           {/* Date of birth */}
           <FormRow label={t("DOB")} required error={liveDobError ?? errors.dob}>
-            <div className="flex gap-4 flex-wrap">
+            <div className="flex gap-2">
               <DropdownField typeable compact placeholder="Year" value={birthYear} open={dobOpen.year} setOpen={setDobFieldOpen("year")} onSelect={setYear} items={filtYears} dropdownClassName="max-h-[300px]" className="flex-1" />
               <DropdownField typeable compact placeholder="Month" value={birthMonth} open={dobOpen.month} setOpen={setDobFieldOpen("month")} onSelect={setMonth} items={filtMonths} dropdownClassName="max-h-[300px]" className="flex-1" />
               <DropdownField typeable compact placeholder="Day" value={birthDay} open={dobOpen.day} setOpen={setDobFieldOpen("day")} onSelect={setBirthDay} items={filtDays} dropdownClassName="max-h-[300px]" className="flex-1" />
@@ -139,11 +150,11 @@ export default function BasicDetailsForm() {
 
           {/* Marital status */}
           <FormRow label={t("Marital_status")} required>
-            <div className="flex flex-wrap gap-5 mt-3 md:mt-2">
+            <div className="flex flex-col min-[500px]:flex-row min-[500px]:flex-wrap gap-3 min-[500px]:gap-5 max-[500px]:mt-0 mt-3 md:mt-2">
               {MARITAL_OPTIONS.map((opt) => (
-                <button key={opt} type="button" onClick={() => setMaritalStatus(opt)} className="flex items-center gap-2 cursor-pointer">
+                <button key={opt} type="button" onClick={() => setMaritalStatus(opt)} className="flex items-center gap-1 cursor-pointer">
                   <RadioCircleIcon checked={maritalStatus === opt} />
-                  <span className="font-16 font-normal text-secondary4 leading-[125%]">{opt}</span>
+                  <span className="text-[16px] font-normal text-secondary4 leading-[125%]">{opt}</span>
                 </button>
               ))}
             </div>
@@ -161,11 +172,11 @@ export default function BasicDetailsForm() {
 
           {/* Any physical challenge */}
           <FormRow label={t("Any_physical_challenge")} required>
-            <div className="flex items-center gap-5 mt-3 md:mt-2">
+            <div className="flex flex-col min-[500px]:flex-row min-[500px]:items-center gap-3 min-[500px]:gap-5 max-[500px]:mt-0 mt-3 md:mt-2">
               {(["no", "yes"] as const).map((val) => (
                 <button key={val} type="button" onClick={() => { setPhysicalChallenge(val); if (val === "no") setDisability(""); }} className="flex items-center gap-2 cursor-pointer">
                   <RadioCircleIcon checked={physicalChallenge === val} />
-                  <span className="font-16 font-normal text-secondary4 leading-[125%]">
+                  <span className="text-[16px] font-normal text-secondary4 leading-[125%] whitespace-nowrap">
                     {val === "no" ? "No disability" : "Differently abled"}
                   </span>
                 </button>
@@ -180,13 +191,21 @@ export default function BasicDetailsForm() {
                 value={disability}
                 onChange={(e) => setDisability(e.target.value)}
                 placeholder="Details"
-                className="flex h-[40px] w-full items-center rounded-[12px] border border-[#F2F2F2] bg-[#F2F2F2] px-4 font-16 text-dark outline-none placeholder:text-[#525252]"
+                className="flex h-[40px] w-full items-center rounded-[12px] border border-[#F2F2F2] bg-[#F2F2F2] px-4 text-[16px] text-dark outline-none placeholder:text-[#525252]"
               />
             </FormRow>
           )}
 
         </div>
       </FormCardLayout>
+
+      {/* Mobile fixed bottom button (<500px) */}
+      <div
+        className="min-[500px]:hidden fixed bottom-0 left-0 right-0 px-4 py-2"
+        style={{ background: "rgba(255, 255, 255, 0.60)", backdropFilter: "blur(11px)" }}
+      >
+        <Button text={t("Next")} icon={<ArrowRightIcon />} onPress={handleNext} className="!w-full" />
+      </div>
     </>
   );
 }

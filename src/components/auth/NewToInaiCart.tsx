@@ -20,11 +20,11 @@ export default function NewToInaiCart({ className }: NewToInaiCartProps) {
 
   return (
     <>
-    < div className={`w-full rounded-[18px] md:rounded-[20px] bg-[#EAEAEA] p-4 md:p-6 ${className ?? ""}`}>
-        <p className="font-24 font-semibold text-dark leading-[150%]">
+    < div className={`w-full rounded-[16px] sm:rounded-[20px] bg-[#EAEAEA] p-4 md:p-6 ${className ?? ""}`}>
+        <p className="fonts-24 font-semibold text-dark leading-[150%]">
           {t("New_to_Inai")}
         </p>
-        <div className="mt-5">
+        <div className="mt-4 sm:mt-5">
           <Button
             text={t("Create_my_free_profile")}
             onPress={() => setOpenForm(true)}
@@ -32,7 +32,7 @@ export default function NewToInaiCart({ className }: NewToInaiCartProps) {
             className="w-full !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
           />
         </div>
-        <p className="mt-5 font-18 font-normal text-dark leading-[150%] text-center">
+        <p className="max-[500px]:mt-2 mt-4 sm:mt-5 fonts-18 font-normal text-dark leading-[150%] max-[500px]:text-left text-center">
           {t("We_keep_your_information_safe_and_secure")}
         </p>
       </div>

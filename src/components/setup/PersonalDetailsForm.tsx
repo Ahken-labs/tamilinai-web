@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { ArrowRightIcon, ChevronIcon } from "../../assets/Icons";
 import Button from "../common-layout/Button";
 import DropdownField from "../common-layout/DropdownField";
 import InputBox from "../common-layout/InputBox";
@@ -62,10 +63,8 @@ export default function PersonalDetailsForm() {
   const setOpen = (key: OpenKey) => (val: boolean) =>
     setOpens({ ...ALL_CLOSED, [key]: val });
 
-  // ── Filtered dropdown items ───────────────────────────────────────
   const filtEducation = useMemo(() => filterItems(EDUCATION_OPTIONS, education), [education]);
   const filtReligion = useMemo(() => filterItems(RELIGION_OPTIONS, religion), [religion]);
-
   const filtCountry = useMemo(() => filterItems(COUNTRY_OPTIONS, country), [country]);
   const filtCitizenship = useMemo(() => filterItems(COUNTRY_OPTIONS, citizenship), [citizenship]);
 
@@ -109,142 +108,159 @@ export default function PersonalDetailsForm() {
     persist();
     router.push("/photo-upload");
 
-    // Fire in background — user is already navigating forward
     savePersonalDetails({ education, occupation, religion, caste, country, city, citizenship })
       .catch(() => { /* user can re-enter in profile */ });
   }
 
   return (
-    <FormCardLayout
-      childrenTopMargin="mt-6 md:mt-8"
-      footer={
-        <div className="flex gap-5 w-full">
-          <Button
-            text={t("Back")}
-            onPress={handleBack}
-            className="flex-1 !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
-          />
-          <Button
-            text={t("Done")}
-            onPress={handleDone}
-            className="flex-1"
-          />
+    <>
+      {/* Mobile: StepProgress fixed at top */}
+      <div className="mb-4 min-[500px]:hidden">
+        <div className="fixed top-[68px] bg-light left-0 right-0 z-40 px-4 pb-2">
+          <StepProgress currentStep={2} />
         </div>
-      }
-    >
-      <StepProgress currentStep={2} />
-
-      <h1 className="mt-6 md:mt-8 lg:mt-10 font-24 font-semibold text-dark leading-[150%]">
-        {t("Education_Religion_Location")}
-      </h1>
-
-      <div className="mt-6 md:mt-8 lg:mt-10 flex flex-col gap-6 md:gap-8">
-
-        {/* ── Education & Occupation ─────────────────────────────── */}
-
-        <FormRow label={t("Highest_education")} align="center" required error={errors.education}>
-          <DropdownField
-            typeable compact
-            placeholder={t("Select_education")}
-            value={education}
-            open={opens.education}
-            setOpen={setOpen("education")}
-            onSelect={setEducation}
-            items={filtEducation}
-            dropdownClassName="max-h-[220px]"
-          />
-
-        </FormRow>
-
-        <FormRow label={t("Occupation")} align="center" required error={errors.occupation}>
-          <InputBox
-            compact
-            value={occupation}
-            onChange={setOccupation}
-            label={t("Enter_job_work")}
-          />
-        </FormRow>
-
-        {/* ── Divider ───────────────────────────────────────────── */}
-        <hr className="border-0 border-t border-[#EAEAEA]" />
-
-        {/* ── Religion & Caste ──────────────────────────────────── */}
-
-        <FormRow label={t("Religion")} align="center" required error={errors.religion}>
-          <DropdownField
-            typeable compact
-            placeholder={t("Select_religion")}
-            value={religion}
-            open={opens.religion}
-            setOpen={setOpen("religion")}
-            onSelect={(value) => {
-              setReligion(value);
-              setCaste("");
-            }}
-            items={filtReligion}
-            dropdownClassName="max-h-[220px]"
-          />
-        </FormRow>
-
-        <FormRow label={t("Caste_or_denomination")} align="center" required error={errors.caste}>
-          <DropdownField
-            typeable
-            compact
-            placeholder={
-              religion
-                ? t("Select_caste")
-                : "Select religion first"
-            }
-            value={caste}
-            open={opens.caste}
-            setOpen={setOpen("caste")}
-            onSelect={setCaste}
-            items={filtCaste}
-            dropdownClassName="max-h-[220px]"
-          />
-        </FormRow>
-
-        {/* ── Divider ───────────────────────────────────────────── */}
-        <hr className="border-0 border-t border-[#EAEAEA]" />
-
-        {/* ── Location ──────────────────────────────────────────── */}
-
-        <FormRow label={t("Country_living_in")} align="center" required error={errors.country}>
-          <DropdownField
-            typeable compact
-            placeholder={t("Select_country")}
-            value={country}
-            open={opens.country}
-            setOpen={setOpen("country")}
-            onSelect={setCountry}
-            items={filtCountry}
-            dropdownClassName="max-h-[220px]"
-          />
-        </FormRow>
-
-        <FormRow label={t("Residing_district_or_city")} align="center" required error={errors.city}>
-          <input
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            placeholder="Enter city or district"
-            className="flex h-[40px] w-full items-center rounded-[12px] border border-[#F2F2F2] bg-[#F2F2F2] px-4 font-16 text-dark outline-none placeholder:text-[#525252]"
-          />
-        </FormRow>
-
-        <FormRow label={t("Citizenship")} align="center" required error={errors.citizenship}>
-          <DropdownField
-            typeable compact
-            placeholder={t("Select_citizenship")}
-            value={citizenship}
-            open={opens.citizenship}
-            setOpen={setOpen("citizenship")}
-            onSelect={setCitizenship}
-            items={filtCitizenship}
-            dropdownClassName="max-h-[220px]"
-          />
-        </FormRow>
-
       </div>
-    </FormCardLayout>
+
+      <FormCardLayout
+        childrenTopMargin="mt-6 md:mt-8"
+        paddingBottom="max-[500px]:pb-0 pb-8 md:pb-10"
+        footer={
+          <div className="hidden min-[500px]:flex gap-5 w-full">
+            <div className="hidden min-[500px]:block flex-1">
+              <Button
+                text={t("Back")}
+                onPress={handleBack}
+                className="!w-full !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
+              />
+            </div>
+            <div className="flex-1">
+              <Button text={t("Next")} icon={<ArrowRightIcon />} onPress={handleDone} className="!w-full" />
+            </div>
+          </div>
+        }
+      >
+        {/* Desktop: StepProgress inside card */}
+        <div className="hidden min-[500px]:block">
+          <StepProgress currentStep={2} />
+        </div>
+
+        {/* Title with mobile chevron back */}
+        <div className="flex items-start gap-2 mt-6 md:mt-8 lg:mt-10">
+          <button
+            type="button"
+            onClick={handleBack}
+            className="min-[500px]:hidden flex items-center justify-center shrink-0"
+          >
+            <ChevronIcon open={false} className="mt-1 w-5 h-5 rotate-90" />
+          </button>
+          <h1 className="fonts-24 font-semibold text-dark leading-[150%]">
+            {t("Education_Religion_Location")}
+          </h1>
+        </div>
+
+        <div className="mt-6 md:mt-8 lg:mt-10 flex flex-col max-[500px]:gap-5 gap-6 md:gap-8">
+
+          <FormRow label={t("Highest_education")} align="center" required error={errors.education}>
+            <DropdownField
+              typeable compact
+              placeholder={t("Select_education")}
+              value={education}
+              open={opens.education}
+              setOpen={setOpen("education")}
+              onSelect={setEducation}
+              items={filtEducation}
+              dropdownClassName="max-h-[220px]"
+            />
+          </FormRow>
+
+          <FormRow label={t("Occupation")} align="center" required error={errors.occupation}>
+            <InputBox
+              compact
+              value={occupation}
+              onChange={setOccupation}
+              label={t("Enter_job_work")}
+            />
+          </FormRow>
+
+          <hr className="border-0 border-t border-[#EAEAEA]" />
+
+          <FormRow label={t("Religion")} align="center" required error={errors.religion}>
+            <DropdownField
+              typeable compact
+              placeholder={t("Select_religion")}
+              value={religion}
+              open={opens.religion}
+              setOpen={setOpen("religion")}
+              onSelect={(value) => {
+                setReligion(value);
+                setCaste("");
+              }}
+              items={filtReligion}
+              dropdownClassName="max-h-[220px]"
+            />
+          </FormRow>
+
+          <FormRow label={t("Caste_or_denomination")} align="center" required error={errors.caste}>
+            <DropdownField
+              typeable compact
+              placeholder={religion ? t("Select_caste") : "Select religion first"}
+              value={caste}
+              open={opens.caste}
+              setOpen={setOpen("caste")}
+              onSelect={setCaste}
+              items={filtCaste}
+              dropdownClassName="max-h-[220px]"
+            />
+          </FormRow>
+
+          <hr className="border-0 border-t border-[#EAEAEA]" />
+
+          <FormRow label={t("Country_living_in")} align="center" required error={errors.country}>
+            <DropdownField
+              typeable compact
+              placeholder={t("Select_country")}
+              value={country}
+              open={opens.country}
+              setOpen={setOpen("country")}
+              onSelect={setCountry}
+              items={filtCountry}
+              dropdownClassName="max-h-[220px]"
+            />
+          </FormRow>
+
+          <FormRow label={t("Residing_district_or_city")} align="center" required error={errors.city}>
+            <input
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              placeholder="Enter city or district"
+              className="flex h-[40px] w-full items-center rounded-[12px] border border-[#F2F2F2] bg-[#F2F2F2] px-4 text-[16px] text-dark outline-none placeholder:text-[#525252]"
+            />
+          </FormRow>
+
+          <FormRow label={t("Citizenship")} align="center" required error={errors.citizenship}>
+            <DropdownField
+              typeable compact
+              placeholder={t("Select_citizenship")}
+              value={citizenship}
+              open={opens.citizenship}
+              setOpen={setOpen("citizenship")}
+              onSelect={setCitizenship}
+              items={filtCitizenship}
+              dropdownClassName="max-h-[220px]"
+            />
+          </FormRow>
+
+        </div>
+      </FormCardLayout>
+
+      {/* Mobile fixed bottom button (<500px) */}
+      <div
+        className="min-[500px]:hidden fixed bottom-0 left-0 right-0 px-4 py-2"
+        style={{ background: "rgba(255, 255, 255, 0.60)", backdropFilter: "blur(11px)" }}
+      >
+        <Button text={t("Next")} onPress={handleDone} className="!w-full" 
+        icon={<ArrowRightIcon />}/>
+      </div>
+    </>
   );
 }
