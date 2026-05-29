@@ -35,6 +35,7 @@ export default function ForgotPasswordForm() {
       return;
     }
     sessionStorage.setItem("otp_sent_at", String(Date.now()));
+    sessionStorage.setItem("inai_reset_identifier", value);
     if (method === "sms") {
       const code = countryCode.match(/\(\+\d+\)/)?.[0] ?? countryCode;
       router.push(`/reset-otp?phone=${encodeURIComponent(value)}&countryCode=${encodeURIComponent(code)}`);
