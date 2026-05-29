@@ -43,7 +43,7 @@ export default function CountryCodeSelect({ value, onChange, open, setOpen, labe
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className={`flex h-[55px] md:h-[60px] w-full items-center justify-between rounded-[12px] border px-4 text-left transition-colors focus:outline-none cursor-pointer
+        className={`flex max-[500px]:h-[52px] h-[55px] md:h-[60px] w-full items-center justify-between rounded-[12px] border px-4 text-left transition-colors focus:outline-none cursor-pointer
           ${isLabelled ? "bg-[#F2F2F2] border-[#F2F2F2]" : "bg-white border-[#8C8C8C] focus:border-[#B31B38]"}`}
       >
         {isLabelled ? (

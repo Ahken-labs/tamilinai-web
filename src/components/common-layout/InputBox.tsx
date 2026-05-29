@@ -57,7 +57,7 @@ export default function InputBox({
   return (
     <div className="flex flex-col">
       <div
-        className={`relative flex h-[55px] md:h-[60px] items-center rounded-xl border px-4 transition-colors
+        className={`relative flex max-[500px]:h-[52px] h-[55px] md:h-[60px] items-center rounded-xl border px-4 transition-colors
           ${focused ? "border-[#B31B38]" : "border-[#8C8C8C]"} ${className ?? ""}`}
       >
         <label

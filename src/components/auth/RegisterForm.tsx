@@ -135,33 +135,8 @@ export default function RegisterForm({
         }
     };
 
-    const body = (
-        <div className="flex flex-col gap-6 px-4 md:px-6 pb-6 pt-6 md:pt-8 max-w-[640px] mx-auto">
-            {variant === "modal" ? (
-                <div className="flex items-start justify-between gap-4">
-                    <div className="flex flex-col">
-                        <h2 className="text-left text-[16px] sm:text-[17px] md:text-[18px] font-semibold leading-[1.5] text-dark">
-                            {t("Create_your_free_profile")}
-                        </h2>
-                        <p className="text-[12px] mt-1 md:text-[14px] font-normal leading-[150%] text-secondary3">
-                            Find your life partner - rooted in Tamil values
-                        </p>
-                    </div>
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="shrink-0 transition hover:opacity-80 cursor-pointer"
-                        aria-label="Close"
-                    >
-                        <CloseCircleIcon className="h-8 w-8 transition-transform duration-200 hover:scale-110 active:scale-95 " />
-                    </button>
-                </div>
-            ) : (
-                <h2 className="text-center text-[16px] sm:text-[17px] md:text-[18px] font-semibold leading-[1.5] text-dark">
-                    {t("Create_your_free_profile")}
-                </h2>
-            )}
-
+    const formFields = (
+        <>
             <DropdownField
                 value={profileFor}
                 placeholder={t("This_profile_is_for")}
@@ -173,7 +148,7 @@ export default function RegisterForm({
                     setErrors((prev) => ({ ...prev, gender: undefined }));
                 }}
                 items={PROFILES}
-                className="h-[55px] md:h-[60px] bg-white"
+                className="max-[500px]:h-[52px] h-[55px] md:h-[60px] bg-white"
                 borderClassName="border-[#8C8C8C]"
                 openBorderClassName="border-[#B31B38]"
                 textClassName="text-[#525252]"
@@ -186,7 +161,6 @@ export default function RegisterForm({
                         <span className="shrink-0 text-[14px] md:text-[16px] font-normal leading-[125%] text-[#222222]">
                             {t("Gender")}
                         </span>
-
                         <div className="flex items-center gap-6">
                             <GenderOption
                                 label={t("Male")}
@@ -196,7 +170,6 @@ export default function RegisterForm({
                                     setErrors((prev) => ({ ...prev, gender: undefined }));
                                 }}
                             />
-
                             <GenderOption
                                 label={t("Female")}
                                 checked={gender === "Female"}
@@ -208,17 +181,19 @@ export default function RegisterForm({
                         </div>
                     </div>
                     {errors.gender && (
-                        <p className="text-[12px] mt-1 text-[#B31B38]">{errors.gender}</p>
+                        <p className="text-[14px] mt-1 text-[#B31B38]">{errors.gender}</p>
                     )}
                 </div>
             )}
+
             <InputBox
                 value={fullName}
                 onChange={setFullName}
                 label={t("Name")}
                 error={errors.name}
             />
-            <div className="grid grid-cols-1 gap-5 min-[370px]:grid-cols-[120px_1fr]">
+
+            <div className="grid grid-cols-1 max-[500px]:gap-4 gap-5 min-[500px]:grid-cols-[120px_1fr]">
                 <CountryCodeSelect
                     value={countryCode}
                     onChange={setCountryCode}
@@ -249,7 +224,7 @@ export default function RegisterForm({
             />
 
             {errors.submit && (
-                <p className="text-[12px] text-[#B31B38]">{errors.submit}</p>
+                <p className="text-[14px] text-[#B31B38]">{errors.submit}</p>
             )}
 
             <div className="flex flex-col gap-5">
@@ -260,45 +235,44 @@ export default function RegisterForm({
                     className="group relative mt-2 flex w-full items-center justify-center py-3 text-[14px] font-semibold text-white transition-all active:scale-[0.99] md:text-[16px] cursor-pointer"
                 >
                     <div className="absolute left-[28px] right-[28px] top-0 bottom-0 z-0 bg-[#B31B38] transition-colors duration-150 group-hover:bg-[#8E162D] group-active:bg-[#6F1023]" />
-
                     <HeroButtonSideIcon
                         className={`absolute left-0 top-0 z-10 h-full w-auto ${HERO_BTN_ICON_COLOR}`}
                     />
                     <HeroButtonSideIcon
                         className={`absolute right-0 top-0 z-10 h-full w-auto scale-x-[-1] ${HERO_BTN_ICON_COLOR}`}
                     />
-
                     <span className="relative z-20 flex select-none items-center gap-2 px-4">
                         {loading ? "Please wait..." : t("Create_my_free_profile")}
                         {!loading && <ArrowRightIcon />}
                     </span>
                 </button>
-                <div className="flex flex-col gap-2">
-                    <p className="text-center text-[11px] sm:text-[12px] md:text-[14px] leading-[1.5] text-secondary1">
+                <div className="flex flex-col max-[500px]:gap-0 gap-2">
+                    <p className="text-center text-[12px] md:text-[14px] leading-[1.5] text-secondary1">
                         {t("Takes_2_minutes_Your_data_is_never_shared_without_your_permission")}
                     </p>
                     {variant === "modal" && (
                         <p className="font-poppins text-center text-[12px] md:text-[14px] font-normal leading-[150%] text-primary">
-                            Already registered? {" "}
-                            <Link
-                                href="/login"
-                                prefetch
-                                className="underline cursor-pointer select-none">
+                            Already registered?{" "}
+                            <Link href="/login" prefetch className="underline cursor-pointer select-none">
                                 Sign in
                             </Link>
                         </p>
-
                     )}
                 </div>
             </div>
-        </div>
+        </>
     );
 
     if (variant === "hero") {
         return (
             <div className="w-full flex justify-center">
                 <div className="w-full lg:w-[400px] rounded-[20px] bg-white shadow-[0px_2px_16px_0px_rgba(0,0,0,0.12)]">
-                    {body}
+                    <div className="flex flex-col gap-6 px-4 md:px-6 pb-6 pt-6 md:pt-8 max-w-[640px] mx-auto">
+                        <h2 className="text-center text-[16px] sm:text-[17px] md:text-[18px] font-semibold leading-[1.5] text-dark">
+                            {t("Create_your_free_profile")}
+                        </h2>
+                        {formFields}
+                    </div>
                 </div>
             </div>
         );
@@ -306,7 +280,7 @@ export default function RegisterForm({
 
     return (
         <div
-            className={`fixed inset-0 z-50 flex items-center justify-center px-4 pb-4 sm:items-center sm:pb-0 transition-opacity duration-300 ${open ? "opacity-100" : "pointer-events-none opacity-0"
+            className={`fixed inset-0 z-50 flex items-end min-[500px]:items-center justify-center min-[500px]:px-4 min-[500px]:pb-4 transition-opacity duration-300 ${open ? "opacity-100" : "pointer-events-none opacity-0"
                 }`}
         >
             <button
@@ -317,10 +291,33 @@ export default function RegisterForm({
             />
 
             <div
-                className={`relative w-full max-w-[420px] md:max-w-[616px] overflow-hidden rounded-[20px] bg-white shadow-[0px_2px_16px_0px_rgba(0,0,0,0.18)] transition-all duration-300 ease-out ${animateIn ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
+                className={`relative w-full min-[500px]:max-w-[420px] md:max-w-[616px] rounded-t-[24px] min-[500px]:rounded-[20px] bg-white shadow-[0px_2px_16px_0px_rgba(0,0,0,0.18)] flex flex-col max-h-[85dvh] min-[500px]:max-h-none overflow-hidden transition-all duration-300 ease-out ${animateIn ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
                     }`}
             >
-                {body}
+                {/* Header — fixed inside the sheet on mobile */}
+                <div className="shrink-0 flex items-start justify-between gap-4 px-4 md:px-6 pt-6 pb-3 min-[500px]:pb-0">
+                    <div className="flex flex-col">
+                        <h2 className="text-left fonts-24 font-semibold leading-[1.5] text-dark">
+                            {t("Create_your_free_profile")}
+                        </h2>
+                        <p className="text-[14px] mt-1 md:text-[16px] font-normal leading-[150%] text-secondary3">
+                            Find your life partner — rooted in Tamil values
+                        </p>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="shrink-0 transition hover:opacity-80 cursor-pointer"
+                        aria-label="Close"
+                    >
+                        <CloseCircleIcon className="h-8 w-8 transition-transform duration-200 hover:scale-110 active:scale-95" />
+                    </button>
+                </div>
+
+                {/* Scrollable form content */}
+                <div className="flex-1 overflow-y-auto min-[500px]:overflow-visible min-[500px]:flex-none flex flex-col max-[500px]:gap-4 gap-6 px-4 md:px-6 pb-6 pt-4 min-[500px]:pt-6">
+                    {formFields}
+                </div>
             </div>
         </div>
     );
