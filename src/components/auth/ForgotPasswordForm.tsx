@@ -129,7 +129,7 @@ export default function ForgotPasswordForm() {
     {/* Send button */}
     <div className="max-[500px]:mt-4 mt-8 md:mt-10">
       <Button
-        text={loading ? "Sending..." : t("Send_reset_code")}
+        text={loading ? "Please wait..." : t("Send_reset_code")}
         icon={loading ? undefined : <ArrowRightIcon />}
         onPress={handleSend}
         className="w-full"
