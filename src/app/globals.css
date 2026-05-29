@@ -160,6 +160,9 @@ input, textarea, select {
 .fonts-18 {
   font-size: 14px;
 }
+.fonts-16 {
+  font-size: 14px;
+}
 
 @media (min-width: 640px) {
   .font-40 {
@@ -193,6 +196,9 @@ input, textarea, select {
   }
   .fonts-18 {
     font-size: 15px;
+  }
+  .fonts-16 {
+    font-size: 14px;
   }
 }
 
@@ -229,6 +235,9 @@ input, textarea, select {
   .fonts-18 {
     font-size: 16px;
   }
+  .fonts-16 {
+    font-size: 16px;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -263,6 +272,9 @@ input, textarea, select {
   }
   .fonts-18 {
     font-size: 18px;
+  }
+  .fonts-16 {
+    font-size: 16px;
   }
 }
 

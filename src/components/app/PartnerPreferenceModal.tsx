@@ -59,15 +59,15 @@ const SEARCH_TABS = [
 
 // ── Small helpers ─────────────────────────────────────────────────────────
 
-function RadioGroup({ options, value, onChange }: {
-  options: string[]; value: string; onChange: (v: string) => void;
+function RadioGroup({ options, value, onChange, className = "" }: {
+  options: string[]; value: string; onChange: (v: string) => void; className?: string;
 }) {
   return (
-    <div className="flex flex-wrap gap-4 md:gap-5">
+    <div className={`flex flex-wrap max-[500px]:gap-2 gap-4 md:gap-5 ${className}`}>
       {options.map((opt) => (
         <button key={opt} type="button" onClick={() => onChange(opt)} className="flex items-center gap-2">
           <RadioCircleIcon checked={value === opt} />
-          <span className="font-poppins font-16 text-left text-secondary4 leading-[150%]">{opt}</span>
+          <span className="font-poppins text-[16px] text-left text-secondary4 leading-[150%]">{opt}</span>
         </button>
       ))}
     </div>
@@ -250,22 +250,22 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
   const showLifestyleFields = !lifestyleCollapsible || isLifestyleOpen;
 
   return createPortal(
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50">
-      <div className="w-full max-w-[784px] max-h-[90vh] flex flex-col rounded-[20px] bg-light shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-[9999] flex items-end min-[500px]:items-center justify-center min-[500px]:p-4 bg-black/50">
+      <div className="w-full min-[500px]:max-w-[784px] max-h-[90dvh] min-[500px]:max-h-[90vh] flex flex-col rounded-t-[20px] min-[500px]:rounded-[20px] bg-light shadow-2xl overflow-hidden">
 
         {/* Header: onboarding */}
         {variant === "onboarding" && (
           <div className="shrink-0 bg-[#F0F0F0] px-4 md:px-5 lg:px-6 py-4 md:py-5 lg:py-6">
             <div className="flex items-center gap-3">
               <div className="min-w-0 flex-1">
-                <p className="font-poppins font-16 font-normal text-dark leading-[150%]">
+                <p className="font-poppins fonts-16 font-normal text-dark leading-[150%]">
                   You successfully registered!
                 </p>
-                <p className="font-poppins font-18 font-medium text-dark leading-[150%]">
-                  Tell us what matters to you in a partner &amp; we&apos;ll show your best matches.
+                <p className="font-poppins text-[16px] md:text-[18px] font-medium text-dark leading-[150%]">
+                  Tell us what matters to you in a partner &amp; we&apos;ll show your best matches.<span className="min-[500px]:hidden text-[18px]"> 🎉</span>
                 </p>
               </div>
-              <PartyIcon />
+              <span className="hidden min-[500px]:block shrink-0"><PartyIcon /></span>
             </div>
           </div>
         )}
@@ -326,15 +326,15 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
           ) : (
             <>
               {showSectionHeadings && (
-                <h2 className="font-poppins font-18 font-medium text-dark py-6 md:py-7 lg:py-8 leading-[150%]">
+                <h2 className="font-poppins text-[16px] md:text-[18px] font-medium text-dark max-[500px]:py-5 py-6 md:py-7 lg:py-8 leading-[150%]">
                   Age &amp; height range
                 </h2>
               )}
 
-              <div className={`flex flex-col gap-6 ${!showSectionHeadings ? "pt-6" : ""}`}>
+              <div className={`flex flex-col max-[500px]:gap-5 gap-6 ${!showSectionHeadings ? "pt-6" : ""}`}>
                 {/* Age */}
                 <FormRow label="Age" required error={ageError}>
-                  <div className="flex flex-col min-[430px]:flex-row items-stretch min-[430px]:items-center gap-2 min-[430px]:gap-4">
+                  <div className="flex flex-row items-center max-[500px]:gap-2 gap-4">
                     <DropdownField
                       typeable compact
                       placeholder="Min"
@@ -363,7 +363,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
 
                 {/* Height */}
                 <FormRow label="Height" required error={heightError}>
-                  <div className="flex flex-col min-[430px]:flex-row items-stretch min-[430px]:items-center gap-2 min-[430px]:gap-4">
+                  <div className="flex flex-row items-center max-[500px]:gap-2 gap-4">
                     <DropdownField
                       typeable compact
                       placeholder="Min"
@@ -392,34 +392,34 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
               </div>
 
               {/* Background & lifestyle */}
-              <div className={`mt-3 md:mt-4 lg:mt-5 border-t border-[#EAEAEA]`}>
+              <div className={`mt-5 sm:mt-6 md:mt-8 border-t border-[#EAEAEA]`}>
                 {lifestyleCollapsible && (
 
                   <button
                     type="button"
                     onClick={() => setIsLifestyleOpen((o) => !o)}
-                    className="w-full flex items-center justify-between"
+                    className="w-full flex items-center justify-between gap-2 pt-6 md:pt-7 lg:pt-8 "
                   >
-                    <h2 className="font-poppins font-18 pb-1 md:pb-3 pt-6 md:pt-7 lg:pt-8 font-medium text-dark leading-[150%]">
+                    <h2 className="font-poppins text-[16x] md:text-[18px] pb-1 md:pb-3 font-medium text-dark leading-[150%] text-left">
                       {isLifestyleOpen ? "Background & lifestyle" : "Background & lifestyle (Optional)"}
                     </h2>
-                    <ChevronIcon open={isLifestyleOpen} />
+                    <ChevronIcon open={isLifestyleOpen} className="w-4 h-4 "/>
                   </button>
                 )}
 
                 {showLifestyleFields && (
                   <div className="divide-y divide-[#EAEAEA]">
-                    <FormRow label="Marital history" required className="py-3 md:py-4 lg:py-5">
-                      <div className="flex flex-wrap mt-3 md:mt-2">
-                        <RadioGroup options={[...MARITAL_OPTIONS, "Open to all"]} value={marital} onChange={setMarital} />
+                    <FormRow label="Marital history" required className="max-[500px]:py-5 py-4 lg:py-5">
+                      <div className="flex flex-wrap max-[500px]:mt-1 mt-3 md:mt-2">
+                        <RadioGroup options={[...MARITAL_OPTIONS, "Open to all"]} value={marital} onChange={setMarital} className="max-[370px]:flex-col min-[370px]:max-[500px]:!grid min-[370px]:max-[500px]:grid-cols-2" />
                       </div>
                     </FormRow>
-                    <FormRow label="Physical ability" required className="-mt-2 py-3 md:py-4 lg:py-5">
-                      <div className="flex flex-wrap mt-3 md:mt-2">
-                        <RadioGroup options={PHYSICAL_OPTIONS} value={physical} onChange={setPhysical} />
+                    <FormRow label="Physical ability" required className="max-[500px]:mt-0 -mt-2 max-[500px]:py-5 py-4 lg:py-5">
+                      <div className="flex flex-wrap max-[500px]:mt-1 mt-3 md:mt-2">
+                        <RadioGroup options={PHYSICAL_OPTIONS} value={physical} onChange={setPhysical} className="max-[500px]:flex-col" />
                       </div>
                     </FormRow>
-                    <FormRow label="Education" required className="py-3 md:py-4 lg:py-5">
+                    <FormRow label="Education" required className="max-[500px]:py-5 py-4 lg:py-5">
                       <MultiSelectDropdown
                         placeholder="Select education levels"
                         options={EDUCATION_OPTIONS}
@@ -429,9 +429,9 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
                         setOpen={setEduOpen}
                         typeable
                       />
-                      <span className="font-14 ml-1">Click to edit</span>
+                      <span className="text-[12px] ml-1">Click to edit</span>
                     </FormRow>
-                    <FormRow label="Country Living In" required className="py-3 md:py-4 lg:py-5">
+                    <FormRow label="Country living in" required className="max-[500px]:py-5 py-4 lg:py-5">
                       <MultiSelectDropdown
                         placeholder="Show all"
                         options={COUNTRY_OPTIONS}
@@ -442,14 +442,14 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
                         showAll
                         typeable
                       />
-                      <span className="font-14 ml-1">Click to edit</span>
+                      <span className="text-[12px] ml-1">Click to edit</span>
                     </FormRow>
-                    <FormRow label="Religion" required className="-mt-2 py-3 md:py-4 lg:py-5">
-                      <div className="flex flex-wrap mt-3 md:mt-2">
-                        <RadioGroup options={RELIGION_PREF} value={religion} onChange={setReligion} />
+                    <FormRow label="Religion" required className="max-[500px]:mt-0 -mt-2 max-[500px]:py-5 py-4 lg:py-5">
+                      <div className="flex flex-wrap max-[500px]:mt-1 mt-3 md:mt-2">
+                        <RadioGroup options={RELIGION_PREF} value={religion} onChange={setReligion} className="max-[370px]:flex-col min-[370px]:max-[500px]:gap-x-6" />
                       </div>
                     </FormRow>
-                    <FormRow label="Cast or denomination" required className="py-3 md:py-4 lg:py-5">
+                    <FormRow label="Cast or denomination" required className="max-[500px]:py-5 py-4 lg:py-5">
                       <MultiSelectDropdown
                         placeholder="Show all"
                         options={CASTE_OPTIONS}
@@ -460,39 +460,39 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
                         showAll
                         typeable
                       />
-                      <span className="font-14 ml-1">Click to edit</span>
+                      <span className="text-[12px] ml-1">Click to edit</span>
                     </FormRow>
                     {/* Food/Smoking/Drinking grouped — no dividers between them */}
                     <div>
-                      <FormRow label="Food Habits" required className="-mt-2 py-3 md:py-4 lg:py-5">
-                        <div className="flex flex-wrap mt-3 md:mt-2">
-                          <RadioGroup options={FOOD_OPTIONS} value={food} onChange={setFood} />
+                      <FormRow label="Food habits" required className="max-[500px]:mt-0 -mt-2 max-[500px]:py-5 py-4 lg:py-5">
+                        <div className="flex flex-wrap max-[500px]:mt-1 mt-3 md:mt-2">
+                          <RadioGroup options={FOOD_OPTIONS} value={food} onChange={setFood} className="max-[452px]:flex-col min-[452px]:max-[500px]:gap-x-6"/>
                         </div>
                       </FormRow>
-                      <FormRow label="Smoking Habits" required className="-mt-2 py-3 md:py-4 lg:py-5">
-                        <div className="flex flex-wrap mt-3 md:mt-2">
-                          <RadioGroup options={SMOKING_OPTIONS} value={smoking} onChange={setSmoking} />
+                      <FormRow label="Smoking habits" required className="max-[500px]:mt-0 -mt-2 max-[500px]:py-0 py-4 lg:py-5">
+                        <div className="flex flex-wrap max-[500px]:mt-1 mt-3 md:mt-2">
+                          <RadioGroup options={SMOKING_OPTIONS} value={smoking} onChange={setSmoking} className="max-[370px]:flex-col min-[370px]:max-[500px]:gap-x-6"/>
                         </div>
                       </FormRow>
-                      <FormRow label="Drinking Habits" required className={`-mt-2 py-3 md:py-4 lg:py-5 ${variant === "search" ? "border-b border-[#EAEAEA]" : ""}`}>
-                        <div className="flex flex-wrap mt-3 md:mt-2">
-                          <RadioGroup options={DRINKING_OPTIONS} value={drinking} onChange={setDrinking} />
+                      <FormRow label="Drinking habits" required className={`max-[500px]:mt-0 -mt-2 max-[500px]:py-5 py-4 lg:py-5 ${variant === "search" ? "border-b border-[#EAEAEA]" : ""}`}>
+                        <div className="flex flex-wrap max-[500px]:mt-1 mt-3 md:mt-2">
+                          <RadioGroup options={DRINKING_OPTIONS} value={drinking} onChange={setDrinking} className="max-[370px]:flex-col min-[370px]:max-[500px]:gap-x-6"/>
                         </div>
                       </FormRow>
                     </div>
 
                     {showAboutPartner && (
                       <div className="pt-6 md:pt-7 lg:pt-8 pb-6 flex flex-col gap-2">
-                        <span className="font-poppins font-16 font-medium text-dark leading-[150%]">
+                        <span className="font-poppins text-[16px] font-medium text-dark leading-[150%]">
                           About my partner (optional)
                         </span>
                         <textarea
                           value={aboutPartner}
                           onChange={handleAboutChange}
-                          placeholder="Share what genuinely matters to you - values, personality, life goals."
-                          className="w-full h-[160px] md:h-[199px] p-3 sm:p-4 rounded-[12px] border border-[#D0D0D0] font-poppins font-16 text-dark placeholder:text-[#656565] resize-none outline-none focus:border-[#B31B38] transition-colors"
+                          placeholder="Share what genuinely matters to you — values, personality, life goals."
+                          className="w-full h-[160px] md:h-[199px] p-3 sm:p-4 rounded-[12px] border border-[#D0D0D0] font-poppins text-[16px] text-dark placeholder:text-[#656565] resize-none outline-none focus:border-[#B31B38] transition-colors"
                         />
-                        <div className="text-left font-poppins font-14 text-secondary4">
+                        <div className="text-left font-poppins text-[12px] md:text-[14px] text-secondary4">
                           {wordCount} / {MAX_ABOUT_WORDS}
                         </div>
                       </div>
@@ -504,7 +504,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
           )}
           {/* Footer — scrolls with body */}
           {showFooter && (
-            <div className={`px-2 pb-6 pt-4 md:pt-5 lg:pt-6 flex ${variant === "search" ? "max-[544px]:flex-col" : ""} gap-3 md:gap-4`}>
+            <div className={`px-2 pb-6 pt-6 md:pt-7 lg:pt-8 flex ${variant === "search" ? "max-[591px]:flex-col" : variant === "onboarding" ? "max-[500px]:flex-col-reverse" : ""} max-[500px]:gap-0 gap-3 md:gap-4`}>
               {variant === "search" ? (
                 <>
                   <Button
@@ -516,7 +516,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
                     text="Search"
                     onPress={handleSearch}
                     iconLeft={<SearchIcon className="w-4 h-4 text-white" />}
-                    className="flex-1"
+                    className="flex-1 max-[500px]:mt-2"
                   />
                 </>
               ) : variant === "edit" ? (
@@ -529,7 +529,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
                   <Button
                     text="Skip"
                     onPress={onClose}
-                    className="flex-1 !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
+                    className="flex-1 max-[500px]:!bg-[#FFF] !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
                   />
                   <Button text="Save" onPress={handleSave} className="flex-1" />
                 </>

@@ -205,7 +205,7 @@ export function StepFamilyIcon({
 
 export function RadioCircleIcon({
   checked = false,
-  className = "w-[20px] md:w-[22px] h-[20px] md:h-[22px] shrink-0",
+  className = "max-[500px]:w-[16px] w-[20px] md:w-[22px] max-[500px]:h-[16px] h-[20px] md:h-[22px] shrink-0",
   ...props
 }: IconProps & { checked?: boolean }) {
   return (
