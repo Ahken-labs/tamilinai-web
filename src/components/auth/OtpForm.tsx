@@ -183,7 +183,11 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
         await resendOtp(registrationKey, method);
       } else {
         const identifier = sessionStorage.getItem("inai_reset_identifier") ?? "";
-        await forgotPassword({ identifier, method: "email" });
+        if (method === "sms") {
+          await forgotPassword({ channel: "sms", phone: identifier, countryCode: countryCode });
+        } else {
+          await forgotPassword({ channel: "email", email: identifier });
+        }
       }
     } catch { /* silently ignore */ }
 

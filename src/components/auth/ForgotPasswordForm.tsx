@@ -10,6 +10,8 @@ import NewToInaiCart from "./NewToInaiCart";
 import { useLang } from "../../context/LangContext";
 import { COUNTRIES } from "../../constants/countries";
 import FormCardLayout from "../common-layout/FormCardLayout";
+import { forgotPassword } from "../../lib/api/auth";
+import { ApiError } from "../../lib/api/client";
 
 type Method = "sms" | "email";
 
@@ -21,6 +23,7 @@ export default function ForgotPasswordForm() {
   const [countryCode, setCountryCode] = useState(COUNTRIES[0]);
   const [countryOpen, setCountryOpen] = useState(false);
   const [error, setError] = useState<string | undefined>();
+  const [loading, setLoading] = useState(false);
 
   const handleMethod = (m: Method) => {
     setMethod(m);
@@ -29,18 +32,29 @@ export default function ForgotPasswordForm() {
     setCountryOpen(false);
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!value.trim()) {
       setError(t("Fill_all_the_Input_fields"));
       return;
     }
-    sessionStorage.setItem("otp_sent_at", String(Date.now()));
-    sessionStorage.setItem("inai_reset_identifier", value);
-    if (method === "sms") {
-      const code = countryCode.match(/\(\+\d+\)/)?.[0] ?? countryCode;
-      router.push(`/reset-otp?phone=${encodeURIComponent(value)}&countryCode=${encodeURIComponent(code)}`);
-    } else {
-      router.push(`/reset-otp?email=${encodeURIComponent(value)}`);
+    setLoading(true);
+    try {
+      if (method === "sms") {
+        const code = countryCode.match(/\(\+\d+\)/)?.[0] ?? countryCode;
+        await forgotPassword({ channel: "sms", phone: value, countryCode: code });
+        sessionStorage.setItem("otp_sent_at", String(Date.now()));
+        sessionStorage.setItem("inai_reset_identifier", value);
+        router.push(`/reset-otp?phone=${encodeURIComponent(value)}&countryCode=${encodeURIComponent(code)}`);
+      } else {
+        await forgotPassword({ channel: "email", email: value });
+        sessionStorage.setItem("otp_sent_at", String(Date.now()));
+        sessionStorage.setItem("inai_reset_identifier", value);
+        router.push(`/reset-otp?email=${encodeURIComponent(value)}`);
+      }
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : t("Fill_all_the_Input_fields"));
+    } finally {
+      setLoading(false);
     }
   };
   
@@ -115,8 +129,8 @@ export default function ForgotPasswordForm() {
     {/* Send button */}
     <div className="max-[500px]:mt-4 mt-8 md:mt-10">
       <Button
-        text={t("Send_reset_code")}
-        icon={<ArrowRightIcon />}
+        text={loading ? "Sending..." : t("Send_reset_code")}
+        icon={loading ? undefined : <ArrowRightIcon />}
         onPress={handleSend}
         className="w-full"
       />

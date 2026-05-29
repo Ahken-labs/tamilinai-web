@@ -25,8 +25,10 @@ export interface LoginPayload {
 }
 
 export interface ForgotPasswordPayload {
-  identifier: string;
-  method: 'sms' | 'email';
+  channel: 'sms' | 'email';
+  email?: string;
+  phone?: string;
+  countryCode?: string;
 }
 
 export interface ResetPasswordPayload {
