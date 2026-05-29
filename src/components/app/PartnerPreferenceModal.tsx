@@ -346,7 +346,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
                       className="flex-1"
                       dropdownClassName="max-h-[200px]"
                     />
-                    <span className="ml-2 sm:ml-0 font-poppins font-16 font-medium text-dark">to</span>
+                    <span className="ml-2 sm:ml-0 font-poppins text-[16px] font-medium text-dark">to</span>
                     <DropdownField
                       typeable compact
                       placeholder="Max"
@@ -375,7 +375,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
                       className="flex-1"
                       dropdownClassName="max-h-[200px]"
                     />
-                    <span className="ml-2 sm:ml-0 font-poppins font-16 font-medium text-[#222]">to</span>
+                    <span className="ml-2 sm:ml-0 font-poppins text-[16px] font-medium text-[#222]">to</span>
                     <DropdownField
                       typeable compact
                       placeholder="Max"

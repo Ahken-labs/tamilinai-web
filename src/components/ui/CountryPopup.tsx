@@ -125,6 +125,12 @@ export default function CountryPopup({ initialSelected, onClose, onConfirm }: Co
         )}
       </div>
       <hr className="my-4 max-[500px]:mx-4 border-t border-[#D8D8D8]" />
+      {shownGroups.length === 0 && (
+        <div className="max-[500px]:mx-4 py-8 flex flex-col items-center gap-2 text-center">
+          <p className="text-[16px] font-medium text-dark">No results found</p>
+          <p className="text-[14px] max-[500px]:mb-10 font-normal text-secondary3">Try a different spelling or country name</p>
+        </div>
+      )}
       <div className="max-[500px]:mx-4 flex flex-col gap-5 md:gap-6">
         {shownGroups.map((group, index) => (
           <div key={group.heading} className="flex flex-col gap-3 md:gap-4">

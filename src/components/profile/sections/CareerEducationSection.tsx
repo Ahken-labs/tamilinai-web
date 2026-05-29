@@ -46,11 +46,11 @@ export default function CareerEducationSection({ me, onDirty }: Props) {
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Education detail" align="center">
-          <input value={educationDetail} onChange={e => { setEducationDetail(e.target.value); sync({ educationDetail: e.target.value }); }} placeholder="Type here" className="font-poppins flex-1 h-[40px] border-[rgba(179,27,56,0.25)] w-full items-center rounded-[12px] border bg-[#FFF0F3] px-4 font-16 text-dark outline-none placeholder:text-[#656565]" />
+          <input value={educationDetail} onChange={e => { setEducationDetail(e.target.value); sync({ educationDetail: e.target.value }); }} placeholder="Type here" className="font-poppins flex-1 h-[40px] border-[rgba(179,27,56,0.25)] w-full items-center rounded-[12px] border bg-[#FFF0F3] px-4 text-[16px] text-dark outline-none placeholder:text-[#656565]" />
         </FormRow>
 
         <FormRow leftWidth={leftWidth} required label="Occupation" align="center">
-          <input value={occupation} onChange={e => { setOccupation(e.target.value); sync({ occupation: e.target.value }); }} placeholder="Enter your job / work" className="flex h-[40px] w-full items-center rounded-[12px] border border-[#F2F2F2] bg-[#F2F2F2] px-4 font-16 text-dark outline-none placeholder:text-[#525252]" />
+          <input value={occupation} onChange={e => { setOccupation(e.target.value); sync({ occupation: e.target.value }); }} placeholder="Enter your job / work" className="flex h-[40px] w-full items-center rounded-[12px] border border-[#F2F2F2] bg-[#F2F2F2] px-4 text-[16px] text-dark outline-none placeholder:text-[#525252]" />
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Sector" align="center">
@@ -60,7 +60,7 @@ export default function CareerEducationSection({ me, onDirty }: Props) {
         <FormRow leftWidth={leftWidth} label="Monthly income">
           <div className="flex gap-4 flex-wrap">
             <DropdownField typeable compact placeholder="Select currency" value={currency} open={opens.currency} setOpen={setOpen("currency")} onSelect={v => { setCurrency(v); sync({ currency: v }); }} items={CURRENCY_OPTIONS} dropdownClassName="max-h-[300px]" className="flex-1" bgClassName="bg-[#FFF0F3]" borderClassName="border-[rgba(179,27,56,0.25)]" textClassName="text-[#656565]" />
-            <input value={monthlyIncome} onChange={e => { setMonthlyIncome(e.target.value); sync({ monthlyIncome: e.target.value }); }} placeholder="Enter monthly income" className="flex-1 h-[40px] border-[rgba(179,27,56,0.25)] w-full items-center rounded-[12px] border bg-[#FFF0F3] px-4 font-16 text-dark outline-none placeholder:text-[#656565]" />
+            <input value={monthlyIncome} onChange={e => { setMonthlyIncome(e.target.value); sync({ monthlyIncome: e.target.value }); }} placeholder="Enter monthly income" className="flex-1 h-[40px] border-[rgba(179,27,56,0.25)] w-full items-center rounded-[12px] border bg-[#FFF0F3] px-4 text-[16px] text-dark outline-none placeholder:text-[#656565]" />
           </div>
         </FormRow>
 

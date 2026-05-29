@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLang } from "../context/LangContext";
 import { ChevronIcon, Logo, TamilLanguageIcon } from "../assets/Icons";
+import Link from "next/link";
 
 const LANGUAGES = [
   { label: "ஆங்கிலம்", value: "en" as const },
@@ -39,12 +40,12 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full bg-white/60 backdrop-blur-sm">
       <div className="mx-auto flex h-[68px] lg:h-[76px] max-w-[1920px] items-center justify-between px-4 lg:px-10 xl:px-[120px]">
         {/* Logo */}
-        <div className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <Logo className="w-9 lg:w-10 h-9 lg:h-10" />
           <span className="font-tamil text-[16px] md:text-[18px] lg:text-[20px] font-semibold leading-[1.5] tracking-[0.7px] text-dark">
             இணை.lk
           </span>
-        </div>
+        </Link>
 
         {/* Desktop right */}
         <div className="hidden items-center lg:flex">

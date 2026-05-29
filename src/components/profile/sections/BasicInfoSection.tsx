@@ -146,7 +146,7 @@ export default function BasicInfoSection({ me, onDirty }: Props) {
               else if (trimmed !== name) { setName(trimmed); sync({ name: trimmed }); }
             }}
             placeholder="Your name"
-            className="flex h-[40px] w-full items-center rounded-[12px] border border-[#F2F2F2] bg-[#F2F2F2] px-4 font-16 text-dark outline-none placeholder:text-[#525252]" />
+            className="flex h-[40px] w-full items-center rounded-[12px] border border-[#F2F2F2] bg-[#F2F2F2] px-4 text-[16px] text-dark outline-none placeholder:text-[#525252]" />
         </FormRow>
         <FormRow leftWidth={leftWidth} label="Date of birth" required>
           <div className="flex gap-4 flex-wrap">
@@ -161,7 +161,7 @@ export default function BasicInfoSection({ me, onDirty }: Props) {
             {MARITAL_OPTIONS.map(opt => (
               <button key={opt} type="button" onClick={() => { setMaritalStatus(opt); sync({ maritalStatus: opt }); }} className="flex items-center gap-2 cursor-pointer">
                 <RadioCircleIcon checked={maritalStatus === opt} />
-                <span className="font-16 font-normal text-secondary4 leading-[125%]">{opt}</span>
+                <span className="text-[16px] font-normal text-secondary4 leading-[125%]">{opt}</span>
               </button>
             ))}
           </div>
@@ -180,7 +180,7 @@ export default function BasicInfoSection({ me, onDirty }: Props) {
             {(["no", "yes"] as const).map(val => (
               <button key={val} type="button" onClick={() => { setPhysicalChallenge(val); if (val === "no") setDisability(""); sync({ physicalChallenge: val, disability: val === "no" ? "" : disability }); }} className="flex items-center gap-2 cursor-pointer">
                 <RadioCircleIcon checked={physicalChallenge === val} />
-                <span className="font-16 font-normal text-secondary4 leading-[125%]">{val === "no" ? "No" : "Yes"}</span>
+                <span className="text-[16px] font-normal text-secondary4 leading-[125%]">{val === "no" ? "No" : "Yes"}</span>
               </button>
             ))}
           </div>
@@ -200,7 +200,7 @@ export default function BasicInfoSection({ me, onDirty }: Props) {
           <div className="mt-3 md:mt-0">
             <button type="button" onClick={() => setLangPopupOpen(true)} className="flex py-5 px-4 items-center w-full rounded-[12px] border border-[rgba(179,27,56,0.25)] bg-[#FFF0F3] cursor-pointer">
               <div className="flex flex-wrap gap-2 sm:gap-3 md:gap-4 flex-1 min-w-0">
-                {languages.map(lang => <span key={lang} className="px-3 py-1 rounded-[48px] bg-white font-16 font-normal text-dark">{lang}</span>)}
+                {languages.map(lang => <span key={lang} className="px-3 py-1 rounded-[48px] bg-white text-[16px] font-normal text-dark">{lang}</span>)}
               </div>
               <ChevronIcon open={false} className="shrink-0 ml-2 w-3.5 h-3 md:w-4 md:h-4 transition-transform duration-200" />
             </button>

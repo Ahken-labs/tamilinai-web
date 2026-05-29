@@ -53,11 +53,11 @@ export default function InterestsHobbiesSection({ me, onDirty }: Props) {
     <div className="pt-3 md:pt-4 font-poppins">
       <div className="flex flex-wrap gap-2">
         <button type="button" onClick={() => { setDraft(selected); setSearch(""); setOpen(true); }} className="inline-flex max-w-full flex-wrap items-center gap-2 rounded-[48px] border border-[rgba(179,27,56,0.25)] bg-[#FFF0F3] px-3 py-1 text-left">
-          <span className="font-16 text-[#656565] leading-[150%]">{selected.length > 0 ? "Edit interests" : "Add interests & hobbies"}</span>
+          <span className="text-[16px] text-[#656565] leading-[150%]">{selected.length > 0 ? "Edit interests" : "Add interests & hobbies"}</span>
           <ChevronRightIcon className="h-3 w-3 sm:h-3.3 sm:w-3.3 md:h-4 md:w-4 shrink-0" />
         </button>
         {selected.map(item => (
-          <span key={item} className="inline-flex items-center rounded-[48px] border border-[rgba(179,27,56,0.25)] bg-[#FFF0F3] px-3 py-1 font-16 text-[#656565] leading-[150%]">{item}</span>
+          <span key={item} className="inline-flex items-center rounded-[48px] border border-[rgba(179,27,56,0.25)] bg-[#FFF0F3] px-3 py-1 text-[16px] text-[#656565] leading-[150%]">{item}</span>
         ))}
       </div>
 

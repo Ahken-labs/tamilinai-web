@@ -44,7 +44,7 @@ export default function LocationSection({ me, onDirty }: Props) {
         </FormRow>
 
         <FormRow leftWidth={leftWidth} required label="Residing district or city" align="center">
-          <input value={city} onChange={e => { setCity(e.target.value); sync({ city: e.target.value }); }} placeholder="Enter city or district" className="flex h-[40px] w-full items-center rounded-[12px] border border-[#F2F2F2] bg-[#F2F2F2] px-4 font-16 text-dark outline-none placeholder:text-[#525252]" />
+          <input value={city} onChange={e => { setCity(e.target.value); sync({ city: e.target.value }); }} placeholder="Enter city or district" className="flex h-[40px] w-full items-center rounded-[12px] border border-[#F2F2F2] bg-[#F2F2F2] px-4 text-[16px] text-dark outline-none placeholder:text-[#525252]" />
         </FormRow>
 
         <FormRow leftWidth={leftWidth} required label="Citizenship" align="center">

@@ -41,11 +41,11 @@ export default function FamilyBackgroundSection({ me, onDirty }: Props) {
       <div className="flex flex-col gap-6 md:gap-8">
 
         <FormRow leftWidth={leftWidth} label="Father's occupation" align="center">
-          <input value={fatherOccupation} onChange={e => { setFatherOccupation(e.target.value); sync({ fatherOccupation: e.target.value }); }} placeholder="Type here" className="font-poppins flex-1 h-[40px] border-[rgba(179,27,56,0.25)] w-full items-center rounded-[12px] border bg-[#FFF0F3] px-4 font-16 text-dark outline-none placeholder:text-[#656565]" />
+          <input value={fatherOccupation} onChange={e => { setFatherOccupation(e.target.value); sync({ fatherOccupation: e.target.value }); }} placeholder="Type here" className="font-poppins flex-1 h-[40px] border-[rgba(179,27,56,0.25)] w-full items-center rounded-[12px] border bg-[#FFF0F3] px-4 text-[16px] text-dark outline-none placeholder:text-[#656565]" />
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Mom's occupation" align="center">
-          <input value={motherOccupation} onChange={e => { setMotherOccupation(e.target.value); sync({ motherOccupation: e.target.value }); }} placeholder="Type here" className="font-poppins flex-1 h-[40px] border-[rgba(179,27,56,0.25)] w-full items-center rounded-[12px] border bg-[#FFF0F3] px-4 font-16 text-dark outline-none placeholder:text-[#656565]" />
+          <input value={motherOccupation} onChange={e => { setMotherOccupation(e.target.value); sync({ motherOccupation: e.target.value }); }} placeholder="Type here" className="font-poppins flex-1 h-[40px] border-[rgba(179,27,56,0.25)] w-full items-center rounded-[12px] border bg-[#FFF0F3] px-4 text-[16px] text-dark outline-none placeholder:text-[#656565]" />
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Number of brother(s)" align="center">

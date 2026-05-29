@@ -83,7 +83,7 @@ function RadioGroup({ options, value, onChange }: {
       {options.map((opt) => (
         <button key={opt} type="button" onClick={() => onChange(opt)} className="flex items-center gap-2 cursor-pointer">
           <RadioCircleIcon checked={value === opt} />
-          <span className="font-16 font-normal text-secondary4 leading-[150%]">{opt}</span>
+          <span className="text-[16px] font-normal text-secondary4 leading-[150%]">{opt}</span>
         </button>
       ))}
     </div>
@@ -140,14 +140,14 @@ export default function PartnerPreferenceSection({ onDirty }: { onDirty?: () => 
 
   return (
     <div className="pt-3 md:pt-4">
-      <h2 className="font-18 font-medium text-dark leading-[150%] pb-4 md:pb-5">Age &amp; height range</h2>
+      <h2 className="text-[16px] md:text-[18px] font-medium text-dark leading-[150%] pb-4 md:pb-5">Age &amp; height range</h2>
 
       <div className="flex flex-col gap-6">
         <FormRow leftWidth={leftWidth} label="Age" required>
           <div className="flex items-center gap-2 md:gap-4">
             <DropdownField typeable compact placeholder="Min" value={ageMin} open={ageMinOpen} setOpen={setAgeMinOpen}
               onSelect={v => { setAgeMin(v); sync({ ageMin: v }); }} items={filterItems(AGE_OPTIONS, ageMin)} className="flex-1" dropdownClassName="max-h-[200px]" />
-            <span className="font-16 font-medium text-dark shrink-0">to</span>
+            <span className="text-[16px] font-medium text-dark shrink-0">to</span>
             <DropdownField typeable compact placeholder="Max" value={ageMax} open={ageMaxOpen} setOpen={setAgeMaxOpen}
               onSelect={v => { setAgeMax(v); sync({ ageMax: v }); }} items={filterItems(AGE_OPTIONS, ageMax)} className="flex-1" dropdownClassName="max-h-[200px]" />
           </div>
@@ -157,7 +157,7 @@ export default function PartnerPreferenceSection({ onDirty }: { onDirty?: () => 
           <div className="flex items-center gap-2 md:gap-4">
             <DropdownField typeable compact placeholder="Min cm" value={heightMin} open={heightMinOpen} setOpen={setHeightMinOpen}
               onSelect={v => { setHeightMin(v); sync({ heightMin: v }); }} items={filterItems(HEIGHT_OPTIONS, heightMin)} className="flex-1" dropdownClassName="max-h-[200px]" />
-            <span className="font-16 font-medium text-dark shrink-0">to</span>
+            <span className="text-[16px] font-medium text-dark shrink-0">to</span>
             <DropdownField typeable compact placeholder="Max cm" value={heightMax} open={heightMaxOpen} setOpen={setHeightMaxOpen}
               onSelect={v => { setHeightMax(v); sync({ heightMax: v }); }} items={filterItems(HEIGHT_OPTIONS, heightMax)} className="flex-1" dropdownClassName="max-h-[200px]" />
           </div>
@@ -167,20 +167,20 @@ export default function PartnerPreferenceSection({ onDirty }: { onDirty?: () => 
       <hr className="my-6 md:my-8 border-t border-[#EAEAEA]" />
 
       <div className="flex flex-col gap-2">
-        <span className="font-16 font-medium text-dark leading-[150%]">About my partner (optional)</span>
+        <span className="text-[16px] md:text-[18px] font-medium text-dark leading-[150%]">About my partner (optional)</span>
         <textarea
           value={aboutPartner}
           onChange={handleAboutChange}
           placeholder="Share what genuinely matters to you — values, personality, life goals."
-          className="w-full resize-none outline-none rounded-[12px] border border-[rgba(179,27,56,0.25)] bg-[#FFF0F3] pt-4 pb-4 pl-4 pr-0 font-16 font-normal text-dark placeholder:text-[#656565] leading-[150%] focus:border-[#B31B38] transition-colors"
+          className="w-full resize-none outline-none rounded-[12px] border border-[rgba(179,27,56,0.25)] bg-[#FFF0F3] pt-4 pb-4 pl-4 pr-0 fonts-16 font-normal text-dark placeholder:text-[#656565] leading-[150%] focus:border-[#B31B38] transition-colors"
           style={{ height: "126px" }}
         />
-        <div className="font-14 text-secondary4">{wordCount} / {MAX_ABOUT_WORDS}</div>
+        <div className="text-[14px] text-secondary4">{wordCount} / {MAX_ABOUT_WORDS}</div>
       </div>
 
       <hr className="my-6 md:my-8 border-t border-[#EAEAEA]" />
 
-      <h2 className="font-18 font-medium text-dark leading-[150%]">Background &amp; lifestyle</h2>
+      <h2 className="text-[16px] md:text-[18px] font-medium text-dark leading-[150%]">Background &amp; lifestyle</h2>
 
       <div className="divide-y divide-[#EAEAEA]">
         <FormRow leftWidth={leftWidth} label="Marital history" required className="py-4 md:py-5">
@@ -202,7 +202,7 @@ export default function PartnerPreferenceSection({ onDirty }: { onDirty?: () => 
             showAll
             typeable
           />
-          <span className="font-14 ml-1 text-secondary4">Click to edit</span>
+          <span className="text-[14px] ml-1 text-secondary4">Click to edit</span>
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Country living in" required className="py-4 md:py-5">
@@ -215,7 +215,7 @@ export default function PartnerPreferenceSection({ onDirty }: { onDirty?: () => 
             setOpen={() => setCountryPopupOpen(true)}
             showAll
           />
-          <span className="font-14 ml-1 text-secondary4">Click to edit</span>
+          <span className="text-[14px] ml-1 text-secondary4">Click to edit</span>
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Religion" required className="py-4 md:py-5">
@@ -232,7 +232,7 @@ export default function PartnerPreferenceSection({ onDirty }: { onDirty?: () => 
             setOpen={setCasteOpen}
             showAll
           />
-          <span className="font-14 ml-1 text-secondary4">Click to edit</span>
+          <span className="text-[14px] ml-1 text-secondary4">Click to edit</span>
         </FormRow>
 
         <div>
