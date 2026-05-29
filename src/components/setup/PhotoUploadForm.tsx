@@ -301,7 +301,7 @@ export default function PhotoUploadForm() {
 
       {/* Mobile: gray info box with subtitle + bullets + checkbox */}
       <div className="min-[500px]:hidden mt-6 p-4 rounded-[16px] bg-[#EAEAEA] flex flex-col gap-4">
-        <p className="text-[14pxmd:] text-[16px] font-normal text-dark leading-[150%]">{t("Photo_subtitle")}</p>
+        <p className="text-[14px] md:text-[16px] font-normal text-dark leading-[150%]">{t("Photo_subtitle")}</p>
         <div className="flex flex-col gap-3">
           {bullets.map((text) => (
             <div key={text} className="flex items-center gap-2">
