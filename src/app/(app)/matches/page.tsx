@@ -1,6 +1,7 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState, useRef } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useScrollHide } from "../../../hooks/useScrollHide";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { IoCloseOutline } from "react-icons/io5";
@@ -66,19 +67,7 @@ function MatchesContent() {
   const [activeTab, setActiveTab] = useState("best");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [tabBarVisible, setTabBarVisible] = useState(true);
-  const lastScrollY = useRef(0);
-  useEffect(() => {
-    const handleScroll = () => {
-      const y = window.scrollY;
-      if (y <= 10) setTabBarVisible(true);
-      else if (y > lastScrollY.current + 4) setTabBarVisible(false);
-      else if (y < lastScrollY.current - 4) setTabBarVisible(true);
-      lastScrollY.current = y;
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const tabBarVisible = useScrollHide();
 
   const searchFilters = useMemo<SearchFilters | null>(() => {
     const displayId = searchParams.get("displayId");
@@ -176,7 +165,7 @@ function MatchesContent() {
     <>
       <PartnerPreferenceModal isOpen={showWelcome} onClose={handleCloseWelcome} variant="onboarding" />
       <main className="min-h-screen bg-[#F8F5F2]">
-        <div className="sticky lg:px-10 max-[320px]:top-[56px] max-[768px]:top-[64px] top-[74px] z-10 w-full bg-white/60 backdrop-blur-sm border-t border-[#EEEEEE] transition-transform duration-300" style={!tabBarVisible ? { transform: "translateY(-110%)" } : undefined}>
+        <div className="sticky lg:px-10 max-[320px]:top-[56px] max-[768px]:top-[65px] top-[74px] z-10 w-full bg-white/60 backdrop-blur-sm border-t border-[#EEEEEE] transition-transform duration-300" style={!tabBarVisible ? { transform: "translateY(-110%)" } : undefined}>
           {searchFilters ? (
             <div className="flex items-center justify-center px-auto py-2 md:py-3">
               <button

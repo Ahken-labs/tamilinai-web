@@ -159,15 +159,15 @@ function SentPendingBody({
   const countdownText = reminderAt ? formatCountdown(reminderAt) : null;
 
   return (
-    <div className="pt-3 md:pt-4">
+    <div className="max-[370px]:pt-2 pt-3 md:pt-4">
       <div className="flex gap-6 md:gap-10 lg:gap-16">
-        <div className="text-secondary3 font-16">
+        <div className="text-secondary3 text-[14px] md:text-[16px]">
           WhatsApp
           <div className="mt-3 md:mt-4">Email</div>
         </div>
-        <div className="flex w-full items-center justify-center rounded-[8px] bg-cartbox2 px-2 py-4 md:py-6">
-          <InterestLockIcon className="mr-1 h-3 w-3 md:mr-2 md:h-4 md:w-4" />
-          <p className="font-16 text-primary">
+        <div className="flex w-full items-start  justify-center rounded-[8px] bg-cartbox2 px-2 py-4 md:py-6">
+          <InterestLockIcon className="mt-1 mr-1 max-[370px]:h-3 max-[370px]:w-3 h-4 w-4 md:mr-2" />
+          <p className="text-[14px] md:text-[16px] text-primary">
             Contact unlocks after {she_l} accepts your interest.
           </p>
         </div>
@@ -188,11 +188,11 @@ function SentPendingBody({
       {/* First interest sent, 3-day wait not over */}
       {sendCount === 1 && !isReminderDue && (
         <>
-          <div className="mt-4 md:mt-5 text-center font-16 font-medium leading-[150%] text-secondary4">
+          <div className="mt-4 md:mt-5 text-center text-[14px] md:text-[16px] font-medium leading-[150%] text-secondary4">
             Interest sent · Awaiting response.
           </div>
           {countdownText && (
-            <div className="mt-1 text-center font-16 font-normal leading-[150%] text-primary">
+            <div className="mt-1 text-center text-[14px] md:text-[16px] font-normal leading-[150%] text-primary">
               You can send a reminder in {countdownText}.
             </div>
           )}
@@ -202,7 +202,7 @@ function SentPendingBody({
       {/* 3 days passed — show Send reminder button */}
       {sendCount === 1 && isReminderDue && (
         <>
-          <div className="mt-4 md:mt-5 text-center font-16 font-medium leading-[150%] text-secondary4">
+          <div className="mt-4 md:mt-5 text-center text-[14px] md:text-[16px] font-medium leading-[150%] text-secondary4">
             Interest sent · Awaiting response.
           </div>
           <div className="mt-2 flex justify-center">
@@ -218,7 +218,7 @@ function SentPendingBody({
 
       {/* Reminder already sent — no more actions */}
       {sendCount >= 2 && (
-        <div className="mt-4 md:mt-5 text-center font-16 font-medium leading-[150%] text-secondary4">
+        <div className="mt-4 md:mt-5 text-center text-[14px] md:text-[16px] font-medium leading-[150%] text-secondary4">
           Reminder sent · Awaiting response.
         </div>
       )}
@@ -238,13 +238,13 @@ function ReceivedRequestBody({
   return (
     <div className="pt-3 md:pt-4">
       <div className="flex gap-6 md:gap-10 lg:gap-16">
-        <div className="text-secondary3 font-16">
+        <div className="text-secondary3 text-[14px] md:text-[16px]">
           WhatsApp
           <div className="mt-3 md:mt-4">Email</div>
         </div>
         <div className="flex w-full items-center justify-center rounded-[8px] bg-cartbox2 px-2 py-4 md:py-6">
-          <InterestLockIcon className="mr-1 h-3 w-3 md:mr-2 md:h-4 md:w-4" />
-          <p className="font-16 text-primary">
+          <InterestLockIcon className="mr-1 max-[370px]:h-3 max-[370px]:w-3 h-4 w-4 md:mr-2" />
+          <p className="text-[14px] md:text-[16px] text-primary">
             Contact unlocks after you accept their interest.
           </p>
         </div>
@@ -271,7 +271,7 @@ function UpgradeContactBody({ title, buttonText }: { title: string; buttonText: 
       <div className="pt-3 md:pt-4">
         <div className="flex flex-col items-center rounded-[8px] bg-[linear-gradient(0deg,#FFE9E2_0%,#FFE9E2_100%),linear-gradient(270deg,#FFE0C2_0%,#FFF2D9_49.72%,#FFE0C2_99.44%)] px-4 py-6">
           <Image src="/icons/elite_batch.png" alt="Elite" width={42} height={40} />
-          <p className="mt-3 md:mt-4 text-center font-16 font-medium leading-[150%] text-[#B31B38]">
+          <p className="mt-3 md:mt-4 text-center text-[14px] md:text-[16px] font-medium leading-[150%] text-[#B31B38]">
             {title}
           </p>
           <div className="mt-4">
@@ -291,13 +291,13 @@ function UpgradeContactBody({ title, buttonText }: { title: string; buttonText: 
           className="mt-4 md:mt-5 w-full text-left cursor-pointer"
         >
           <div className="flex w-full justify-between gap-6 md:gap-10 lg:gap-16">
-            <div className="text-secondary3 font-16">WhatsApp</div>
-            <span className="font-16 text-[#767676] blur-[5.3px] select-none">+94 75 020 7507</span>
+            <div className="text-secondary3 text-[14px] md:text-[16px]">WhatsApp</div>
+            <span className="text-[14px] md:text-[16px] text-[#767676] blur-[5.3px] select-none">+94 75 020 7507</span>
           </div>
           <div className="mt-4 border-b border-[#EAEAEA]" />
           <div className="mt-4 md:mt-5 flex w-full justify-between gap-6 md:gap-10 lg:gap-16">
-            <div className="text-secondary3 font-16">Email</div>
-            <span className="font-16 text-[#767676] blur-[5.3px] select-none">contact@inai.lk</span>
+            <div className="text-secondary3 text-[14px] md:text-[16px]">Email</div>
+            <span className="text-[14px] md:text-[16px] text-[#767676] blur-[5.3px] select-none">contact@inai.lk</span>
           </div>
         </button>
       </div>
@@ -328,9 +328,9 @@ function VisibleContactBody({
       {displayPhone && (
         <>
           <div className="flex w-full justify-between">
-            <div className="text-secondary3 font-16">WhatsApp</div>
+            <div className="text-secondary3 text-[14px] md:text-[16px]">WhatsApp</div>
             <div className="flex items-center gap-1 md:gap-2">
-              <span className="font-16 text-[#767676]">{displayPhone}</span>
+              <span className="text-[14px] md:text-[16px] text-[#767676]">{displayPhone}</span>
               <ChevronRightIcon className="ml-1 h-4 w-4 md:ml-2 md:h-5 md:w-5" />
             </div>
           </div>
@@ -340,9 +340,9 @@ function VisibleContactBody({
 
       {displayEmail && (
         <div className="mt-3 md:mt-4 flex w-full justify-between">
-          <div className="text-secondary3 font-16">Email</div>
+          <div className="text-secondary3 text-[14px] md:text-[16px]">Email</div>
           <div className="flex items-center gap-1 md:gap-2">
-            <span className="font-16 text-[#767676]">{displayEmail}</span>
+            <span className="text-[14px] md:text-[16px] text-[#767676]">{displayEmail}</span>
             <ChevronRightIcon className="ml-1 h-4 w-4 md:ml-2 md:h-5 md:w-5" />
           </div>
         </div>

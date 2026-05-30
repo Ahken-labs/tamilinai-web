@@ -127,7 +127,7 @@ function calcPercentage(rows: { value: string; matched: boolean }[]): number | n
 
 function PhotoCircle({ src, alt }: { src: string; alt: string }) {
   return (
-    <div className="h-8 sm:h-10 md:h-14 lg:h-16 w-8 sm:w-10 md:w-14 lg:w-16 rounded-full overflow-hidden shrink-0">
+    <div className="h-10 md:h-14 lg:h-16 w-10 w-10 md:w-14 lg:w-16 rounded-full overflow-hidden shrink-0">
       <ProtectedPhoto
         src={src}
         alt={alt}
@@ -145,7 +145,7 @@ function SkeletonCard() {
     <div className="font-poppins w-full max-w-[1160px] px-6 md:px-10 mx-auto animate-pulse">
       <div className="rounded-[60px] bg-white p-2">
         <div className="flex items-center gap-2">
-          <div className="h-8 sm:h-10 md:h-14 lg:h-16 w-8 sm:w-10 md:w-14 lg:w-16 rounded-full bg-[#EAEAEA] shrink-0" />
+          <div className="h-10 md:h-14 lg:h-16 w-10 md:w-14 lg:w-16 rounded-full bg-[#EAEAEA] shrink-0" />
           <div className="flex-1 h-3 bg-[#EAEAEA] rounded-full mx-4" />
           <div className="h-8 sm:h-10 md:h-14 lg:h-16 w-8 sm:w-10 md:w-14 lg:w-16 rounded-full bg-[#EAEAEA] shrink-0" />
         </div>
@@ -189,14 +189,14 @@ export default function MatchPreferencesCard({
   return (
     <div className="font-poppins w-full max-w-[1160px] px-6 md:px-10 mx-auto">
       {/* Top match bar */}
-      <div className="rounded-[60px] bg-white p-2">
+      <div className="rounded-[60px] bg-white max-[500px]:p-1 p-2">
         <div className="flex items-center">
           <div className="shrink-0">
             <PhotoCircle src={theirPhoto} alt="their profile" />
           </div>
           <div className="flex flex-1 items-center">
             <div className="h-px flex-1 bg-[#D7D7D7]" />
-            <span className="mx-3 sm:mx-4 shrink-0 font-16 font-semibold leading-[150%] text-primary">
+            <span className="mx-3 sm:mx-4 shrink-0 text-[16px] font-semibold leading-[150%] text-primary">
               {pct !== null ? `${pct}% match` : "Match"}
             </span>
             <div className="h-px flex-1 bg-[#D7D7D7]" />
@@ -208,30 +208,30 @@ export default function MatchPreferencesCard({
       </div>
 
       {/* Header row */}
-      <div className="mt-4 md:mt-6 flex items-center justify-between gap-4">
-        <h2 className="font-20 font-semibold leading-[150%] text-dark">
+      <div className="mt-5 md:mt-6 flex items-center justify-between gap-4">
+        <h2 className="text-[16px] sm:text-[18px] md:text-[20px] font-semibold leading-[150%] text-dark">
           {theirPronoun} partner preferences
         </h2>
-        <span className="font-20 font-semibold leading-[150%] text-dark">You</span>
+        <span className="text-[16px] sm:text-[18px] md:text-[20px] font-semibold leading-[150%] text-dark">You</span>
       </div>
 
       {/* Rows */}
-      <div className="mt-4 md:mt-6">
+      <div className="mt-5 md:mt-6">
         {rows.map((item) => (
           <div
             key={item.label}
-            className="flex items-center gap-0 sm:gap-2 md:gap-8 border-b border-[#D7D7D7] py-3"
+            className="flex items-center gap-0 sm:gap-2 md:gap-8 border-b border-[#D7D7D7] max-[370px]:py-2 py-3"
           >
-            <div className="min-w-[140px] sm:min-w-[160px] font-16 font-normal italic leading-[150%] text-dark">
+            <div className="min-w-[140px] sm:min-w-[160px] text-[14px] md:text-[16px] font-normal italic leading-[150%] text-dark">
               {item.label}
             </div>
-            <div className="flex-1 font-16 font-medium not-italic leading-[150%] text-dark">
+            <div className="flex-1 text-[14px] md:text-[16px] font-medium not-italic leading-[150%] text-dark">
               {item.value}
             </div>
             <div className="shrink-0">
               <CheckboxIcon
                 checked={item.matched}
-                className="h-4 sm:h-5 md:h-5.5 lg:h-6 w-4 sm:w-5 md:w-5.5 lg:w-6"
+                className="h-5 md:h-5.5 lg:h-6 w-5 md:w-5.5 lg:w-6"
               />
             </div>
           </div>

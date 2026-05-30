@@ -124,7 +124,7 @@ export default function MatchInterestCard({
             // They declined my interest — permanent dead end, no path to re-send
             return (
                 <CardShell>
-                    <p className="font-poppins font-16 font-normal leading-[150%] text-dark">
+                    <p className="font-poppins text-[14px] md:text-[16px] font-normal leading-[150%] text-dark">
                         {profileName} has chosen to explore other matches.
                     </p>
                     <div className="mt-5">
@@ -136,7 +136,7 @@ export default function MatchInterestCard({
 
         return (
             <CardShell>
-                <p className="font-poppins font-16 font-normal leading-[150%] text-dark">
+                <p className="font-poppins text-[14px] md:text-[16px] font-normal leading-[150%] text-dark">
                     You have respectfully passed on {profileName}&apos;s profile. We will keep this private.
                 </p>
 
@@ -148,7 +148,7 @@ export default function MatchInterestCard({
                 max-[633px]:flex-col
                 max-[520px]:flex-row
                 max-[513px]:flex-col">
-                    <Button text="Explore more profiles" className="flex-1" onPress={() => router.push("/matches")} />
+                    <Button text="Explore more profiles" className="flex-1 !px-4" onPress={() => router.push("/matches")} />
                     <Button
                         text="Change mind"
                         onPress={() => {
@@ -157,7 +157,7 @@ export default function MatchInterestCard({
                             unblockSender(profileId).catch(() => {});
                         }}
                         iconLeft={<RiArrowGoBackLine className="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5" />}
-                        className="flex-1 !bg-[#FFF] border border-[#B31B38] !text-[#B31B38] hover:!bg-gray-50 active:!bg-gray-100"
+                        className="!px-4 flex-1 !bg-[#FFF] border border-[#B31B38] !text-[#B31B38] hover:!bg-gray-50 active:!bg-gray-100"
                     />
                 </div>
             </CardShell>
@@ -177,17 +177,17 @@ export default function MatchInterestCard({
             return (
                 <>
                     <CardShell>
-                        <div className="flex w-full justify-between gap-3">
-                            <span className="font-16 text-dark leading-[150%]">
+                        <div className="flex flex-col gap-0 min-[500px]:flex-row min-[500px]:justify-between w-full">
+                            <span className="text-[14px] md:text-[16px] text-dark leading-[150%]">
                                 🎉 This profile matches your preferences.
                             </span>
                             <div className="flex items-center">
-                                <span className="font-16 text-dark">More details</span>
-                                <ChevronRightIcon className="h-3 w-3 md:h-4 md:w-4" />
+                                <span className="text-[14px] md:text-[16px] text-dark">More details</span>
+                                <ChevronRightIcon className="h-4 w-4" />
                             </div>
                         </div>
                         <div
-                            className="mt-[20px] flex gap-3 flex-row
+                            className="max-[370px]:mt-2 max-[500px]:mt-4 mt-6 flex max-[370px]:gap-2 gap-3 flex-row
                       max-[470px]:flex-col
                       min-[520px]:flex-col
                       min-[650px]:flex-row
@@ -195,18 +195,18 @@ export default function MatchInterestCard({
                       min-[815px]:flex-row
                       md:mt-[25px] md:gap-4"
                         >
-                            <Button className="!font-medium w-full"
+                            <Button className="!px-4 !font-medium w-full"
                                 text={pending ? "Sending..." : "Send Interest"}
                                 onPress={() => act(() => sendInterest(profileId))}
-                                iconLeft={<SendInterestMsgIcon className="h-4 w-4 md:h-5 md:w-5" />}
+                                iconLeft={<SendInterestMsgIcon className="h-5 w-5" />}
                             />
                             <Button
                                 onPress={handleShortlist}
-                                className="!font-medium w-full !text-[#B31B38] border border-[#B31B38] !bg-[#FFE9E2] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
+                                className="!px-4 !font-medium w-full !text-[#B31B38] border border-[#B31B38] !bg-[#FFE9E2] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
                                 text={shortlisted ? "Remove" : "Add to shortlist"}
                                 iconLeft={shortlisted
-                                    ? <ShortlistRemoveIcon className="h-4 w-4 md:h-5 md:w-5" />
-                                    : <ShortlistedIcon className="h-4 w-4 md:h-5 md:w-5" />
+                                    ? <ShortlistRemoveIcon className="h-5 w-5" />
+                                    : <ShortlistedIcon className="h-5 w-5" />
                                 }
                             />
                         </div>
@@ -230,11 +230,11 @@ export default function MatchInterestCard({
                             bubbles={[interestText]}
                         />
                     </div>
-                    <div className="mt-5 text-center font-poppins font-16 font-medium leading-[150%] text-dark">
+                    <div className="mt-5 text-center font-poppins text-[14px] md:text-[16px] font-medium leading-[150%] text-dark">
                         Interest sent · Awaiting response.
                     </div>
                     {countdownText && (
-                        <div className="mt-1 text-center font-poppins font-16 font-normal leading-[150%] text-primary">
+                        <div className="mt-1 text-center font-poppins text-[14px] md:text-[16px] font-normal leading-[150%] text-primary">
                             You can send a reminder in {countdownText}.
                         </div>
                     )}
@@ -254,7 +254,7 @@ export default function MatchInterestCard({
                             bubbles={[interestText]}
                         />
                     </div>
-                    <div className="mt-5 text-center font-poppins font-16 font-medium leading-[150%] text-dark">
+                    <div className="mt-5 text-center font-poppins text-[14px] md:text-[16px] font-medium leading-[150%] text-dark">
                         Interest sent · Awaiting response.
                     </div>
                     <div className="mt-3 flex justify-center">
@@ -262,7 +262,7 @@ export default function MatchInterestCard({
                             text={pending ? "Sending..." : "Send reminder"}
                             onPress={() => act(() => sendInterest(profileId))}
                             iconLeft={<NotificationIcon className="h-4 w-4 md:h-5 md:w-5" />}
-                            className="!font-medium"
+                            className="!px-4 !font-medium"
                         />
                     </div>
                 </CardShell>
@@ -280,7 +280,7 @@ export default function MatchInterestCard({
                         bubbles={[interestText, FOLLOW_UP]}
                     />
                 </div>
-                <div className="mt-5 text-center font-poppins font-16 font-medium leading-[150%] text-dark">
+                <div className="mt-5 text-center font-poppins text-[14px] md:text-[16px] font-medium leading-[150%] text-dark">
                     Reminder sent · Awaiting response.
                 </div>
             </CardShell>
@@ -312,7 +312,7 @@ export default function MatchInterestCard({
 
                 {isElite ? (
                     <>
-                        <div className="mt-3 md:mt-4 text-center font-poppins font-16 font-normal leading-[150%] text-dark">
+                        <div className="mt-3 md:mt-4 text-center font-poppins text-[14px] md:text-[16px] font-normal leading-[150%] text-dark">
                             Congratulations! You are both a mutual match. Don&apos;t keep {her} waiting - make the first move and start your beautiful journey together.
                         </div>
 
@@ -320,7 +320,7 @@ export default function MatchInterestCard({
                             <Button
                                 text="Chat on WhatsApp"
                                 iconLeft={<FaWhatsapp className="h-4 w-4 md:h-5 md:w-5" />}
-                                className="!font-medium"
+                                className="!px-4 !font-medium"
                                 onPress={() => {
                                     if (!phone) return;
                                     window.open(`https://wa.me/${phone.replace(/\D/g, "")}`, "_blank");
@@ -330,19 +330,19 @@ export default function MatchInterestCard({
                     </>
                 ) : (
                     <>
-                        <div className="mt-4 text-center font-poppins font-16 font-medium leading-[150%] text-primary">
+                        <div className="mt-4 text-center font-poppins text-[14px] md:text-[16px] font-medium leading-[150%] text-primary">
                             {she} accepted! Upgrade to Elite to see {her} contact.
                         </div>
 
                         <div className="mt-4 flex justify-center">
                             <Button
                                 text="Upgrade & connect now"
-                                className="!font-medium"
+                                className="!px-4 !font-medium"
                                 onPress={() => router.push("/elite-upgrade")}
                             />
                         </div>
 
-                        <div className="mt-7 text-center font-poppins font-16 font-normal leading-[150%] text-dark">
+                        <div className="mt-7 text-center font-poppins text-[14px] md:text-[16px] font-normal leading-[150%] text-dark">
                             Congratulations! You are both a mutual match. Don&apos;t keep {her} waiting - make the first move and start your beautiful journey together.
                         </div>
                     </>
@@ -373,13 +373,13 @@ export default function MatchInterestCard({
                         text={pending ? "..." : "Accept"}
                         onPress={() => act(() => respondToInterest(profileId, "accept"))}
                         iconLeft={<CheckmarkIcon className="w-4 sm:w-4.5 md:w-5 lg:w-6 h-4 sm:h-4.5 md:h-5 lg:h-6" />}
-                        className="flex-1"
+                        className="!px-4 flex-1"
                     />
                     <Button
                         text={pending ? "..." : "Decline"}
                         onPress={() => act(() => respondToInterest(profileId, "decline"))}
                         iconLeft={<CgClose className="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5" />}
-                        className="flex-1 !bg-[#FFF] border border-[#B31B38] !text-[#B31B38] hover:!bg-gray-50 active:!bg-gray-100"
+                        className="!px-4 flex-1 !bg-[#FFF] border border-[#B31B38] !text-[#B31B38] hover:!bg-gray-50 active:!bg-gray-100"
                     />
                 </div>
             </CardShell>
@@ -410,7 +410,7 @@ export default function MatchInterestCard({
 
             {isElite ? (
                 <>
-                    <div className="mt-4 text-center font-poppins font-16 font-normal leading-[150%] text-dark">
+                    <div className="mt-4 text-center font-poppins text-[14px] md:text-[16px] font-normal leading-[150%] text-dark">
                         Congratulations! You are both a mutual match. Don&apos;t keep {her} waiting - send the first message and start your beautiful journey together.
                     </div>
 
@@ -418,21 +418,21 @@ export default function MatchInterestCard({
                         <Button
                             text="Chat on WhatsApp"
                             iconLeft={<FaWhatsapp className="h-4 w-4 md:h-5 md:w-5" />}
-                            className="!font-medium"
+                            className="!px-4 !font-medium"
                         />
                     </div>
                 </>
             ) : (
                 <>
-                    <div className="mt-3 md:mt-4 text-center font-poppins font-16 font-medium leading-[150%] text-primary">
+                    <div className="mt-3 md:mt-4 text-center font-poppins text-[14px] md:text-[16px] font-medium leading-[150%] text-primary">
                         You accepted! Upgrade to Elite to see {her} contact.
                     </div>
 
                     <div className="mt-3 md:mt-4 flex justify-center">
-                        <Button text="Upgrade & connect now" className="!font-medium" onPress={() => router.push("/elite-upgrade")} />
+                        <Button text="Upgrade & connect now" className="!px-4 !font-medium" onPress={() => router.push("/elite-upgrade")} />
                     </div>
 
-                    <div className="mt-5 md:mt-7 text-center font-poppins font-16 font-normal leading-[150%] text-dark">
+                    <div className="mt-5 md:mt-7 text-center font-poppins text-[14px] md:text-[16px] font-normal leading-[150%] text-dark">
                         Congratulations! You are both a mutual match. Don&apos;t keep {her} waiting - make the first move and start your beautiful journey together.
                     </div>
                 </>
@@ -443,7 +443,7 @@ export default function MatchInterestCard({
 
 function CardShell({ children }: { children: React.ReactNode }) {
     return (
-        <div className="rounded-[16px] bg-[#FFE9E2] p-4 md:p-5">
+        <div className="rounded-[16px] bg-[#FFE9E2] max-[500px]:p-3 p-4 md:p-5">
             {children}
         </div>
     );
@@ -502,7 +502,7 @@ function MessageBubble({
         <div
             className={`flex w-full flex-1 items-center justify-left bg-white px-2 sm:px-3 py-3 sm:py-4 md:py-5 ${radiusClass}`}
         >
-            <p className="font-poppins font-16 font-normal leading-[150%] text-dark">
+            <p className="font-poppins text-[14px] md:text-[16px] font-normal leading-[150%] text-dark">
                 {text}
             </p>
         </div>

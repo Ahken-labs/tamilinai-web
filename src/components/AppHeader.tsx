@@ -226,12 +226,12 @@ export default function AppHeader() {
         className="font-poppins select-none sticky top-0 z-50 w-full bg-white/60 backdrop-blur-sm transition-transform duration-300"
         style={isMobile && !navVisible ? { transform: "translateY(-100%)" } : undefined}
       >
-        <div className="max-w-[1920px] mx-auto flex px-5 lg:px-10 max-[320px]:h-[56px] max-[768px]:h-[64px] h-[74px] max-[320px]:pt-2 pt-5 gap-5 min-[900px]:gap-6">
+        <div className="max-w-[1920px] mx-auto flex px-5 lg:px-10 max-[320px]:h-[56px] max-[768px]:h-[66px] h-[74px] max-[320px]:pt-2 pt-5 gap-5 min-[900px]:gap-6">
 
           {/* Left: Logo + Search — desktop only */}
           <div className="hidden min-[900px]:flex mb-2 items-center gap-2 lg:gap-3 flex-1 min-w-0">
             <Link href={"/matches"}>
-            <Logo />
+              <Logo />
             </Link>
             <button
               type="button"
@@ -311,8 +311,8 @@ export default function AppHeader() {
               {/* Desktop settings dropdown */}
               <div
                 className={`absolute top-full right-0 mt-5 z-50 ${trustBadge && !isElite ? "w-[309px]" : "w-[270px]"} rounded-[16px] bg-white shadow-[0_0_16px_0_rgba(0,0,0,0.08)] p-2 transition-all duration-200 ease-out origin-top-right ${settingsOpen
-                    ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
-                    : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
+                  ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
+                  : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
                   }`}
               >
                 <div className="flex flex-col items-start gap-2">
@@ -390,7 +390,7 @@ export default function AppHeader() {
 
           {/* Left: Logo + Search */}
           <div className="flex items-center gap-2">
-            <Logo className="w-9 h-9"/>
+            <Logo className="w-9 h-9" />
             <button
               type="button"
               onClick={() => { setSettingsOpen(false); setMobileOpen(false); setOpenModal("search"); }}

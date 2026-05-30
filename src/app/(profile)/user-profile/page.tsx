@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState, useEffect } from "react";
+import { useScrollHide } from "@/src/hooks/useScrollHide";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import ProtectedPhoto from "@/src/components/common-layout/ProtectedPhoto";
@@ -24,6 +25,7 @@ import { getMe } from "@/src/lib/api/user";
 import type { ProfileDetail } from "@/src/types/user";
 import { UserProfileSkeletonBody } from "@/src/components/app/skeleton-layout/UserProfileSkeleton";
 import { calculateAge } from "@/src/utils/calculateAge";
+import { DIET_FROM_BE, SMOKE_FROM_BE, DRINK_FROM_BE } from "@/src/utils/profileMappers";
 import EliteUpgradePopup, { shouldShowWeeklyNudge, markWeeklyNudgeSeen, type EliteUpgradeTrigger } from "@/src/components/common-layout/EliteUpgradePopup";
 
 function formatWeight(kg?: number): string {
@@ -67,7 +69,7 @@ function buildSections(p: ProfileDetail, interestStatus: "sent" | "received" | "
       right: [],
       hidden: !pr.aboutMe,
       extra: (
-        <p className="md:mt-4 mt-3 font-16 leading-[150%] text-dark">
+        <p className="md:mt-4 mt-3 text-[14px] md:text-[16px] leading-[150%] text-dark">
           {pr.aboutMe}
         </p>
       ),
@@ -110,7 +112,7 @@ function buildSections(p: ProfileDetail, interestStatus: "sent" | "received" | "
             isAccepted ? (
               <span className="inline-flex select-none items-center justify-center text-[20px] leading-none" aria-label="party" role="img">🎉</span>
             ) : (
-              <EliteCrownIcon className="w-4 sm:w-5 md:w-5.5 lg:w-6 h-4 sm:h-5 md:h-5.5 lg:h-6 shrink-0" />
+              <EliteCrownIcon className="w-5 md:w-5.5 lg:w-6 h-5 md:h-5.5 lg:h-6 shrink-0" />
             )
           ) : null,
           left: [],
@@ -179,10 +181,10 @@ function buildSections(p: ProfileDetail, interestStatus: "sent" | "received" | "
     {
       icon: <WineGlassIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
       title: "Lifestyle",
-      left: [{ label: "Diet habit", value: pr.dietHabit ?? "Not specified" }],
+      left: [{ label: "Diet habit", value: (pr.dietHabit && DIET_FROM_BE[pr.dietHabit]) ?? "Not specified" }],
       right: [
-        { label: "Smoking habit", value: pr.smokingHabit ?? "Not specified" },
-        { label: "Drinking habit", value: pr.drinkingHabit ?? "Not specified" },
+        { label: "Smoking habit", value: (pr.smokingHabit && SMOKE_FROM_BE[pr.smokingHabit]) ?? "Not specified" },
+        { label: "Drinking habit", value: (pr.drinkingHabit && DRINK_FROM_BE[pr.drinkingHabit]) ?? "Not specified" },
       ],
     },
     ...(pr.hobbies && pr.hobbies.length > 0
@@ -196,7 +198,7 @@ function buildSections(p: ProfileDetail, interestStatus: "sent" | "received" | "
             <div className="pt-4 flex flex-wrap gap-3 md:gap-4">
               {pr.hobbies.map((hobby) => (
                 <div key={hobby} className="flex items-center justify-center rounded-[48px] bg-[#F0F0F0] px-2 md:px-3 py-1">
-                  <span className="font-16 font-normal leading-[150%] text-dark">{hobby}</span>
+                  <span className="text-[14px] md:text-[16px] font-normal leading-[150%] text-dark">{hobby}</span>
                 </div>
               ))}
             </div>
@@ -212,6 +214,7 @@ function UserProfileContent() {
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const id = searchParams.get("id") ?? "";
+  const backBarVisible = useScrollHide();
 
   function handleInterestAction() {
     queryClient.invalidateQueries({ queryKey: ["profile", id] });
@@ -269,16 +272,16 @@ function UserProfileContent() {
 
   if (isLoading || !profile) return (
     <main className="min-h-screen bg-[#F8F5F2] font-poppins select-none pb-10">
-      <div className="sticky top-[74px] z-30 w-full border-t border-[#EEEEEE] bg-white">
-        <div className="flex px-4 lg:px-10 py-3">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center justify-center rounded-[40px] bg-light py-2 pl-2 pr-4 shadow-[0_0_11.1px_0_rgba(0,0,0,0.25)]"
-          >
+      <div className="sticky lg:px-10 max-[320px]:top-[56px] max-[768px]:top-[60px] top-[74px] z-10 w-full bg-white/60 backdrop-blur-sm border-t border-[#EEEEEE] transition-transform duration-300" style={!backBarVisible ? { transform: "translateY(-110%)" } : undefined}>
+        <div className="hidden md:flex px-4 lg:px-10 py-3">
+          <button onClick={() => router.back()} className="flex items-center justify-center rounded-[40px] bg-light py-2 pl-2 pr-4 shadow-[0_0_11.1px_0_rgba(0,0,0,0.25)]">
             <ChevronRightIcon className="mr-1 md:mr-2 w-4 md:w-5 h-4 md:h-5 rotate-180" />
-            <span className="font-16 text-dark">Back</span>
+            <span className="text-[14px] md:text-[16px] text-dark">Back</span>
           </button>
         </div>
+        <button onClick={() => router.back()} className="md:hidden flex items-center px-4 py-3 gap-1">
+          <ChevronRightIcon className="w-4 sm:w-5 h-4 sm:h-5 rotate-180 text-dark" />
+        </button>
       </div>
       <UserProfileSkeletonBody />
     </main>
@@ -345,20 +348,132 @@ function UserProfileContent() {
   return (
     <main className="min-h-screen bg-[#F8F5F2] font-poppins select-none pb-10">
       {/* Header */}
-      <div className="sticky top-[74px] z-30 w-full border-t border-[#EEEEEE] bg-white">
-        <div className="flex px-4 lg:px-10 py-3">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center justify-center rounded-[40px] bg-light py-2 pl-2 pr-4 shadow-[0_0_11.1px_0_rgba(0,0,0,0.25)]"
-          >
+      <div className="sticky lg:px-10 max-[320px]:top-[48.5px] max-[768px]:top-[49.5px] top-[74px] z-10 w-full bg-white/60 backdrop-blur-sm border-t border-[#EEEEEE] transition-transform duration-300" style={!backBarVisible ? { transform: "translateY(-110%)" } : undefined}>
+        {/* Desktop back button */}
+        <div className="hidden md:flex px-4 lg:px-10 py-3">
+          <button onClick={() => router.back()} className="flex items-center justify-center rounded-[40px] bg-light py-2 pl-2 pr-4 shadow-[0_0_11.1px_0_rgba(0,0,0,0.25)]">
             <ChevronRightIcon className="mr-1 md:mr-2 w-4 md:w-5 h-4 md:h-5 rotate-180" />
-            <span className="font-16 text-dark">Back</span>
+            <span className="text-[14px] md:text-[16px] text-dark">Back</span>
           </button>
+        </div>
+        {/* Mobile: chevron + name */}
+        <button onClick={() => router.back()} className="cursor-pointer md:hidden flex items-center px-4 py-3 gap-1.5">
+          <ChevronRightIcon className="w-4 sm:w-5 h-4 sm:h-5 rotate-180 shrink-0 text-dark" />
+          <span className="font-poppins text-[16px] font-medium text-dark leading-tight truncate">{profile.name}</span>
+          {profile.trustBadge && <ProfileVerifiedBadgeIcon className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />}
+        </button>
+      </div>
+
+      {/* ── Mobile layout (≤768px) ── */}
+      <div className="md:hidden">
+        {/* Image + right details row */}
+        <div className="flex max-[370px]:gap-3 max-[500px]:gap-4 gap-6 sm:px-6 px-4 max-[370px]:px-2 max-[500px]:pt-4 pt-6">
+          {/* Image */}
+          <div className="relative shrink-0 w-[165px] h-[218.664px] rounded-[20px] overflow-hidden bg-[#D9D9D9] transition-all duration-300">
+            {hasPhoto ? (
+              <ProtectedPhoto
+                src={photoSrc}
+                alt={profile.name}
+                fill
+                priority
+                className={`object-cover${interestStatus === "declined" ? " grayscale" : ""}`}
+                sizes="165px"
+              />
+            ) : (
+              <ProtectedImage
+                src={placeholder}
+                alt={profile.name}
+                fill
+                priority
+                className={`object-cover${interestStatus === "declined" ? " grayscale" : ""}`}
+              />
+            )}
+            {(noPhotoCase || isPrivate) && (
+              <div className="absolute left-1/2 -translate-x-1/2 z-20 bottom-2">
+                {noPhotoCase && !resolvedUploadRequested && (
+                  <Button text={photoActionLoading ? "loading..." : "Request photo"} onPress={handleRequestPhotoUpload} disabled={photoActionLoading} iconLeft={<NotifPhotoUploadIcon className="w-4 h-4 shrink-0 text-white" />} className="!py-1.5 !px-3 !text-[14px] whitespace-nowrap" />
+                )}
+                {noPhotoCase && resolvedUploadRequested && (
+                  <button disabled className="inline-flex items-center justify-center rounded-full bg-[#E8E8E8] py-1.5 px-3 text-[14px] font-semibold text-[#AAAAAA] whitespace-nowrap">Requested</button>
+                )}
+                {resolvedPhotoAccess === 'locked' && (
+                  <Button text={photoActionLoading ? "loading..." : "Request access"} onPress={handleRequestPhotoAccess} disabled={photoActionLoading} iconLeft={<ShieldLockRedIcon className="w-4 h-4 shrink-0" />} className="!py-1.5 !px-2 !text-[14px] whitespace-nowrap" />
+                )}
+                {resolvedPhotoAccess === 'declined' && !accessInCooldown && !accessMaxed && (
+                  <Button text={photoActionLoading ? "loading..." : "Request access"} onPress={handleRequestPhotoAccess} disabled={photoActionLoading} iconLeft={<ShieldLockRedIcon className="w-4 h-4 shrink-0" />} className="!py-1.5 !px-2 !text-[14px] whitespace-nowrap" />
+                )}
+                {resolvedPhotoAccess === 'declined' && accessInCooldown && (
+                  <button disabled className="inline-flex items-center justify-center rounded-full bg-[#E8E8E8] py-1.5 px-3 text-[14px] font-semibold text-[#AAAAAA] whitespace-nowrap">Try again in {accessCooldownDaysLeft}d</button>
+                )}
+                {resolvedPhotoAccess === 'declined' && accessMaxed && (
+                  <button disabled className="inline-flex items-center justify-center rounded-full bg-[#E8E8E8] py-1.5 px-3 text-[14px] font-semibold text-[#AAAAAA] whitespace-nowrap">Request limit reached</button>
+                )}
+                {resolvedPhotoAccess === 'pending' && (
+                  <button disabled className="inline-flex items-center justify-center rounded-full bg-[#E8E8E8] py-1.5 px-3 text-[14px] font-semibold text-[#AAAAAA] whitespace-nowrap">Requested</button>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Right column */}
+          <div className="flex-1 min-w-0 flex flex-col justify-center gap-0">
+            {/* Inai ID */}
+            <p className="font-poppins text-[14px] text-dark font-normal">{profile.displayId}</p>
+            {/* Tags */}
+            <div className="flex flex-wrap gap-2 mt-1">
+              {profile.isElite ? (
+                <div className="flex items-center gap-1 rounded-[38px] bg-[#FFDED3] px-2 py-[4.5px]">
+                  <EliteCrownIcon className="w-4 h-4 shrink-0" />
+                  <span className="text-[#A97216] text-[14px] font-normal leading-[150%]">Elite</span>
+                </div>
+              ) : (
+                <div className="flex items-center rounded-[38px] bg-[#D5ECFF] px-2 py-[4.5px]">
+                  <span className="text-[14px] font-normal leading-[150%] text-[#5D5D5D]">New</span>
+                </div>
+              )}
+            </div>
+            <div className="border-t border-[#EBEBEB] my-2" />
+            {/* Verified badges */}
+            {(profile.isPhoneVerified || profile.isEmailVerified) && (
+              <>
+                {profile.isPhoneVerified && <div className="flex items-center max-[370px]:gap-0 gap-0.5 text-[#6B6B6B] mb-[3px]"><span className="text-[14px] font-normal leading-[150%]">WhatsApp verified</span><CheckmarkIcon className="max-[500px]:h-4 h-5 max-[500px]:w-4 w-5 shrink-0" /></div>}
+                {profile.isEmailVerified && <div className="flex items-center max-[370px]:gap-0 gap-0.5 text-[#6B6B6B]"><span className="text-[14px] font-normal leading-[150%]">Email verified</span><CheckmarkIcon className="max-[500px]:h-4 h-5 max-[500px]:w-4 w-5 shrink-0" /></div>}
+                <div className="border-t border-[#EBEBEB] my-2" />
+              </>
+            )}
+            {/* 4 quick details */}
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center max-[370px]:gap-1.5 gap-2"><CakeIcon className="w-4 h-4 shrink-0 text-dark" /><span className="text-[14px] text-dark truncate">{age != null && age > 0 ? `${age} years` : "Age not specified"}</span></div>
+              <div className="flex items-center max-[370px]:gap-1.5 gap-2"><EducationCapIcon className="w-4 h-4 shrink-0 text-dark" /><span className="text-[14px] text-dark truncate">{pr.education ?? "Not specified"}</span></div>
+              <div className="flex items-center max-[370px]:gap-1.5 gap-2"><WorkBriefcaseIcon className="w-4 h-4 shrink-0 text-dark" /><span className="text-[14px] text-dark truncate">{pr.occupation ?? "Not specified"}</span></div>
+              <div className="flex items-center max-[370px]:gap-1.5 gap-2"><HeightRulerIcon className="w-4 h-4 shrink-0 text-dark" /><span className="text-[14px] text-dark truncate">{pr.heightCm ? formatHeight(pr.heightCm) : "Not specified"}</span></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Full-width sections below */}
+        <div className="mt-5 lg:px-10 sm:px-6 px-4 max-[370px]:px-2 space-y-4">
+          {isBackgroundFetching ? (
+            <>
+              <div className="rounded-[16px] bg-light p-4 animate-pulse"><div className="h-4 w-1/3 bg-[#EAEAEA] rounded mb-3" /><div className="h-px bg-[#EAEAEA] mb-4" /><div className="h-10 bg-[#EAEAEA] rounded mb-3" /><div className="h-9 w-40 bg-[#EAEAEA] rounded mx-auto" /></div>
+              <div className="rounded-[16px] bg-light p-4 animate-pulse h-24" />
+            </>
+          ) : (
+            <>
+              <MatchInterestCard profileId={profile.id} profileName={profile.name} gender={profile.gender} status={interestStatus} isElite={viewerIsElite} isAccepted={profile.interestIsAccepted ?? false} sendCount={sendCount} receivedCount={profile.interestReceiveCount ?? 1} isShortlisted={profile.isShortlisted} lastSentAt={profile.interestLastSentAt} isReminderDue={profile.isReminderDue ?? false} declinedByMe={declinedByMe} phone={viewerIsElite ? profile.phone : undefined} onAction={handleInterestAction} />
+              {profile.incomingPhotoRequest && !incomingDismissed && (
+                <IncomingPhotoRequestCard profileId={profileId} profileName={profile.name} type={profile.incomingPhotoRequest.type} onDismiss={() => { setIncomingDismissed(true); handleInterestAction(); }} />
+              )}
+            </>
+          )}
+          {sections.filter((s) => !s.hidden).map((section) => (
+            <SectionCard key={section.title} section={section} />
+          ))}
         </div>
       </div>
 
-      {/* Body */}
-      <div className="mt-6 md:mt-8 flex justify-center px-4 md:px-10">
+      {/* ── Desktop body (≥768px) ── */}
+      <div className="hidden md:flex mt-6 md:mt-8 justify-center px-4 md:px-10">
         <div className="flex w-full max-w-[1160px] flex-col items-center min-[520px]:items-start min-[520px]:flex-row gap-5 sm:gap-7 lg:gap-10">
           {/* Sticky Image */}
           <div className="shrink-0 min-[520px]:sticky min-[520px]:top-[172px] mb-0 min-[520px]:mb-16 sm:mb-18 md:mb-26">
@@ -396,7 +511,7 @@ function UserProfileContent() {
                     />
                   )}
                   {noPhotoCase && resolvedUploadRequested && (
-                    <button disabled className="inline-flex items-center justify-center rounded-full bg-[#E8E8E8] py-1.5 px-3 sm:py-2 sm:px-4 text-[11px] sm:text-[12px] md:text-[13px] font-semibold text-[#AAAAAA] whitespace-nowrap">
+                    <button disabled className="inline-flex items-center justify-center rounded-full bg-[#E8E8E8] py-1.5 px-3 sm:py-2 sm:px-4 text-[12px] md:text-[14px] font-semibold text-[#AAAAAA] whitespace-nowrap">
                       Requested
                     </button>
                   )}
@@ -406,7 +521,7 @@ function UserProfileContent() {
                       onPress={handleRequestPhotoAccess}
                       disabled={photoActionLoading}
                       iconLeft={<ShieldLockRedIcon className="w-4 h-4 sm:w-5 sm:h-5 md:h-8 md:w-8 shrink-0"/>}
-                      className="!py-1.5 !px-2 sm:!py-2 sm:!px-2 md:!px-4 !text-[11px] sm:!text-[12px] md:!text-[13px] whitespace-nowrap"
+                      className="!py-1.5 !px-2 sm:!py-2 sm:!px-2 md:!px-4 !text-[11px] sm:!text-[12px] md:!text-[14px] whitespace-nowrap"
                     />
                   )}
                   {resolvedPhotoAccess === 'declined' && !accessInCooldown && !accessMaxed && (
@@ -415,21 +530,21 @@ function UserProfileContent() {
                       onPress={handleRequestPhotoAccess}
                       disabled={photoActionLoading}
                       iconLeft={<ShieldLockRedIcon className="w-4 h-4 sm:w-5 sm:h-5 md:h-8 md:w-8 shrink-0"/>}
-                      className="!py-1.5 !px-2 sm:!py-2 sm:!px-2 md:!px-4 !text-[11px] sm:!text-[12px] md:!text-[13px] whitespace-nowrap"
+                      className="!py-1.5 !px-2 sm:!py-2 sm:!px-2 md:!px-4 !text-[11px] sm:!text-[12px] md:!text-[14px] whitespace-nowrap"
                     />
                   )}
                   {resolvedPhotoAccess === 'declined' && accessInCooldown && (
-                    <button disabled className="inline-flex items-center justify-center rounded-full bg-[#E8E8E8] py-1.5 px-3 sm:py-2 sm:px-4 text-[11px] sm:text-[12px] md:text-[13px] font-semibold text-[#AAAAAA] whitespace-nowrap">
+                    <button disabled className="inline-flex items-center justify-center rounded-full bg-[#E8E8E8] py-1.5 px-3 sm:py-2 sm:px-4 text-[12px] md:text-[14px] font-semibold text-[#AAAAAA] whitespace-nowrap">
                       Try again in {accessCooldownDaysLeft}d
                     </button>
                   )}
                   {resolvedPhotoAccess === 'declined' && accessMaxed && (
-                    <button disabled className="inline-flex items-center justify-center rounded-full bg-[#E8E8E8] py-1.5 px-3 sm:py-2 sm:px-4 text-[11px] sm:text-[12px] md:text-[13px] font-semibold text-[#AAAAAA] whitespace-nowrap">
+                    <button disabled className="inline-flex items-center justify-center rounded-full bg-[#E8E8E8] py-1.5 px-3 sm:py-2 sm:px-4 text-[12px] md:text-[14px] font-semibold text-[#AAAAAA] whitespace-nowrap">
                       Request limit reached
                     </button>
                   )}
                   {resolvedPhotoAccess === 'pending' && (
-                    <button disabled className="inline-flex items-center justify-center rounded-full bg-[#E8E8E8] py-1.5 px-3 sm:py-2 sm:px-4 text-[11px] sm:text-[12px] md:text-[13px] font-semibold text-[#AAAAAA] whitespace-nowrap">
+                    <button disabled className="inline-flex items-center justify-center rounded-full bg-[#E8E8E8] py-1.5 px-3 sm:py-2 sm:px-4 text-[12px] md:text-[14px] font-semibold text-[#AAAAAA] whitespace-nowrap">
                       Requested
                     </button>
                   )}
@@ -447,7 +562,7 @@ function UserProfileContent() {
             {/* Top Row */}
             <div className="flex items-center justify-between gap-4 flex-wrap">
               <div className="flex items-center gap-1 md:gap-2">
-                <h1 className="text-dark text-[14px] md:text-[18px] font-medium leading-[150%]">
+                <h1 className="text-dark text-[16px] md:text-[18px] font-medium leading-[150%]">
                   {profile.name}
                 </h1>
                 {profile.trustBadge && (
@@ -457,17 +572,17 @@ function UserProfileContent() {
               {profile.isElite ? (
                 <div className="flex items-center gap-1 rounded-[38px] bg-[#FFDED3] px-2 py-[2px]">
                   <EliteCrownIcon className="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5 shrink-0" />
-                  <span className="text-[#A97216] font-16 font-normal leading-[150%]">Elite</span>
+                  <span className="text-[#A97216] text-[14px] md:text-[16px] font-normal leading-[150%]">Elite</span>
                 </div>
               ) : (
                 <div className="flex items-center rounded-[38px] bg-[#D5ECFF] px-3 py-[2px]">
-                  <span className="font-16 font-normal leading-[150%] text-[#5D5D5D]">New</span>
+                  <span className="text-[14px] md:text-[16px] font-normal leading-[150%] text-[#5D5D5D]">New</span>
                 </div>
               )}
             </div>
 
             {/* ID */}
-            <div className="md:mt-0.5 text-dark font-16 font-normal leading-[150%]">
+            <div className="md:mt-0.5 text-dark text-[14px] md:text-[16px] font-normal leading-[150%]">
               {profile.displayId}
             </div>
 
@@ -581,11 +696,11 @@ function QuickRow({
     <div className="flex items-center font-poppins justify-between flex-wrap">
       <div className="flex items-center gap-3 sm:gap-4">
         <LeftIcon className="h-4 w-4 shrink-0 md:h-5 md:w-5" />
-        <span className="font-16 font-normal leading-[150%] text-dark">{leftText}</span>
+        <span className="text-[14px] md:text-[16px] font-normal leading-[150%] text-dark">{leftText}</span>
       </div>
       {rightText ? (
         <div className="flex items-center gap-1 text-secondary sm:gap-2">
-          <span className="font-16 font-normal leading-[150%]">{rightText}</span>
+          <span className="text-[14px] md:text-[16px] font-normal leading-[150%]">{rightText}</span>
           <CheckmarkIcon className="h-4 w-4 shrink-0 md:h-5 md:w-5" />
         </div>
       ) : null}
@@ -595,15 +710,15 @@ function QuickRow({
 
 function SectionCard({ section }: { section: SectionData }) {
   return (
-    <div id={section.title === "Contact" ? "contact-section" : undefined} className="rounded-[16px] bg-light p-4 md:p-5 font-poppins">
-      <div className="flex items-center justify-between gap-2 text-dark md:gap-3">
-        <div className="flex items-center gap-2 md:gap-3">
+    <div id={section.title === "Contact" ? "contact-section" : undefined} className="rounded-[16px] bg-light max-[370px]:px-3 max-[370px]:py-2 px-4 py-4 md:py-5 md:py-5 font-poppins">
+      <div className="flex items-center justify-between max-[370px]:gap-1 gap-2 text-dark md:gap-3">
+        <div className="flex items-center max-[370px]:gap-1 gap-2 md:gap-3">
           {section.icon}
-          <h2 className="font-20 font-semibold">{section.title}</h2>
+          <h2 className="text-[16px] sm:text-[18px] md:text-[20px] font-semibold">{section.title}</h2>
         </div>
         {section.titleRightIcon ? <div className="shrink-0">{section.titleRightIcon}</div> : null}
       </div>
-      <div className="mt-3 md:mt-4 border-t border-[#EAEAEA]" />
+      <div className="max-[500px]:mt-2 mt-3 md:mt-4 border-t border-[#EAEAEA]" />
       {section.extra ? (
         section.extra
       ) : (
@@ -619,16 +734,16 @@ function SectionCard({ section }: { section: SectionData }) {
 function InfoColumn({ items, borderLeft = false }: { items: FieldRow[]; borderLeft?: boolean }) {
   return (
     <div
-      className={`flex flex-col gap-3 pt-3 md:pt-4 font-poppins ${
+      className={`flex flex-col max-[500px]:gap-[11px] gap-3 max-[500px]:mt-2 mt-3 md:mt-4 font-poppins ${
         borderLeft
           ? "min-[700px]:border-l min-[700px]:border-[#EAEAEA] min-[700px]:pl-5 min-[767px]:max-[867px]:border-l-0 min-[767px]:max-[867px]:pl-0"
           : ""
       }`}
     >
       {items.map((item) => (
-        <div key={item.label} className="grid grid-cols-1 min-[420px]:grid-cols-2 gap-x-4 gap-y-1 items-start">
-          <span className="font-16 font-normal leading-[150%] text-secondary3">{item.label}</span>
-          <span className="font-16 font-normal leading-[150%] text-dark break-words">{item.value}</span>
+        <div key={item.label} className="grid grid-cols-1 min-[310px]:grid-cols-2 gap-x-4 gap-y-1 items-start">
+          <span className="text-[14px] md:text-[16px] font-normal leading-[150%] text-secondary3">{item.label}</span>
+          <span className="text-[14px] md:text-[16px] font-normal leading-[150%] text-dark break-words">{item.value}</span>
         </div>
       ))}
     </div>
