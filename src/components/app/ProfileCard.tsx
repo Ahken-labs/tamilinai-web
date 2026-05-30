@@ -122,18 +122,20 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
   ];
 
   return (
-    <div className={`w-full select-none max-w-[944px] p-4 mx-auto rounded-[32px] bg-white mb-4 md:mb-6 
+    <div className={`w-full select-none max-w-[944px] p-2 md:p-4 mx-auto rounded-[24px] md:rounded-[32px] bg-white mb-4 md:mb-6
       ${profile.isElite ? "shadow-[0_4px_40px_0_rgba(255,140,60,0.18)]" : "shadow-none"} overflow-hidden`}>
-      <div className="flex flex-col min-[840px]:flex-row">
+
+      {/* ── Top row: image + name/id/tags ── */}
+      <div className="flex flex-row items-center min-[600px]:items-start">
         {/* Photo */}
-        <div className="relative w-full min-[840px]:w-[220px] md:min-w-[220px] h-[240px] md:h-[263px] lg:h-[293.33px] rounded-[16px] overflow-hidden bg-[#DBDBDB]/20">
+        <div className="relative shrink-0 w-[80px] h-[106.665px] min-[600px]:w-[155.76px] min-[600px]:h-[207.68px] min-[840px]:w-[220px] min-[840px]:h-[293.33px] rounded-[16px] overflow-hidden bg-[#DBDBDB]/20 transition-all duration-300">
           {profile.photo && !profile.isPrivate ? (
             <ProtectedPhoto
               src={photoSrc}
               alt={profile.name}
               fill
               className="object-cover"
-              sizes="(max-width: 840px) 100vw, 220px"
+              sizes="(max-width: 840px) 80px, 220px"
             />
           ) : (
             <ProtectedImage
@@ -141,7 +143,7 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
               alt={profile.name}
               fill
               className="object-cover"
-              sizes="(max-width: 840px) 100vw, 220px"
+              sizes="(max-width: 840px) 80px, 220px"
             />
           )}
           {(!profile.photo || profile.isPrivate) && (
@@ -154,7 +156,7 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
                 {profile.isPrivate ? (
                   <ShieldLockIcon />
                 ) : (
-                  <span className="flex items-center px-3 py-[2px] rounded-[38px] bg-white font-poppins font-16 font-normal leading-[150%] text-[#5D5D5D]">
+                  <span className="hidden min-[600px]:flex items-center px-3 py-[2px] rounded-[38px] bg-white font-poppins font-16 font-normal leading-[150%] text-[#5D5D5D]">
                     No photo
                   </span>
                 )}
@@ -163,23 +165,24 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
           )}
         </div>
 
-        {/* Details */}
-        <div className="flex-1 ml-0 min-[840px]:ml-5 pt-5 min-[840px]:pt-0 min-w-0">
-          {/* Name + badge + tags */}
-          <div className="flex justify-between flex-wrap items-center gap-2">
-            <h2 className="font-poppins flex gap-2 text-[14px] sm:text-[15px] md:text-[17px] lg:text-[18px] font-semibold text-dark leading-tight">
+        {/* Name / ID / Tags */}
+        <div className="flex-1 ml-3 min-[840px]:ml-5 lg:ml-8 min-w-0">
+          {/* Name + verified badge */}
+          <div className="flex justify-between flex-wrap items-center gap-1 sm:gap-2">
+            <h2 className="font-poppins flex gap-2 items-center text-[16px] sm:text-[17px] md:text-[18px] font-medium text-dark leading-tight">
               {profile.name}
               {profile.isVerified && (
-                <ProfileVerifiedBadgeIcon className="w-4 md:w-5 h-4 md:h-5 shrink-0" />
+                <ProfileVerifiedBadgeIcon className="w-4 md:w-6 h-4 md:h-6 shrink-0" />
               )}
             </h2>
-            <div className="flex gap-2">
+            {/* Tags — desktop: beside name */}
+            <div className="hidden min-[840px]:flex gap-2">
               {tags.map((tag) => (
                 <span
                   key={tag.type}
-                  className={`flex items-center gap-1 px-3 py-1 rounded-full font-16 font-poppins font-medium leading-none ${TAG_STYLES[tag.type]}`}
+                  className={`flex items-center gap-1 px-3 py-1 rounded-full text-[14px] md:text-[16px] font-poppins font-medium leading-none ${TAG_STYLES[tag.type]}`}
                 >
-                  {tag.type === "elite" && <EliteCrownIcon className="w-3.5 h-3.5 shrink-0" />}
+                  {tag.type === "elite" && <EliteCrownIcon className="w-4 md:w-5 h-4 md:h-5 shrink-0" />}
                   {tag.type === "viewed" && <ViewedIcon />}
                   {tag.label}
                 </span>
@@ -188,60 +191,122 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
           </div>
 
           {/* ID */}
-          <p className="mt-[3px] font-poppins font-16 text-[#888888] font-normal">
+          <p className="md:mt-[3px] font-poppins text-[14px] md:text-[16px] text-dark font-normal">
             ID: {profile.displayId}
           </p>
 
-          {/* Divider */}
-          <div className="mt-3 md:mt-4 mb-4 md:mb-5 border-t border-[#EBEBEB]" />
+          {/* Tags — mobile: below ID */}
+          {tags.length > 0 && (
+            <div className="flex gap-2 mt-2 min-[840px]:hidden flex-wrap">
+              {tags.map((tag) => (
+                <span
+                  key={tag.type}
+                  className={`flex items-center gap-1 px-3 py-1 rounded-full text-[14px] md:text-[16px] font-poppins font-medium leading-none ${TAG_STYLES[tag.type]}`}
+                >
+                  {tag.type === "elite" && <EliteCrownIcon className="w-4 md:w-5 h-4 md:h-5 shrink-0" />}
+                  {tag.type === "viewed" && <ViewedIcon />}
+                  {tag.label}
+                </span>
+              ))}
+            </div>
+          )}
 
-          {/* Detail rows */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 md:gap-y-3">
+          {/* 600px+: detail rows in right column (buttons stay at bottom) */}
+          <div className="hidden min-[600px]:block">
+            <div className="mt-3 mb-4 border-t border-[#EBEBEB]" />
+            <div className="grid grid-cols-2 gap-x-6 gap-y-2 md:gap-y-3">
+              {detailRows.map((row, ri) =>
+                row.map(({ Icon, value }, ci) => (
+                  <div key={`${ri}-${ci}`} className="flex items-center gap-3 md:gap-4 min-w-0">
+                    <Icon className="w-4 md:w-5 h-4 md:h-5 shrink-0 text-[#222222]" />
+                    <span className="font-poppins text-[14px] md:text-[16px] text-[#6B6B6B] truncate">{value}</span>
+                  </div>
+                ))
+              )}
+            </div>
+            {/* Desktop 840px+: buttons inside right column */}
+            <div className="hidden min-[840px]:flex gap-3 mt-5 md:mt-6">
+              <Button
+                className="flex-1 !px-4"
+                text="View Full Profile"
+                onPress={() => router.push(`/user-profile?id=${profile.id}`)}
+              />
+              <Button
+                onPress={handleShortlist}
+                className="!px-4 flex-1 !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
+                text={shortlisted ? "Remove" : "Shortlist"}
+                iconLeft={shortlisted ? <ShortlistRemoveIcon className="w-4 h-4 shrink-0" /> : <ShortlistIcon className="w-4 h-4 shrink-0" />}
+              />
+              <Button
+                onPress={handleSendInterest}
+                className="!px-4 flex-1 !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE] disabled:opacity-50"
+                text={mutualMatch ? "Connected 🎉" : interestSent ? "Interest Sent" : interestPending ? "Sending..." : "Send Interest"}
+                iconLeft={<SendInterestMsgIcon className="w-4 h-4 shrink-0" />}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Below 840px: buttons always at bottom. Detail rows only shown here below 600px. */}
+      <div className="min-[840px]:hidden mt-0">
+        <div className="min-[600px]:hidden">
+          <div className="mb-1 border-t border-[#EBEBEB]" />
+          <div className="grid grid-cols-2 gap-x-6 gap-y-2">
             {detailRows.map((row, ri) =>
               row.map(({ Icon, value }, ci) => (
-                <div key={`${ri}-${ci}`} className="flex items-center gap-3 md:gap-4 min-w-0">
-                  <Icon className="w-4 md:w-5 h-4 md:h-5 shrink-0 text-[#222222]" />
-                  <span className="font-poppins font-16 min-[840px]:text-[14px] text-[#6B6B6B] truncate">
-                    {value}
-                  </span>
+                <div key={`${ri}-${ci}`} className="flex items-center max-[370px]:gap-1.5 gap-2 min-w-0">
+                  <Icon className="w-[14px] md:w-5 h-[14px] md:h-5 shrink-0 text-[#222222]" />
+                  <span className="font-poppins text-[14px] md:text-[16px] text-[#6B6B6B] truncate">{value}</span>
                 </div>
               ))
             )}
           </div>
+        </div>
+        {/* >= 640px: full buttons with text */}
+        <div className="hidden min-[500px]:flex gap-3 mt-4">
+          <Button
+            className="!px-3 flex-1"
+            text="View Full Profile"
+            onPress={() => router.push(`/user-profile?id=${profile.id}`)}
+          />
+          <Button
+            onPress={handleShortlist}
+            className="!px-3 flex-1 !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
+            text={shortlisted ? "Remove" : "Shortlist"}
+            iconLeft={shortlisted ? <ShortlistRemoveIcon className="w-4 h-4 shrink-0" /> : <ShortlistIcon className="w-4 h-4 shrink-0" />}
+          />
+          <Button
+            onPress={handleSendInterest}
+            className="!px-3 flex-1 !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE] disabled:opacity-50"
+            text={mutualMatch ? "Connected 🎉" : interestSent ? "Interest Sent" : interestPending ? "Sending..." : "Send Interest"}
+            iconLeft={<SendInterestMsgIcon className="w-4 h-4 shrink-0" />}
+          />
+        </div>
 
-          <div className="flex flex-wrap gap-3 mt-5 md:mt-6">
-            <Button
-              className="basis-full [@media(min-width:450px)]:basis-[calc(50%-0.375rem)] [@media(min-width:690px)]:basis-[calc(33.333%-0.5rem)] [@media(min-width:838px)]:basis-[calc(50%-0.375rem)] [@media(min-width:940px)]:basis-[calc(33.333%-0.5rem)]"
-              text="View Full Profile"
-              onPress={() => router.push(`/user-profile?id=${profile.id}`)}
-            />
-            <Button
-              onPress={handleShortlist}
-              className="basis-full flex-1 [@media(min-width:450px)]:basis-[calc(50%-0.375rem)] [@media(min-width:690px)]:basis-[calc(33.333%-0.5rem)] [@media(min-width:838px)]:basis-[calc(50%-0.375rem)] [@media(min-width:940px)]:basis-[calc(33.333%-0.5rem)] !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
-              text={shortlisted ? "Remove" : "Shortlist"}
-              iconLeft={
-                shortlisted ? (
-                  <ShortlistRemoveIcon className="w-4 h-4 shrink-0" />
-                ) : (
-                  <ShortlistIcon className="w-4 h-4 shrink-0" />
-                )
-              }
-            />
-            <Button
-              onPress={handleSendInterest}
-              className="basis-full flex-1 [@media(min-width:450px)]:basis-[calc(50%-0.375rem)] [@media(min-width:690px)]:basis-[calc(33.333%-0.5rem)] [@media(min-width:838px)]:basis-full [@media(min-width:940px)]:basis-[calc(33.333%-0.5rem)] !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE] disabled:opacity-50"
-              text={
-                mutualMatch ? "Connected 🎉"
-                : interestSent ? "Interest Sent"
-                : interestPending ? "Sending..."
-                : "Send Interest"
-              }
-              iconLeft={<SendInterestMsgIcon className="w-4 h-4 shrink-0" />}
-            />
+        {/* < 640px: View Full Profile as-is, shortlist + interest icon-only */}
+        <div className="flex min-[500px]:hidden max-[360px]:gap-2 gap-3 mt-4">
+          <Button
+            className="flex-1 !py-2 max-[350]:!px-4"
+            text="View Full Profile"
+            onPress={() => router.push(`/user-profile?id=${profile.id}`)}
+          />
+          <div
+            onClick={handleShortlist}
+            className="flex items-center flex max-[302px]:hidden justify-center py-2 px-3 rounded-[43px] bg-[#FFF0F3] cursor-pointer hover:bg-[#FFE4E9] active:bg-[#FFD6DE]"
+          >
+            {shortlisted ? <ShortlistRemoveIcon className="w-5 h-5 shrink-0 text-[#B31B38]" /> : <ShortlistIcon className="w-5 h-5 shrink-0 text-[#B31B38]" />}
           </div>
-          {showLimitPopup && <EliteUpgradePopup trigger="daily_limit" onClose={() => setShowLimitPopup(false)} />}
+          <div
+            onClick={handleSendInterest}
+            className="flex items-center  flex max-[302px]:hidden justify-center py-2 px-3 rounded-[43px] bg-[#FFF0F3] cursor-pointer hover:bg-[#FFE4E9] active:bg-[#FFD6DE]"
+          >
+            <SendInterestMsgIcon className="w-5 h-5 shrink-0 text-[#B31B38]" />
+          </div>
         </div>
       </div>
+
+      {showLimitPopup && <EliteUpgradePopup trigger="daily_limit" onClose={() => setShowLimitPopup(false)} />}
     </div>
   );
 }

@@ -2,6 +2,7 @@
 
 interface Tab {
   label: string;
+  shortLabel?: string;
   value: string;
   icon?: React.ReactNode;
 }
@@ -21,14 +22,19 @@ export default function ToggleTabs({ tabs, activeTab, onTabChange }: ToggleTabsP
           <button
             key={tab.value}
             onClick={() => onTabChange(tab.value)}
-            className={`h-8 px-2 sm:px-3 md:px-4 rounded-[44px] font-poppins font-14 font-medium leading-none transition-all duration-200 whitespace-nowrap cursor-pointer ${
+            className={`h-8 px-2 sm:px-3 md:px-4 rounded-[44px] font-poppins text-[12px] sm:text-[14px] md:text-[16px] font-medium leading-none transition-all duration-200 whitespace-nowrap cursor-pointer ${
               isActive
                 ? "bg-[#222222] text-white"
                 : "text-[#222222] hover:bg-[#F0F0F0]"
             }`}
           >
             <span className="flex items-center gap-2">
-              {tab.label}
+              {tab.shortLabel ? (
+                <>
+                  <span className="min-[500px]:hidden">{tab.shortLabel}</span>
+                  <span className="hidden min-[500px]:inline">{tab.label}</span>
+                </>
+              ) : tab.label}
               {tab.icon}
             </span>
           </button>

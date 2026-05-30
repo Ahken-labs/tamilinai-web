@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { IoCloseOutline } from "react-icons/io5";
@@ -22,7 +22,7 @@ const CARDS_PER_PAGE = 10;
 const TABS = [
   { label: "Best match", value: "best" },
   { label: "Elite match", value: "elite" },
-  { label: "Viewed not connected", value: "viewed" },
+  { label: "Viewed not connected", shortLabel: "Viewed", value: "viewed" },
 ];
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
@@ -65,6 +65,20 @@ function MatchesContent() {
   const [showWelcome, setShowWelcome] = useState(() => searchParams.get("welcome") === "1");
   const [activeTab, setActiveTab] = useState("best");
   const [currentPage, setCurrentPage] = useState(1);
+
+  const [tabBarVisible, setTabBarVisible] = useState(true);
+  const lastScrollY = useRef(0);
+  useEffect(() => {
+    const handleScroll = () => {
+      const y = window.scrollY;
+      if (y <= 10) setTabBarVisible(true);
+      else if (y > lastScrollY.current + 4) setTabBarVisible(false);
+      else if (y < lastScrollY.current - 4) setTabBarVisible(true);
+      lastScrollY.current = y;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const searchFilters = useMemo<SearchFilters | null>(() => {
     const displayId = searchParams.get("displayId");
@@ -162,7 +176,7 @@ function MatchesContent() {
     <>
       <PartnerPreferenceModal isOpen={showWelcome} onClose={handleCloseWelcome} variant="onboarding" />
       <main className="min-h-screen bg-[#F8F5F2]">
-        <div className="sticky top-[74px] z-10 w-full bg-white border-t border-[#EEEEEE]">
+        <div className="sticky lg:px-10 max-[320px]:top-[56px] max-[768px]:top-[64px] top-[74px] z-10 w-full bg-white/60 backdrop-blur-sm border-t border-[#EEEEEE] transition-transform duration-300" style={!tabBarVisible ? { transform: "translateY(-110%)" } : undefined}>
           {searchFilters ? (
             <div className="flex items-center justify-center px-auto py-2 md:py-3">
               <button
@@ -181,7 +195,7 @@ function MatchesContent() {
           )}
         </div>
 
-        <div className="px-4 lg:px-8 pt-[27px] pb-4 flex flex-col gap-4 max-w-[1024px] mx-auto">
+        <div className="px-4 lg:px-8 pt-[12px] sm:pt-[27px] pb-4 flex flex-col gap-4 max-w-[1024px] mx-auto">
 
           {showSkeletons ? (
             Array.from({ length: 3 }).map((_, i) => <ProfileCardSkeleton key={i} />)

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Logo,
@@ -195,21 +195,50 @@ export default function AppHeader() {
 
   const closeMobile = () => setMobileOpen(false);
 
+  // Scroll-hide for mobile (≤900px)
+  const [navVisible, setNavVisible] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 900);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!isMobile) return;
+      const y = window.scrollY;
+      if (y <= 10) setNavVisible(true);
+      else if (y > lastScrollY.current + 4) setNavVisible(false);
+      else if (y < lastScrollY.current - 4) setNavVisible(true);
+      lastScrollY.current = y;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isMobile]);
+
   return (
     <>
       <header
-        className="font-poppins select-none sticky top-0 z-50 w-full bg-white/60 backdrop-blur-sm"
+        className="font-poppins select-none sticky top-0 z-50 w-full bg-white/60 backdrop-blur-sm transition-transform duration-300"
+        style={isMobile && !navVisible ? { transform: "translateY(-100%)" } : undefined}
       >
-        <div className="max-w-[1920px] mx-auto flex px-5 lg:px-10 h-[74px] pt-5 gap-5 min-[900px]:gap-6">
+        <div className="max-w-[1920px] mx-auto flex px-5 lg:px-10 max-[320px]:h-[56px] max-[768px]:h-[64px] h-[74px] max-[320px]:pt-2 pt-5 gap-5 min-[900px]:gap-6">
 
-          {/* Left: Logo + Search */}
-          <div className="flex mb-2 items-center gap-2 lg:gap-3 flex-1 min-w-0">
+          {/* Left: Logo + Search — desktop only */}
+          <div className="hidden min-[900px]:flex mb-2 items-center gap-2 lg:gap-3 flex-1 min-w-0">
+            <Link href={"/matches"}>
             <Logo />
+            </Link>
             <button
               type="button"
               onClick={() => { setSettingsOpen(false); setMobileOpen(false); setOpenModal("search"); }}
               className="flex items-center pr-4 pl-2 py-2 gap-2 rounded-[41px] bg-[#E0E0E0] cursor-pointer hover:bg-[#D4D4D4] transition-colors duration-150"
             >
+              {/* desktop */}
               <SearchIcon className="w-5 md:w-5.3 lg:w-6 h-5 md:h-5.3 lg:h-6 text-[#525252]" />
               <span className="bg-transparent text-[14px] md:text-[15px] lg:text-[16px] font-normal text-[#4A4A4A]">
                 Search
@@ -217,8 +246,8 @@ export default function AppHeader() {
             </button>
           </div>
 
-          {/* Center: Nav tabs — desktop only */}
-          <nav className="hidden min-[900px]:flex items-center gap-6 lg:gap-9 flex-1 mt-0 md:mt-2 lg:mt-0 justify-center">
+          {/* Center: Nav tabs — all sizes */}
+          <nav className="flex items-center justify-between min-[420px]:mx-3 min-[500px]:mx-10 min-[600px]:mx-20 min-[720px]:mx-30 min-[900px]:justify-center min-[500px]:mx-0 min-[900px]:justify-center min-[900px]:mx-0 min-[900px]:gap-5 lg:gap-9 flex-1 mt-0">
             {NAV_TABS.map(({ labelKey, href, Icon }) => {
               const active = pathname.startsWith(href);
               const showDot = (!active && labelKey === "Notifications" && hasUnread) || (!active && labelKey === "Interested" && hasUnreadInterest);
@@ -226,13 +255,13 @@ export default function AppHeader() {
                 <Link
                   key={href}
                   href={href}
-                  className={`relative flex flex-col items-center pb-1 gap-0.5 border-b-[2.4px] transition-colors duration-150 ${active ? "border-[#222222]" : "border-transparent"}`}
+                  className={`relative flex flex-col items-center pb-1 md:pb-1 gap-0.5 border-b-[2.4px] transition-colors duration-150 ${active ? "border-[#222222]" : "border-transparent"}`}
                 >
                   <div className="relative">
-                    <Icon className={`w-5 lg:w-6 h-5 lg:h-6 shrink-0 transition-colors duration-150 ${active ? "text-[#222222]" : "text-[#888888]"}`} />
+                    <Icon className={`w-5 md:w-6 h-5 md:h-6 shrink-0 transition-colors duration-150 ${active ? "text-[#222222]" : "text-[#888888]"}`} />
                     {showDot && <span className="absolute -top-0 -right-1.5 h-2 md:h-2.5 lg:h-3 w-2 md:w-2.5 lg:w-3 rounded-full bg-[#B31B38]" />}
                   </div>
-                  <span className={`font-16 font-normal leading-[150%] transition-colors duration-150 ${active ? "text-dark" : "text-secondary"}`}>
+                  <span className={`text-[12px] sm:text-[14px] md:text-[16px] font-normal leading-[150%] transition-colors duration-150 whitespace-nowrap ${active ? "text-dark max-[500px]:font-semibold font-normal" : "text-secondary"}`}>
                     {(labelKey) as string}
                   </span>
                 </Link>
@@ -240,8 +269,8 @@ export default function AppHeader() {
             })}
           </nav>
 
-          {/* Right: Profile + Settings (desktop) | Hamburger (mobile) */}
-          <div className="flex items-center gap-3 flex-1 justify-end">
+          {/* Right: Profile + Settings — desktop only */}
+          <div className="hidden min-[900px]:flex items-center gap-3 flex-1 justify-end">
 
             {/* ── Desktop profile/settings button ── */}
             <div className="hidden min-[900px]:relative mb-2 min-[900px]:flex items-center">
@@ -261,7 +290,7 @@ export default function AppHeader() {
                 <div className="flex flex-col gap-1">
                   {!trustBadge ? (
                     <>
-                      <span className="font-14 font-semibold text-[#525252] leading-none">Profile points</span>
+                      <span className="text-[12px] md:text-[14px] font-semibold text-[#525252] leading-none">Profile points</span>
                       <div className="flex items-center gap-2">
                         <div className="w-[52px] h-2 bg-white rounded-[19px] overflow-hidden">
                           <div className="h-full bg-[#B31B38] rounded-[19px] transition-[width] duration-700 ease-in-out" style={{ width: `${getProgressWidth(score)}%` }} />
@@ -281,11 +310,10 @@ export default function AppHeader() {
 
               {/* Desktop settings dropdown */}
               <div
-                className={`absolute top-full right-0 mt-5 z-50 ${trustBadge && !isElite ? "w-[309px]" : "w-[270px]"} rounded-[16px] bg-white shadow-[0_0_16px_0_rgba(0,0,0,0.08)] p-2 transition-all duration-200 ease-out origin-top-right ${
-                  settingsOpen
+                className={`absolute top-full right-0 mt-5 z-50 ${trustBadge && !isElite ? "w-[309px]" : "w-[270px]"} rounded-[16px] bg-white shadow-[0_0_16px_0_rgba(0,0,0,0.08)] p-2 transition-all duration-200 ease-out origin-top-right ${settingsOpen
                     ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
                     : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
-                }`}
+                  }`}
               >
                 <div className="flex flex-col items-start gap-2">
                   <div className="w-full">
@@ -349,37 +377,64 @@ export default function AppHeader() {
               </div>
             </div>
 
-            {/* ── Hamburger button — mobile only (< 900px) ── */}
-            <button
-              onClick={() => { setSettingsOpen(false); setMobileOpen((v) => !v); }}
-              className="min-[900px]:hidden flex flex-col justify-center cursor-pointer select-none gap-[5px] p-1 shrink-0"
-              aria-label="Toggle menu"
-            >
-              <span
-                className="block w-6 h-[2px] bg-[#222222] rounded"
-                style={{
-                  transition: "transform 0.25s cubic-bezier(.4,0,.2,1)",
-                  transform: mobileOpen ? "translateY(7px) rotate(45deg)" : "none",
-                }}
-              />
-              <span
-                className="block w-6 h-[2px] bg-[#222222] rounded"
-                style={{
-                  transition: "opacity 0.25s cubic-bezier(.4,0,.2,1)",
-                  opacity: mobileOpen ? 0 : 1,
-                }}
-              />
-              <span
-                className="block w-6 h-[2px] bg-[#222222] rounded"
-                style={{
-                  transition: "transform 0.25s cubic-bezier(.4,0,.2,1)",
-                  transform: mobileOpen ? "translateY(-7px) rotate(-45deg)" : "none",
-                }}
-              />
-            </button>
           </div>
         </div>
       </header>
+
+      {/* ── Bottom overlay — mobile only (< 900px) ── */}
+      <div
+        className="fixed bottom-0 left-0 right-0 z-50 min-[900px]:hidden bg-white/80 backdrop-blur-sm border-t border-[#EAEAEA] transition-transform duration-300"
+        style={isMobile && !navVisible ? { transform: "translateY(100%)" } : undefined}
+      >
+        <div className="max-w-[1920px] mx-auto flex items-center max-[420px]:px-3 px-5 h-[56px] gap-3 justify-between">
+
+          {/* Left: Logo + Search */}
+          <div className="flex items-center gap-2">
+            <Logo className="w-9 h-9"/>
+            <button
+              type="button"
+              onClick={() => { setSettingsOpen(false); setMobileOpen(false); setOpenModal("search"); }}
+              className="flex items-center max-[420px]:pr-1.5 pr-3 max-[420px]:pl-1.5 pl-2 py-1.5 gap-2 rounded-[41px] bg-[#E0E0E0] cursor-pointer hover:bg-[#D4D4D4] transition-colors duration-150"
+            >
+              <SearchIcon className="w-5 sm:w-6 h-5 sm:h-6 text-[#525252]" />
+              <span className="text-[14px] sm:text-[16px] font-normal text-[#4A4A4A] max-[420px]:hidden">
+                Search
+              </span>
+            </button>
+          </div>
+
+          {/* Right: Profile indicator — opens drawer */}
+          <button
+            type="button"
+            onClick={() => { setSettingsOpen(false); setMobileOpen((v) => !v); }}
+            className={`cursor-pointer flex items-center py-0.5 pl-0.5 pr-1.5 rounded-[42px] transition-colors duration-150 gap-1 ${isElite && trustBadge ? "" : "bg-[#E0E0E0] hover:bg-[#D4D4D4]"}`}
+            style={isElite && trustBadge ? { background: "linear-gradient(269deg, #FFE0C2 44.21%, #FFF2D9 98.97%), #E0E0E0" } : undefined}
+          >
+            <div className="w-8 h-8 rounded-full overflow-hidden border border-white bg-[#D9D9D9] relative">
+              <ProtectedImage src={photo} fill className="object-cover" alt="my profile" sizes="32px" />
+            </div>
+            <div className="flex flex-col gap-0.5">
+              {!trustBadge ? (
+                <>
+                  <span className="text-[12px] md:text-[14px] font-semibold text-[#525252] leading-none">Profile points</span>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-[40px] h-2 bg-white rounded-[19px] overflow-hidden">
+                      <div className="h-full bg-[#B31B38] rounded-[19px] transition-[width] duration-700 ease-in-out" style={{ width: `${getProgressWidth(score)}%` }} />
+                    </div>
+                    <span className="text-[14px] font-normal text-[#B31B38] leading-none">{score}%</span>
+                  </div>
+                </>
+              ) : !isElite ? (
+                <span className="text-[12px] font-semibold text-[#B31B38] leading-none">Upgrade</span>
+              ) : (
+                <span className="text-[12px] font-semibold text-[#8D5900] leading-none">Elite</span>
+              )}
+            </div>
+            <div className="w-px self-stretch bg-white mx-0.5" />
+            <SettingsIcon className={`w-6 h-6 ${isElite && trustBadge ? "text-[#8D5900]" : "text-[#525252]"}`} />
+          </button>
+        </div>
+      </div>
 
       {/* Backdrop */}
       <div
@@ -435,8 +490,8 @@ export default function AppHeader() {
           {!trustBadge && (
             <div className="px-4 py-3.5 border-b border-[#F0F0F0]">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[12px] font-semibold text-[#525252] uppercase tracking-wide">Profile points</span>
-                <span className="text-[13px] font-semibold text-[#B31B38]">{score}%</span>
+                <span className="text-[12px] md:text-[14px] font-semibold text-[#525252] uppercase tracking-wide">Profile points</span>
+                <span className="text-[16px] font-semibold text-[#B31B38]">{score}%</span>
               </div>
               <div className="w-full h-2 bg-[#EBEBEB] rounded-[19px] overflow-hidden">
                 <div
@@ -495,9 +550,8 @@ export default function AppHeader() {
                   key={href}
                   href={href}
                   onClick={closeMobile}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-[10px] mb-0.5 transition-colors duration-150 ${
-                    active ? "bg-[#fdf0f2]" : "hover:bg-[#F7F7F7]"
-                  }`}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-[10px] mb-0.5 transition-colors duration-150 ${active ? "bg-[#fdf0f2]" : "hover:bg-[#F7F7F7]"
+                    }`}
                 >
                   <div className="relative shrink-0">
                     <Icon
@@ -507,9 +561,8 @@ export default function AppHeader() {
                     {showDot && <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-[#B31B38]" />}
                   </div>
                   <span
-                    className={`text-[14px] leading-[150%] flex-1 ${
-                      active ? "text-[#222222] font-semibold" : "text-[#6B6B6B] font-normal"
-                    }`}
+                    className={`text-[14px] leading-[150%] flex-1 ${active ? "text-[#222222] font-semibold" : "text-[#6B6B6B] font-normal"
+                      }`}
                   >
                     {(labelKey) as string}
                   </span>
@@ -558,17 +611,15 @@ export default function AppHeader() {
                   key={text}
                   type="button"
                   onClick={onClick}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[10px] mb-0.5 text-left transition-colors duration-150 ${
-                    danger ? "hover:bg-[#FFF0F2]" : "hover:bg-[#F7F7F7]"
-                  }`}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[10px] mb-0.5 text-left transition-colors duration-150 ${danger ? "hover:bg-[#FFF0F2]" : "hover:bg-[#F7F7F7]"
+                    }`}
                 >
                   <Icon
                     className={`w-[16px] h-[16px] shrink-0 ${danger ? "text-[#B31B38]" : "text-[#525252]"}`}
                   />
                   <span
-                    className={`text-[14px] font-normal leading-[150%] ${
-                      danger ? "text-[#B31B38]" : "text-[#222222]"
-                    }`}
+                    className={`text-[14px] font-normal leading-[150%] ${danger ? "text-[#B31B38]" : "text-[#222222]"
+                      }`}
                   >
                     {text}
                   </span>
