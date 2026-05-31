@@ -8,6 +8,7 @@ export class ApiError extends Error {
     message: string,
     public readonly code: string,
     public readonly status: number,
+    public readonly retryAfter?: number,
   ) {
     super(message);
     this.name = 'ApiError';
@@ -31,10 +32,10 @@ function authHeaders(extra?: Record<string, string>): Record<string, string> {
 
 async function parseError(res: Response): Promise<ApiError> {
   try {
-    const body = await res.json() as { error?: string; message?: string; code?: string };
+    const body = await res.json() as { error?: string; message?: string; code?: string; retryAfter?: number };
     const message = body.error ?? body.message ?? 'Something went wrong';
     const code = body.code ?? 'UNKNOWN';
-    return new ApiError(message, code, res.status);
+    return new ApiError(message, code, res.status, body.retryAfter);
   } catch {
     return new ApiError('Something went wrong', 'UNKNOWN', res.status);
   }

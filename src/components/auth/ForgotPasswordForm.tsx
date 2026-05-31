@@ -41,13 +41,15 @@ export default function ForgotPasswordForm() {
     try {
       if (method === "sms") {
         const code = countryCode.match(/\(\+\d+\)/)?.[0] ?? countryCode;
-        await forgotPassword({ channel: "sms", phone: value, countryCode: code });
+        const smsRes = await forgotPassword({ channel: "sms", phone: value, countryCode: code });
         sessionStorage.setItem("otp_sms_sent_at", String(Date.now()));
+        sessionStorage.setItem("otp_sms_cd", String(smsRes.cooldownSeconds ?? 60));
         sessionStorage.setItem("inai_reset_identifier", value);
         router.push(`/reset-otp?phone=${encodeURIComponent(value)}&countryCode=${encodeURIComponent(code)}`);
       } else {
-        await forgotPassword({ channel: "email", email: value });
+        const emailRes = await forgotPassword({ channel: "email", email: value });
         sessionStorage.setItem("otp_email_sent_at", String(Date.now()));
+        sessionStorage.setItem("otp_email_cd", String(emailRes.cooldownSeconds ?? 60));
         sessionStorage.setItem("inai_reset_identifier", value);
         router.push(`/reset-otp?email=${encodeURIComponent(value)}`);
       }

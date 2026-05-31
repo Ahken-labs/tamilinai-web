@@ -9,7 +9,7 @@ import type {
   AuthResponse,
 } from '../../types/auth';
 
-export function register(payload: RegisterPayload): Promise<{ message: string; registrationKey: string }> {
+export function register(payload: RegisterPayload): Promise<{ message: string; registrationKey: string; cooldownSeconds: number }> {
   return http('/api/auth/register', { method: 'POST', body: JSON.stringify(payload) });
 }
 
@@ -17,7 +17,7 @@ export function verifyOtp(payload: VerifyOtpPayload): Promise<{ tempToken: strin
   return http('/api/auth/verify-otp', { method: 'POST', body: JSON.stringify(payload) });
 }
 
-export function resendOtp(registrationKey: string, channel: 'sms' | 'email'): Promise<{ message: string }> {
+export function resendOtp(registrationKey: string, channel: 'sms' | 'email'): Promise<{ message: string; channel: string; cooldownSeconds: number }> {
   return http('/api/auth/resend-otp', { method: 'POST', body: JSON.stringify({ registrationKey, channel }) });
 }
 
@@ -29,7 +29,7 @@ export function login(payload: LoginPayload): Promise<AuthResponse> {
   return http('/api/auth/login', { method: 'POST', body: JSON.stringify(payload) });
 }
 
-export function forgotPassword(payload: ForgotPasswordPayload): Promise<{ message: string }> {
+export function forgotPassword(payload: ForgotPasswordPayload): Promise<{ message: string; channel: string; cooldownSeconds: number }> {
   return http('/api/auth/forgot-password', { method: 'POST', body: JSON.stringify(payload) });
 }
 

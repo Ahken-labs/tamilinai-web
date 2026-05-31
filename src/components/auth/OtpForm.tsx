@@ -10,7 +10,6 @@ import { verifyOtp, resendOtp, forgotPassword } from "../../lib/api/auth";
 import { ApiError } from "../../lib/api/client";
 
 const OTP_LENGTH = 6;
-const RESEND_SECONDS = 300;
 
 type OtpFormProps = {
   variant?: "register" | "reset";
@@ -21,11 +20,20 @@ type OtpFormProps = {
   };
 };
 
-function getSecondsRemaining(storageKey: string): number {
+// Read remaining seconds using stored timestamp + stored duration
+function getSecondsRemaining(tsKey: string, durKey: string): number {
   if (typeof window === "undefined") return 0;
-  const sentAt = Number(sessionStorage.getItem(storageKey) ?? 0);
-  if (!sentAt) return 0;
-  return Math.max(0, RESEND_SECONDS - Math.floor((Date.now() - sentAt) / 1000));
+  const sentAt = Number(sessionStorage.getItem(tsKey) ?? 0);
+  const duration = Number(sessionStorage.getItem(durKey) ?? 0);
+  if (!sentAt || !duration) return 0;
+  return Math.max(0, duration - Math.floor((Date.now() - sentAt) / 1000));
+}
+
+function setCountdown(tsKey: string, durKey: string, seconds: number, setter: (n: number) => void) {
+  const now = String(Date.now());
+  sessionStorage.setItem(tsKey, now);
+  sessionStorage.setItem(durKey, String(seconds));
+  setter(seconds);
 }
 
 export default function OtpForm({ variant = "register", searchParams }: OtpFormProps) {
@@ -42,15 +50,16 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
   const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const [error, setError] = useState("");
   const [isExpired, setIsExpired] = useState(false);
+  const [isBanned, setIsBanned] = useState(false);
   const [shake, setShake] = useState(false);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  // Independent countdown per channel — each tracks its own sent_at timestamp
-  const [emailCountdown, setEmailCountdown] = useState(() => getSecondsRemaining("otp_email_sent_at"));
-  const [smsCountdown, setSmsCountdown] = useState(() => getSecondsRemaining("otp_sms_sent_at"));
+  // Independent countdown per channel — each tracks timestamp + duration
+  const [emailCountdown, setEmailCountdown] = useState(() => getSecondsRemaining("otp_email_sent_at", "otp_email_cd"));
+  const [smsCountdown, setSmsCountdown] = useState(() => getSecondsRemaining("otp_sms_sent_at", "otp_sms_cd"));
 
   useEffect(() => {
     inputRefs.current[0]?.focus();
@@ -146,62 +155,77 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
     }
   };
 
+  function applyResendResult(ch: "email" | "sms", cooldownSeconds: number) {
+    if (ch === "email") {
+      setCountdown("otp_email_sent_at", "otp_email_cd", cooldownSeconds, setEmailCountdown);
+    } else {
+      setCountdown("otp_sms_sent_at", "otp_sms_cd", cooldownSeconds, setSmsCountdown);
+    }
+  }
+
+  function handleResendError(err: unknown, revertMethod?: "email" | "sms") {
+    if (err instanceof ApiError) {
+      if (err.code === "BAN") {
+        setIsBanned(true);
+        setError("Too many attempts. Please try again tomorrow.");
+        return;
+      }
+      if (err.code === "SESSION_LOCK" || err.code === "COOLDOWN") {
+        const secs = err.retryAfter ?? 900;
+        applyResendResult(method === "email" ? "email" : "sms", secs);
+        return;
+      }
+      setErrorMsg(err.message);
+    }
+    if (revertMethod) setMethod(revertMethod);
+  }
+
   // Switching to SMS sends OTP immediately (first time only — no waiting)
   const handleSwitchToSms = async () => {
-    if (isExpired) { router.replace("/"); return; }
+    if (isExpired || isBanned) { router.replace("/"); return; }
     setMethod("sms");
     setDigits(Array(OTP_LENGTH).fill(""));
     setError("");
-    // If SMS already sent, don't re-send — just switch view
     if (smsCountdown > 0) return;
     try {
       const registrationKey = sessionStorage.getItem("inai_reg_key") ?? "";
-      await resendOtp(registrationKey, "sms");
-      sessionStorage.setItem("otp_sms_sent_at", String(Date.now()));
-      setSmsCountdown(RESEND_SECONDS);
+      const res = await resendOtp(registrationKey, "sms");
+      applyResendResult("sms", res.cooldownSeconds ?? 60);
     } catch (err) {
-      const msg = err instanceof ApiError ? err.message : "Failed to send WhatsApp OTP. Please try again.";
-      setErrorMsg(msg);
-      setMethod("email"); // revert back to email if SMS failed
+      handleResendError(err, "email");
     }
   };
 
   const handleSwitchToEmail = () => {
-    if (isExpired) { router.replace("/"); return; }
+    if (isExpired || isBanned) { router.replace("/"); return; }
     setMethod("email");
     setDigits(Array(OTP_LENGTH).fill(""));
     setError("");
-    // No re-send on switching back — email is already running
   };
 
   const handleResend = async () => {
-    if (isExpired) { router.replace("/"); return; }
+    if (isExpired || isBanned) { router.replace("/"); return; }
     if (countdown > 0) return;
     try {
+      let cooldownSeconds = 60;
       if (variant === "register") {
         const registrationKey = sessionStorage.getItem("inai_reg_key") ?? "";
-        await resendOtp(registrationKey, method);
+        const res = await resendOtp(registrationKey, method);
+        cooldownSeconds = res.cooldownSeconds ?? 60;
       } else {
         const identifier = sessionStorage.getItem("inai_reset_identifier") ?? "";
-        if (method === "sms") {
-          await forgotPassword({ channel: "sms", phone: identifier, countryCode: countryCode });
-        } else {
-          await forgotPassword({ channel: "email", email: identifier });
-        }
+        const res = method === "sms"
+          ? await forgotPassword({ channel: "sms", phone: identifier, countryCode })
+          : await forgotPassword({ channel: "email", email: identifier });
+        cooldownSeconds = res.cooldownSeconds ?? 60;
       }
-    } catch { /* silently ignore */ }
-
-    const now = String(Date.now());
-    if (method === "email") {
-      sessionStorage.setItem("otp_email_sent_at", now);
-      setEmailCountdown(RESEND_SECONDS);
-    } else {
-      sessionStorage.setItem("otp_sms_sent_at", now);
-      setSmsCountdown(RESEND_SECONDS);
+      applyResendResult(method === "email" ? "email" : "sms", cooldownSeconds);
+      setDigits(Array(OTP_LENGTH).fill(""));
+      setError("");
+      inputRefs.current[0]?.focus();
+    } catch (err) {
+      handleResendError(err);
     }
-    setDigits(Array(OTP_LENGTH).fill(""));
-    setError("");
-    inputRefs.current[0]?.focus();
   };
 
   const formattedTimer = `${String(Math.floor(countdown / 60)).padStart(2, "0")}:${String(countdown % 60).padStart(2, "0")}`;
@@ -303,14 +327,18 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
             <button
               type="button"
               onClick={handleResend}
-              disabled={countdown > 0}
+              disabled={countdown > 0 || isBanned}
               className={`text-[14px] md:text-[16px] font-medium leading-[150%] transition-colors select-none
-                ${countdown > 0
+                ${countdown > 0 || isBanned
                   ? "text-[#767676] cursor-default"
                   : "text-[#B31B38] underline cursor-pointer hover:text-[#8E162D] active:text-[#6F1023]"
                 }`}
             >
-              {countdown > 0 ? `${t("Resend_code")} (${formattedTimer})` : t("Resend_code")}
+              {isBanned
+                ? t("Resend_code")
+                : countdown > 0
+                  ? `${t("Resend_code")} (${formattedTimer})`
+                  : t("Resend_code")}
             </button>
           </div>
 

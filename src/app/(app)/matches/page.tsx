@@ -63,7 +63,11 @@ function MatchesContent() {
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
 
-  const [showWelcome, setShowWelcome] = useState(() => searchParams.get("welcome") === "1");
+  const [showWelcome, setShowWelcome] = useState(() => {
+    if (typeof window === "undefined") return false;
+    if (localStorage.getItem("inai_welcome_seen")) return false;
+    return searchParams.get("welcome") === "1";
+  });
   const [activeTab, setActiveTab] = useState("best");
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -150,6 +154,7 @@ function MatchesContent() {
   }
 
   function handleCloseWelcome() {
+    localStorage.setItem("inai_welcome_seen", "1");
     setShowWelcome(false);
     router.replace("/matches");
   }
