@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRightIcon, EyeOffIcon, EyeOnIcon } from "../../assets/Icons";
 import Button from "../common-layout/Button";
@@ -17,6 +17,12 @@ export default function LoginForm() {
   const { t } = useLang();
   const router = useRouter();
   const { saveSession } = useAuth();
+
+  useEffect(() => {
+    if (localStorage.getItem("tamilinai_access_token")) {
+      router.replace("/matches");
+    }
+  }, [router]);
 
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
