@@ -45,6 +45,7 @@ const TABS = [
 // ─── Session draft keys ────────────────────────────────────────────────────────
 import { DRAFT_KEYS } from "@/src/constants/profileDraftKeys";
 import { validateAboutMe, splitHighlight } from "@/src/utils/aboutMeValidation";
+import { useScrollHide } from "@/src/hooks/useScrollHide";
 
 export { DRAFT_KEYS } from "@/src/constants/profileDraftKeys";
 
@@ -56,7 +57,7 @@ function readDraft<T>(key: string): T | null {
 
 function hasSectionDrafts(): boolean {
   const keys = [DRAFT_KEYS.basic, DRAFT_KEYS.career, DRAFT_KEYS.family, DRAFT_KEYS.religion,
-    DRAFT_KEYS.location, DRAFT_KEYS.lifestyle, DRAFT_KEYS.hobbies, DRAFT_KEYS.partner];
+  DRAFT_KEYS.location, DRAFT_KEYS.lifestyle, DRAFT_KEYS.hobbies, DRAFT_KEYS.partner];
   return keys.some(k => sessionStorage.getItem(k) !== null);
 }
 
@@ -82,7 +83,7 @@ function getFirstIncomplete(me: Me | null): string {
   ].filter(Boolean).length < 5) return "career";
   // family: 6 fields
   if ([p?.fatherOccupation, p?.motherOccupation,
-    nn(p?.brotherCount), nn(p?.brothersMarried), nn(p?.sisterCount), nn(p?.sistersMarried),
+  nn(p?.brotherCount), nn(p?.brothersMarried), nn(p?.sisterCount), nn(p?.sistersMarried),
   ].filter(Boolean).length < 6) return "family";
   if ([p?.religion, p?.caste].filter(Boolean).length < 2) return "religion";
   if ([p?.country, p?.city, p?.citizenship, p?.residentStatus].filter(Boolean).length < 4) return "location";
@@ -121,7 +122,7 @@ export default function MyProfilePage() {
   const [openSectionId, setOpenSectionId] = useState<string>("contact");
 
   const handleDirty = useCallback(() => { setDraftsExist(true); setDraftTick(t => t + 1); }, []);
-
+  const tabBarVisible = useScrollHide();
   // Load me (cache first, then fresh)
   useEffect(() => {
     // Check session drafts immediately (handles page reload with pending drafts)
@@ -140,7 +141,7 @@ export default function MyProfilePage() {
       setMe(data);
       setOpenSectionId(prev => prev === "contact" ? getFirstIncomplete(data) : prev);
       if (!sessionStorage.getItem(ABOUT_ME_KEY)) setAboutMe(data.profile?.aboutMe ?? "");
-    }).catch(() => {});
+    }).catch(() => { });
 
     // Pre-cache partner prefs so computePartnerCompleted shows correct count immediately
     const existingPref = sessionStorage.getItem("inai_partner_pref");
@@ -149,7 +150,7 @@ export default function MyProfilePage() {
       getPartnerPreferences().then((prefs) => {
         try { sessionStorage.setItem("inai_partner_pref", JSON.stringify({ data: prefs, expiresAt: Date.now() + 30 * 60 * 1000 })); } catch { /* unavailable */ }
         setDraftTick(t => t + 1);
-      }).catch(() => {});
+      }).catch(() => { });
     }
   }, []);
 
@@ -253,12 +254,12 @@ export default function MyProfilePage() {
           saves.push(updateMe({ name: draftName }));
         }
 
-        const dob      = formatDOB(bd.birthYear, bd.birthMonth, bd.birthDay) ?? bp?.dateOfBirth;
-        const marital  = bd.maritalStatus ? (MARITAL_TO_BE[bd.maritalStatus] ?? bd.maritalStatus) : bp?.maritalStatus;
+        const dob = formatDOB(bd.birthYear, bd.birthMonth, bd.birthDay) ?? bp?.dateOfBirth;
+        const marital = bd.maritalStatus ? (MARITAL_TO_BE[bd.maritalStatus] ?? bd.maritalStatus) : bp?.maritalStatus;
         const heightCm = bd.height ? parseCm(bd.height) : bp?.heightCm;
         const weightKg = bd.weight ? parseKg(bd.weight) : bp?.weightKg;
-        const hasPhys  = bd.physicalChallenge !== undefined ? bd.physicalChallenge === "yes" : (bp?.hasPhysicalChallenge ?? false);
-        const disType  = hasPhys ? (bd.disability || bp?.disabilityType || undefined) : undefined;
+        const hasPhys = bd.physicalChallenge !== undefined ? bd.physicalChallenge === "yes" : (bp?.hasPhysicalChallenge ?? false);
+        const disType = hasPhys ? (bd.disability || bp?.disabilityType || undefined) : undefined;
 
         const basicChanged =
           diff(dob, bp?.dateOfBirth) ||
@@ -291,10 +292,10 @@ export default function MyProfilePage() {
 
       const lsd = readDraft<{ dietHabit: string; smokingHabit: string; drinkingHabit: string }>(DRAFT_KEYS.lifestyle);
       if (lsd) {
-        const dietBE  = lsd.dietHabit  ? (DIET_TO_BE[lsd.dietHabit]   ?? undefined) : undefined;
+        const dietBE = lsd.dietHabit ? (DIET_TO_BE[lsd.dietHabit] ?? undefined) : undefined;
         const smokeBE = lsd.smokingHabit ? (SMOKE_TO_BE[lsd.smokingHabit] ?? undefined) : undefined;
         const drinkBE = lsd.drinkingHabit ? (DRINK_TO_BE[lsd.drinkingHabit] ?? undefined) : undefined;
-        if (dietBE  && diff(dietBE,  bp?.dietHabit))    lifestylePayload.dietHabit    = dietBE;
+        if (dietBE && diff(dietBE, bp?.dietHabit)) lifestylePayload.dietHabit = dietBE;
         if (smokeBE && diff(smokeBE, bp?.smokingHabit)) lifestylePayload.smokingHabit = smokeBE;
         if (drinkBE && diff(drinkBE, bp?.drinkingHabit)) lifestylePayload.drinkingHabit = drinkBE;
       }
@@ -312,14 +313,14 @@ export default function MyProfilePage() {
       const cd = readDraft<{ education: string; educationDetail: string; occupation: string; sector: string; currency: string; monthlyIncome: string }>(DRAFT_KEYS.career);
       if (cd) {
         const careerPayload: Parameters<typeof saveCareerDetails>[0] = {};
-        const income   = cd.monthlyIncome ? Number(cd.monthlyIncome) : undefined;
+        const income = cd.monthlyIncome ? Number(cd.monthlyIncome) : undefined;
         const currency = cd.currency ? cd.currency.substring(0, 3) : undefined;
-        if (cd.education    && diff(cd.education,    bp?.education))      careerPayload.education      = cd.education;
+        if (cd.education && diff(cd.education, bp?.education)) careerPayload.education = cd.education;
         if (cd.educationDetail && diff(cd.educationDetail, bp?.educationDetail)) careerPayload.educationDetail = cd.educationDetail;
-        if (cd.occupation   && diff(cd.occupation,   bp?.occupation))     careerPayload.occupation     = cd.occupation;
-        if (cd.sector       && diff(cd.sector,       bp?.sector))         careerPayload.sector         = cd.sector;
-        if (income  !== undefined && diff(income,    bp?.monthlyIncome))  careerPayload.monthlyIncome  = income;
-        if (currency && diff(currency, bp?.incomeCurrency))               careerPayload.incomeCurrency = currency;
+        if (cd.occupation && diff(cd.occupation, bp?.occupation)) careerPayload.occupation = cd.occupation;
+        if (cd.sector && diff(cd.sector, bp?.sector)) careerPayload.sector = cd.sector;
+        if (income !== undefined && diff(income, bp?.monthlyIncome)) careerPayload.monthlyIncome = income;
+        if (currency && diff(currency, bp?.incomeCurrency)) careerPayload.incomeCurrency = currency;
         if (Object.keys(careerPayload).length) saves.push(saveCareerDetails(careerPayload));
       }
 
@@ -327,16 +328,16 @@ export default function MyProfilePage() {
       const fd = readDraft<{ fatherOccupation: string; motherOccupation: string; brothers: string; brothersMarried: string; sisters: string; sistersMarried: string }>(DRAFT_KEYS.family);
       if (fd) {
         const familyPayload: Parameters<typeof saveFamilyDetails>[0] = {};
-        const bc  = fd.brothers !== ""       ? Number(fd.brothers)        : undefined;
-        const bm  = fd.brothersMarried !== "" ? Number(fd.brothersMarried) : undefined;
-        const sc  = fd.sisters !== ""         ? Number(fd.sisters)         : undefined;
-        const sm  = fd.sistersMarried !== ""  ? Number(fd.sistersMarried)  : undefined;
+        const bc = fd.brothers !== "" ? Number(fd.brothers) : undefined;
+        const bm = fd.brothersMarried !== "" ? Number(fd.brothersMarried) : undefined;
+        const sc = fd.sisters !== "" ? Number(fd.sisters) : undefined;
+        const sm = fd.sistersMarried !== "" ? Number(fd.sistersMarried) : undefined;
         if (fd.fatherOccupation && diff(fd.fatherOccupation, bp?.fatherOccupation)) familyPayload.fatherOccupation = fd.fatherOccupation;
         if (fd.motherOccupation && diff(fd.motherOccupation, bp?.motherOccupation)) familyPayload.motherOccupation = fd.motherOccupation;
-        if (bc !== undefined && diff(bc, bp?.brotherCount))     familyPayload.brotherCount    = bc;
-        if (bm !== undefined && diff(bm, bp?.brothersMarried))  familyPayload.brothersMarried = bm;
-        if (sc !== undefined && diff(sc, bp?.sisterCount))      familyPayload.sisterCount     = sc;
-        if (sm !== undefined && diff(sm, bp?.sistersMarried))   familyPayload.sistersMarried  = sm;
+        if (bc !== undefined && diff(bc, bp?.brotherCount)) familyPayload.brotherCount = bc;
+        if (bm !== undefined && diff(bm, bp?.brothersMarried)) familyPayload.brothersMarried = bm;
+        if (sc !== undefined && diff(sc, bp?.sisterCount)) familyPayload.sisterCount = sc;
+        if (sm !== undefined && diff(sm, bp?.sistersMarried)) familyPayload.sistersMarried = sm;
         if (Object.keys(familyPayload).length) saves.push(saveFamilyDetails(familyPayload));
       }
 
@@ -380,7 +381,8 @@ export default function MyProfilePage() {
   return (
     <main className="min-h-screen bg-[#F8F5F2] font-poppins select-none pb-4">
       {/* Tab bar */}
-      <div className="sticky top-[74px] z-30 w-full border-t border-[#EEEEEE] bg-white">
+      <div className="sticky max-[320px]:top-[56px] max-[768px]:top-[65px] top-[74px] z-10 w-full bg-white/60 backdrop-blur-sm border-t border-[#EEEEEE] transition-transform duration-300" style={!tabBarVisible ? { transform: "translateY(-110%)" } : undefined}>
+
         <div className="flex justify-center px-4 lg:px-10 py-3">
           <ToggleTabs tabs={TABS} activeTab={activeTab} onTabChange={setActiveTab} />
         </div>
@@ -497,12 +499,12 @@ export default function MyProfilePage() {
                   <span className="mt-[5px] md:mt-[7px] block font-14" style={{ minHeight: "1.2em" }}>
                     {aboutMeError
                       ? <span className="text-[#B31B38] font-medium">
-                          {splitHighlight(aboutMeError.message, aboutMeError.offendingWord).map((seg, i) =>
-                            seg.highlight
-                              ? <span key={i} className="underline decoration-[0.5px] underline-offset-2">{seg.text}</span>
-                              : <span key={i}>{seg.text}</span>
-                          )}
-                        </span>
+                        {splitHighlight(aboutMeError.message, aboutMeError.offendingWord).map((seg, i) =>
+                          seg.highlight
+                            ? <span key={i} className="underline decoration-[0.5px] underline-offset-2">{seg.text}</span>
+                            : <span key={i}>{seg.text}</span>
+                        )}
+                      </span>
                       : <span className="text-secondary4">Keep it genuine — families read this</span>}
                   </span>
                 </div>

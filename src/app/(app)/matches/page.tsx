@@ -196,18 +196,18 @@ function MatchesContent() {
           ) : isError ? (
             <div className="flex flex-col items-center justify-center py-24 text-center">
               {searchFilters ? (
-                <p className="font-poppins text-[16px] font-medium text-[#888888]">
+                <p className="font-poppins text-[14px] md:text-[16px] font-medium text-[#888888]">
                   No profiles match your search.<br />- Team Inai -
                 </p>
               ) : (
-                <p className="font-poppins text-[16px] font-medium text-[#B31B38]">
+                <p className="font-poppins text-[14px] md:text-[16px] font-medium text-[#B31B38]">
                   Failed to load profiles. Please try again.
                 </p>
               )}
             </div>
           ) : profiles.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 text-center">
-              <p className="font-poppins font-16 font-medium text-[#888888]">
+              <p className="font-poppins text-[14px] md:text-[16px] font-medium text-[#888888]">
                 {searchFilters ? "No profiles match your search." : "No profiles found for this filter."}
                 <br />- Team Inai -
               </p>
