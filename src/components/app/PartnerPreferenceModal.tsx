@@ -235,7 +235,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
     if (countWords(e.target.value) <= MAX_ABOUT_WORDS) setAboutPartner(e.target.value);
   }
   function filterList(list: string[], q: string) {
-    if (!q) return list;
+    if (!q || list.includes(q)) return list;
     return list.filter((s) => s.toLowerCase().includes(q.toLowerCase()));
   }
 
