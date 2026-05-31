@@ -251,7 +251,7 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
       {/* Below 840px: buttons always at bottom. Detail rows only shown here below 600px. */}
       <div className="min-[840px]:hidden mt-0">
         <div className="min-[600px]:hidden">
-          <div className="mb-1 border-t border-[#EBEBEB]" />
+          <div className="mt-4" />
           <div className="grid grid-cols-2 gap-x-6 gap-y-2">
             {detailRows.map((row, ri) =>
               row.map(({ Icon, value }, ci) => (
