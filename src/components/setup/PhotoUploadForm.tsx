@@ -87,6 +87,9 @@ export default function PhotoUploadForm() {
   const { t } = useLang();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const gender = typeof window !== "undefined" ? (sessionStorage.getItem("inai_setup_gender") ?? "female") : "female";
+  const placeholderSrc = gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png";
+
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [cropSrc, setCropSrc] = useState<string | null>(null);
@@ -221,15 +224,18 @@ export default function PhotoUploadForm() {
         </p>
 
         {/* Photo circle — shared */}
-        <div className="mt-6 sm:mt-8 flex flex-col min-[500px]:flex-row items-center justify-center gap-5 min-[500px]:gap-10">
+        <div className="mt-6 sm:mt-8 flex flex-col min-[500px]:flex-row items-center justify-center gap-5 min-[500px]:gap-5">
           <div className="relative shrink-0 mx-auto min-[500px]:mx-0">
-            <div className={`w-31 min-[500px]:w-41 h-31 min-[500px]:h-41 rounded-full overflow-hidden flex items-center justify-center ${hasPhoto ? "" : "bg-[#D9D9D9]"}`}>
+            <div
+              className={`w-31 min-[500px]:w-41 pt-8 h-31 min-[500px]:h-41 overflow-hidden flex items-center justify-center ${hasPhoto ? "rounded-full" : "rounded-full bg-[#D9D9D9]"}`}
+              style={!hasPhoto ? { border: "1.5px dashed #767676" } : {}}
+            >
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
               >
                 <Image
-                  src={hasPhoto ? photoUrl! : "/icons/Ellipse.svg"}
+                  src={hasPhoto ? photoUrl! : placeholderSrc}
                   alt="Profile photo"
                   width={164}
                   height={164}
