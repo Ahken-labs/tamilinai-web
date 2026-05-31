@@ -110,7 +110,7 @@ export function validateAboutMe(text: string): AboutMeError | null {
   const wordMatches = text.match(/\b[a-zA-Z]{5,}\b/g) ?? [];
   for (const word of wordMatches) {
     const vowels = (word.match(/[aeiouAEIOU]/g) ?? []).length;
-    if (vowels <= 1) {
+    if (vowels === 0) {
       return {
         message: `"${word}" — that doesn't look like a real word. Please write something meaningful.`,
         offendingWord: word,

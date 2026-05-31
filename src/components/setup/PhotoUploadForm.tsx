@@ -129,7 +129,7 @@ export default function PhotoUploadForm() {
     // Build FormData now before navigating (component unmounts on navigate)
     const basic = JSON.parse(sessionStorage.getItem("inai_setup_basic") ?? "{}") as Record<string, string>;
     const personal = JSON.parse(sessionStorage.getItem("inai_setup_personal") ?? "{}") as Record<string, string>;
-    const fd = buildSetupFormData(basic, personal, aboutMe, skipPhoto ? undefined : (photoFile ?? undefined));
+    const fd = buildSetupFormData(basic, personal, aboutMeError ? "" : aboutMe, skipPhoto ? undefined : (photoFile ?? undefined));
 
     router.replace("/matches?welcome=1");
 
@@ -154,190 +154,193 @@ export default function PhotoUploadForm() {
         </div>
       </div>
 
-    <FormCardLayout
-      bgColor="bg-mvp"
-      paddingHorizontal = "max-[500px]:px-0 px-4 md:px-6"
-      childrenTopMargin="mt-6 md:mt-8"
-      paddingBottom="max-[500px]:pb-0 pb-8 md:pb-10"
-      footer={
-        <>
-          <div className="hidden min-[500px]:flex gap-5 w-full">
-            <Button
-              text={t("Skip")}
-              onPress={() => submitSetup(true)}
-              className={`flex-1 ${!agreed
-                ? "!bg-[#FFF] !text-[#999]"
-                : "!bg-[#FFF] !text-[#767676] hover:!bg-gray-50 active:!bg-gray-100"
-              }`}
-            />
-            <Button
-              text={t("Save")}
-              onPress={() => submitSetup(false)}
-              className={`flex-1 ${!agreed || !hasPhoto
-                ? "!bg-[#BBBBBB] hover:!bg-[#BBBBBB] active:!bg-[#BBBBBB]"
-                : ""}`}
-            />
-          </div>
+      <FormCardLayout
+        bgColor="bg-mvp"
+        paddingHorizontal="max-[500px]:px-0 px-4 md:px-6"
+        childrenTopMargin="mt-6 md:mt-8"
+        paddingBottom="max-[500px]:pb-0 pb-8 md:pb-10"
+        footer={
+          <>
+            <div className="hidden min-[500px]:flex gap-5 w-full">
+              <Button
+                text={t("Skip")}
+                onPress={() => submitSetup(true)}
+                className={`flex-1 ${!agreed
+                  ? "!bg-[#FFF] !text-[#999]"
+                  : "!bg-[#FFF] !text-[#767676] hover:!bg-gray-50 active:!bg-gray-100"
+                  }`}
+              />
+              <Button
+                text={t("Save")}
+                onPress={() => submitSetup(false)}
+                className={`flex-1 ${!agreed || !hasPhoto
+                  ? "!bg-[#BBBBBB] hover:!bg-[#BBBBBB] active:!bg-[#BBBBBB]"
+                  : ""}`}
+              />
+            </div>
 
-          <div className="hidden min-[500px]:flex mt-8 gap-3 md:gap-4 items-start">
-            <button onClick={() => {
-              setAgreed(prev => !prev);
-              setShowError(false);
-            }}>
-              <CheckboxIcon checked={agreed} />
-            </button>
-            <span className="font-14 text-secondary4 font-poppins font-normal">
-              I have read and agree to Inai&apos;s{" "}
+            <div className="hidden min-[500px]:flex mt-8 gap-3 md:gap-4 items-start">
+              <button onClick={() => {
+                setAgreed(prev => !prev);
+                setShowError(false);
+              }}>
+                <CheckboxIcon checked={agreed} />
+              </button>
+              <span className="text-[14px] text-secondary4 font-poppins font-normal">
+                I have read and agree to Inai&apos;s{" "}
+                <button
+                  type="button"
+                  onClick={() => setOpenPrivacy(true)}
+                  className="underline font-medium cursor-pointer"
+                >
+                  Privacy Policy
+                </button>{" "}
+                and understand how my information will be used to help me find a partner.
+              </span>
+            </div>
+
+            {showError && (
+              <p className="hidden min-[500px]:block mt-2 text-[12px] text-[#B31B38]">
+                * Please agree to the terms and conditions
+              </p>
+            )}
+          </>
+        }
+      >
+        <div className="hidden min-[500px]:block">
+          <StepProgress currentStep={3} />
+        </div>
+
+        <h1 className="max-[500px]:-mt-4 mt-6 md:mt-8 lg:mt-10 fonts-24 font-semibold text-dark leading-[150%] max-[500px]:text-left text-center">
+          {t("Add_your_clear_photo")}
+        </h1>
+
+        {/* Desktop subtitle */}
+        <p className="hidden min-[500px]:block mt-2 text-[14px] md:text-[16px] font-normal text-dark leading-[150%] text-center">
+          {t("Photo_subtitle")}
+        </p>
+
+        {/* Photo circle — shared */}
+        <div className="mt-6 sm:mt-8 flex flex-col min-[500px]:flex-row items-center justify-center gap-5 min-[500px]:gap-10">
+          <div className="relative shrink-0 mx-auto min-[500px]:mx-0">
+            <div className={`w-31 min-[500px]:w-41 h-31 min-[500px]:h-41 rounded-full overflow-hidden flex items-center justify-center ${hasPhoto ? "" : "bg-[#D9D9D9]"}`}>
               <button
                 type="button"
-                onClick={() => setOpenPrivacy(true)}
-                className="underline font-medium cursor-pointer"
+                onClick={() => fileInputRef.current?.click()}
               >
+                <Image
+                  src={hasPhoto ? photoUrl! : "/icons/Ellipse.svg"}
+                  alt="Profile photo"
+                  width={164}
+                  height={164}
+                  className="w-full h-full object-cover"
+                  unoptimized
+                  priority={!hasPhoto}
+                />
+              </button>
+            </div>
+
+            <div className="absolute bottom-1 right-1 px-2.5 py-2.5 rounded-full flex items-center justify-center transition-colors"
+              style={{ background: hasPhoto ? "#B31B38" : "#767676" }}>
+              <SecurityIcon />
+            </div>
+
+            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+          </div>
+
+          {/* Desktop: bullets + button beside photo */}
+          <div className="hidden min-[500px]:flex flex-col items-start">
+            <div className="flex flex-col gap-2">
+              {bullets.map((text) => (
+                <div key={text} className="flex items-center gap-2">
+                  <CheckmarkIcon stroke={hasPhoto ? "#B31B38" : "#222222"} />
+                  <span className="text-[14px] md:text-[16px] font-normal text-dark leading-[150%]">{text}</span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-[22px]">
+              <Button
+                text={hasPhoto ? t("Change_photo") : t("Add_photo")}
+                iconLeft={<CameraIcon className={`w-4 h-4 ${hasPhoto ? "text-[#222222]" : "text-white"}`} />}
+                onPress={() => fileInputRef.current?.click()}
+                className={`!px-10 ${hasPhoto ? "!bg-white !text-[#222222] hover:!bg-gray-50" : ""}`}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile: full-width Add photo button below circle */}
+        <div className="min-[500px]:hidden mt-4">
+          <Button
+            text={hasPhoto ? t("Change_photo") : t("Add_photo")}
+            iconLeft={<CameraIcon className={`w-4 h-4 ${hasPhoto ? "text-[#222222]" : "text-white"}`} />}
+            onPress={() => fileInputRef.current?.click()}
+            className={`!w-full ${hasPhoto ? "!bg-white !text-[#222222] hover:!bg-gray-50" : ""}`}
+          />
+        </div>
+
+        {/* About me */}
+        <div className="mt-8 sm:mt-12">
+          <p className="text-[16px] font-medium text-dark">{t("About_me")}</p>
+          <textarea
+            value={aboutMe}
+            onChange={(e) => handleAboutMeChange(e.target.value)}
+            placeholder={t("About_me_placeholder")}
+            className={`w-full mt-3 rounded-[12px] border text-[14px] md:text-[16px] font-normal text-dark placeholder:text-[#656565] resize-none outline-none focus:border-[#B31B38] transition-colors max-[500px]:h-[123px] h-[160px] md:h-[199px] p-3 sm:p-4 ${aboutMeError ? "border-[#B31B38]" : "border-[#767676]"}`}
+          />
+          <div className="flex text-[12px] md:text-[14px] justify-between mt-1 gap-2">
+            <span className={aboutMeError ? "text-[#B31B38] font-medium flex-1" : "text-secondary4"}>
+              {aboutMeError
+                ? splitHighlight(aboutMeError.message, aboutMeError.offendingWord).map((seg, i) =>
+                  seg.highlight
+                    ? <span key={i} className="underline decoration-[0.5px] underline-offset-2">{seg.text}</span>
+                    : <span key={i}>{seg.text}</span>
+                )
+                : t("Keep_it_genuine")}
+            </span>
+            <span className="text-secondary4 shrink-0">{wordCount} {t("Word_count")}</span>
+          </div>
+        </div>
+
+        {/* Mobile: gray info box with subtitle + bullets + checkbox */}
+        <div className="min-[500px]:hidden mt-6 p-4 rounded-[16px] bg-[#EAEAEA] flex flex-col gap-4">
+          <p className="text-[14px] md:text-[16px] font-normal text-dark leading-[150%]">{t("Photo_subtitle")}</p>
+          <div className="flex flex-col gap-3">
+            {bullets.map((text) => (
+              <div key={text} className="flex items-center gap-2">
+                <CheckmarkIcon stroke={hasPhoto ? "#B31B38" : "#222222"} />
+                <span className="text-[14px] md:text-[16px] font-normal text-dark leading-[150%]">{text}</span>
+              </div>
+            ))}
+          </div>
+          <div className="flex max-[500px]:gap-2 gap-3 items-start">
+            <button onClick={() => { setAgreed(prev => !prev); setShowError(false); }}>
+              <CheckboxIcon checked={agreed} />
+            </button>
+            <span className="text-[14px] text-secondary4 font-normal">
+              I have read and agree to Inai&apos;s{" "}
+              <button type="button" onClick={() => setOpenPrivacy(true)} className="underline font-medium cursor-pointer">
                 Privacy Policy
               </button>{" "}
               and understand how my information will be used to help me find a partner.
             </span>
           </div>
-
-          {showError && (
-            <p className="hidden min-[500px]:block mt-2 text-[12px] text-[#B31B38]">
-              * Please agree to the terms and conditions
-            </p>
-          )}
-        </>
-      }
-    >
-      <div className="hidden min-[500px]:block">
-        <StepProgress currentStep={3} />
-      </div>
-
-      <h1 className="max-[500px]:-mt-4 mt-6 md:mt-8 lg:mt-10 fonts-24 font-semibold text-dark leading-[150%] max-[500px]:text-left text-center">
-        {t("Add_your_clear_photo")}
-      </h1>
-
-      {/* Desktop subtitle */}
-      <p className="hidden min-[500px]:block mt-2 font-16 font-normal text-dark leading-[150%] text-center">
-        {t("Photo_subtitle")}
-      </p>
-
-      {/* Photo circle — shared */}
-      <div className="mt-6 sm:mt-8 flex flex-col min-[500px]:flex-row items-center justify-center gap-5 min-[500px]:gap-10">
-        <div className="relative shrink-0 mx-auto min-[500px]:mx-0">
-          <div className={`w-31 min-[500px]:w-41 h-31 min-[500px]:h-41 rounded-full overflow-hidden flex items-center justify-center ${hasPhoto ? "" : "bg-[#D9D9D9]"}`}>
-            <Image
-              src={hasPhoto ? photoUrl! : "/icons/Ellipse.svg"}
-              alt="Profile photo"
-              width={164}
-              height={164}
-              className="w-full h-full object-cover"
-              unoptimized
-              priority={!hasPhoto}
-            />
-          </div>
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="absolute bottom-1 right-1 px-2.5 py-2.5 rounded-full flex items-center justify-center transition-colors"
-            style={{ background: hasPhoto ? "#B31B38" : "#767676" }}
-          >
-            <SecurityIcon />
-          </button>
-          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+          {showError && <p className="text-[14px] text-[#B31B38]">* Please agree to the terms and conditions</p>}
         </div>
 
-        {/* Desktop: bullets + button beside photo */}
-        <div className="hidden min-[500px]:flex flex-col items-start">
-          <div className="flex flex-col gap-3">
-            {bullets.map((text) => (
-              <div key={text} className="flex items-center gap-2">
-                <CheckmarkIcon stroke={hasPhoto ? "#B31B38" : "#222222"} />
-                <span className="font-14 font-normal text-dark leading-[150%]">{text}</span>
-              </div>
-            ))}
-          </div>
-          <div className="mt-[22px]">
-            <Button
-              text={hasPhoto ? t("Change_photo") : t("Add_photo")}
-              iconLeft={<CameraIcon className={`w-4 h-4 ${hasPhoto ? "text-[#222222]" : "text-white"}`} />}
-              onPress={() => fileInputRef.current?.click()}
-              className={`!px-10 ${hasPhoto ? "!bg-white !text-[#222222] hover:!bg-gray-50" : ""}`}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile: full-width Add photo button below circle */}
-      <div className="min-[500px]:hidden mt-4">
-        <Button
-          text={hasPhoto ? t("Change_photo") : t("Add_photo")}
-          iconLeft={<CameraIcon className={`w-4 h-4 ${hasPhoto ? "text-[#222222]" : "text-white"}`} />}
-          onPress={() => fileInputRef.current?.click()}
-          className={`!w-full ${hasPhoto ? "!bg-white !text-[#222222] hover:!bg-gray-50" : ""}`}
+        <PrivacyPopup
+          isOpen={openPrivacy}
+          onClose={() => setOpenPrivacy(false)}
         />
-      </div>
 
-      {/* About me */}
-      <div className="mt-8 sm:mt-12">
-        <p className="text-[16px] font-medium text-dark">{t("About_me")}</p>
-        <textarea
-          value={aboutMe}
-          onChange={(e) => handleAboutMeChange(e.target.value)}
-          placeholder={t("About_me_placeholder")}
-          className={`w-full mt-3 rounded-[12px] border text-[14px] md:text-[16px] font-normal text-dark placeholder:text-[#656565] resize-none outline-none focus:border-[#B31B38] transition-colors max-[500px]:h-[123px] h-[160px] md:h-[199px] p-3 sm:p-4 ${aboutMeError ? "border-[#B31B38]" : "border-[#767676]"}`}
-        />
-        <div className="flex text-[12px] md:text-[14px] justify-between mt-1 gap-2">
-          <span className={aboutMeError ? "text-[#B31B38] font-medium flex-1" : "text-secondary4"}>
-            {aboutMeError
-              ? splitHighlight(aboutMeError.message, aboutMeError.offendingWord).map((seg, i) =>
-                  seg.highlight
-                    ? <span key={i} className="underline decoration-[0.5px] underline-offset-2">{seg.text}</span>
-                    : <span key={i}>{seg.text}</span>
-                )
-              : t("Keep_it_genuine")}
-          </span>
-          <span className="text-secondary4 shrink-0">{wordCount} {t("Word_count")}</span>
-        </div>
-      </div>
-
-      {/* Mobile: gray info box with subtitle + bullets + checkbox */}
-      <div className="min-[500px]:hidden mt-6 p-4 rounded-[16px] bg-[#EAEAEA] flex flex-col gap-4">
-        <p className="text-[14px] md:text-[16px] font-normal text-dark leading-[150%]">{t("Photo_subtitle")}</p>
-        <div className="flex flex-col gap-3">
-          {bullets.map((text) => (
-            <div key={text} className="flex items-center gap-2">
-              <CheckmarkIcon stroke={hasPhoto ? "#B31B38" : "#222222"} />
-              <span className="text-[14px] md:text-[16px] font-normal text-dark leading-[150%]">{text}</span>
-            </div>
-          ))}
-        </div>
-        <div className="flex max-[500px]:gap-2 gap-3 items-start">
-          <button onClick={() => { setAgreed(prev => !prev); setShowError(false); }}>
-            <CheckboxIcon checked={agreed} />
-          </button>
-          <span className="text-[14px] text-secondary4 font-normal">
-            I have read and agree to Inai&apos;s{" "}
-            <button type="button" onClick={() => setOpenPrivacy(true)} className="underline font-medium cursor-pointer">
-              Privacy Policy
-            </button>{" "}
-            and understand how my information will be used to help me find a partner.
-          </span>
-        </div>
-        {showError && <p className="text-[14px] text-[#B31B38]">* Please agree to the terms and conditions</p>}
-      </div>
-
-      <PrivacyPopup
-        isOpen={openPrivacy}
-        onClose={() => setOpenPrivacy(false)}
-      />
-
-      {cropSrc && (
-        <PhotoCropModal
-          imageSrc={cropSrc}
-          onConfirm={handleCropConfirm}
-          onClose={() => setCropSrc(null)}
-        />
-      )}
-    </FormCardLayout>
+        {cropSrc && (
+          <PhotoCropModal
+            imageSrc={cropSrc}
+            onConfirm={handleCropConfirm}
+            onClose={() => setCropSrc(null)}
+          />
+        )}
+      </FormCardLayout>
 
       {/* Mobile fixed bottom buttons (<500px) */}
       <div
