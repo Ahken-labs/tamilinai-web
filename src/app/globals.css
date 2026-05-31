@@ -1,8 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Arima+Madurai:wght@700;900&family=Poppins:wght@400;500;600&family=Noto+Sans+Tamil:wght@400;500;700&display=swap');
-
 @import "tailwindcss";
-
-/* Fonts */
 
 :root {
   --primary: #B31B38;
@@ -13,16 +9,15 @@ input, textarea, select {
   font-size: 1rem;
 }
 
-
 /* Font utility classes */
 .font-arima {
-  font-family: 'Arima Madurai', cursive;
+  font-family: var(--font-arima), cursive;
 }
 .font-poppins {
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-poppins), sans-serif;
 }
 .font-tamil {
-  font-family: 'Noto Sans Tamil', sans-serif;
+  font-family: var(--font-tamil), sans-serif;
 }
 
 @keyframes shake {

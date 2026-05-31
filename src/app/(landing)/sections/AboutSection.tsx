@@ -70,7 +70,7 @@ export default function AboutSection() {
               alt="Privacy control demo on phone"
               width={565}
               height={320}
-              priority
+              sizes="(max-width: 768px) 100vw, 565px"
               onLoad={() => setImageLoaded(true)}
               style={{
                 width: "100%",

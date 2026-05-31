@@ -1,5 +1,10 @@
 import "./globals.css";
+import { Poppins, Noto_Sans_Tamil, Arima } from "next/font/google";
 import { LangProvider } from "../context/LangContext";
+
+const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-poppins", display: "swap" });
+const notoSansTamil = Noto_Sans_Tamil({ subsets: ["tamil"], weight: ["400", "500", "700"], variable: "--font-tamil", display: "swap" });
+const arima = Arima({ subsets: ["tamil", "latin"], weight: ["700"], variable: "--font-arima", display: "swap" });
 import QueryProvider from "../providers/QueryProvider";
 import SeoSchema from "./SeoSchema";
 
@@ -41,7 +46,7 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
+    <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth" className={`${poppins.variable} ${notoSansTamil.variable} ${arima.variable}`}>
       <body>
         <SeoSchema/>
         <QueryProvider>
