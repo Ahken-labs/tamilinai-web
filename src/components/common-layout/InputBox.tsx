@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useId } from "react";
 
 interface InputBoxProps {
   value: string;
@@ -27,6 +27,7 @@ export default function InputBox({
   onBlur,
   compact = false,
 }: InputBoxProps) {
+  const id = useId();
   const [focused, setFocused] = useState(false);
 
   const isActive = focused || value.length > 0;
@@ -39,13 +40,15 @@ export default function InputBox({
             ${focused ? "border-[#F2F2F2]" : "border-[#F2F2F2]"} ${className ?? ""}`}
         >
           <input
+            id={id}
             type={type}
             value={value}
             placeholder={label}
+            aria-label={label}
             onChange={(e) => onChange(e.target.value)}
             onFocus={() => { setFocused(true); onFocus?.(); }}
             onBlur={() => { setFocused(false); onBlur?.(); }}
-            className="w-full bg-transparent text-[14px] md:text-[16px] outline-none placeholder:text-[#525252] text-dark"
+            className="w-full bg-transparent text-[16px] outline-none placeholder:text-[#525252] text-dark"
           />
           {suffix && <div className="shrink-0 ml-2 flex items-center">{suffix}</div>}
         </div>
@@ -61,6 +64,7 @@ export default function InputBox({
           ${focused ? "border-[#B31B38]" : "border-[#8C8C8C]"} ${className ?? ""}`}
       >
         <label
+          htmlFor={id}
           className={`absolute left-4 transition-all duration-300 ease-in-out pointer-events-none select-none
             ${isActive
               ? "top-2 text-[12px] text-[#525252]"
@@ -70,12 +74,13 @@ export default function InputBox({
           {label}
         </label>
         <input
+          id={id}
           type={type}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onFocus={() => { setFocused(true); onFocus?.(); }}
           onBlur={() => { setFocused(false); onBlur?.(); }}
-          className="w-full bg-transparent text-[14px] md:text-[16px] text-[#222222] outline-none pt-4"
+          className="w-full bg-transparent text-[16px] text-[#222222] outline-none pt-4"
         />
         {suffix && <div className="shrink-0 ml-2 flex items-center">{suffix}</div>}
       </div>
