@@ -12,4 +12,9 @@ export const CONTACT = {
     name: "Ahken Nexus (Pvt) Ltd.",
     website: "https://ahkenlabs.com/",
   },
+  address: {
+    line1: "247/1, Uthayanagar west,",
+    line2: "Kilinochchi, Sri Lanka.",
+  },
+  email: "support@inai.lk",
 } as const;

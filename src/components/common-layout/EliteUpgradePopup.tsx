@@ -27,12 +27,6 @@ export type EliteUpgradeTrigger =
   | "contact_locked"   // connected but contact hidden (non-elite)
   | "weekly_nudge";    // once-a-week gentle reminder
 
-// const TRIGGER_COPY: Record<EliteUpgradeTrigger, { sub: string }> = {
-//   daily_limit: { sub: "You've sent 20 interests today — that's the free plan limit. Elite members send unlimited interests every day." },
-//   contact_locked: { sub: "You're connected! Upgrade to Elite to unlock their WhatsApp number and email so you can reach out directly." },
-//   weekly_nudge: { sub: "Elite members find their match faster. Unlock unlimited interests, direct contact details, and more." },
-// };
-
 // ── Features list ─────────────────────────────────────────────────────────────
 const FEATURES = [
   { Icon: WhatsAppIcon, label: "Direct WhatsApp connections" },
@@ -102,7 +96,7 @@ export default function EliteUpgradePopup({ onClose }: Props) {
           {/* Heading */}
           <div className="max-w-[224px]">
             <p
-              className="font-24 font-bold leading-[130%]"
+              className="fonts-24 font-bold leading-[130%]"
               style={{
                 background: "linear-gradient(90deg, #B31B38 0%, #222 100%)",
                 WebkitBackgroundClip: "text",
@@ -115,7 +109,7 @@ export default function EliteUpgradePopup({ onClose }: Props) {
             </p>
             <div className="flex gap-3 mt-1 items-center">
               <p
-                className="font-24 font-bold leading-[130%]"
+                className="fonts-24 font-bold leading-[130%]"
                 style={{
                   background: "linear-gradient(90deg, #B31B38 0%, #222 100%)",
                   WebkitBackgroundClip: "text",
@@ -128,24 +122,17 @@ export default function EliteUpgradePopup({ onClose }: Props) {
               {/* Elite badge */}
               <div className="inline-flex items-center gap-1 rounded-[40px] bg-[#FFDED3] px-2 py-0.5">
                 <EliteCrownIcon className="w-4 md:w-5 h-4 md:h-5 shrink-0" />
-                <span className="font-poppins font-20 text-[#A97216]">Elite</span>
+                <span className="font-poppins text-[16px] sm:text-[18px] md:text-[20px] text-[#A97216]">Elite</span>
               </div>
             </div>
-
-
           </div>
-
-          {/* Sub-copy */}
-          {/* <p className="mt-3 font-poppins text-[13px] leading-[160%] text-[#444444] max-w-[340px]">
-            {sub}
-          </p> */}
 
           {/* Features */}
           <ul className="mt-6 md:mt-8 flex flex-col gap-2 md:gap-3 max-w-[305px]">
             {FEATURES.map(({ Icon, label }) => (
               <li key={label} className="flex items-center gap-2.5">
                 <Icon className="w-4 md:w-5 h-4 md:h-5 shrink-0 text-[#444444]" />
-                <span className="font-poppins font-16 leading-[150%] text-dark">
+                <span className="font-poppins text-[14px] md:text-[16px] leading-[150%] text-dark">
                   {label}
                 </span>
               </li>
@@ -154,7 +141,7 @@ export default function EliteUpgradePopup({ onClose }: Props) {
 
           {/* CTA */}
           <Button text="View Elite plans"
-            className="mt-6"
+            className="mt-6 !px-4 sm:!px-6 md:!px-8 "
             iconLeft={<EliteCrownIcon className="w-4 md:w-5 h-4 md:h-5 shrink-0 " fill="#FFFFFF" />}
             onPress={handleUpgrade} />
         </div>

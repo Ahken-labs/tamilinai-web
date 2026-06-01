@@ -17,6 +17,7 @@ import {
 } from "@/src/assets/Icons";
 import { CgClose } from "react-icons/cg";
 import { RiArrowGoBackLine } from "react-icons/ri";
+import { readMeCache } from "@/src/components/AppHeader";
 import { sendInterest, respondToInterest, unblockSender } from "@/src/lib/api/interests";
 import { shortlistProfile, unshortlistProfile } from "@/src/lib/api/profiles";
 import { ApiError } from "@/src/lib/api/client";
@@ -26,7 +27,6 @@ type StatusType = "sent" | "received" | "declined";
 type MatchInterestCardProps = {
     profileId: string;
     profileName: string;
-    myName?: string;
     gender?: string;
     status: StatusType;
     isElite: boolean;
@@ -53,7 +53,6 @@ const ACCEPT_REPLY = "Vanakkam! I have accepted your interest. Let's connect!";
 export default function MatchInterestCard({
     profileId,
     profileName,
-    myName = "username",
     gender,
     status,
     isElite,
@@ -117,6 +116,7 @@ export default function MatchInterestCard({
         }
     }
     const interestText = DEFAULT_INTEREST.replace("{name}", profileName);
+    const myName = readMeCache()?.name ?? "";
     const incomingText = DEFAULT_INTEREST.replace("{name}", myName);
 
     if (status === "declined" && !changeMindMode) {
@@ -181,10 +181,10 @@ export default function MatchInterestCard({
                             <span className="text-[14px] md:text-[16px] text-dark leading-[150%]">
                                 🎉 This profile matches your preferences.
                             </span>
-                            <div className="flex items-center">
+                            <a href="#partner-preferences" className="flex items-center">
                                 <span className="text-[14px] md:text-[16px] text-dark">More details</span>
                                 <ChevronRightIcon className="h-4 w-4" />
-                            </div>
+                            </a>
                         </div>
                         <div
                             className="max-[370px]:mt-2 max-[500px]:mt-4 mt-6 flex max-[370px]:gap-2 gap-3 flex-row
@@ -320,7 +320,7 @@ export default function MatchInterestCard({
                             <Button
                                 text="Chat on WhatsApp"
                                 iconLeft={<FaWhatsapp className="h-4 w-4 md:h-5 md:w-5" />}
-                                className="!px-4 !font-medium"
+                                className="md:!px-6 !px-4 !font-medium"
                                 onPress={() => {
                                     if (!phone) return;
                                     window.open(`https://wa.me/${phone.replace(/\D/g, "")}`, "_blank");
@@ -388,7 +388,7 @@ export default function MatchInterestCard({
 
     return (
         <CardShell>
-            <SectionTitle title={`✨ ${profileName} is interested in you!`} />
+            <SectionTitle title={`🎉 It's a mutual match!`} red/>
 
             <div className="mt-4 flex flex-col gap-4">
                 <MessageRow
@@ -418,7 +418,7 @@ export default function MatchInterestCard({
                         <Button
                             text="Chat on WhatsApp"
                             iconLeft={<FaWhatsapp className="h-4 w-4 md:h-5 md:w-5" />}
-                            className="!px-4 !font-medium"
+                            className="md:!px-6 !px-4 !font-medium"
                         />
                     </div>
                 </>
@@ -449,9 +449,9 @@ function CardShell({ children }: { children: React.ReactNode }) {
     );
 }
 
-function SectionTitle({ title }: { title: string }) {
+function SectionTitle({ title, red }: { title: string; red?: boolean }) {
     return (
-        <div className="font-poppins font-20 font-bold leading-[150%] text-dark">
+        <div className={`font-poppins text-[16px] sm:text-[18px] md:text-[20px] font-bold leading-[150%] ${red ? "text-[#B31B38]" : "text-dark"}`}>
             {title}
         </div>
     );

@@ -13,7 +13,6 @@ import RefundPolicyPopup from "./footer/RefundPolicyPopup";
 
 import translations from "../assets/translation.json";
 import { CONTACT } from "../lib/contact";
-import Link from "next/link";
 
 type FooterVariant = "landing" | "app";
 
@@ -26,12 +25,9 @@ const NAV_LEFT = [
   { label: "Home", href: "#hero", appHref: "/matches" },
   { label: "About_Us", href: "#about", appHref: "/about" },
   { label: "Join_Now", href: "#", appHref: "/register" },
-] as const;
-
-const NAV_RIGHT = [
-  { label: "Terms_Conditions", href: "/terms" },
-  { label: "Privacy_Policy", href: "/privacy" },
-  { label: "Refund_Return_Policy", href: "/refund-policy" },
+  { label: "Terms_Conditions", href: "/terms", appHref: "/terms" },
+  { label: "Privacy_Policy", href: "/privacy", appHref: "/privacy" },
+  { label: "Refund_Return_Policy", href: "/refund-policy", appHref: "/refund-policy" },
 ] as const;
 
 // Social links
@@ -92,11 +88,16 @@ export default function Footer({ variant = "landing" }: FooterProps) {
 
   const handleLeftNav = (label: string, href: string, appHref: string) => {
     if (isApp) {
+      if (label === "Terms_Conditions") { setOpenPopup("terms"); return; }
+      if (label === "Privacy_Policy") { setOpenPopup("privacy"); return; }
+      if (label === "Refund_Return_Policy") { setOpenPopup("refund"); return; }
       router.push(appHref);
       return;
     }
     if (label === "Join_Now") {
       setOpenForm(true);
+    } else if (label === "Terms_Conditions" || label === "Privacy_Policy" || label === "Refund_Return_Policy") {
+      router.push(href);
     } else {
       scrollTo(href);
     }
@@ -111,13 +112,13 @@ export default function Footer({ variant = "landing" }: FooterProps) {
           : { background: "linear-gradient(270deg, #35050C 0%, #740234 100%)" }
       }
     >
-      <div className="mx-auto max-w-[1200px] px-6 md:pt-10 pt-8 pb-0">
+      <div className="mx-auto max-w-[1200px] px-6 min-[890px]:pt-10 pt-8 pb-0">
 
         {/* ── Top 3-column row ── */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-10 lg:gap-0">
+        <div className="grid grid-cols-1 min-[890px]:grid-cols-2 gap-6 sm:gap-8 min-[890px]:gap-10 lg:gap-0">
 
           {/* LEFT SIDE (Col1 + Col2 combined) */}
-          <div className="flex justify-between max-w-[490px] w-full">
+          <div className="flex flex-col min-[460px]:flex-row min-[460px]:justify-between max-w-[490px] w-full gap-6 min-[460px]:gap-0">
 
             {/* Col 1 */}
             <div className="flex flex-col gap-2 md:mr-4 mr:0 select-none">
@@ -126,35 +127,34 @@ export default function Footer({ variant = "landing" }: FooterProps) {
                   key={label}
                   type="button"
                   onClick={() => handleLeftNav(label, href, appHref)}
-                  className={`cursor-pointer text-left ${navLinkClass}`}
+                  className={`cursor-pointer text-left ${navLinkClass} ${label === "Home" ? "font-semibold" : ""}`}
                 >
                   {t(label)}
                 </button>
               ))}
             </div>
 
-            {/* Col 2 */}
+            {/* Col 2 — Contact */}
             <div className="flex flex-col gap-2 md:mr-4 mr-0 select-none">
-              {isApp ? (
-                <>
-                  <button type="button" onClick={() => setOpenPopup("terms")} className={`cursor-pointer text-left ${navLinkClass}`}>{t("Terms_Conditions")}</button>
-                  <button type="button" onClick={() => setOpenPopup("privacy")} className={`cursor-pointer text-left ${navLinkClass}`}>{t("Privacy_Policy")}</button>
-                  <button type="button" onClick={() => setOpenPopup("refund")} className={`cursor-pointer text-left ${navLinkClass}`}>{t("Refund_Return_Policy")}</button>
-                </>
-              ) : (
-                NAV_RIGHT.map(({ label, href }) => (
-                  <Link key={label} href={href} className={`cursor-pointer text-left ${navLinkClass}`}>
-                    {t(label as Parameters<typeof t>[0])}
-                  </Link>
-                ))
-              )}
+              <span className={`font-poppins font-semibold text-[15px] leading-[200%] ${isApp ? "text-[#464646]" : "text-white"}`}>
+                Contact
+              </span>
+              <span className={navLinkClass}>{CONTACT.company.name}</span>
+              <span className={navLinkClass}>{CONTACT.address.line1}</span>
+              <span className={navLinkClass}>{CONTACT.address.line2}</span>
+              <a href={CONTACT.whatsappUrl} target="_blank" rel="noopener noreferrer" className={navLinkClass}>
+                +{CONTACT.whatsappNumber}
+              </a>
+              <a href={`mailto:${CONTACT.email}`} className={navLinkClass}>
+                {CONTACT.email}
+              </a>
             </div>
 
           </div>
 
           {/* Col 3 — Description (pushed right on desktop) */}
-          <div className="md:ml-auto">
-            <p className={`font-poppins font-normal lg:text-[16px] text-[14px] leading-[150%] ${isApp ? "text-[#464646] " : "text-white"}`}>
+          <div className="min-[890px]:ml-auto select-none">
+            <p className={`font-poppins font-normal md:text-[16px] text-[14px] leading-[150%] ${isApp ? "text-[#464646] " : "text-white"}`}>
               {t("Footer_parah")}
             </p>
           </div>
@@ -168,7 +168,7 @@ export default function Footer({ variant = "landing" }: FooterProps) {
             <div className="flex flex-wrap items-center gap-1.5 select-none">
               {isApp ? (
                 <>
-                  <span className={`font-poppins font-normal font-14 ${textClass}`}>
+                  <span className={`font-poppins font-normal text-[14px] ${textClass}`}>
                     © 2026{" "}
                     <a
                       href={CONTACT.company.website}
@@ -182,7 +182,7 @@ export default function Footer({ variant = "landing" }: FooterProps) {
 
                   <Dot isApp={isApp} />
 
-                  <span className={`font-poppins font-normal font-14 ${textClass}`}>
+                  <span className={`font-poppins font-normal text-[14px] ${textClass}`}>
                     Your Privacy Choices
                   </span>
 
@@ -229,7 +229,7 @@ export default function Footer({ variant = "landing" }: FooterProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={label}
-                    className={`transition transform hover:scale-110 duration-200 ${isApp ? "text-[#464646]" : "text-white"}`}
+                    className={`transition transform hover:scale-150 duration-200 ${isApp ? "text-[#464646]" : "text-white"}`}
                   >
                     {typeof icon === "function" ? icon(isApp) : icon}
                   </a>

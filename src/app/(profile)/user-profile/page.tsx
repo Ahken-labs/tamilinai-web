@@ -652,7 +652,7 @@ function UserProfileContent() {
           </div>
         </div>
       </div>
-      <div className="my-10 md:my-13 lg:mt-15">
+      <div id="partner-preferences" className="my-10 md:my-13 lg:mt-15" style={{ scrollMarginTop: "90px" }}>
         <MatchPreferencesCard
           theirPrefs={profile.partnerPreferences}
           theirPhotoUrl={profile.profile?.photoUrl}

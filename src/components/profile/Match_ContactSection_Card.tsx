@@ -277,7 +277,7 @@ function UpgradeContactBody({ title, buttonText }: { title: string; buttonText: 
           <div className="mt-4">
             <Button
               text={buttonText}
-              className="!font-medium"
+              className="sm:!px-6 !px-4 !font-medium"
               onPress={() => router.push("/elite-upgrade")}
               iconLeft={<FaWhatsapp className="h-4 w-4 md:h-5 md:w-5" />}
             />
