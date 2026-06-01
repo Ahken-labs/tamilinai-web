@@ -47,6 +47,9 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth" className={`${poppins.variable} ${notoSansTamil.variable} ${arima.variable}`}>
+      <head>
+        <link rel="preload" href="/images/elite_popup.webp" as="image" type="image/webp" />
+      </head>
       <body>
         <SeoSchema/>
         <QueryProvider>

@@ -6,6 +6,19 @@ const nextConfig: NextConfig = {
     // /api/photos (requires Bearer token) so /_next/image cannot bypass auth.
     remotePatterns: [],
   },
+  async headers() {
+    return [
+      {
+        source: "/images/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

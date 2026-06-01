@@ -81,7 +81,7 @@ export default function EliteUpgradePopup({ onClose }: Props) {
         {/* Background image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('/images/elite_popup.png')" }}
+          style={{ backgroundImage: "url('/images/elite_popup.webp')" }}
         />
         {/* Left overlay for readability */}
         <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/0 to-transparent" />
