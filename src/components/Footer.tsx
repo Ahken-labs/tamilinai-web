@@ -73,6 +73,14 @@ export default function Footer({ variant = "landing" }: FooterProps) {
 
   const [openForm, setOpenForm] = useState(false);
   const [openPopup, setOpenPopup] = useState<"terms" | "privacy" | "refund" | null>(null);
+  const [emailCopied, setEmailCopied] = useState(false);
+
+  function copyEmail() {
+    navigator.clipboard.writeText(CONTACT.email).then(() => {
+      setEmailCopied(true);
+      setTimeout(() => setEmailCopied(false), 400);
+    });
+  }
   const router = useRouter();
 
   const isApp = variant === "app";
@@ -139,15 +147,17 @@ export default function Footer({ variant = "landing" }: FooterProps) {
               <span className={`font-poppins font-semibold text-[15px] leading-[200%] ${isApp ? "text-[#464646]" : "text-white"}`}>
                 Contact
               </span>
-              <span className={navLinkClass}>{CONTACT.company.name}</span>
-              <span className={navLinkClass}>{CONTACT.address.line1}</span>
-              <span className={navLinkClass}>{CONTACT.address.line2}</span>
-              <a href={CONTACT.whatsappUrl} target="_blank" rel="noopener noreferrer" className={navLinkClass}>
+              <a href={CONTACT.company.website} target="_blank" rel="noopener noreferrer" className={`${navLinkClass} no-underline`}>
+                {CONTACT.company.name}
+              </a>
+              <span className={`font-poppins font-normal text-[15px] leading-[200%] ${isApp ? "text-[#464646]" : "text-white"} block`}>{CONTACT.address.line1}</span>
+              <span className={`font-poppins font-normal text-[15px] leading-[200%] ${isApp ? "text-[#464646]" : "text-white"} block`}>{CONTACT.address.line2}</span>
+              <a href={CONTACT.whatsappUrl} target="_blank" rel="noopener noreferrer" className={`${navLinkClass} no-underline`}>
                 +{CONTACT.whatsappNumber}
               </a>
-              <a href={`mailto:${CONTACT.email}`} className={navLinkClass}>
-                {CONTACT.email}
-              </a>
+              <button type="button" onClick={copyEmail} className={`cursor-pointer text-left ${navLinkClass}`}>
+                {emailCopied ? "Copied!" : CONTACT.email}
+              </button>
             </div>
 
           </div>
