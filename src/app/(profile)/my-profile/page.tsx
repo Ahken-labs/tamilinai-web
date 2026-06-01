@@ -380,7 +380,7 @@ export default function MyProfilePage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#F8F5F2] font-poppins select-none pb-4">
+    <main className="min-h-screen bg-[#F8F5F2] font-poppins select-none max-[500px]:pb-10 pb-4">
       {/* Tab bar */}
       <div className="sticky max-[320px]:top-[56px] max-[768px]:top-[65px] top-[74px] z-30 w-full bg-white/60 backdrop-blur-sm border-t border-[#EEEEEE] transition-transform duration-300" style={!tabBarVisible ? { transform: "translateY(-110%)" } : undefined}>
 

@@ -190,11 +190,11 @@ function buildSections(me: Me): SectionData[] {
       right: [],
       extra: (
         <div className="mt-3 md:mt-4 flex flex-col gap-2">
-          <div className="grid grid-cols-1 min-[310px]:grid-cols-2 gap-x-4 gap-y-1">
+          <div className="grid grid-cols-1 min-[501px]:grid-cols-2 gap-x-4 gap-y-1">
             <span className="text-[14px] md:text-[16px] font-normal leading-[150%] text-secondary3">WhatsApp</span>
             <span className="text-[14px] md:text-[16px] font-normal leading-[150%] text-dark select-none">{me.phone ?? "—"}</span>
           </div>
-          <div className="grid grid-cols-1 min-[310px]:grid-cols-2 gap-x-4 gap-y-1">
+          <div className="grid grid-cols-1 min-[501px]:grid-cols-2 gap-x-4 gap-y-1">
             <span className="text-[14px] md:text-[16px] font-normal leading-[150%] text-secondary3">Email</span>
             <span className="text-[14px] md:text-[16px] font-normal leading-[150%] text-dark select-none">{me.email ?? "—"}</span>
           </div>
@@ -216,7 +216,7 @@ export default function MyProfilePreview({ me, photoSrc }: { me: Me; photoSrc: s
   return (
     <>
       {/* ── Mobile layout (<768px) ── */}
-      <div className="md:hidden">
+      <div className="md:hidden pb-20">
         <div className="flex max-[370px]:gap-3 max-[500px]:gap-4 gap-6 sm:px-6 px-4 max-[370px]:px-2 max-[500px]:pt-4 pt-6">
           {/* Photo */}
           <div className="relative shrink-0 w-[165px] h-[218.664px] rounded-[20px] overflow-hidden bg-[#D9D9D9]">

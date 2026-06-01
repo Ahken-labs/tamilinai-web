@@ -290,12 +290,12 @@ function UpgradeContactBody({ title, buttonText }: { title: string; buttonText: 
           onClick={() => setShowPopup(true)}
           className="mt-4 md:mt-5 w-full text-left cursor-pointer"
         >
-          <div className="flex w-full justify-between gap-6 md:gap-10 lg:gap-16">
+          <div className="flex flex-col min-[500px]:flex-row min-[500px]:justify-between w-full gap-1 min-[500px]:gap-6 md:gap-10 lg:gap-16">
             <div className="text-secondary3 text-[14px] md:text-[16px]">WhatsApp</div>
             <span className="text-[14px] md:text-[16px] text-[#767676] blur-[5.3px] select-none">+94 75 020 7507</span>
           </div>
           <div className="mt-4 border-b border-[#EAEAEA]" />
-          <div className="mt-4 md:mt-5 flex w-full justify-between gap-6 md:gap-10 lg:gap-16">
+          <div className="flex max-[500px]:flex-col min-[500px]:justify-between w-full mt-4 md:mt-5 gap-1 min-[500px]:gap-6 md:gap-10 lg:gap-16">
             <div className="text-secondary3 text-[14px] md:text-[16px]">Email</div>
             <span className="text-[14px] md:text-[16px] text-[#767676] blur-[5.3px] select-none">contact@inai.lk</span>
           </div>
@@ -327,7 +327,7 @@ function VisibleContactBody({
     <div className="pt-3 md:pt-4">
       {displayPhone && (
         <>
-          <div className="flex w-full justify-between">
+          <div className="flex max-[500px]:flex-col min-[501px]:justify-between w-full gap-1">
             <div className="text-secondary3 text-[14px] md:text-[16px]">WhatsApp</div>
             <div className="flex items-center gap-1 md:gap-2">
               <span className="text-[14px] md:text-[16px] text-[#767676]">{displayPhone}</span>
@@ -339,7 +339,7 @@ function VisibleContactBody({
       )}
 
       {displayEmail && (
-        <div className="mt-3 md:mt-4 flex w-full justify-between">
+        <div className="mt-3 md:mt-4 flex max-[500px]:flex-col min-[501px]:justify-between w-full gap-1">
           <div className="text-secondary3 text-[14px] md:text-[16px]">Email</div>
           <div className="flex items-center gap-1 md:gap-2">
             <span className="text-[14px] md:text-[16px] text-[#767676]">{displayEmail}</span>
