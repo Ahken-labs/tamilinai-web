@@ -19,8 +19,8 @@ export default function RefundPolicyPage() {
         </div>
         <div className="pb-8 px-auto bg-[#F8F5F2] pt-6 md:pt-8 px-4 max-[370px]:px-2">
           <div className="rounded-[20px] max-w-[920px] bg-white p-4 md:p-6 mx-auto">
-          <RefundPolicy />
-        </div>
+            <RefundPolicy />
+          </div>
         </div>
       </main>
     </>
