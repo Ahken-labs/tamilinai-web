@@ -242,8 +242,8 @@ function ReceivedRequestBody({
           WhatsApp
           <div className="mt-3 md:mt-4">Email</div>
         </div>
-        <div className="flex w-full items-center justify-center rounded-[8px] bg-cartbox2 px-2 py-4 md:py-6">
-          <InterestLockIcon className="mr-1 max-[370px]:h-3 max-[370px]:w-3 h-4 w-4 md:mr-2" />
+        <div className="flex w-full max-[525px]:items-start items-center justify-center rounded-[8px] bg-cartbox2 px-2 py-4 md:py-6">
+          <InterestLockIcon className="mr-1 max-[370px]:mt-0 max-[524px]:mt-0.5 max-[370px]:h-6 max-[370px]:w-6 h-4 w-4 md:mr-2" />
           <p className="text-[14px] md:text-[16px] text-primary">
             Contact unlocks after you accept their interest.
           </p>
@@ -270,7 +270,7 @@ function UpgradeContactBody({ title, buttonText }: { title: string; buttonText: 
     <>
       <div className="pt-3 md:pt-4">
         <div className="flex flex-col items-center rounded-[8px] bg-[linear-gradient(0deg,#FFE9E2_0%,#FFE9E2_100%),linear-gradient(270deg,#FFE0C2_0%,#FFF2D9_49.72%,#FFE0C2_99.44%)] px-4 py-6">
-          <Image src="/icons/elite_batch.png" alt="Elite" width={42} height={40} />
+          <Image src="/icons/elite_Badge.png" alt="Elite" width={42} height={40} />
           <p className="mt-3 md:mt-4 text-center text-[14px] md:text-[16px] font-medium leading-[150%] text-[#B31B38]">
             {title}
           </p>
