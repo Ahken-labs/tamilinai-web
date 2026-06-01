@@ -8,7 +8,7 @@ type FormRowProps = {
   leftWidth?:string;
 };
 
-export default function FormRow({label, required, children, error, className = "", align = "start", leftWidth="w-[130px] sm:w-[130px] md:w-[140px] lg:w-[180px]"}: FormRowProps) {
+export default function FormRow({label, required, children, error, className = "", align = "start", leftWidth="max-[500px]:w-[450px] w-[130px] sm:w-[130px] md:w-[140px] lg:w-[180px]"}: FormRowProps) {
   const isCenter = align === "center";
 
   return (

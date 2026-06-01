@@ -275,7 +275,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
         {/* Header: search or edit */}
         {(variant === "search" || variant === "edit") && (
           <div className="shrink-0 bg-white border-b border-[#EAEAEA] rounded-t-[20px] px-6 pt-4 md:pt-5.5 pb-4 md:pb-5.5 flex items-center gap-4">
-            <span className="font-poppins font-24 font-semibold text-[dark leading-[150%] shrink-0">
+            <span className="font-poppins fonts-24 font-semibold text-[dark leading-[150%] shrink-0">
               {variant === "search" ? "Search" : "Edit partner preference"}
             </span>
             {variant === "search" && (

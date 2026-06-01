@@ -58,9 +58,9 @@ export default function CareerEducationSection({ me, onDirty }: Props) {
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Monthly income">
-          <div className="flex gap-4 flex-wrap">
+          <div className="flex gap-4 max-[400px]:flex-col flex-wrap">
             <DropdownField typeable compact placeholder="Select currency" value={currency} open={opens.currency} setOpen={setOpen("currency")} onSelect={v => { setCurrency(v); sync({ currency: v }); }} items={CURRENCY_OPTIONS} dropdownClassName="max-h-[300px]" className="flex-1" bgClassName="bg-[#FFF0F3]" borderClassName="border-[rgba(179,27,56,0.25)]" textClassName="text-[#656565]" />
-            <input value={monthlyIncome} onChange={e => { setMonthlyIncome(e.target.value); sync({ monthlyIncome: e.target.value }); }} placeholder="Enter monthly income" className="flex-1 h-[40px] border-[rgba(179,27,56,0.25)] w-full items-center rounded-[12px] border bg-[#FFF0F3] px-4 text-[16px] text-dark outline-none placeholder:text-[#656565]" />
+            <input value={monthlyIncome} onChange={e => { setMonthlyIncome(e.target.value); sync({ monthlyIncome: e.target.value }); }} placeholder="Enter monthly income" className="flex-1 max-[400]:py-[10px] h-[40px] border-[rgba(179,27,56,0.25)] w-full items-center rounded-[12px] border bg-[#FFF0F3] px-4 text-[16px] text-dark outline-none placeholder:text-[#656565]" />
           </div>
         </FormRow>
 

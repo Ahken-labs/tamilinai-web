@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useScrollHide } from "@/src/hooks/useScrollHide";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { EliteCrownIcon, CardIcon } from "@/src/assets/Icons";
@@ -28,9 +29,9 @@ function formatAmount(cents: number, currency: string): string {
 function InvoiceSkeleton() {
   return (
     <div className="font-poppins min-h-screen bg-[#F8F5F2]">
-      <div className="sticky top-[74px] z-10 w-full border-t border-[#EEEEEE] bg-white">
+      <div className="sticky top-[64px] lg:top-[74px] z-10 w-full bg-white/60 backdrop-blur-sm border-t border-[#EEEEEE]">
         <div className="flex items-center justify-center px-4 py-3">
-          <span className="select-none font-24 font-semibold text-dark">Subscription & Billing</span>
+          <span className="select-none fonts-24 font-semibold text-dark">Subscription & Billing</span>
         </div>
       </div>
       <div className="mx-auto max-w-[1024px] px-4 pt-8 pb-16 flex flex-col gap-6 animate-pulse">
@@ -196,6 +197,7 @@ function UpdatePaymentModal({ onClose, onUpdated }: { onClose: () => void; onUpd
 export default function SubscriptionPage() {
   const router = useRouter();
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const headerVisible = useScrollHide();
 
   // Intercept browser back → go to matches
   useEffect(() => {
@@ -229,9 +231,9 @@ export default function SubscriptionPage() {
   if (!sub || !isElite) {
     return (
       <div className="font-poppins min-h-screen bg-[#F8F5F2]">
-        <div className="sticky top-[74px] z-10 w-full border-t border-[#EEEEEE] bg-white">
+       <div className="sticky top-[64px] lg:top-[74px] z-10 w-full bg-white/60 backdrop-blur-sm border-t border-[#EEEEEE] transition-transform duration-300" style={!headerVisible ? { transform: "translateY(-110%)" } : undefined}>
           <div className="flex items-center justify-center px-4 py-3">
-            <span className="select-none font-24 font-semibold text-dark">Subscription & Billing</span>
+            <span className="select-none fonts-24 font-semibold text-dark">Subscription & Billing</span>
           </div>
         </div>
         <div className="mx-auto max-w-[1024px] px-4 pt-20 pb-16 flex flex-col items-center text-center gap-4">
@@ -251,9 +253,9 @@ export default function SubscriptionPage() {
   return (
     <div className="font-poppins min-h-screen bg-[#F8F5F2]">
       {/* Sticky sub-header */}
-      <div className="sticky top-[74px] z-10 w-full border-t border-[#EEEEEE] bg-white">
+      <div className="sticky top-[66px] md:top-[74px] z-10 w-full bg-white/60 backdrop-blur-sm border-t border-[#EEEEEE] transition-transform duration-300" style={!headerVisible ? { transform: "translateY(-128%)" } : undefined}>
         <div className="flex items-center justify-center px-4 py-3">
-          <span className="select-none font-24 font-semibold text-dark">Subscription & Billing</span>
+          <span className="select-none fonts-24 font-semibold text-dark">Subscription & Billing</span>
         </div>
       </div>
 

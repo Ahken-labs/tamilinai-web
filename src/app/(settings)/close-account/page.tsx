@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useScrollHide } from "@/src/hooks/useScrollHide";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -59,6 +60,7 @@ export default function CloseAccountPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
 
+  const headerVisible = useScrollHide();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [selected, setSelected] = useState<number>(0);
   const [otherText, setOtherText] = useState("");
@@ -112,7 +114,7 @@ export default function CloseAccountPage() {
 
   return (
     <main className="select-none font-poppins min-h-screen bg-[#F8F5F2] pb-10">
-      <div className="sticky top-[74px] z-10 w-full bg-white border-t border-[#EEEEEE]">
+      <div className="sticky top-[66px] md:top-[74px] z-10 w-full bg-white/60 backdrop-blur-sm border-t border-[#EEEEEE] transition-transform duration-300" style={!headerVisible ? { transform: "translateY(-114%)" } : undefined}>
         <div className="flex justify-center items-center py-3 px-4">
           <div className="w-full max-w-[945px] px-0 md:px-8 lg:px-0">
             <StepProgress
@@ -134,6 +136,7 @@ export default function CloseAccountPage() {
         childrenTopMargin="mt-1"
         maxwidth="max-w-[945px]"
         paddingBottom="pb-4 sm:pb-5 md:pb-6"
+        minHeight=""
       >
         <>
           <span className="select-none font-16 leading-[150%] text-dark">

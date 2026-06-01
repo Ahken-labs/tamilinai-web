@@ -6,6 +6,7 @@ import TermsPopup from "@/src/components/footer/TermsPopup";
 import PrivacyPolicy from "@/src/components/more/PrivacySection";
 import Link from "next/link";
 import { useState } from "react";
+import { useScrollHide } from "@/src/hooks/useScrollHide";
 
 type SettingItem = {
     icon: React.ElementType;
@@ -44,13 +45,14 @@ const SETTINGS: SettingItem[] = [
 export default function SettingsPage() {
     const [openPasswordPopup, setOpenPasswordPopup] = useState(false);
     const [openTermsPopup, setOpenTermsPopup] = useState(false);
+    const headerVisible = useScrollHide();
 
     return (
         <div className="pb-6 font-poppins min-h-screen bg-[#F8F5F2]">
             {/* Header */}
-            <div className="sticky top-[74px] z-10 w-full border-t border-[#EEEEEE] bg-white">
+            <div className="sticky top-[66px] md:top-[74px] z-10 w-full bg-white/60 backdrop-blur-sm border-t border-[#EEEEEE] transition-transform duration-300" style={!headerVisible ? { transform: "translateY(-128%)" } : undefined}>
                 <div className="flex items-center justify-center px-4 py-3">
-                    <span className="select-none font-24 font-semibold text-dark">
+                    <span className="select-none fonts-24 font-semibold text-dark">
                         Account settings
                     </span>
                 </div>
@@ -132,7 +134,7 @@ export default function SettingsPage() {
             <div className="my-6 bg-light py-6 md:py-6 rounded-[20px] mx-4 md:mx-auto max-w-[910px]">
                 <div className="mb-4 md:mb-6 flex flex-col items-center justify-center">
                     <PrivacyPolicyIcon className="w-6 h-6" />
-                    <span className="font-24 font-semibold leading-[150%] text-dark">
+                    <span className="fonts-24 font-semibold leading-[150%] text-dark">
                         Privacy policy
                     </span>
                 </div>

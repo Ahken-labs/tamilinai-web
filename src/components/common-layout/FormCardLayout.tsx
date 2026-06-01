@@ -10,6 +10,7 @@ type FormCardLayoutProps = {
   bgColor?: string;
   maxwidth?: string;
   paddingHorizontal?:string;
+  minHeight?: string;
 };
 
 export default function FormCardLayout({
@@ -23,10 +24,11 @@ export default function FormCardLayout({
   subtitleMarginTop = "max-[500px]:mt-2 mt-4 md:mt-6 lg:mt-10",
   bgColor = "bg-light",
   maxwidth = "max-w-[784px]",
-  paddingHorizontal = "px-4 md:px-6"
+  paddingHorizontal = "px-4 md:px-6",
+  minHeight = "min-h-[calc(100vh-80px)]"
 }: FormCardLayoutProps) {
   return (
-    <div className="w-full flex justify-center max-[340px]:px-2 px-4 md:px-10 max-[500px]:py-4 py-8 bg-mvp font-poppins min-h-[calc(100vh-80px)]">
+    <div className={`w-full flex justify-center max-[340px]:px-2 px-4 md:px-10 max-[500px]:py-4 py-8 bg-mvp font-poppins ${minHeight}`}>
       <div className={`w-full ${maxwidth} flex flex-col`}>
 
         <div className={`w-full rounded-[16px] sm:rounded-[20px] ${paddingHorizontal} ${bgColor} ${paddingBottom}`}>

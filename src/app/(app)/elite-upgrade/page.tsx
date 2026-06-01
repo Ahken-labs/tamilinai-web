@@ -254,7 +254,7 @@ export default function EliteUpgradePage() {
                         </div>
                     </div>
                     <div className="md:mt-10 mt-8">
-                        <h1 className="text-center text-dark font-semibold font-24">why Elite membership?</h1>
+                        <h1 className="text-center text-dark font-semibold fonts-24">why Elite membership?</h1>
                         <div className="mt-4 md:mt-6">
                             {/* box */}
                             <div className="mt-4 md:mt-6 grid grid-cols-2 gap-3">

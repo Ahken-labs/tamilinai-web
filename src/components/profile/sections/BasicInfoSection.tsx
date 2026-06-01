@@ -49,7 +49,7 @@ function LanguagePopup({ initialSelected, onClose, onConfirm }: {
       <div className="flex max-h-[90vh] w-full max-w-[920px] flex-col overflow-hidden rounded-[16px] bg-white shadow-2xl">
         <div className="self-stretch px-4 md:px-5 pb-2 pt-4 md:pt-5 shrink-0">
           <div className="flex items-center justify-between">
-            <span className="font-24 font-semibold text-dark leading-[150%]">Languages spoken</span>
+            <span className="fonts-24 font-semibold text-dark leading-[150%]">Languages spoken</span>
             <button type="button" onClick={onClose} className="cursor-pointer shrink-0"><CloseCircleIcon /></button>
           </div>
           <p className="font-16 md:mt-1 font-normal text-dark leading-[150%]">Select language you know and add them to your profile.</p>
@@ -157,7 +157,7 @@ export default function BasicInfoSection({ me, onDirty }: Props) {
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Marital status" required>
-          <div className="flex flex-wrap gap-5 mt-3 md:mt-2">
+          <div className="flex max-[370px]:flex-col flex-wrap gap-5 max-[370px]:gap-3 mt-3 md:mt-2">
             {MARITAL_OPTIONS.map(opt => (
               <button key={opt} type="button" onClick={() => { setMaritalStatus(opt); sync({ maritalStatus: opt }); }} className="flex items-center gap-2 cursor-pointer">
                 <RadioCircleIcon checked={maritalStatus === opt} />

@@ -79,7 +79,7 @@ function RadioGroup({ options, value, onChange }: {
   options: string[]; value: string; onChange: (v: string) => void;
 }) {
   return (
-    <div className="flex flex-wrap gap-4 md:gap-5 mt-3 md:mt-2">
+    <div className="flex max-[370px]:flex-col flex-wrap gap-4 max-[370px]:gap-3 md:gap-5 mt-3 md:mt-2">
       {options.map((opt) => (
         <button key={opt} type="button" onClick={() => onChange(opt)} className="flex items-center gap-2 cursor-pointer">
           <RadioCircleIcon checked={value === opt} />
