@@ -35,7 +35,7 @@ export default function PrivacyPopup({ isOpen, onClose }: Props) {
 
         <div className="flex-1 pt-2 overflow-y-auto">
           <PrivacyPolicy />
-          <div className="border-t border-[#EAEAEA] my-4 md:my-6 mx-4 md:mx-6"/>
+          <div className="my-4 md:my-6 mx-4 md:mx-6"/>
         </div>
       </div>
     </div>,

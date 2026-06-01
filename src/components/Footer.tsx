@@ -7,6 +7,9 @@ import { useLang } from "../context/LangContext";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import RegisterForm from "./auth/RegisterForm";
+import TermsPopup from "./footer/TermsPopup";
+import PrivacyPopup from "./footer/PrivacyPopup";
+import RefundPolicyPopup from "./footer/RefundPolicyPopup";
 
 import translations from "../assets/translation.json";
 import { CONTACT } from "../lib/contact";
@@ -73,6 +76,7 @@ export default function Footer({ variant = "landing" }: FooterProps) {
     variant === "app" ? translations.en[key] || key : _t(key);
 
   const [openForm, setOpenForm] = useState(false);
+  const [openPopup, setOpenPopup] = useState<"terms" | "privacy" | "refund" | null>(null);
   const router = useRouter();
 
   const isApp = variant === "app";
@@ -131,15 +135,19 @@ export default function Footer({ variant = "landing" }: FooterProps) {
 
             {/* Col 2 */}
             <div className="flex flex-col gap-2 md:mr-4 mr-0 select-none">
-              {NAV_RIGHT.map(({ label, href }) => (
-                <Link
-                  key={label}
-                  href={href}
-                  className={`cursor-pointer text-left ${navLinkClass}`}
-                >
-                  {t(label as Parameters<typeof t>[0])}
-                </Link>
-              ))}
+              {isApp ? (
+                <>
+                  <button type="button" onClick={() => setOpenPopup("terms")} className={`cursor-pointer text-left ${navLinkClass}`}>{t("Terms_Conditions")}</button>
+                  <button type="button" onClick={() => setOpenPopup("privacy")} className={`cursor-pointer text-left ${navLinkClass}`}>{t("Privacy_Policy")}</button>
+                  <button type="button" onClick={() => setOpenPopup("refund")} className={`cursor-pointer text-left ${navLinkClass}`}>{t("Refund_Return_Policy")}</button>
+                </>
+              ) : (
+                NAV_RIGHT.map(({ label, href }) => (
+                  <Link key={label} href={href} className={`cursor-pointer text-left ${navLinkClass}`}>
+                    {t(label as Parameters<typeof t>[0])}
+                  </Link>
+                ))
+              )}
             </div>
 
           </div>
@@ -238,6 +246,13 @@ export default function Footer({ variant = "landing" }: FooterProps) {
           open={openForm}
           onClose={() => setOpenForm(false)}
         />
+      )}
+      {isApp && (
+        <>
+          <TermsPopup isOpen={openPopup === "terms"} onClose={() => setOpenPopup(null)} />
+          <PrivacyPopup isOpen={openPopup === "privacy"} onClose={() => setOpenPopup(null)} />
+          <RefundPolicyPopup isOpen={openPopup === "refund"} onClose={() => setOpenPopup(null)} />
+        </>
       )}
     </footer>
   );
