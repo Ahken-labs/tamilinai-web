@@ -275,12 +275,6 @@ input, textarea, select {
 
 
 
-/* Prevent background scroll when modal/popup is open */
-body.modal-open,
-html:has(body.modal-open) {
-  overflow: hidden;
-}
-
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
