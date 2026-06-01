@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useScrollLock } from "../../hooks/useScrollLock";
 import Cropper, { type Area } from "react-easy-crop";
 import Button from "../common-layout/Button";
 
@@ -44,6 +45,7 @@ type Props = {
 };
 
 export default function PhotoCropModal({ imageSrc, onConfirm, onClose }: Props) {
+  useScrollLock(true);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);

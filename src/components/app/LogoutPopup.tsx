@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useScrollLock } from "../../hooks/useScrollLock";
 import { useQueryClient } from "@tanstack/react-query";
 import { http } from "../../lib/api/client";
 import { clearBlobCache } from "../common-layout/ProtectedPhoto";
@@ -12,6 +13,7 @@ interface Props {
 
 export default function LogoutPopup({ isOpen, onClose }: Props) {
   const router = useRouter();
+  useScrollLock(isOpen);
   const queryClient = useQueryClient();
 
   if (!isOpen) return null;

@@ -1,6 +1,7 @@
 "use client";
 
 import { createPortal } from "react-dom";
+import { useScrollLock } from "../../hooks/useScrollLock";
 import { CloseCircleIcon } from "../../assets/Icons";
 import RefundPolicy from "../more/RefundPolicySection";
 type Props = {
@@ -8,7 +9,8 @@ type Props = {
   onClose: () => void;
 };
 
-export default function PrivacyPopup({ isOpen, onClose }: Props) {
+export default function RefundPolicyPopup({ isOpen, onClose }: Props) {
+  useScrollLock(isOpen);
   if (!isOpen) return null;
 
   return createPortal(

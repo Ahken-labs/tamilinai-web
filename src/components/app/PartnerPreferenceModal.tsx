@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useScrollLock } from "../../hooks/useScrollLock";
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import { ChevronIcon, RadioCircleIcon, CloseCircleIcon, SearchIcon, PartyIcon } from "../../assets/Icons";
@@ -86,6 +87,7 @@ interface Props {
 
 export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onboarding" }: Props) {
   const router = useRouter();
+  useScrollLock(isOpen);
   const originalPrefs = useRef<PartnerPreferences | null>(null);
 
   const [ageMin, setAgeMin] = useState("");

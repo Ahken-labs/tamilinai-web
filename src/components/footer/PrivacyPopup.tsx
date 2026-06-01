@@ -1,6 +1,7 @@
 "use client";
 
 import { createPortal } from "react-dom";
+import { useScrollLock } from "../../hooks/useScrollLock";
 import { CloseCircleIcon } from "../../assets/Icons";
 import PrivacyPolicy from "../more/PrivacySection";
 type Props = {
@@ -9,6 +10,7 @@ type Props = {
 };
 
 export default function PrivacyPopup({ isOpen, onClose }: Props) {
+  useScrollLock(isOpen);
   if (!isOpen) return null;
 
   return createPortal(

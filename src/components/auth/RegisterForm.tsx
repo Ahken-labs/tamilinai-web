@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useScrollLock } from "../../hooks/useScrollLock";
 import {
     ArrowRightIcon,
     CloseCircleIcon,
@@ -31,6 +32,7 @@ export default function RegisterForm({
 }: RegisterFormProps) {
     const { t } = useLang();
     const router = useRouter();
+    useScrollLock(variant === "modal" && open);
 
     const [mounted, setMounted] = useState(variant === "hero" ? true : open);
     const [animateIn, setAnimateIn] = useState(open);

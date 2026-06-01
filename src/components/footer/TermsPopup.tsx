@@ -1,6 +1,7 @@
 "use client";
 
 import { createPortal } from "react-dom";
+import { useScrollLock } from "../../hooks/useScrollLock";
 import { CloseCircleIcon } from "../../assets/Icons";
 import Terms from "../more/TermsSection";
 type Props = {
@@ -9,6 +10,7 @@ type Props = {
 };
 
 export default function TermsPopup({ isOpen, onClose }: Props) {
+  useScrollLock(isOpen);
   if (!isOpen) return null;
 
   return createPortal(

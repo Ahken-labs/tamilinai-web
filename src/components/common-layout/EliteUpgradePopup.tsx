@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useScrollLock } from "../../hooks/useScrollLock";
 import { EliteCrownIcon, HeadphoneSupportIcon, InfinityIcon, StarBadgeIcon, TrophyIcon, UserSearchIcon, WhatsAppIcon } from "@/src/assets/Icons";
 import { FiX } from "react-icons/fi";
 import Button from "./Button";
@@ -50,6 +51,7 @@ interface Props {
 
 export default function EliteUpgradePopup({ onClose }: Props) {
   const router = useRouter();
+  useScrollLock(true);
 
   // Close on Escape
   useEffect(() => {
@@ -57,12 +59,6 @@ export default function EliteUpgradePopup({ onClose }: Props) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
-
-  // Lock scroll
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
-  }, []);
 
   function handleUpgrade() {
     onClose();

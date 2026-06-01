@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useScrollLock } from "../../hooks/useScrollLock";
 import { createPortal } from "react-dom";
 import { CloseCircleIcon, SearchIcon } from "../../assets/Icons";
 import Button from "../common-layout/Button";
@@ -70,6 +71,7 @@ interface CountryPopupProps {
 }
 
 export default function CountryPopup({ initialSelected, onClose, onConfirm }: CountryPopupProps) {
+  useScrollLock(true);
   const [draft, setDraft] = useState<string[]>(initialSelected);
   const [search, setSearch] = useState("");
   const tagsRowRef = useRef<HTMLDivElement>(null);

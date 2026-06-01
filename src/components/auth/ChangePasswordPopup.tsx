@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useScrollLock } from "../../hooks/useScrollLock";
 
 import { CloseCircleIcon, EyeOffIcon, EyeOnIcon } from "../../assets/Icons";
 import InputBox from "../common-layout/InputBox";
@@ -14,6 +15,7 @@ type Props = {
 };
 
 export default function ChangePasswordPopup({ isOpen, onClose }: Props) {
+  useScrollLock(isOpen);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
