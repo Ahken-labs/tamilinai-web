@@ -937,32 +937,32 @@ function renderBlock(block: ContentBlock): ReactNode {
     switch (block.type) {
         case "paragraph":
             return (
-                <p className="whitespace-pre-line text-left font-16 font-normal leading-[150%] text-secondary3">
+                <p className="whitespace-pre-line text-left text-[14px] md:text-[16px] font-normal leading-[150%] text-secondary3">
                     {block.text}
                 </p>
             );
         case "Red_paragraph":
             return (
-                <p className="whitespace-pre-line text-left font-16 font-normal leading-[150%] text-[#B31B38]">
+                <p className="whitespace-pre-line text-left text-[14px] md:text-[16px] font-normal leading-[150%] text-[#B31B38]">
                     {block.text}
                 </p>
             );
         case "italic":
             return (
-                <p className="whitespace-pre-line italic text-left font-16 font-normal leading-[150%] text-secondary3">
+                <p className="whitespace-pre-line italic text-left text-[14px] md:text-[16px] font-normal leading-[150%] text-secondary3">
                     {block.text}
                 </p>
             );
         case "subheading":
             return (
-                <div className="whitespace-pre-line font-medium text-left font-16 leading-[150%] text-secondary3 ">
+                <div className="whitespace-pre-line font-medium text-left text-[14px] md:text-[16px] leading-[150%] text-secondary3 ">
                     {block.text}
                 </div>
             );
 
         case "bullets":
             return (
-                <ul className="list-disc pl-5 text-left font-16 font-normal leading-[150%] text-secondary3 space-y-0">
+                <ul className="list-disc pl-5 text-left text-[14px] md:text-[16px] font-normal leading-[150%] text-secondary3 space-y-0">
                     {block.items.map((item, index) => (
                         <li key={`${item}-${index}`} className="whitespace-pre-line">
                             {item}
@@ -972,7 +972,7 @@ function renderBlock(block: ContentBlock): ReactNode {
             );
         case "alert":
             return (
-                <div className="p-3 md:p-4 bg-[#F2F2F2] my-1 md:my-1.5 rounded-[8px] whitespace-pre-line uppercase text-left font-16 leading-[150%] text-[#B31B38] ">
+                <div className="p-3 md:p-4 bg-[#F2F2F2] my-1 md:my-1.5 rounded-[8px] whitespace-pre-line uppercase text-left text-[14px] md:text-[16px] leading-[150%] text-[#B31B38] ">
                     {block.text}
                 </div>
             );
@@ -982,7 +982,7 @@ function renderBlock(block: ContentBlock): ReactNode {
 function TermsSectionBlock({ title, blocks }: PolicySection) {
     return (
         <div className="flex flex-col justify-center border-b border-[#EAEAEA] py-4 sm:py-5 md:py-6">
-            <h2 className="text-left font-18 font-medium leading-[150%] text-dark pb-1.5">
+            <h2 className="text-left text-[16px] md:text-[18px] font-medium leading-[150%] text-dark pb-1.5">
                 {title}
             </h2>
 
@@ -995,14 +995,14 @@ export default function Terms() {
     return (
         <div className="font-poppins mx-auto flex max-w-[910px] flex-col bg-white px-4 md:px-6">
             <div className="flex flex-col items-center text-center">
-                <div className="font-18 font-medium leading-[150%] text-dark">
+                <div className="text-[16px] md:text-[18px] font-medium leading-[150%] text-dark">
                     INAI.LK
                 </div>
-                <div className="mt-1.5 font-16 font-normal leading-[150%] text-secondary3">
+                <div className="mt-1.5 text-[14px] md:text-[16px] font-normal leading-[150%] text-secondary3">
                     Tamil Matrimony — Connecting Hearts Worldwide
                 </div>
 
-                <div className="mt-1.5 flex w-full flex-col items-center text-center font-16 font-normal leading-[150%] text-secondary3">
+                <div className="mt-1.5 flex w-full flex-col items-center text-center text-[14px] md:text-[16px] font-normal leading-[150%] text-secondary3">
                     {metaLines.map((item) => (
                         <div key={item.text}>{item.text}</div>
                     ))}
@@ -1022,7 +1022,7 @@ export default function Terms() {
             </div>
 
             <div className="mt-4 md:mt-5">
-                <div className="text-center flex-col flex font-16 font-normal leading-[150%] text-secondary3">
+                <div className="text-center flex-col flex text-[14px] md:text-[16px] font-normal leading-[150%] text-secondary3">
                     <span>By using Inai, you agree to these Terms.</span>
                     <span>We are honoured to be part of your journey.</span>
                     <span>— The Inai Team —</span>
@@ -1032,11 +1032,12 @@ export default function Terms() {
             <div className="border-b border-[#EAEAEA] mt-5 md:mt-6" />
 
             <div className="mt-4 md:mt-5">
-                <div className="text-center flex-col flex font-16 font-normal leading-[150%] text-secondary3">
+                <div className="text-center flex-col flex text-[14px] md:text-[16px] font-normal leading-[150%] text-secondary3">
                     <span>Inai.lk  |  A product of Ahken Nexus  |  Built by Ahkenlabs</span>
                     <span className="underline font-medium">www.inai.lk  |  privacy@inai.lk</span>
                 </div>
             </div>
+            <div className="border-b border-[#EAEAEA] mt-5 md:mt-6" />
         </div>
     );
 }

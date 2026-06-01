@@ -9,9 +9,8 @@ import { useRouter } from "next/navigation";
 import RegisterForm from "./auth/RegisterForm";
 
 import translations from "../assets/translation.json";
-import PrivacyPopup from "./footer/PrivacyPopup";
 import { CONTACT } from "../lib/contact";
-import TermsPopup from "./footer/TermsPopup";
+import Link from "next/link";
 
 type FooterVariant = "landing" | "app";
 
@@ -27,9 +26,9 @@ const NAV_LEFT = [
 ] as const;
 
 const NAV_RIGHT = [
-  { label: "Terms_Conditions", key: "terms" },
-  { label: "Privacy_Policy", key: "privacy" },
-  { label: "Blog", key: "blog" },
+  { label: "Terms_Conditions", href: "/terms" },
+  { label: "Privacy_Policy", href: "/privacy" },
+  { label: "Refund_Return_Policy", href: "/refund-policy" },
 ] as const;
 
 // Social links
@@ -77,8 +76,6 @@ export default function Footer({ variant = "landing" }: FooterProps) {
   const router = useRouter();
 
   const isApp = variant === "app";
-  const [openPrivacy, setOpenPrivacy] = useState(false);
-  const [openTerms, setOpenTerms] = useState(false);
 
   const textClass = isApp ? "text-[#464646] hover:text-[#222]" : "text-white hover:opacity-70";
   const navLinkClass = `font-poppins font-normal lg:text-[18x] md:md:-[16px] text-[15px] leading-[200%] ${textClass} transition-opacity duration-150 block`;
@@ -134,18 +131,14 @@ export default function Footer({ variant = "landing" }: FooterProps) {
 
             {/* Col 2 */}
             <div className="flex flex-col gap-2 md:mr-4 mr-0 select-none">
-              {NAV_RIGHT.map(({ label, key }) => (
-                <button
+              {NAV_RIGHT.map(({ label, href }) => (
+                <Link
                   key={label}
-                  type="button"
-                  onClick={() => {
-                    if (key === "privacy") setOpenPrivacy(true);
-                    if (key === "terms") setOpenTerms(true);
-                  }}
+                  href={href}
                   className={`cursor-pointer text-left ${navLinkClass}`}
                 >
-                  {t(label)}
-                </button>
+                  {t(label as Parameters<typeof t>[0])}
+                </Link>
               ))}
             </div>
 
@@ -246,14 +239,6 @@ export default function Footer({ variant = "landing" }: FooterProps) {
           onClose={() => setOpenForm(false)}
         />
       )}
-      <PrivacyPopup
-        isOpen={openPrivacy}
-        onClose={() => setOpenPrivacy(false)}
-      />
-      <TermsPopup
-        isOpen={openTerms}
-        onClose={() => setOpenTerms(false)}
-      />
     </footer>
   );
 }
