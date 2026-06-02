@@ -109,15 +109,16 @@ function InterestedContent() {
   });
 
   const hasNewReceived = receivedItems.some((i) => i.isNew);
-  const hasNewSent = sentItems.some((i) => i.isReminderDue);
+  const seenSentIds = (() => { try { return new Set<string>(JSON.parse(localStorage.getItem("inai_seen_sent_ids") ?? "[]")); } catch { return new Set<string>(); } })();
+  const hasNewSent = sentItems.some((i) => i.isReminderDue || !seenSentIds.has(i.id));
   const hasNewAccepted = acceptedItems.some((i) => i.isNew);
   const hasNewDeclined = declinedItems.some((i) => i.isNew);
 
   const TABS = [
-    { label: "Received", value: "received", icon: hasNewReceived && activeTab !== "received" ? <RedDotIcon /> : undefined },
-    { label: "Sent", value: "sent", icon: hasNewSent && activeTab !== "sent" ? <RedDotIcon /> : undefined },
-    { label: "Accepted", value: "accepted", icon: hasNewAccepted && activeTab !== "accepted" ? <RedDotIcon /> : undefined },
-    { label: "Declined", value: "declined", icon: hasNewDeclined && activeTab !== "declined" ? <RedDotIcon /> : undefined },
+    { label: "Received", value: "received", icon: hasNewReceived ? <RedDotIcon className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3" /> : undefined },
+    { label: "Sent", value: "sent", icon: hasNewSent ? <RedDotIcon className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3" /> : undefined },
+    { label: "Accepted", value: "accepted", icon: hasNewAccepted ? <RedDotIcon className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3" /> : undefined },
+    { label: "Declined", value: "declined", icon: hasNewDeclined ? <RedDotIcon className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3" /> : undefined },
   ];
 
   const items =
@@ -145,14 +146,14 @@ function InterestedContent() {
   }
 
   return (
-    <main className="min-h-screen bg-[#F8F5F2]">
+    <main className="font-poppins min-h-screen bg-[#F8F5F2]">
       <div className="sticky max-[320px]:top-[56px] max-[768px]:top-[65px] top-[74px] z-10 w-full bg-white/60 backdrop-blur-sm border-t border-[#EEEEEE] transition-transform duration-300" style={!tabBarVisible ? { transform: "translateY(-110%)" } : undefined}>
         <div className="flex justify-center items-center py-3 px-4">
           <ToggleTabs tabs={TABS} activeTab={activeTab} onTabChange={handleTabChange} />
         </div>
       </div>
 
-      <div className="px-4 lg:px-8 pt-[12px] sm:pt-[27px] pb-10 max-w-[1024px] mx-auto">
+      <div className="max-[370px]:px-0 max-[500px]:px-2 px-4 lg:px-8 pt-[16px] sm:pt-[27px] pb-10 max-w-[1024px] mx-auto">
         {isLoading ? (
           <div className="max-w-[926px] mx-auto rounded-[20px] overflow-hidden">
             {Array.from({ length: SKELETON_COUNT }).map((_, idx) => (
@@ -160,7 +161,8 @@ function InterestedContent() {
             ))}
           </div>
         ) : items.length > 0 ? (
-          <div className={`max-w-[926px] mx-auto rounded-[20px] overflow-hidden${isBackgroundFetching ? " opacity-60 pointer-events-none transition-opacity" : ""}`}>
+          <div className={`max-w-[926px] mx-auto rounded-[20px] bg-light overflow-hidden${isBackgroundFetching ? " opacity-60 pointer-events-none transition-opacity" : ""}`}>
+            <div className="max-[370px]:my-0 max-[500px]:my-4 my-6 max-[370px]:mx-1 max-[500px]:mx-2 mx-4 max-[370px]:rounded-[4px] max-[500px]:rounded-[12px] rounded-[16px] overflow-hidden">
             {items.map((item, idx) => (
               <InterestCard
                 key={item.id}
@@ -169,6 +171,7 @@ function InterestedContent() {
                 onAction={handleAction}
               />
             ))}
+            </div>
           </div>
         ) : (
           <EmptyState tab={activeTab} />

@@ -166,7 +166,7 @@ function SentPendingBody({
           <div className="mt-3 md:mt-4">Email</div>
         </div>
         <div className="flex w-full items-start  justify-center rounded-[8px] bg-cartbox2 px-2 py-4 md:py-6">
-          <InterestLockIcon className="mt-1 mr-1 max-[370px]:h-3 max-[370px]:w-3 h-4 w-4 md:mr-2" />
+          <InterestLockIcon className="mt-1 mr-1 max-[370px]:h-3 max-[370px]:w-3 h-4 w-4 md:mr-2 shrink-0" />
           <p className="text-[14px] md:text-[16px] text-primary">
             Contact unlocks after {she_l} accepts your interest.
           </p>
@@ -243,7 +243,7 @@ function ReceivedRequestBody({
           <div className="mt-3 md:mt-4">Email</div>
         </div>
         <div className="flex w-full max-[525px]:items-start items-center justify-center rounded-[8px] bg-cartbox2 px-2 py-4 md:py-6">
-          <InterestLockIcon className="mr-1 max-[370px]:mt-0 max-[524px]:mt-0.5 max-[370px]:h-6 max-[370px]:w-6 h-4 w-4 md:mr-2" />
+          <InterestLockIcon className="mr-1 max-[370px]:mt-0 max-[524px]:mt-0.5 max-[370px]:h-6 max-[370px]:w-6 h-4 w-4 md:mr-2 shrink-0" />
           <p className="text-[14px] md:text-[16px] text-primary">
             Contact unlocks after you accept their interest.
           </p>
