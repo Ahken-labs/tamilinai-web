@@ -12,6 +12,7 @@ import { COUNTRIES } from "../../constants/countries";
 import FormCardLayout from "../common-layout/FormCardLayout";
 import { forgotPassword } from "../../lib/api/auth";
 import { ApiError } from "../../lib/api/client";
+import { useLoadingText } from "../../hooks/useLoadingText";
 
 type Method = "sms" | "email";
 
@@ -24,6 +25,7 @@ export default function ForgotPasswordForm() {
   const [countryOpen, setCountryOpen] = useState(false);
   const [error, setError] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
+  const loadingText = useLoadingText(loading, "send");
 
   const handleMethod = (m: Method) => {
     setMethod(m);
@@ -131,7 +133,7 @@ export default function ForgotPasswordForm() {
     {/* Send button */}
     <div className="max-[500px]:mt-4 mt-8 md:mt-10">
       <Button
-        text={loading ? "Please wait..." : t("Send_reset_code")}
+        text={loading ? loadingText : t("Send_reset_code")}
         icon={loading ? undefined : <ArrowRightIcon />}
         onPress={handleSend}
         className="w-full"

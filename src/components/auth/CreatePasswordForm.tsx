@@ -10,6 +10,7 @@ import { useLang } from "@/src/context/LangContext";
 import { createPassword, resetPassword } from "../../lib/api/auth";
 import { useAuth } from "../../hooks/useAuth";
 import { ApiError } from "../../lib/api/client";
+import { useLoadingText } from "@/src/hooks/useLoadingText";
 
 type Props = {
     variant?: "register" | "reset";
@@ -29,6 +30,7 @@ export default function CreatePasswordForm({ variant = "register" }: Props) {
     const [confirmPasswordError, setConfirmPasswordError] = useState("");
     const [submitError, setSubmitError] = useState("");
     const [loading, setLoading] = useState(false);
+    const loadingText = useLoadingText(loading, "send");
 
     const [passwordFocused, setPasswordFocused] = useState(false);
     const [confirmFocused, setConfirmFocused] = useState(false);
@@ -159,7 +161,7 @@ export default function CreatePasswordForm({ variant = "register" }: Props) {
                     <div className="hidden min-[500px]:flex">
                         <div className="flex-1"/>
                         <Button
-                            text={loading ? "Please wait..." : (variant === "reset" ? t("Save_new_password") : t("Next"))}
+                            text={loading ? loadingText : (variant === "reset" ? t("Save_new_password") : t("Next"))}
                             icon={loading ? undefined : <ArrowRightIcon />}
                             onPress={handleContinue}
                             className="flex-1"
@@ -258,7 +260,7 @@ export default function CreatePasswordForm({ variant = "register" }: Props) {
             style={{ background: "rgba(255, 255, 255, 0.60)", backdropFilter: "blur(11px)" }}
         >
             <Button
-                text={loading ? "Please wait..." : (variant === "reset" ? t("Save_new_password") : t("Next"))}
+                text={loading ? loadingText : (variant === "reset" ? t("Save_new_password") : t("Next"))}
                 icon={loading ? undefined : <ArrowRightIcon />}
                 onPress={handleContinue}
                 className="!w-full"

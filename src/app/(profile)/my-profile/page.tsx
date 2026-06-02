@@ -47,6 +47,7 @@ const TABS = [
 import { DRAFT_KEYS } from "@/src/constants/profileDraftKeys";
 import { validateAboutMe, splitHighlight } from "@/src/utils/aboutMeValidation";
 import { useScrollHide } from "@/src/hooks/useScrollHide";
+import { useLoadingText } from "@/src/hooks/useLoadingText";
 
 export { DRAFT_KEYS } from "@/src/constants/profileDraftKeys";
 
@@ -110,6 +111,8 @@ export default function MyProfilePage() {
 
   // Saving
   const [saving, setSaving] = useState(false);
+  const loadingText = useLoadingText(saving, "save");
+
   // True when any section has written a draft to sessionStorage
   const [draftsExist, setDraftsExist] = useState(false);
   // Incremented on every onDirty call so buildSections re-reads sessionStorage even when draftsExist is already true
@@ -405,192 +408,192 @@ export default function MyProfilePage() {
             </div>
           )}
 
-        <div className="flex flex-col items-center min-[700px]:items-start min-[700px]:flex-row gap-5 sm:gap-7 lg:gap-10">
+          <div className="flex flex-col items-center min-[700px]:items-start min-[700px]:flex-row gap-5 sm:gap-7 lg:gap-10">
 
-          {/* Sticky photo column */}
-          <div className="shrink-0 min-[700px]:sticky min-[700px]:top-[168px]">
-            <div className="relative h-[219px] w-[165px] min-[700px]:h-[213px] min-[700px]:w-[160px] lg:h-[266px] lg:w-[200px]">
-              <div className="relative z-10 h-[219px] w-[165px] min-[700px]:h-[213px] min-[700px]:w-[160px] lg:h-[266px] lg:w-[200px] overflow-hidden rounded-[16px] bg-[#D9D9D9]">
-                <ProtectedImage
-                  src={photoSrc}
-                  alt="profile"
-                  width={200}
-                  height={300}
-                  priority
-                  className="h-full w-full object-cover"
-                />
-              </div>
-
-              {/* Hidden file input */}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleFileChange}
-              />
-
-              {activeTab !== "preview_my_profile" && (
-                <div className="absolute left-1/2 -translate-x-1/2 z-10 bottom-0">
-                  <Button
-                    text={hasPhoto ? "Edit" : "Upload"}
-                    onPress={() => fileInputRef.current?.click()}
-                    className="max-[700px]:py-2 px-10 py-3 !font-medium text"
-                    iconLeft={<CameraIcon className="w-4 md:w-4.5 h-4 md:h-4.5" />}
+            {/* Sticky photo column */}
+            <div className="shrink-0 min-[700px]:sticky min-[700px]:top-[168px]">
+              <div className="relative h-[219px] w-[165px] min-[700px]:h-[213px] min-[700px]:w-[160px] lg:h-[266px] lg:w-[200px]">
+                <div className="relative z-10 h-[219px] w-[165px] min-[700px]:h-[213px] min-[700px]:w-[160px] lg:h-[266px] lg:w-[200px] overflow-hidden rounded-[16px] bg-[#D9D9D9]">
+                  <ProtectedImage
+                    src={photoSrc}
+                    alt="profile"
+                    width={200}
+                    height={300}
+                    priority
+                    className="h-full w-full object-cover"
                   />
                 </div>
-              )}
 
-              <div className="max-[500px]:hidden mt-[-2px] w-[60px] md:w-[92px] lg:w-[105px] mx-auto">
-                <UnionDesignIcon className="rotate-270 -translate-y-16 md:-translate-y-32 lg:-translate-y-36.5" />
-                <UnionDesignIcon className="rotate-90 -translate-y-29 md:-translate-y-52 lg:-translate-y-59.5" />
+                {/* Hidden file input */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+
+                {activeTab !== "preview_my_profile" && (
+                  <div className="absolute left-1/2 -translate-x-1/2 z-10 bottom-0">
+                    <Button
+                      text={hasPhoto ? "Edit" : "Upload"}
+                      onPress={() => fileInputRef.current?.click()}
+                      className="max-[700px]:py-2 px-10 py-3 !font-medium text"
+                      iconLeft={<CameraIcon className="w-4 md:w-4.5 h-4 md:h-4.5" />}
+                    />
+                  </div>
+                )}
+
+                <div className="max-[500px]:hidden mt-[-2px] w-[60px] md:w-[92px] lg:w-[105px] mx-auto">
+                  <UnionDesignIcon className="rotate-270 -translate-y-16 md:-translate-y-32 lg:-translate-y-36.5" />
+                  <UnionDesignIcon className="rotate-90 -translate-y-29 md:-translate-y-52 lg:-translate-y-59.5" />
+                </div>
               </div>
+
+              {/* Photo status labels below the image */}
+              {photoStatus === "pending" && (
+                <p className="text-center relative z-10 text-[14px] md:text-[16px] text-[#8D5900] font-medium">Photo under review</p>
+              )}
+              {photoStatus === "rejected" && (
+                <p className="text-center relative z-10 text-[14px] md:text-[16px] text-[#B31B38] font-medium">Photo rejected</p>
+              )}
             </div>
 
-            {/* Photo status labels below the image */}
-            {photoStatus === "pending" && (
-              <p className="text-center relative z-10 text-[14px] md:text-[16px] text-[#8D5900] font-medium">Photo under review</p>
-            )}
-            {photoStatus === "rejected" && (
-              <p className="text-center relative z-10 text-[14px] md:text-[16px] text-[#B31B38] font-medium">Photo rejected</p>
-            )}
-          </div>
+            {/* Detail column */}
+            <div className="flex-1 min-w-0 w-full">
 
-          {/* Detail column */}
-          <div className="flex-1 min-w-0 w-full">
+              {/* ── Mobile info box ≤500px ── */}
+              <div className="min-[500px]:hidden rounded-[16px] bg-white max-[370px]:px-3 px-4 py-4">
+                {/* Row 1: My profile + tag */}
+                <div className="flex items-center justify-between">
+                  <span className="text-[#222] text-[16px] font-semibold leading-[150%]">My profile</span>
+                  {isElite ? (
+                    <div className="flex items-center gap-1 rounded-[38px] bg-[#FFDED3] px-2 py-[2px]">
+                      <EliteCrownIcon className="w-3.5 h-3.5 shrink-0" />
+                      <span className="text-[#A97216] text-[14px] font-normal leading-[150%]">Elite</span>
+                    </div>
+                  ) : isNew ? (
+                    <div className="flex items-center rounded-[38px] bg-[#D5ECFF] px-3 py-[2px]">
+                      <span className="text-[14px] font-normal leading-[150%] text-[#5D5D5D]">New</span>
+                    </div>
+                  ) : null}
+                </div>
+                {/* Name + trust badge */}
+                <div className="mt-5 flex items-center gap-1">
+                  <span className="text-[#222] text-[14px] font-medium leading-[150%]">{displayName}</span>
+                  {trustBadge && <ProfileVerifiedBadgeIcon className="h-4 w-4 shrink-0" />}
+                </div>
+                {/* Inai ID */}
+                <div className="text-[#222] text-[14px] font-normal leading-[150%]">{displayId}</div>
+                {/* Photo visibility */}
+                <div className="mt-2">
+                  {me && <PhotoVisibilityRow photoStatus={photoStatus} initialVisibility={me.profile?.photoVisibility ?? "public"} pillBg="bg-[#F2F2F2]" />}
+                </div>
+              </div>
 
-            {/* ── Mobile info box ≤500px ── */}
-            <div className="min-[500px]:hidden rounded-[16px] bg-white max-[370px]:px-3 px-4 py-4">
-              {/* Row 1: My profile + tag */}
-              <div className="flex items-center justify-between">
-                <span className="text-[#222] text-[16px] font-semibold leading-[150%]">My profile</span>
+              {/* ── Desktop header >500px ── */}
+              <h1 className="max-[500px]:hidden fonts-24 font-semibold text-dark">My profile</h1>
+
+              {/* Name + badge + tag row */}
+              <div className="max-[500px]:hidden mt-4 md:mt-6 flex items-center justify-between gap-4 flex-wrap">
+                <div className="flex items-center gap-1 md:gap-2">
+                  <h2 className="text-dark text-[14px] md:text-[18px] font-medium leading-[150%]">
+                    {displayName}
+                  </h2>
+                  {trustBadge && (
+                    <ProfileVerifiedBadgeIcon className="h-4 sm:h-5 lg:h-6 w-4 sm:w-5 lg:w-6 shrink-0" />
+                  )}
+                </div>
+
+                {/* One tag: Elite has priority, then New (< 30 days), else nothing */}
                 {isElite ? (
                   <div className="flex items-center gap-1 rounded-[38px] bg-[#FFDED3] px-2 py-[2px]">
-                    <EliteCrownIcon className="w-3.5 h-3.5 shrink-0" />
-                    <span className="text-[#A97216] text-[14px] font-normal leading-[150%]">Elite</span>
+                    <EliteCrownIcon className="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5 shrink-0" />
+                    <span className="text-[#A97216] text-[14px] md:text-[16px] font-normal leading-[150%]">Elite</span>
                   </div>
                 ) : isNew ? (
                   <div className="flex items-center rounded-[38px] bg-[#D5ECFF] px-3 py-[2px]">
-                    <span className="text-[14px] font-normal leading-[150%] text-[#5D5D5D]">New</span>
+                    <span className="text-[14px] md:text-[16px] font-normal leading-[150%] text-[#5D5D5D]">New</span>
                   </div>
                 ) : null}
               </div>
-              {/* Name + trust badge */}
-              <div className="mt-5 flex items-center gap-1">
-                <span className="text-[#222] text-[14px] font-medium leading-[150%]">{displayName}</span>
-                {trustBadge && <ProfileVerifiedBadgeIcon className="h-4 w-4 shrink-0" />}
-              </div>
+
               {/* Inai ID */}
-              <div className="text-[#222] text-[14px] font-normal leading-[150%]">{displayId}</div>
+              <div className="max-[500px]:hidden md:mt-0.5 text-dark text-[14px] md:text-[16px] font-normal leading-[150%]">{displayId}</div>
+
               {/* Photo visibility */}
-              <div className="mt-2">
-                {me && <PhotoVisibilityRow photoStatus={photoStatus} initialVisibility={me.profile?.photoVisibility ?? "public"} pillBg="bg-[#F2F2F2]" />}
+              <div className="max-[500px]:hidden">
+                {me && <PhotoVisibilityRow photoStatus={photoStatus} initialVisibility={me.profile?.photoVisibility ?? "public"} />}
               </div>
-            </div>
 
-            {/* ── Desktop header >500px ── */}
-            <h1 className="max-[500px]:hidden fonts-24 font-semibold text-dark">My profile</h1>
+              {/* Trust badge section — desktop only (mobile shown above photo row) */}
+              {me && !trustBadge && (
+                <div className="max-[500px]:hidden mt-6 md:mt-8">
+                  <TrustBadgeCard me={me} onAddDetails={scrollToAddDetails} />
+                </div>
+              )}
 
-            {/* Name + badge + tag row */}
-            <div className="max-[500px]:hidden mt-4 md:mt-6 flex items-center justify-between gap-4 flex-wrap">
-              <div className="flex items-center gap-1 md:gap-2">
-                <h2 className="text-dark text-[14px] md:text-[18px] font-medium leading-[150%]">
-                  {displayName}
-                </h2>
-                {trustBadge && (
-                  <ProfileVerifiedBadgeIcon className="h-4 sm:h-5 lg:h-6 w-4 sm:w-5 lg:w-6 shrink-0" />
+              {/* About Me */}
+              <div ref={aboutMeRef} className="max-[500px]:mt-4 mt-6 md:mt-8 rounded-[16px] bg-light p-4 md:p-5">
+                <div className="flex items-center gap-2 text-dark md:gap-3">
+                  <AboutMeIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />
+                  <h2 className="md:text-[20px] sm:text-[18px] text-[16px] font-semibold">About Me</h2>
+                </div>
+                <div className="my-3 border-t border-[#EAEAEA] md:my-4" />
+                {activeTab === "preview_my_profile" ? (
+                  <p className="text-[14px] md:text-[16px] text-dark leading-[150%] whitespace-pre-wrap">
+                    {aboutMe || <span className="text-[#B31B38]">A few words about yourself, your values, what you&apos;re looking for.</span>}
+                  </p>
+                ) : (
+                  <div>
+                    <div className={`rounded-[12px] border bg-[#FFF0F3] ${aboutMeError ? "border-[#B31B38]" : "border-[rgba(179,27,56,0.25)]"}`}>
+                      <textarea
+                        value={aboutMe}
+                        onChange={(e) => handleAboutMeChange(e.target.value)}
+                        placeholder="A few words about yourself, your values, what you're looking for."
+                        className="md:h-20 h-22 w-full resize-none bg-transparent p-3 text-[14px] md:text-[16px] text-dark outline-none placeholder:text-[#B31B38]"
+                      />
+                    </div>
+                    <span className="mt-[5px] md:mt-[7px] block text-[12px] md:text-[14px]" style={{ minHeight: "1.2em" }}>
+                      {aboutMeError
+                        ? <span className="text-[#B31B38] font-medium">
+                          {splitHighlight(aboutMeError.message, aboutMeError.offendingWord).map((seg, i) =>
+                            seg.highlight
+                              ? <span key={i} className="underline decoration-[0.5px] underline-offset-2">{seg.text}</span>
+                              : <span key={i}>{seg.text}</span>
+                          )}
+                        </span>
+                        : <span className="text-secondary4">Keep it genuine — families read this</span>}
+                    </span>
+                  </div>
                 )}
               </div>
 
-              {/* One tag: Elite has priority, then New (< 30 days), else nothing */}
-              {isElite ? (
-                <div className="flex items-center gap-1 rounded-[38px] bg-[#FFDED3] px-2 py-[2px]">
-                  <EliteCrownIcon className="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5 shrink-0" />
-                  <span className="text-[#A97216] text-[14px] md:text-[16px] font-normal leading-[150%]">Elite</span>
-                </div>
-              ) : isNew ? (
-                <div className="flex items-center rounded-[38px] bg-[#D5ECFF] px-3 py-[2px]">
-                  <span className="text-[14px] md:text-[16px] font-normal leading-[150%] text-[#5D5D5D]">New</span>
-                </div>
-              ) : null}
-            </div>
-
-            {/* Inai ID */}
-            <div className="max-[500px]:hidden md:mt-0.5 text-dark text-[14px] md:text-[16px] font-normal leading-[150%]">{displayId}</div>
-
-            {/* Photo visibility */}
-            <div className="max-[500px]:hidden">
-              {me && <PhotoVisibilityRow photoStatus={photoStatus} initialVisibility={me.profile?.photoVisibility ?? "public"} />}
-            </div>
-
-            {/* Trust badge section — desktop only (mobile shown above photo row) */}
-            {me && !trustBadge && (
-              <div className="max-[500px]:hidden mt-6 md:mt-8">
-                <TrustBadgeCard me={me} onAddDetails={scrollToAddDetails} />
+              {/* Expandable sections */}
+              <div ref={sectionsRef} className="max-[500px]:mt-4 mt-6 md:mt-8 space-y-4 md:space-y-6">
+                {activeTab === "preview_my_profile" ? (
+                  <ExpandableSections
+                    me={me}
+                    openId={openSectionId}
+                    onOpenChange={setOpenSectionId}
+                    onDirty={handleDirty}
+                    revision={sectionRevision}
+                    draftTick={draftTick}
+                    isPreview
+                  />
+                ) : (
+                  <ExpandableSections
+                    me={me}
+                    openId={openSectionId}
+                    onOpenChange={setOpenSectionId}
+                    onDirty={handleDirty}
+                    revision={sectionRevision}
+                    draftTick={draftTick}
+                  />
+                )}
               </div>
-            )}
-
-            {/* About Me */}
-            <div ref={aboutMeRef} className="max-[500px]:mt-4 mt-6 md:mt-8 rounded-[16px] bg-light p-4 md:p-5">
-              <div className="flex items-center gap-2 text-dark md:gap-3">
-                <AboutMeIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />
-                <h2 className="md:text-[20px] sm:text-[18px] text-[16px] font-semibold">About Me</h2>
-              </div>
-              <div className="my-3 border-t border-[#EAEAEA] md:my-4" />
-              {activeTab === "preview_my_profile" ? (
-                <p className="text-[14px] md:text-[16px] text-dark leading-[150%] whitespace-pre-wrap">
-                  {aboutMe || <span className="text-[#B31B38]">A few words about yourself, your values, what you&apos;re looking for.</span>}
-                </p>
-              ) : (
-                <div>
-                  <div className={`rounded-[12px] border bg-[#FFF0F3] ${aboutMeError ? "border-[#B31B38]" : "border-[rgba(179,27,56,0.25)]"}`}>
-                    <textarea
-                      value={aboutMe}
-                      onChange={(e) => handleAboutMeChange(e.target.value)}
-                      placeholder="A few words about yourself, your values, what you're looking for."
-                      className="md:h-20 h-22 w-full resize-none bg-transparent p-3 text-[14px] md:text-[16px] text-dark outline-none placeholder:text-[#B31B38]"
-                    />
-                  </div>
-                  <span className="mt-[5px] md:mt-[7px] block text-[12px] md:text-[14px]" style={{ minHeight: "1.2em" }}>
-                    {aboutMeError
-                      ? <span className="text-[#B31B38] font-medium">
-                        {splitHighlight(aboutMeError.message, aboutMeError.offendingWord).map((seg, i) =>
-                          seg.highlight
-                            ? <span key={i} className="underline decoration-[0.5px] underline-offset-2">{seg.text}</span>
-                            : <span key={i}>{seg.text}</span>
-                        )}
-                      </span>
-                      : <span className="text-secondary4">Keep it genuine — families read this</span>}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* Expandable sections */}
-            <div ref={sectionsRef} className="max-[500px]:mt-4 mt-6 md:mt-8 space-y-4 md:space-y-6">
-              {activeTab === "preview_my_profile" ? (
-                <ExpandableSections
-                  me={me}
-                  openId={openSectionId}
-                  onOpenChange={setOpenSectionId}
-                  onDirty={handleDirty}
-                  revision={sectionRevision}
-                  draftTick={draftTick}
-                  isPreview
-                />
-              ) : (
-                <ExpandableSections
-                  me={me}
-                  openId={openSectionId}
-                  onOpenChange={setOpenSectionId}
-                  onDirty={handleDirty}
-                  revision={sectionRevision}
-                  draftTick={draftTick}
-                />
-              )}
             </div>
           </div>
-        </div>
         </div>
       </div>
 
@@ -601,7 +604,7 @@ export default function MyProfilePage() {
             <div className="flex max-w-[1160px] mx-auto">
               <div className="flex-1" />
               <Button
-                text={saving ? "Saving…" : "Done"}
+                text={saving ? loadingText : "Done"}
                 onPress={handleDone}
                 className="flex-1"
               />

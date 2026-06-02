@@ -8,6 +8,7 @@ import Button from "../common-layout/Button";
 import { useLang } from "../../context/LangContext";
 import { verifyOtp, resendOtp, forgotPassword } from "../../lib/api/auth";
 import { ApiError } from "../../lib/api/client";
+import { useLoadingText } from "@/src/hooks/useLoadingText";
 
 const OTP_LENGTH = 6;
 
@@ -54,6 +55,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
   const [shake, setShake] = useState(false);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const loadingText = useLoadingText(loading, "verify");
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -353,7 +355,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
             </div>
             <div className="flex-1">
               <Button
-                text={isExpired ? "Start over" : (loading ? "Verifying..." : t("Next"))}
+                text={isExpired ? "Start over" : (loading ? loadingText : t("Next"))}
                 onPress={handleVerify}
                 icon={loading ? undefined : <ArrowRightIcon />}
                 className="!w-full"

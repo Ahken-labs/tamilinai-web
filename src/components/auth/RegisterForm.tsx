@@ -16,6 +16,7 @@ import { COUNTRIES } from "../../constants/countries";
 import DropdownField from "../common-layout/DropdownField";
 import Link from "next/link";
 import { AUTO_GENDER, PROFILES } from "@/src/constants/profiles";
+import { useLoadingText } from "../../hooks/useLoadingText";
 import { register } from "../../lib/api/auth";
 import { ApiError } from "../../lib/api/client";
 
@@ -55,6 +56,7 @@ export default function RegisterForm({
         submit?: string;
     }>({});
     const [loading, setLoading] = useState(false);
+    const loadingText = useLoadingText(loading, "register");
 
     const HERO_BTN_ICON_COLOR =
         "text-[#B31B38] group-hover:text-[#8E162D] group-active:text-[#6F1023] transition-colors duration-150";
@@ -246,7 +248,7 @@ export default function RegisterForm({
                         className={`absolute right-0 top-0 z-10 h-full w-auto scale-x-[-1] ${HERO_BTN_ICON_COLOR}`}
                     />
                     <span className="relative z-20 flex select-none items-center gap-2 px-4">
-                        {loading ? "Please wait..." : t("Create_my_free_profile")}
+                        {loading ? loadingText : t("Create_my_free_profile")}
                         {!loading && <ArrowRightIcon />}
                     </span>
                 </button>

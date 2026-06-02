@@ -8,6 +8,7 @@ import { CloseCircleIcon, EyeOffIcon, EyeOnIcon } from "../../assets/Icons";
 import InputBox from "../common-layout/InputBox";
 import Button from "../common-layout/Button";
 import { http } from "../../lib/api/client";
+import { useLoadingText } from "@/src/hooks/useLoadingText";
 
 type Props = {
   isOpen: boolean;
@@ -25,6 +26,7 @@ export default function ChangePasswordPopup({ isOpen, onClose }: Props) {
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
   const [submitting, setSubmitting] = useState(false);
+  const loadingText = useLoadingText(submitting, "save");
 
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -296,7 +298,7 @@ export default function ChangePasswordPopup({ isOpen, onClose }: Props) {
           <div className="mt-8 flex w-full gap-4 sm:mt-10 md:mt-12">
             <div className="flex-1" />
             <Button
-              text={submitting ? "Updating…" : "Update password"}
+              text={submitting ? loadingText : "Update password"}
               onPress={handleUpdatePassword}
               disabled={submitting}
               className="flex-1"
