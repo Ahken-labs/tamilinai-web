@@ -7,6 +7,7 @@ import Button from "../common-layout/Button";
 import InputBox from "../common-layout/InputBox";
 import NewToInaiCart from "./NewToInaiCart";
 import { useLang } from "../../context/LangContext";
+import { useLoadingText } from "../../hooks/useLoadingText";
 import Link from "next/link";
 import FormCardLayout from "../common-layout/FormCardLayout";
 import { login } from "../../lib/api/auth";
@@ -28,6 +29,7 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const loadingText = useLoadingText(loading, "auth");
 
   const [identifierError, setIdentifierError] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -88,7 +90,7 @@ export default function LoginForm() {
       footer={
         <>
           <Button
-            text={loading ? "Please wait..." : t("Log_In")}
+            text={loading ? loadingText : t("Log_In")}
             icon={loading ? undefined : <ArrowRightIcon />}
             onPress={handleLogin}
             className="w-full"
