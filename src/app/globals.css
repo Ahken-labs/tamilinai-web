@@ -4,6 +4,13 @@ html {
   scroll-behavior: smooth !important;
 }
 
+body {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
 :root {
   --primary: #B31B38;
   --text-dark: #222222;

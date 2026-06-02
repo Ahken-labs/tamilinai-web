@@ -7,6 +7,7 @@ const notoSansTamil = Noto_Sans_Tamil({ subsets: ["tamil"], weight: ["400", "500
 const arima = Arima({ subsets: ["tamil", "latin"], weight: ["700"], variable: "--font-arima", display: "swap" });
 import QueryProvider from "../providers/QueryProvider";
 import SeoSchema from "./SeoSchema";
+import NoContextMenu from "../components/NoContextMenu";
 
 export const viewport = {
   width: "device-width",
@@ -51,6 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preload" href="/images/elite_popup.webp" as="image" type="image/webp" />
       </head>
       <body>
+        <NoContextMenu />
         <SeoSchema/>
         <QueryProvider>
           <LangProvider>
