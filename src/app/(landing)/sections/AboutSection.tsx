@@ -66,7 +66,7 @@ export default function AboutSection() {
               <div className="absolute inset-0 rounded-[32px] bg-[#e8d5d5] animate-pulse" />
             )}
             <Image
-              src="/images/sample_profile_phone.png"
+              src="/images/sample_profile_phone.webp"
               alt="Privacy control demo on phone"
               width={565}
               height={320}

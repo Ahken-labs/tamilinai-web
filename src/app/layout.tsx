@@ -49,6 +49,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth" className={`${poppins.variable} ${notoSansTamil.variable} ${arima.variable}`}>
       <head>
+        {/* LCP hero image — fetchpriority=high ensures browser fetches this first */}
+        <link rel="preload" as="image" fetchPriority="high" href="/_next/image?url=%2Fimages%2Fhero_image.webp&w=750&q=75" type="image/webp" />
         <link rel="preload" href="/images/elite_popup.webp" as="image" type="image/webp" />
       </head>
       <body>

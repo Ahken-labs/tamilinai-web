@@ -33,7 +33,7 @@ export function HelpSection() {
 
           {/* Girl image */}
           <Image
-            src="/images/help_girl.png"
+            src="/images/help_girl.webp"
             alt="Support"
             width={250}
             height={400}

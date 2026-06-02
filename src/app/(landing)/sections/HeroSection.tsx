@@ -18,7 +18,7 @@ export default function HeroSection() {
                 <div className="relative w-full overflow-hidden rounded-[32px] md:rounded-[40px] lg:rounded-[60px]
                 h-[513px] md:h-[462px] lg:h-[850px] select-none" >
                     <Image
-                        src="/images/hero_image.png"
+                        src="/images/hero_image.webp"
                         alt="Tamil matrimony couple"
                         fill priority
                         className="object-cover object-[25%_20%] md:object-[30%_100%] lg:object-center md:translate-y-0 translate-y-[-80px]"

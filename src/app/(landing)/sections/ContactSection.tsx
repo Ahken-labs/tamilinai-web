@@ -65,7 +65,7 @@ export default function ContactSection() {
                 {/* ── LEFT PILLAR ── */}
                 <div className="pointer-events-none absolute left-5 top-1/2 hidden -translate-y-1/2 select-none lg:block">
                     <Image
-                        src="/images/piller.png"
+                        src="/images/piller.webp"
                         alt=""
                         width={156}
                         height={412}
@@ -77,7 +77,7 @@ export default function ContactSection() {
                 {/* ── RIGHT PILLAR (MIRRORED) ── */}
                 <div className="pointer-events-none absolute right-5 top-1/2 hidden -translate-y-1/2 select-none lg:block">
                     <Image
-                        src="/images/piller.png"
+                        src="/images/piller.webp"
                         alt=""
                         width={156}
                         height={412}
@@ -90,12 +90,11 @@ export default function ContactSection() {
                 <div className="relative z-10 mx-auto max-w-[640px] text-center">
                     <div className="lg:hidden flex justify-center mb-5">
                         <Image
-                            src="/images/piller_mobile.png"
+                            src="/images/piller_mobile.webp"
                             alt=""
                             width={320}
                             height={110}
                             className="w-[320px] h-[110px]"
-                            priority
                         />
                     </div>
                     <p className="md:text-[16px] text-[15px] font-medium text-dark">
@@ -120,12 +119,11 @@ export default function ContactSection() {
                     />
                     <div className="scale-y-[-1] lg:hidden flex justify-center mt-5">
                         <Image
-                            src="/images/piller_mobile.png"
+                            src="/images/piller_mobile.webp"
                             alt=""
                             width={320}
                             height={110}
                             className="w-[320px] h-[110px]"
-                            priority
                         />
                     </div>
                 </div>
