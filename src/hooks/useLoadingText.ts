@@ -76,11 +76,7 @@ export function useLoadingText(
   const [dotCount, setDotCount] = useState(1);
 
   useEffect(() => {
-    if (!isLoading) {
-      setMsgIndex(0);
-      setDotCount(1);
-      return;
-    }
+    if (!isLoading) return;
 
     const msgTimer = setInterval(
       () => setMsgIndex((i) => (i + 1) % messages.length),
@@ -94,6 +90,8 @@ export function useLoadingText(
     return () => {
       clearInterval(msgTimer);
       clearInterval(dotTimer);
+      setMsgIndex(0);
+      setDotCount(1);
     };
   }, [isLoading, messages.length, msgIntervalMs, dotIntervalMs]);
 
