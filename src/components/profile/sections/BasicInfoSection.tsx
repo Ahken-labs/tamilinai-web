@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { ChevronIcon, RadioCircleIcon, SearchIcon, CloseCircleIcon } from "../../../assets/Icons";
 import DropdownField from "../../common-layout/DropdownField";
@@ -37,60 +37,102 @@ function LanguagePopup({ initialSelected, onClose, onConfirm }: {
 }) {
   const [draft, setDraft] = useState<string[]>(initialSelected);
   const [search, setSearch] = useState("");
+  const tagsRowRef = useRef<HTMLDivElement>(null);
   const shownMost = useMemo(() => filterSearch(SL_MOST_SELECTED, search), [search]);
   const shownMain = useMemo(() => filterSearch(MAIN_LANGUAGES, search), [search]);
+  const noResults = shownMost.length === 0 && shownMain.length === 0;
+
+  useEffect(() => {
+    const el = tagsRowRef.current;
+    if (el) el.scrollLeft = el.scrollWidth;
+  }, [draft.length]);
 
   function toggle(lang: string) {
     setDraft(prev => prev.includes(lang) ? prev.filter(l => l !== lang) : [...prev, lang]);
   }
 
+  const langBtn = (lang: string) => {
+    const isSel = draft.includes(lang);
+    const isHL = SL_HIGHLIGHTED.has(lang);
+    return (
+      <button key={lang} type="button" onClick={() => toggle(lang)}
+        className={`rounded-[28px] px-3 py-2.5 text-[16px] font-normal leading-[125%] transition-colors cursor-pointer ${isSel || isHL ? "border border-[rgba(179,27,56,0.25)] bg-[#FFF0F3] text-[#222]" : "bg-[#F0F0F0] text-[#656565] hover:bg-[#EAEAEA]"}`}>
+        {lang}
+      </button>
+    );
+  };
+
   return createPortal(
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4">
-      <div className="flex max-h-[90vh] w-full max-w-[920px] flex-col overflow-hidden rounded-[16px] bg-white shadow-2xl">
-        <div className="self-stretch px-4 md:px-5 pb-2 pt-4 md:pt-5 shrink-0">
-          <div className="flex items-center justify-between">
-            <span className="fonts-24 font-semibold text-dark leading-[150%]">Languages spoken</span>
+    <div className="fixed inset-0 z-[9999] flex items-end min-[500px]:items-center justify-center min-[500px]:p-4 bg-black/50">
+      <div className="flex max-h-[90dvh] min-[500px]:max-h-[90vh] w-full min-[500px]:max-w-[920px] flex-col overflow-hidden rounded-t-[16px] min-[500px]:rounded-[16px] bg-white shadow-2xl">
+
+        {/* Header */}
+        <div className="shrink-0 px-4 md:px-5 pb-2 pt-4 md:pt-5">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0 flex-1">
+              <h2 className="fonts-24 font-semibold text-dark leading-[150%]">Languages spoken</h2>
+              <p className="mt-1 font-16 font-normal text-dark leading-[150%]">Select languages you know and add them to your profile.</p>
+            </div>
             <button type="button" onClick={onClose} className="cursor-pointer shrink-0"><CloseCircleIcon /></button>
           </div>
-          <p className="font-16 md:mt-1 font-normal text-dark leading-[150%]">Select language you know and add them to your profile.</p>
         </div>
-        <div className="flex-1 border-t border-[#EAEAEA] overflow-y-auto flex-col px-4 md:px-5 py-3 md:py-4 flex gap-4 md:gap-6">
+
+        {/* Scrollable body */}
+        <div className="flex-1 overflow-y-auto border-t border-[#EAEAEA] max-[500px]:px-0 px-4 md:px-5 max-[500px]:py-4 py-3 md:py-4 pb-[72px] min-[500px]:pb-3 md:pb-4">
           {draft.length > 0 && (
-            <div className="flex flex-wrap gap-2 md:gap-3">
+            <div ref={tagsRowRef} className="no-scrollbar flex max-[500px]:flex-nowrap max-[500px]:overflow-x-auto flex-wrap gap-2 md:gap-3 mb-4">
               {draft.map(lang => (
-                <button key={lang} type="button" onClick={() => toggle(lang)} className="flex items-center gap-2 md:gap-3 px-3 py-2.5 rounded-[28px] border border-[rgba(179,27,56,0.25)] bg-[#FFF0F3] cursor-pointer">
-                  <span className="font-16 font-semibold text-[#656565] leading-[125%]">{lang}</span>
-                  <span className="text-secondary3 text-[16px] leading-none">×</span>
+                <button key={lang} type="button" onClick={() => toggle(lang)}
+                  className="flex shrink-0 items-center gap-2 rounded-[28px] border border-[rgba(179,27,56,0.25)] bg-[#FFF0F3] px-3 py-2.5 cursor-pointer">
+                  <span className="text-[16px] font-medium leading-[125%] text-[#222]">{lang}</span>
+                  <span className="text-secondary3 text-[18px] leading-none">×</span>
                 </button>
               ))}
             </div>
           )}
-          <div className="flex items-center gap-2 px-2 py-2 rounded-[41px] bg-[#E0E0E0]">
-            <SearchIcon className="w-4 md:w-5 lg:w-6 h-4 md:h-5 lg:h-6 shrink-0 text-[#525252]" />
+          <div className="flex items-center gap-2 max-[500px]:mx-4 rounded-[41px] bg-[#E0E0E0] px-2 py-2">
+            <SearchIcon className="h-6 w-6 shrink-0 text-[#525252]" />
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search languages" className="flex-1 bg-transparent font-16 font-normal text-[#656565] placeholder:text-[#656565] outline-none" />
             {search && <button type="button" onClick={() => setSearch("")} className="cursor-pointer pr-1"><CloseCircleIcon fillOpacity="1" fill="#888888" stroke="#FFF" className="w-5 h-5" /></button>}
           </div>
-          <hr className="border-t border-[#D8D8D8]" />
-          {shownMost.length > 0 && (
-            <div className="flex flex-wrap gap-3">
-              {shownMost.map(lang => {
-                const isHL = SL_HIGHLIGHTED.has(lang); const isSel = draft.includes(lang);
-                return <button key={lang} type="button" onClick={() => toggle(lang)} className={`flex items-center px-3 py-2.5 rounded-[28px] cursor-pointer transition-colors ${isSel || isHL ? "border border-[rgba(179,27,56,0.25)] bg-[#FFF0F3]" : "bg-[#F0F0F0]"}`}><span className="font-16 font-normal text-[#656565] leading-[125%]">{lang}</span></button>;
-              })}
+          <hr className="my-4 max-[500px]:mx-4 border-t border-[#D8D8D8]" />
+          {noResults && (
+            <div className="max-[500px]:mx-4 py-8 flex flex-col items-center gap-2 text-center">
+              <p className="text-[16px] font-medium text-dark">No results found</p>
+              <p className="text-[14px] max-[500px]:mb-10 font-normal text-secondary3">Try a different spelling or language name</p>
             </div>
           )}
-          <hr className="border-t border-[#D8D8D8]" />
-          <div className="flex flex-wrap overflow-y-auto flex-row gap-2 md:gap-3">
-            {shownMain.map(lang => {
-              const isSel = draft.includes(lang);
-              return <button key={lang} type="button" onClick={() => toggle(lang)} className={`flex items-center px-3 py-2.5 rounded-[28px] cursor-pointer transition-colors ${isSel ? "border border-[rgba(179,27,56,0.25)] bg-[#FFF0F3]" : "bg-[#F0F0F0]"}`}><span className="font-16 font-normal text-[#656565] leading-[125%]">{lang}</span></button>;
-            })}
+          <div className="max-[500px]:mx-4 flex flex-col gap-5 md:gap-6">
+            {shownMost.length > 0 && (
+              <div className="flex flex-col gap-3 md:gap-4">
+                <div className="text-[16px] font-medium leading-[150%] text-dark">Popular</div>
+                <div className="flex flex-wrap gap-2 md:gap-3">{shownMost.map(langBtn)}</div>
+                <div className="border-b border-[#D8D8D8]" />
+              </div>
+            )}
+            {shownMain.length > 0 && (
+              <div className="flex flex-col gap-3 md:gap-4">
+                <div className="text-[16px] font-medium leading-[150%] text-dark">All languages</div>
+                <div className="flex flex-wrap gap-2 md:gap-3">{shownMain.map(langBtn)}</div>
+              </div>
+            )}
           </div>
+           <div className="h-20" />
         </div>
-        <div className="flex justify-end gap-4 md:gap-5 border-t border-[#EAEAEA] px-4 md:px-5 py-3 md:py-4 shrink-0">
+
+        {/* Desktop footer — hidden on mobile */}
+        <div className="hidden min-[500px]:flex justify-end gap-4 md:gap-5 border-t border-[#EAEAEA] px-4 md:px-5 py-3 md:py-4 shrink-0">
           <div className="w-full" />
           <Button text="Add languages" onPress={() => { onConfirm(draft); onClose(); }} className="w-full" />
         </div>
+      </div>
+
+      {/* Mobile fixed bottom button */}
+      <div
+        className="min-[500px]:hidden fixed bottom-0 left-0 right-0 px-4 py-2 z-10"
+        style={{ background: "rgba(255, 255, 255, 0.60)", backdropFilter: "blur(11px)" }}
+      >
+        <Button text="Add languages" onPress={() => { onConfirm(draft); onClose(); }} className="!w-full" />
       </div>
     </div>,
     document.body

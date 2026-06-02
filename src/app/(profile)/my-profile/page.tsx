@@ -599,10 +599,10 @@ export default function MyProfilePage() {
 
       {/* Done button — scrolls with page, sits at bottom of content */}
       {hasPendingChanges && activeTab === "edit_profile" && (
-        <div className="mt-10 md:mt-20 border-t border-[#EAEAEA] bg-[rgba(255,255,255,0.60)] shadow-[0_0_20px_rgba(0,0,0,0.04)]">
+        <div className="mt-10 md:mt-20 mb-[57px] min-[900px]:mb-0 border-t border-[#EAEAEA] bg-[rgba(255,255,255,0.60)] shadow-[0_0_20px_rgba(0,0,0,0.04)]">
           <div className="mx-auto px-4 md:px-10 py-2 md:py-3">
             <div className="flex max-w-[1160px] mx-auto">
-              <div className="flex-1" />
+              <div className="flex-1 hidden min-[500px]:block" />
               <Button
                 text={saving ? loadingText : "Done"}
                 onPress={handleDone}

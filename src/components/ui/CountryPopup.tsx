@@ -133,7 +133,7 @@ export default function CountryPopup({ initialSelected, onClose, onConfirm }: Co
           <p className="text-[14px] max-[500px]:mb-10 font-normal text-secondary3">Try a different spelling or country name</p>
         </div>
       )}
-      <div className="max-[500px]:mx-4 flex flex-col gap-5 md:gap-6">
+      <div className="max-[500px]:mx-4 flex flex-col gap-5 mb-20 md:gap-6">
         {shownGroups.map((group, index) => (
           <div key={group.heading} className="flex flex-col gap-3 md:gap-4">
             <div className="text-[16px] font-medium leading-[150%] text-dark">{group.heading}</div>
