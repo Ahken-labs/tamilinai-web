@@ -183,7 +183,7 @@ function NotificationRow({
 
   return (
     <div
-      className="flex items-center justify-between border-b gap-4 border-[#EAEAEA] bg-light px-4 py-3 sm:py-4 md:py-5 lg:py-6 md:px-4 rounded-[16px]"
+      className="select-none font-poppins flex items-center justify-between border-b gap-4 border-[#EAEAEA] bg-light max-[370px]:px-2 px-4 py-3 sm:py-4 md:py-5 lg:py-6 md:px-4 rounded-[16px]"
       onClick={markRead}
     >
       <div className="flex min-w-0 items-center gap-3 md:gap-4 flex-1">
@@ -192,7 +192,7 @@ function NotificationRow({
         </div>
 
         <div className="min-w-0 flex-1">
-          <div className="truncate text-dark font-18 font-medium leading-[150%]">
+          <div className="truncate text-dark text-[14px] sm:text-[16px] md:text-[18px] font-medium leading-[150%]">
             {item.title}
           </div>
           <div className="mt-1 md:mt-1.5 line-clamp-2 text-secondary3 font-16 font-normal leading-[150%]">
@@ -202,15 +202,27 @@ function NotificationRow({
                 ? `${item.subtitle} • ${timeAgo(item.createdAt)}`
                 : timeAgo(item.createdAt)}
           </div>
+          {/* CTA below text on mobile */}
+          <button
+            onClick={navigate}
+            className="sm:hidden max-[370px]:mt-0.5 mt-2 flex cursor-pointer items-center gap-0.5"
+          >
+            {!item.isRead ? <div className="h-2 w-2 rounded-full bg-[#B31B38]" /> : <div className="h-0 md:h-2 w-0 md:w-2" />}
+            <span className="font-poppins text-primary font-16 font-normal mb-0.5 leading-[150%] whitespace-nowrap">
+              {label}
+            </span>
+            <ChevronRightIcon className="h-4 w-4 text-[#B31B38]" />
+          </button>
         </div>
       </div>
 
+      {/* CTA on right on sm+ */}
       <button
         onClick={navigate}
-        className="flex shrink-0 cursor-pointer items-center gap-0.5 md:gap-1.5"
+        className="hidden sm:flex shrink-0 cursor-pointer items-center gap-0.5 md:gap-1.5"
       >
         {!item.isRead ? <div className="h-2 md:h-3 w-2 md:w-3 rounded-full bg-[#B31B38]" /> : <div className="h-2 md:h-3 w-2 md:w-3" />}
-        <span className="text-primary font-16 font-normal mb-0.5 leading-[150%] whitespace-nowrap">
+        <span className="font-poppins text-primary font-16 font-normal mb-0.5 leading-[150%] whitespace-nowrap">
           {label}
         </span>
         <ChevronRightIcon className="h-4 w-4 md:h-6 md:w-6 text-[#B31B38]" />
@@ -252,8 +264,8 @@ export default function NotificationsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#F8F5F2]">
-      <div className="mx-auto flex max-w-[1024px] flex-col gap-3 px-4 pt-[27px] pb-10 lg:px-8">
+    <main className="font-poppins min-h-screen bg-[#F8F5F2]">
+      <div className="mx-auto flex max-w-[1024px] flex-col gap-3 max-[370px]:px-2 px-4 max-[500px]:pt-5 pt-[27px] pb-10 lg:px-8">
         {isLoading ? (
           Array.from({ length: SKELETON_COUNT }).map((_, i) => (
             <NotificationSkeleton key={i} />

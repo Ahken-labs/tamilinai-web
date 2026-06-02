@@ -28,7 +28,7 @@ export default function ToggleTabs({ tabs, activeTab, onTabChange }: ToggleTabsP
                 : "text-[#222222] hover:bg-[#F0F0F0]"
             }`}
           >
-            <span className="flex items-center gap-2">
+            <span className="flex items-center max-[370px]:gap-[3px] max-[500px]:gap-[4px] gap-2">
               {tab.shortLabel ? (
                 <>
                   <span className="min-[500px]:hidden">{tab.shortLabel}</span>

@@ -187,7 +187,7 @@ export default function MatchPreferencesCard({
   const pct = calcPercentage(rows);
 
   return (
-    <div className="font-poppins w-full max-w-[1160px] px-6 md:px-10 mx-auto">
+    <div className="font-poppins w-full max-w-[1160px] sm:px-6 px-4 max-[370px]:px-2 md:px-10 mx-auto">
       {/* Top match bar */}
       <div className="rounded-[60px] bg-white max-[500px]:p-1 p-2">
         <div className="flex items-center">

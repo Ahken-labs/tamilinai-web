@@ -275,7 +275,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
         {/* Header: search or edit */}
         {(variant === "search" || variant === "edit") && (
           <div className="shrink-0 bg-white border-b border-[#EAEAEA] rounded-t-[20px] px-6 pt-4 md:pt-5.5 pb-4 md:pb-5.5 flex items-center gap-4">
-            <span className="font-poppins fonts-24 font-semibold text-[dark leading-[150%] shrink-0">
+            <span className={`font-poppins fonts-24 font-semibold text-[dark leading-[150%] shrink-0${variant === "search" ? " max-[500px]:hidden" : ""}`}>
               {variant === "search" ? "Search" : "Edit partner preference"}
             </span>
             {variant === "search" && (
@@ -305,7 +305,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
           {showSearchOnly ? (
             <div className="py-6">
               <div
-                className="flex items-center rounded-[41px] bg-[#E0E0E0]"
+                className="flex items-center overflow-hidden rounded-[41px] bg-[#E0E0E0]"
                 style={{ padding: "4px 4px 4px 16px" }}
               >
                 <input
@@ -314,7 +314,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={(e) => { if (e.key === "Enter") handleSimpleSearch(); }}
-                  className="flex-1 bg-transparent font-poppins text-base font-normal text-[#222222] placeholder:text-[#656565] outline-none"
+                  className="flex-1 min-w-0 bg-transparent font-poppins text-base font-normal text-[#222222] placeholder:text-[#656565] outline-none"
                 />
                 <button
                   type="button"
