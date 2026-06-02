@@ -2,22 +2,10 @@
 
 import ProtectedImage from "../common-layout/ProtectedImage";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { getProfilePhotoSrc } from "../../utils/profilePhoto";
 import type { Interest, InterestCardStatus, SentInterest, ReceivedInterest } from "../../types/interest";
 import { markInterestSeen } from "../../lib/api/interests";
 import { useQueryClient } from "@tanstack/react-query";
-
-const SEEN_SENT_KEY = "inai_seen_sent_ids";
-function getSeenSentIds(): Set<string> {
-  try { return new Set(JSON.parse(localStorage.getItem(SEEN_SENT_KEY) ?? "[]")); } catch { return new Set(); }
-}
-function persistSeenSent(id: string) {
-  try {
-    const ids = getSeenSentIds(); ids.add(id);
-    localStorage.setItem(SEEN_SENT_KEY, JSON.stringify([...ids]));
-  } catch {}
-}
 import {
   InterestArrowIcon,
   InterestXIcon,
@@ -167,21 +155,10 @@ export default function InterestCard({ interest, isLast = false }: InterestCardP
 
   const isSent = status === "sent_interest" || status === "sent_reminder";
   const isReceived = status === "received_interest" || status === "received_reminder";
-
-  // For sent pending items the backend always returns isNew=false (status==='pending').
-  // Track seen state locally so newly sent interests show as unread until clicked.
-  const [sentLocalSeen, setSentLocalSeen] = useState(() =>
-    isSent ? getSeenSentIds().has(profileId) : true
-  );
-  const isNew = isSent ? !sentLocalSeen : interest.isNew;
+  const isNew = interest.isNew;
 
   function markSeen() {
-    if (isSent && !sentLocalSeen) {
-      setSentLocalSeen(true);
-      persistSeenSent(profileId);
-    }
-    if (!interest.isNew) return;
-    // Optimistically clear isNew in both caches so dot disappears immediately
+    if (!isNew) return;
     queryClient.setQueryData<SentInterest[]>(["interests", "sent"], (old) =>
       old?.map((item) => item.receiverId === profileId ? { ...item, isNew: false } : item)
     );

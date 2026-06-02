@@ -109,8 +109,7 @@ function InterestedContent() {
   });
 
   const hasNewReceived = receivedItems.some((i) => i.isNew);
-  const seenSentIds = (() => { try { return new Set<string>(JSON.parse(localStorage.getItem("inai_seen_sent_ids") ?? "[]")); } catch { return new Set<string>(); } })();
-  const hasNewSent = sentItems.some((i) => i.isReminderDue || !seenSentIds.has(i.id));
+  const hasNewSent = sentItems.some((i) => i.isNew || i.isReminderDue);
   const hasNewAccepted = acceptedItems.some((i) => i.isNew);
   const hasNewDeclined = declinedItems.some((i) => i.isNew);
 
