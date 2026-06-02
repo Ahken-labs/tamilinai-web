@@ -64,14 +64,14 @@ export default function ProtectedPhoto({ src, alt, fill, width, height, classNam
   }, []);
 
   const [displaySrc, setDisplaySrc] = useState<string | null>(() => {
-    if (!isProtected) return src;
+    if (!isProtected) return src || null;
     return getCachedBlob(fetchUrl);
   });
 
   useEffect(() => {
     if (!isProtected) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setDisplaySrc(src);
+      setDisplaySrc(src || null);
       return;
     }
 

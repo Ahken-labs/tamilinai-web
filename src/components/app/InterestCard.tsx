@@ -145,8 +145,8 @@ interface InterestCardProps {
   onAction?: () => void; // parent refreshes list after action
 }
 
-const ACTION_CLASS =
-  "flex items-center max-[500px]:gap-[2px] gap-1.5 font-poppins font-16 font-normal text-[#B31B38] leading-[150%] whitespace-nowrap cursor-pointer disabled:opacity-50";
+const actionClass = (isNew: boolean | undefined) =>
+  `flex items-center max-[500px]:gap-[2px] gap-1.5 font-poppins font-16 ${isNew ? "font-medium" : "font-normal"} text-[#B31B38] leading-[150%] whitespace-nowrap cursor-pointer disabled:opacity-50`;
 
 export default function InterestCard({ interest, isLast = false }: InterestCardProps) {
   const router = useRouter();
@@ -178,7 +178,7 @@ export default function InterestCard({ interest, isLast = false }: InterestCardP
 
   if (status === "sent_interest") {
     actionEl = (
-      <button className={ACTION_CLASS} onClick={goToProfile}>
+      <button className={actionClass(isNew)} onClick={goToProfile}>
         {isNew && <RedDotIcon className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3" />}
         {isNew ? "Send reminder" : "See status"}
         <ChevronRightIcon className="w-4 sm:w-5 h-4 sm:h-5 shrink-0 text-[#B31B38]" />
@@ -186,7 +186,7 @@ export default function InterestCard({ interest, isLast = false }: InterestCardP
     );
   } else if (status === "sent_reminder") {
     actionEl = (
-      <button className={ACTION_CLASS} onClick={goToProfile}>
+      <button className={actionClass(isNew)} onClick={goToProfile}>
         {(isNew || interest.isReminderDue) && <RedDotIcon className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3" />}
         See reminder
         <ChevronRightIcon className="w-4 sm:w-5 h-4 sm:h-5 shrink-0 text-[#B31B38]" />
@@ -194,7 +194,7 @@ export default function InterestCard({ interest, isLast = false }: InterestCardP
     );
   } else if (isReceived) {
     actionEl = (
-      <button className={ACTION_CLASS} onClick={goToProfile}>
+      <button className={actionClass(isNew)} onClick={goToProfile}>
         {isNew && <RedDotIcon className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3" />}
         See full profile
         <ChevronRightIcon className="w-4 sm:w-5 h-4 sm:h-5 shrink-0 text-[#B31B38]" />
@@ -202,7 +202,7 @@ export default function InterestCard({ interest, isLast = false }: InterestCardP
     );
   } else if (status === "accepted_by_them" || status === "accepted_by_me") {
     actionEl = (
-      <button className={ACTION_CLASS} onClick={() => { markSeen(); router.push(`/user-profile?id=${profileId}#contact-section`); }}>
+      <button className={actionClass(isNew)} onClick={() => { markSeen(); router.push(`/user-profile?id=${profileId}#contact-section`); }}>
         {isNew && <RedDotIcon className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3" />}
         Start chat
         <ChevronRightIcon className="w-4 sm:w-5 h-4 sm:h-5 shrink-0 text-[#B31B38]" />
@@ -210,7 +210,7 @@ export default function InterestCard({ interest, isLast = false }: InterestCardP
     );
   } else if (status === "skipped_by_them") {
     actionEl = (
-      <button className={ACTION_CLASS} onClick={() => { markSeen(); router.push("/matches"); }}>
+      <button className={actionClass(isNew)} onClick={() => { markSeen(); router.push("/matches"); }}>
         {isNew && <RedDotIcon className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3" />}
         View similar matches
         <ChevronRightIcon className="w-4 sm:w-5 h-4 sm:h-5 shrink-0 text-[#B31B38]" />
@@ -218,7 +218,7 @@ export default function InterestCard({ interest, isLast = false }: InterestCardP
     );
   } else if (status === "declined_by_me") {
     actionEl = (
-      <button className={ACTION_CLASS} onClick={goToProfile}>
+      <button className={actionClass(isNew)} onClick={goToProfile}>
         {isNew && <RedDotIcon className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3" />}
         View profile
         <ChevronRightIcon className="w-4 sm:w-5 h-4 sm:h-5 shrink-0 text-[#B31B38]" />

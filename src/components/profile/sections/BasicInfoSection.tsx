@@ -199,7 +199,7 @@ export default function BasicInfoSection({ me, onDirty }: Props) {
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Marital status" required>
-          <div className="flex max-[370px]:flex-col flex-wrap gap-5 max-[370px]:gap-3 mt-3 md:mt-2">
+          <div className="flex max-[370px]:flex-col flex-wrap gap-5 max-[370px]:gap-3 max-[500px]:mt-0.5 mt-3 md:mt-2">
             {MARITAL_OPTIONS.map(opt => (
               <button key={opt} type="button" onClick={() => { setMaritalStatus(opt); sync({ maritalStatus: opt }); }} className="flex items-center gap-2 cursor-pointer">
                 <RadioCircleIcon checked={maritalStatus === opt} />
@@ -218,7 +218,7 @@ export default function BasicInfoSection({ me, onDirty }: Props) {
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Any physical challenge?" required>
-          <div className="flex items-center gap-5 mt-3 md:mt-2">
+          <div className="flex items-center gap-5 max-[500px]:mt-0.5 mt-3 md:mt-2">
             {(["no", "yes"] as const).map(val => (
               <button key={val} type="button" onClick={() => { setPhysicalChallenge(val); if (val === "no") setDisability(""); sync({ physicalChallenge: val, disability: val === "no" ? "" : disability }); }} className="flex items-center gap-2 cursor-pointer">
                 <RadioCircleIcon checked={physicalChallenge === val} />
@@ -239,7 +239,7 @@ export default function BasicInfoSection({ me, onDirty }: Props) {
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Languages spoken" align="center">
-          <div className="mt-3 md:mt-0">
+          <div className="max-[500px]:mt-0.5 mt-3 md:mt-0">
             <button type="button" onClick={() => setLangPopupOpen(true)} className="flex py-5 px-4 items-center w-full rounded-[12px] border border-[rgba(179,27,56,0.25)] bg-[#FFF0F3] cursor-pointer">
               <div className="flex flex-wrap gap-2 sm:gap-3 md:gap-4 flex-1 min-w-0">
                 {languages.map(lang => <span key={lang} className="px-3 py-1 rounded-[48px] bg-white text-[16px] font-normal text-dark">{lang}</span>)}

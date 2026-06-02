@@ -28,6 +28,7 @@ type MatchInterestCardProps = {
     profileId: string;
     profileName: string;
     gender?: string;
+    profilePhoto?: string | null;
     status: StatusType;
     isElite: boolean;
     isAccepted: boolean;
@@ -54,6 +55,7 @@ export default function MatchInterestCard({
     profileId,
     profileName,
     gender,
+    profilePhoto,
     status,
     isElite,
     isAccepted,
@@ -69,7 +71,9 @@ export default function MatchInterestCard({
     const isMale = gender === "male";
     const she = isMale ? "He" : "She";
     const her = isMale ? "his" : "her";
-    const placeholder = isMale ? "/images/no_photo_male.png" : "/images/no_photo.png";
+    const theirPhoto = profilePhoto ?? (isMale ? "/images/no_photo_male.png" : "/images/no_photo.png");
+    const me = readMeCache();
+    const myPhoto = me?.profile?.photoUrl ?? (me?.gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png");
     const router = useRouter();
     const [pending, setPending] = useState(false);
     const [showLimitPopup, setShowLimitPopup] = useState(false);
@@ -116,7 +120,7 @@ export default function MatchInterestCard({
         }
     }
     const interestText = DEFAULT_INTEREST.replace("{name}", profileName);
-    const myName = readMeCache()?.name ?? "";
+    const myName = me?.name ?? "";
     const incomingText = DEFAULT_INTEREST.replace("{name}", myName);
 
     if (status === "declined" && !changeMindMode) {
@@ -223,18 +227,18 @@ export default function MatchInterestCard({
             return (
                 <CardShell>
                     <SectionTitle title={`You sent a priority interest to ${profileName}`} />
-                    <div className="mt-3 md:mt-4">
+                    <div className="max-[500px]:mt-2 mt-3 md:mt-4">
                         <MessageRow
                             side="outgoing"
-                            avatarSrc={placeholder}
+                            avatarSrc={myPhoto}
                             bubbles={[interestText]}
                         />
                     </div>
-                    <div className="mt-5 text-center font-poppins text-[14px] md:text-[16px] font-medium leading-[150%] text-dark">
+                    <div className="max-[500px]:mt-3 mt-5 text-center font-poppins text-[14px] md:text-[16px] font-medium leading-[150%] text-dark">
                         Interest sent · Awaiting response.
                     </div>
                     {countdownText && (
-                        <div className="mt-1 text-center font-poppins text-[14px] md:text-[16px] font-normal leading-[150%] text-primary">
+                        <div className="max-[500px]:mt-0 mt-1 text-center font-poppins text-[14px] md:text-[16px] font-normal leading-[150%] text-primary">
                             You can send a reminder in {countdownText}.
                         </div>
                     )}
@@ -247,17 +251,17 @@ export default function MatchInterestCard({
             return (
                 <CardShell>
                     <SectionTitle title={`You sent a priority interest to ${profileName}`} />
-                    <div className="mt-4">
+                    <div className="max-[500px]:mt-2 mt-4">
                         <MessageRow
                             side="outgoing"
-                            avatarSrc={placeholder}
+                            avatarSrc={myPhoto}
                             bubbles={[interestText]}
                         />
                     </div>
-                    <div className="mt-5 text-center font-poppins text-[14px] md:text-[16px] font-medium leading-[150%] text-dark">
+                    <div className="max-[500px]:mt-3 mt-5 text-center font-poppins text-[14px] md:text-[16px] font-medium leading-[150%] text-dark">
                         Interest sent · Awaiting response.
                     </div>
-                    <div className="mt-3 flex justify-center">
+                    <div className="max-[500px]:mt-2 mt-3 flex justify-center">
                         <Button
                             text={pending ? "Sending..." : "Send reminder"}
                             onPress={() => act(() => sendInterest(profileId))}
@@ -273,14 +277,14 @@ export default function MatchInterestCard({
         return (
             <CardShell>
                 <SectionTitle title={`You sent a priority interest to ${profileName}`} />
-                <div className="mt-4 flex flex-col gap-4">
+                <div className="max-[500px]:mt-2 mt-4 flex flex-col gap-4">
                     <MessageRow
                         side="outgoing"
-                        avatarSrc={placeholder}
+                        avatarSrc={myPhoto}
                         bubbles={[interestText, FOLLOW_UP]}
                     />
                 </div>
-                <div className="mt-5 text-center font-poppins text-[14px] md:text-[16px] font-medium leading-[150%] text-dark">
+                <div className="max-[500px]:mt-3 mt-5 text-center font-poppins text-[14px] md:text-[16px] font-medium leading-[150%] text-dark">
                     Reminder sent · Awaiting response.
                 </div>
             </CardShell>
@@ -292,31 +296,31 @@ export default function MatchInterestCard({
             <CardShell>
                 <SectionTitle title={`🎉 ${profileName} has accepted your interest!`} />
 
-                <div className="mt-4 flex flex-col gap-4">
+                <div className="max-[500px]:mt-2 mt-4 flex flex-col max-[500px]:gap-2 gap-4">
                     <MessageRow
                         side="outgoing"
-                        avatarSrc={placeholder}
+                        avatarSrc={myPhoto}
                         bubbles={sendCount >= 2 ? [interestText, FOLLOW_UP] : [interestText]}
                     />
 
                     <MessageRow
                         side="incoming"
-                        avatarSrc={placeholder}
+                        avatarSrc={theirPhoto}
                         bubbles={[ACCEPT_REPLY]}
                     />
                 </div>
 
-                <div className="mt-9 flex justify-center">
+                <div className="max-[500px]:mt-5 mt-9 flex justify-center">
                     <PartyIcon />
                 </div>
 
                 {isElite ? (
                     <>
-                        <div className="mt-3 md:mt-4 text-center font-poppins text-[14px] md:text-[16px] font-normal leading-[150%] text-dark">
+                        <div className="max-[500px]:mt-2 mt-3 md:mt-4 text-center font-poppins text-[14px] md:text-[16px] font-normal leading-[150%] text-dark">
                             Congratulations! You are both a mutual match. Don&apos;t keep {her} waiting - make the first move and start your beautiful journey together.
                         </div>
 
-                        <div className="mt-4 flex justify-center">
+                        <div className="max-[500px]:mt-2 mt-4 flex justify-center">
                             <Button
                                 text="Chat on WhatsApp"
                                 iconLeft={<FaWhatsapp className="h-4 w-4 md:h-5 md:w-5" />}
@@ -330,11 +334,11 @@ export default function MatchInterestCard({
                     </>
                 ) : (
                     <>
-                        <div className="mt-4 text-center font-poppins text-[14px] md:text-[16px] font-medium leading-[150%] text-primary">
+                        <div className="max-[500px]:mt-2 mt-4 text-center font-poppins text-[14px] md:text-[16px] font-medium leading-[150%] text-primary">
                             {she} accepted! Upgrade to Elite to see {her} contact.
                         </div>
 
-                        <div className="mt-4 flex justify-center">
+                        <div className="max-[500px]:mt-2 mt-4 flex justify-center">
                             <Button
                                 text="Upgrade & connect now"
                                 className="!px-4 !font-medium"
@@ -342,7 +346,7 @@ export default function MatchInterestCard({
                             />
                         </div>
 
-                        <div className="mt-7 text-center font-poppins text-[14px] md:text-[16px] font-normal leading-[150%] text-dark">
+                        <div className="max-[500px]:mt-2 mt-6 text-center font-poppins text-[14px] md:text-[16px] font-normal leading-[150%] text-dark">
                             Congratulations! You are both a mutual match. Don&apos;t keep {her} waiting - make the first move and start your beautiful journey together.
                         </div>
                     </>
@@ -356,10 +360,10 @@ export default function MatchInterestCard({
             <CardShell>
                 <SectionTitle title={`✨ ${profileName} is interested in you!`} />
 
-                <div className="mt-4">
+                <div className="max-[500px]:mt-2 mt-4">
                     <MessageRow
                         side="incoming"
-                        avatarSrc={placeholder}
+                        avatarSrc={theirPhoto}
                         bubbles={
                             receivedCount >= 2
                                 ? [incomingText, FOLLOW_UP]
@@ -368,15 +372,15 @@ export default function MatchInterestCard({
                     />
                 </div>
 
-                <div className="mt-5 flex gap-4 max-[520px]:flex-col">
+                <div className="max-[500px]:mt-3 mt-5 flex gap-4 max-[520px]:flex-col">
                     <Button
-                        text={pending ? "..." : "Accept"}
+                        text={pending ? "Loading..." : "Accept"}
                         onPress={() => act(() => respondToInterest(profileId, "accept"))}
                         iconLeft={<CheckmarkIcon className="w-4 sm:w-4.5 md:w-5 lg:w-6 h-4 sm:h-4.5 md:h-5 lg:h-6" />}
                         className="!px-4 flex-1"
                     />
                     <Button
-                        text={pending ? "..." : "Decline"}
+                        text={pending ? "Loading..." : "Decline"}
                         onPress={() => act(() => respondToInterest(profileId, "decline"))}
                         iconLeft={<CgClose className="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5" />}
                         className="!px-4 flex-1 !bg-[#FFF] border border-[#B31B38] !text-[#B31B38] hover:!bg-gray-50 active:!bg-gray-100"
@@ -390,31 +394,31 @@ export default function MatchInterestCard({
         <CardShell>
             <SectionTitle title={`🎉 It's a mutual match!`} red/>
 
-            <div className="mt-4 flex flex-col gap-4">
+            <div className="max-[500px]:mt-2 mt-4 flex flex-col max-[500px]:gap-2 gap-4">
                 <MessageRow
                     side="incoming"
-                    avatarSrc={placeholder}
+                    avatarSrc={theirPhoto}
                     bubbles={receivedCount >= 2 ? [incomingText, FOLLOW_UP] : [incomingText]}
                 />
 
                 <MessageRow
                     side="outgoing"
-                    avatarSrc={placeholder}
+                    avatarSrc={myPhoto}
                     bubbles={[ACCEPT_REPLY]}
                 />
             </div>
 
-            <div className="mt-9 flex justify-center">
+            <div className="max-[500px]:mt-5 mt-9 flex justify-center">
                 <PartyIcon />
             </div>
 
             {isElite ? (
                 <>
-                    <div className="mt-4 text-center font-poppins text-[14px] md:text-[16px] font-normal leading-[150%] text-dark">
+                    <div className="max-[500px]:mt-2 mt-4 text-center font-poppins text-[14px] md:text-[16px] font-normal leading-[150%] text-dark">
                         Congratulations! You are both a mutual match. Don&apos;t keep {her} waiting - send the first message and start your beautiful journey together.
                     </div>
 
-                    <div className="mt-4 flex justify-center">
+                    <div className="max-[500px]:mt-2 mt-4 flex justify-center">
                         <Button
                             text="Chat on WhatsApp"
                             iconLeft={<FaWhatsapp className="h-4 w-4 md:h-5 md:w-5" />}
@@ -515,9 +519,9 @@ function Avatar({ src }: { src: string }) {
             <ProtectedPhoto
                 src={src}
                 alt="profile"
-                fill
-                className="object-cover"
-                sizes="56px"
+                width={64}
+                height={64}
+                className="w-full h-full object-cover"
                 watermark=""
             />
         </div>

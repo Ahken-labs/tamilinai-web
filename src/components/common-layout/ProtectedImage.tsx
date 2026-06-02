@@ -5,7 +5,19 @@ import type { ImageProps } from "next/image";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 
-const _blobCache = new Map<string, string>();
+const BLOB_TTL_MS = 55 * 60 * 1000;
+interface BlobEntry { url: string; expiresAt: number; }
+const _blobCache = new Map<string, BlobEntry>();
+
+function getCachedBlob(key: string): string | null {
+  const entry = _blobCache.get(key);
+  if (!entry) return null;
+  if (Date.now() > entry.expiresAt) { URL.revokeObjectURL(entry.url); _blobCache.delete(key); return null; }
+  return entry.url;
+}
+function setCachedBlob(key: string, url: string) {
+  _blobCache.set(key, { url, expiresAt: Date.now() + BLOB_TTL_MS });
+}
 
 interface Props {
   src: string;
@@ -24,18 +36,18 @@ export default function ProtectedImage({ src, alt, fill, width, height, classNam
   const fetchUrl = isProtected ? `${API_BASE}${src}` : src;
 
   const [displaySrc, setDisplaySrc] = useState<string | null>(() => {
-    if (!isProtected) return src;
-    return _blobCache.get(fetchUrl) ?? null;
+    if (!isProtected) return src || null;
+    return getCachedBlob(fetchUrl);
   });
 
   useEffect(() => {
     if (!isProtected) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setDisplaySrc(src);
+      setDisplaySrc(src || null);
       return;
     }
 
-    const cached = _blobCache.get(fetchUrl);
+    const cached = getCachedBlob(fetchUrl);
     if (cached) {
       setDisplaySrc(cached);
       return;
@@ -53,7 +65,7 @@ export default function ProtectedImage({ src, alt, fill, width, height, classNam
       .then((blob) => {
         if (cancelled) return;
         const url = URL.createObjectURL(blob);
-        _blobCache.set(fetchUrl, url);
+        setCachedBlob(fetchUrl, url);
         setDisplaySrc(url);
       })
       .catch(() => {});

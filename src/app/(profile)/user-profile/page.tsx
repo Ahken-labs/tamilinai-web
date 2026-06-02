@@ -348,7 +348,7 @@ function UserProfileContent() {
   return (
     <main className="min-h-screen bg-[#F8F5F2] font-poppins select-none pb-10">
       {/* Header */}
-      <div className="sticky lg:px-10 max-[320px]:top-[48.5px] max-[768px]:top-[49.5px] top-[74px] z-10 w-full bg-white/60 backdrop-blur-sm border-t border-[#EEEEEE] transition-transform duration-300" style={!backBarVisible ? { transform: "translateY(-110%)" } : undefined}>
+      <div className={`sticky lg:px-10 max-[320px]:top-[56px] z-50 top-[66px] md:top-[74px] z-10 w-full bg-white/60 backdrop-blur-sm border-t border-[#EEEEEE] transition-transform duration-300${!backBarVisible ? " max-[768px]:-translate-y-[146%] md:-translate-y-[120%]" : ""}`}>
         {/* Desktop back button */}
         <div className="hidden md:flex px-4 lg:px-10 py-3">
           <button onClick={() => router.back()} className="flex items-center justify-center rounded-[40px] bg-light py-2 pl-2 pr-4 shadow-[0_0_11.1px_0_rgba(0,0,0,0.25)]">
@@ -460,7 +460,7 @@ function UserProfileContent() {
             </>
           ) : (
             <>
-              <MatchInterestCard profileId={profile.id} profileName={profile.name} gender={profile.gender} status={interestStatus} isElite={viewerIsElite} isAccepted={profile.interestIsAccepted ?? false} sendCount={sendCount} receivedCount={profile.interestReceiveCount ?? 1} isShortlisted={profile.isShortlisted} lastSentAt={profile.interestLastSentAt} isReminderDue={profile.isReminderDue ?? false} declinedByMe={declinedByMe} phone={viewerIsElite ? profile.phone : undefined} onAction={handleInterestAction} />
+              <MatchInterestCard profileId={profile.id} profileName={profile.name} gender={profile.gender} profilePhoto={profile.profile?.photoUrl} status={interestStatus} isElite={viewerIsElite} isAccepted={profile.interestIsAccepted ?? false} sendCount={sendCount} receivedCount={profile.interestReceiveCount ?? 1} isShortlisted={profile.isShortlisted} lastSentAt={profile.interestLastSentAt} isReminderDue={profile.isReminderDue ?? false} declinedByMe={declinedByMe} phone={viewerIsElite ? profile.phone : undefined} onAction={handleInterestAction} />
               {profile.incomingPhotoRequest && !incomingDismissed && (
                 <IncomingPhotoRequestCard profileId={profileId} profileName={profile.name} type={profile.incomingPhotoRequest.type} onDismiss={() => { setIncomingDismissed(true); handleInterestAction(); }} />
               )}
@@ -620,6 +620,7 @@ function UserProfileContent() {
                     profileId={profile.id}
                     profileName={profile.name}
                     gender={profile.gender}
+                    profilePhoto={profile.profile?.photoUrl}
                     status={interestStatus}
                     isElite={viewerIsElite}
                     isAccepted={profile.interestIsAccepted ?? false}

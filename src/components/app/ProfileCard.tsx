@@ -278,8 +278,8 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
           />
           <Button
             onPress={handleSendInterest}
-            className="!px-3 flex-1 !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE] disabled:opacity-50"
-            text={mutualMatch ? "Connected 🎉" : interestSent ? "Interest Sent" : interestPending ? "Sending..." : "Send Interest"}
+            className="!px-2.5 flex-1 !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE] disabled:opacity-50"
+            text={mutualMatch ? "Connected🎉" : interestSent ? "Interest Sent" : interestPending ? "Sending..." : "Send Interest"}
             iconLeft={<SendInterestMsgIcon className="w-4 h-4 shrink-0" />}
           />
         </div>

@@ -13,10 +13,10 @@ import { ELITE_PLANS, getPricing, getSavePct } from "@/src/constants/elitePlans"
 // import { CONTACT } from "@/src/lib/contact";
 
 const eliteBenefits = [
-    { icon: <FaWhatsapp className="h-4 md:h-6 w-4 md:w-6" />, text: "Talk to matches directly", },
-    { icon: <StepPreferencesIcon className="h-4 md:h-6 w-4 md:w-6" />, text: "Send unlimited interests", },
-    { icon: <ProfileVisibilityIcon className="h-4 md:h-6 w-4 md:w-6" />, text: "Enhanced profile visibility", },
-    { icon: <ResponseIcon className="h-4 md:h-6 w-4 md:w-6" />, text: "Get more responses", },
+    { icon: <FaWhatsapp className="h-6 w-6" />, text: "Talk to matches directly", },
+    { icon: <StepPreferencesIcon className="h-6 w-6" />, text: "Send unlimited interests", },
+    { icon: <ProfileVisibilityIcon className="h-6 w-6" />, text: "Enhanced profile visibility", },
+    { icon: <ResponseIcon className="h-6 w-6" />, text: "Get more responses", },
 ];
 
 export default function EliteUpgradePage() {
@@ -44,7 +44,7 @@ export default function EliteUpgradePage() {
     }
 
     return (
-        <main className="select-none min-h-screen bg-[#F8F5F2] pb-20">
+        <main className="font-poppins select-none min-h-screen bg-[#F8F5F2] pb-20">
             <div className="mx-auto flex max-w-[1024px] flex-col px-4 pb-4 pt-[27px] lg:px-10">
                 <div className="flex justify-center">
                     <Image src="/icons/elite_Badge.png" alt="elite" width={42} height={40} />
@@ -257,11 +257,11 @@ export default function EliteUpgradePage() {
                         <h1 className="text-center text-dark font-semibold fonts-24">why Elite membership?</h1>
                         <div className="mt-4 md:mt-6">
                             {/* box */}
-                            <div className="mt-4 md:mt-6 grid grid-cols-2 gap-3">
+                            <div className="mt-4 md:mt-6 grid grid-cols-2 max-[500px]:gap-2 gap-3">
                                 {eliteBenefits.map((benefit, index) => (
                                     <div
                                         key={index}
-                                        className="bg-light flex justify-center items-center rounded-[20px] p-4 md:p-6"
+                                        className="bg-light flex justify-center items-start max-[500px]:rounded-[8px] rounded-[20px] max-[500px]:px-2 px-4 md:px-6 py-4 md:py-6"
                                     >
                                         <div className="flex flex-col items-center justify-center text-center">
                                             {benefit.icon}

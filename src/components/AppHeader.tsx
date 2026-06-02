@@ -177,9 +177,8 @@ export default function AppHeader() {
   const score = me?.profileCompletionScore ?? 0;
   const displayName = me?.name ?? "";
   const displayId = me?.displayId ?? "";
-  const photo = me?.profile?.photoStatus === "approved" && me?.profile?.photoUrl
-    ? me.profile.photoUrl
-    : (me?.gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png");
+  const photo = me?.profile?.photoUrl
+    ?? (me?.gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png");
 
   // Lock body scroll when mobile drawer is open
   useEffect(() => {
@@ -342,7 +341,7 @@ export default function AppHeader() {
                       <span className="ml-auto rounded-[41px] bg-[#B31B38] px-2 py-[2px] text-white font-poppins font-16 font-normal leading-[150%]">Upgrade</span>
                     </Link>
                   ) : null}
-                  <div className="w-full flex flex-col gap-2">
+                  <div className="w-full flex flex-col z-20 gap-2">
                     {[
                       { text: "Complete / Edit profile", Icon: EditIcon, href: "/my-profile" },
                       ...(trustBadge || isElite ? [] : [{ text: "Upgrade to Elite", Icon: EliteIcon, href: "/elite-upgrade" }]),
@@ -394,10 +393,13 @@ export default function AppHeader() {
             <button
               type="button"
               onClick={() => { setSettingsOpen(false); setMobileOpen(false); setOpenModal("search"); }}
-              className="flex items-center max-[420px]:pr-1.5 pr-3 max-[420px]:pl-1.5 pl-2 py-1.5 gap-2 rounded-[41px] bg-[#E0E0E0] cursor-pointer hover:bg-[#D4D4D4] transition-colors duration-150"
+              className="flex items-center max-[420px]:pr-1.5 pr-3 max-[420px]:pl-1.5 pl-2 py-1.5 max-[420px]:gap-0.5 gap-2 rounded-[41px] bg-[#E0E0E0] cursor-pointer hover:bg-[#D4D4D4] transition-colors duration-150"
             >
               <SearchIcon className="w-5 sm:w-6 h-5 sm:h-6 text-[#525252]" />
               <span className="text-[14px] sm:text-[16px] font-normal text-[#4A4A4A] max-[420px]:hidden">
+                Search
+              </span>
+              <span className="text-[12px] sm:text-[16px] font-normal text-[#4A4A4A] min-[420px]:hidden">
                 Search
               </span>
             </button>
@@ -538,7 +540,7 @@ export default function AppHeader() {
           ) : null}
 
           {/* Nav tabs section */}
-          <div className="px-3 pt-4 pb-1">
+          {/* <div className="px-3 pt-4 pb-1">
             <p className="px-2 pb-1.5 text-[10.5px] font-semibold text-[#BBBBBB] uppercase tracking-[0.08em]">
               Navigation
             </p>
@@ -570,13 +572,13 @@ export default function AppHeader() {
                 </Link>
               );
             })}
-          </div>
+          </div> */}
 
           {/* Divider */}
-          <div className="mx-4 my-2 border-t border-[#F0F0F0]" />
+          {/* <div className="mx-4 my-2 border-t border-[#F0F0F0]" /> */}
 
           {/* Account section — mirrors desktop dropdown items exactly */}
-          <div className="px-3 pb-4">
+          <div className="px-3 pb-4 mt-3">
             <p className="px-2 pb-1.5 text-[10.5px] font-semibold text-[#BBBBBB] uppercase tracking-[0.08em]">
               Account
             </p>

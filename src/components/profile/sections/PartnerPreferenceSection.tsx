@@ -184,11 +184,15 @@ export default function PartnerPreferenceSection({ onDirty }: { onDirty?: () => 
 
       <div className="divide-y divide-[#EAEAEA]">
         <FormRow leftWidth={leftWidth} label="Marital history" required className="py-4 md:py-5">
+          <div className="max-[500px]:mt-[-10px]">
           <RadioGroup options={[...MARITAL_OPTIONS, "Open to all"]} value={marital} onChange={v => { setMarital(v); sync({ marital: v }); }} />
+            </div>
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Physical status" required className="py-4 md:py-5">
+          <div className="max-[500px]:mt-[-10px]">
           <RadioGroup options={PHYSICAL_OPTIONS} value={physical} onChange={v => { setPhysical(v); sync({ physical: v }); }} />
+            </div>
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Education" required className="py-4 md:py-5">
@@ -219,7 +223,9 @@ export default function PartnerPreferenceSection({ onDirty }: { onDirty?: () => 
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Religion" required className="py-4 md:py-5">
+          <div className="max-[500px]:mt-[-10px]">
           <RadioGroup options={RELIGION_PREF} value={religion} onChange={v => { setReligion(v); sync({ religion: v }); }} />
+            </div>
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Cast or denomination" required className="py-4 md:py-5">
@@ -237,13 +243,19 @@ export default function PartnerPreferenceSection({ onDirty }: { onDirty?: () => 
 
         <div>
           <FormRow leftWidth={leftWidth} label="Food habits" required className="py-4 md:py-5">
+            <div className="max-[500px]:mt-[-10px]">
             <RadioGroup options={FOOD_OPTIONS} value={food} onChange={v => { setFood(v); sync({ food: v }); }} />
+              </div>
           </FormRow>
           <FormRow leftWidth={leftWidth} label="Smoking habits" required className="py-4 md:py-5">
+            <div className="max-[500px]:mt-[-10px]">
             <RadioGroup options={SMOKING_OPTIONS} value={smoking} onChange={v => { setSmoking(v); sync({ smoking: v }); }} />
+              </div>
           </FormRow>
           <FormRow leftWidth={leftWidth} label="Drinking habits" required className="py-4 md:py-5">
+            <div className="max-[500px]:mt-[-10px]">
             <RadioGroup options={DRINKING_OPTIONS} value={drinking} onChange={v => { setDrinking(v); sync({ drinking: v }); }} />
+              </div>
           </FormRow>
         </div>
       </div>

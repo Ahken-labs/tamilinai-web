@@ -434,7 +434,7 @@ export default function MyProfilePage() {
                 />
 
                 {activeTab !== "preview_my_profile" && (
-                  <div className="absolute left-1/2 -translate-x-1/2 z-10 bottom-0">
+                  <div className="absolute left-1/2 -translate-x-1/2 z-10 bottom-0 mb-1.5">
                     <Button
                       text={hasPhoto ? "Edit" : "Upload"}
                       onPress={() => fileInputRef.current?.click()}
@@ -1072,7 +1072,7 @@ function ExpandableSection({
               </span>
               {/* Count + dot — below title on ≤410px, hidden here on desktop (shown in right group) */}
               <div className="min-[410px]:hidden flex items-center gap-1">
-                <span className="text-[14px] font-medium leading-[150%] text-secondary4">{statusText}</span>
+                <span className="text-[14px] max-[500px]:font-normal font-medium leading-[150%] text-secondary4">{statusText}</span>
                 {!allDone && <div className="h-2 w-2 rounded-full bg-[#B31B38]" />}
               </div>
             </div>

@@ -152,7 +152,7 @@ function InterestedContent() {
         </div>
       </div>
 
-      <div className="max-[370px]:px-0 max-[500px]:px-2 px-4 lg:px-8 pt-[16px] sm:pt-[27px] pb-10 max-w-[1024px] mx-auto">
+      <div className="max-[400px]:px-0 max-[500px]:px-2 px-4 lg:px-8 pt-[16px] sm:pt-[27px] pb-10 max-w-[1024px] mx-auto">
         {isLoading ? (
           <div className="max-w-[926px] mx-auto rounded-[20px] overflow-hidden">
             {Array.from({ length: SKELETON_COUNT }).map((_, idx) => (
@@ -160,8 +160,8 @@ function InterestedContent() {
             ))}
           </div>
         ) : items.length > 0 ? (
-          <div className={`max-w-[926px] mx-auto rounded-[20px] bg-light overflow-hidden${isBackgroundFetching ? " opacity-60 pointer-events-none transition-opacity" : ""}`}>
-            <div className="max-[370px]:my-0 max-[500px]:my-4 my-6 max-[370px]:mx-1 max-[500px]:mx-2 mx-4 max-[370px]:rounded-[4px] max-[500px]:rounded-[12px] rounded-[16px] overflow-hidden">
+          <div className={`max-w-[926px] mx-auto max-[400px]:rounded-[0px] rounded-[20px] bg-light overflow-hidden${isBackgroundFetching ? " opacity-60 pointer-events-none transition-opacity" : ""}`}>
+            <div className="max-[400px]:my-0 max-[500px]:my-4 my-6 max-[400px]:mx-0 max-[500px]:mx-2 mx-4 max-[370px]:rounded-[0px] max-[500px]:rounded-[12px] rounded-[16px] overflow-hidden">
             {items.map((item, idx) => (
               <InterestCard
                 key={item.id}
