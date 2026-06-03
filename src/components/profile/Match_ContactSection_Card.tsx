@@ -327,8 +327,8 @@ function VisibleContactBody({
     <div className="pt-3 md:pt-4">
       {displayPhone && (
         <>
-          <div className="flex max-[500px]:flex-col min-[501px]:justify-between w-full gap-1">
-            <div className="text-secondary3 text-[14px] md:text-[16px]">WhatsApp</div>
+          <div className="flex max-[500px]:flex-col min-[500px]:justify-between w-full gap-1">
+            <div className="text-[#767676] text-[14px] md:text-[16px]">WhatsApp</div>
             <div className="flex items-center gap-1 md:gap-2">
               <span className="text-[14px] md:text-[16px] text-[#767676]">{displayPhone}</span>
               <ChevronRightIcon className="ml-1 h-4 w-4 md:ml-2 md:h-5 md:w-5" />
@@ -339,8 +339,8 @@ function VisibleContactBody({
       )}
 
       {displayEmail && (
-        <div className="mt-3 md:mt-4 flex max-[500px]:flex-col min-[501px]:justify-between w-full gap-1">
-          <div className="text-secondary3 text-[14px] md:text-[16px]">Email</div>
+        <div className="mt-3 md:mt-4 flex max-[500px]:flex-col min-[500px]:justify-between w-full gap-1">
+          <div className="text-[#767676] text-[14px] md:text-[16px]">Email</div>
           <div className="flex items-center gap-1 md:gap-2">
             <span className="text-[14px] md:text-[16px] text-[#767676]">{displayEmail}</span>
             <ChevronRightIcon className="ml-1 h-4 w-4 md:ml-2 md:h-5 md:w-5" />

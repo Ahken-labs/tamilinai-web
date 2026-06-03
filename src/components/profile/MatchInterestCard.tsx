@@ -158,7 +158,7 @@ export default function MatchInterestCard({
                         onPress={() => {
                             setChangeMindMode(true);
                             // Immediately unblock so their profile reappears in our browse — idempotent
-                            unblockSender(profileId).catch(() => {});
+                            unblockSender(profileId).catch(() => { });
                         }}
                         iconLeft={<RiArrowGoBackLine className="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5" />}
                         className="!px-4 flex-1 !bg-[#FFF] border border-[#B31B38] !text-[#B31B38] hover:!bg-gray-50 active:!bg-gray-100"
@@ -392,7 +392,7 @@ export default function MatchInterestCard({
 
     return (
         <CardShell>
-            <SectionTitle title={`🎉 It's a mutual match!`} red/>
+            <SectionTitle title={`🎉 It's a mutual match!`} red />
 
             <div className="max-[500px]:mt-2 mt-4 flex flex-col max-[500px]:gap-2 gap-4">
                 <MessageRow
@@ -423,6 +423,10 @@ export default function MatchInterestCard({
                             text="Chat on WhatsApp"
                             iconLeft={<FaWhatsapp className="h-4 w-4 md:h-5 md:w-5" />}
                             className="md:!px-6 !px-4 !font-medium"
+                            onPress={() => {
+                                if (!phone) return;
+                                window.open(`https://wa.me/${phone.replace(/\D/g, "")}`, "_blank");
+                            }}
                         />
                     </div>
                 </>

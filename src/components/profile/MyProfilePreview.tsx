@@ -10,7 +10,7 @@ import {
 import { BiPhoneCall } from "react-icons/bi";
 import { calculateAge } from "@/src/utils/calculateAge";
 import { formatHeight } from "@/src/utils/heightUtils";
-import { DIET_FROM_BE, SMOKE_FROM_BE, DRINK_FROM_BE } from "@/src/utils/profileMappers";
+import { DIET_FROM_BE, SMOKE_FROM_BE, DRINK_FROM_BE, MARITAL_FROM_BE, BUILD_FROM_BE, RESIDENT_FROM_BE } from "@/src/utils/profileMappers";
 import type { Me } from "@/src/types/user";
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
@@ -103,16 +103,16 @@ function buildSections(me: Me): SectionData[] {
       icon: <ProfileBoxIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
       title: "Basic Info",
       left: [
-        { label: "Gender", value: me.gender ?? "Not specified" },
+        { label: "Gender", value: me.gender ? me.gender.charAt(0).toUpperCase() + me.gender.slice(1) : "Not specified" },
         { label: "Age", value: age != null && age > 0 ? `${age} years` : "Not specified" },
-        { label: "Marital status", value: pr.maritalStatus ?? "Not specified" },
+        { label: "Marital status", value: (pr.maritalStatus ? (MARITAL_FROM_BE[pr.maritalStatus] ?? pr.maritalStatus) : "Not specified") },
         { label: "Languages spoken", value: pr.languagesSpoken?.join(", ") || "Not specified" },
       ],
       right: [
         { label: "Height", value: pr.heightCm ? formatHeight(pr.heightCm) : "Not specified" },
         { label: "Weight", value: formatWeight(pr.weightKg) },
         { label: "Any physical challenge", value: pr.hasPhysicalChallenge ? (pr.disabilityType ?? "Yes") : "No" },
-        { label: "Body type", value: pr.physicalBuild ?? "Not specified" },
+        { label: "Body type", value: (pr.physicalBuild ? (BUILD_FROM_BE[pr.physicalBuild] ?? pr.physicalBuild) : "Not specified") },
       ],
     },
     {
@@ -136,10 +136,10 @@ function buildSections(me: Me): SectionData[] {
         { label: "Mom's occupation", value: pr.motherOccupation ?? "Not specified" },
       ],
       right: [
-        { label: "Number of brother(s)", value: pr.brotherCount !== undefined ? String(pr.brotherCount) : "Not specified" },
-        { label: "Brother(s) married", value: pr.brothersMarried !== undefined ? String(pr.brothersMarried) : "Not specified" },
-        { label: "Number of sister(s)", value: pr.sisterCount !== undefined ? String(pr.sisterCount) : "Not specified" },
-        { label: "Sister(s) married", value: pr.sistersMarried !== undefined ? String(pr.sistersMarried) : "Not specified" },
+        { label: "Number of brother(s)", value: pr.brotherCount != null ? String(pr.brotherCount) : "Not specified" },
+        { label: "Brother(s) married", value: pr.brothersMarried != null ? String(pr.brothersMarried) : "Not specified" },
+        { label: "Number of sister(s)", value: pr.sisterCount != null ? String(pr.sisterCount) : "Not specified" },
+        { label: "Sister(s) married", value: pr.sistersMarried != null ? String(pr.sistersMarried) : "Not specified" },
       ],
     },
     {
@@ -157,7 +157,7 @@ function buildSections(me: Me): SectionData[] {
       ],
       right: [
         { label: "Citizenship", value: pr.citizenship ?? "Not specified" },
-        { label: "Resident status", value: pr.residentStatus ?? "Not specified" },
+        { label: "Resident status", value: (pr.residentStatus ? (RESIDENT_FROM_BE[pr.residentStatus] ?? pr.residentStatus) : "Not specified") },
       ],
     },
     {

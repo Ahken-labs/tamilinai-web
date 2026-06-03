@@ -25,7 +25,7 @@ import { getMe } from "@/src/lib/api/user";
 import type { ProfileDetail } from "@/src/types/user";
 import { UserProfileSkeletonBody } from "@/src/components/app/skeleton-layout/UserProfileSkeleton";
 import { calculateAge } from "@/src/utils/calculateAge";
-import { DIET_FROM_BE, SMOKE_FROM_BE, DRINK_FROM_BE } from "@/src/utils/profileMappers";
+import { DIET_FROM_BE, SMOKE_FROM_BE, DRINK_FROM_BE, MARITAL_FROM_BE, BUILD_FROM_BE, RESIDENT_FROM_BE } from "@/src/utils/profileMappers";
 import EliteUpgradePopup, { shouldShowWeeklyNudge, markWeeklyNudgeSeen, type EliteUpgradeTrigger } from "@/src/components/common-layout/EliteUpgradePopup";
 
 function formatWeight(kg?: number): string {
@@ -78,15 +78,15 @@ function buildSections(p: ProfileDetail, interestStatus: "sent" | "received" | "
       icon: <ProfileBoxIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
       title: "Basic Info",
       left: [
-        { label: "Gender", value: p.gender ?? "Not specified" },
-        { label: "Marital status", value: pr.maritalStatus ?? "Not specified" },
+        { label: "Gender", value: p.gender ? p.gender.charAt(0).toUpperCase() + p.gender.slice(1) : "Not specified" },
+        { label: "Marital status", value: (pr.maritalStatus ? (MARITAL_FROM_BE[pr.maritalStatus] ?? pr.maritalStatus) : "Not specified") },
         { label: "Languages spoken", value: pr.languagesSpoken?.join(", ") || "Not specified" },
       ],
       right: [
         { label: "Height", value: pr.heightCm ? formatHeight(pr.heightCm) : "Not specified" },
         { label: "Weight", value: formatWeight(pr.weightKg) },
         { label: "Any physical challenge", value: pr.hasPhysicalChallenge ? (pr.disabilityType ?? "Yes") : "No" },
-        { label: "Body type", value: pr.physicalBuild ?? "Not specified" },
+        { label: "Body type", value: (pr.physicalBuild ? (BUILD_FROM_BE[pr.physicalBuild] ?? pr.physicalBuild) : "Not specified") },
       ],
     },
     {
@@ -157,10 +157,10 @@ function buildSections(p: ProfileDetail, interestStatus: "sent" | "received" | "
         { label: "Family origin / Ancestral", value: pr.familyOrigin ?? "Not specified" },
       ],
       right: [
-        { label: "Number of brother(s)", value: pr.brotherCount !== undefined ? String(pr.brotherCount) : "Not specified" },
-        { label: "Brother(s) married", value: pr.brothersMarried !== undefined ? String(pr.brothersMarried) : "Not specified" },
-        { label: "Number of sister(s)", value: pr.sisterCount !== undefined ? String(pr.sisterCount) : "Not specified" },
-        { label: "Sister(s) married", value: pr.sistersMarried !== undefined ? String(pr.sistersMarried) : "Not specified" },
+        { label: "Number of brother(s)", value: pr.brotherCount != null ? String(pr.brotherCount) : "Not specified" },
+        { label: "Brother(s) married", value: pr.brothersMarried != null ? String(pr.brothersMarried) : "Not specified" },
+        { label: "Number of sister(s)", value: pr.sisterCount != null ? String(pr.sisterCount) : "Not specified" },
+        { label: "Sister(s) married", value: pr.sistersMarried != null ? String(pr.sistersMarried) : "Not specified" },
       ],
     },
     {
@@ -176,7 +176,10 @@ function buildSections(p: ProfileDetail, interestStatus: "sent" | "received" | "
         { label: "City", value: pr.city ?? "Not specified" },
         { label: "Country", value: pr.country ?? "Not specified" },
       ],
-      right: [{ label: "Citizenship", value: pr.citizenship ?? "Not specified" }],
+      right: [
+        { label: "Citizenship", value: pr.citizenship ?? "Not specified" },
+        { label: "Resident status", value: (pr.residentStatus ? (RESIDENT_FROM_BE[pr.residentStatus] ?? pr.residentStatus) : "Not specified") },
+      ],
     },
     {
       icon: <WineGlassIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
