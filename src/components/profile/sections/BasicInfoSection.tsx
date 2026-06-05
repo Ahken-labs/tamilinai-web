@@ -28,7 +28,7 @@ function mergeDraft(partial: Record<string, unknown>, onDirty: () => void) {
 
 // ── Language data ─────────────────────────────────────────────────────────────
 const SL_MOST_SELECTED = ["Tamil", "English", "Sinhala"];
-const SL_HIGHLIGHTED = new Set(["Tamil", "English"]);
+const SL_HIGHLIGHTED = new Set(["Tamil"]);
 const MAIN_LANGUAGES = ALL_LANGUAGES.filter((l) => !SL_MOST_SELECTED.includes(l));
 const leftWidth = "w-[100px] sm:w-[120px] md:w-[140px] lg:w-[250px]";
 

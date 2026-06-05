@@ -18,6 +18,7 @@ import {
   NotifPhotoAddedIcon,
   NotifPaymentSuccessIcon,
   NotifPaymentFailedIcon,
+  ProfileCompletionRequestIcon,
 } from "@/src/assets/Icons";
 import { getNotifications, markNotificationRead } from "../../../lib/api/notifications";
 import { getProfilePhotoSrc } from "../../../utils/profilePhoto";
@@ -27,7 +28,7 @@ import NotificationSkeleton from "../../../components/app/skeleton-layout/Notifi
 
 const SKELETON_COUNT = 5;
 
-// ── Time helper ──────────────────────────────────────────────────────────────
+// Time helper
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -41,7 +42,7 @@ function timeAgo(dateStr: string): string {
   return `${Math.floor(days / 7)} week${Math.floor(days / 7) > 1 ? "s" : ""} ago`;
 }
 
-// ── CTA config per notification type ─────────────────────────────────────────
+// CTA config per notification type
 
 function getCtaConfig(type: string, fromUserId?: string): { label: string; href: string } {
   const profileHref = fromUserId ? `/user-profile?id=${fromUserId}` : "/matches";
@@ -62,18 +63,19 @@ function getCtaConfig(type: string, fromUserId?: string): { label: string; href:
     case "interest_received":     return { label: "View",              href: "/interested" };
     case "interest_accepted":     return { label: "View match",        href: "/interested" };
     case "interest_declined":     return { label: "View",              href: "/interested" };
-    case "interest_reminder":     return { label: "View",              href: "/interested" };
+    case "interest_reminder":     return { label: "Send Reminder",     href: profileHref };
     case "elite_expiring_7d":
     case "elite_expiring_3d":
     case "elite_expired":         return { label: "Renew",             href: "/elite-upgrade" };
     case "promo":                 return { label: "Claim offer",       href: "/elite-upgrade" };
     case "profile_viewed":        return { label: "See all viewers",   href: "/my-profile" };
+    case "profile_completion_request": return { label: "Update profile", href: "/my-profile" };
     case "birthday":              return { label: "View matches",      href: "/matches" };
     default:                      return { label: "View",              href: "/matches" };
   }
 }
 
-// ── Avatar ──────────────────────────────────────────────────────────────────
+// Avatar
 
 const ICON_CLS = "h-5 w-5 md:h-6 md:w-6 text-[#B31B38]";
 
@@ -91,6 +93,7 @@ function NotifIcon({ type }: { type: string }) {
     case "promo":                 return <NotifPromoIcon className={ICON_CLS} />;
     case "birthday":              return <CakeIcon className={ICON_CLS} />;
     case "profile_viewed":        return <ProfileBoxIcon className={ICON_CLS} />;
+    case "profile_completion_request": return <ProfileCompletionRequestIcon className={ICON_CLS} />;
     default:
       if (type.startsWith("elite")) return <EliteCrownIcon className="h-5 w-5 md:h-6 md:w-6 text-[#A97216]" />;
       return null;
@@ -139,7 +142,7 @@ function NotifAvatar({ item }: { item: AppNotification }) {
     );
   }
 
-  if (item.fromUser) {
+  if (item.fromUser && item.type !== "profile_completion_request") {
     const photoSrc = item.fromUser.photoUrl
       ?? (item.fromUser.gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png");
     return (
@@ -183,8 +186,8 @@ function NotificationRow({
 
   return (
     <div
-      className="select-none font-poppins flex items-center justify-between border-b gap-4 border-[#EAEAEA] bg-light max-[370px]:px-2 px-4 py-3 sm:py-4 md:py-5 lg:py-6 md:px-4 rounded-[16px]"
-      onClick={markRead}
+      className="select-none font-poppins flex items-center justify-between border-b gap-4 border-[#EAEAEA] bg-light max-[370px]:px-2 px-4 py-3 sm:py-4 md:py-5 lg:py-6 md:px-4 rounded-[16px] cursor-pointer"
+      onClick={navigate}
     >
       <div className="flex min-w-0 items-center gap-3 md:gap-4 flex-1">
         <div className="shrink-0">
@@ -195,7 +198,7 @@ function NotificationRow({
           <div className="truncate text-dark text-[14px] sm:text-[16px] md:text-[18px] font-medium leading-[150%]">
             {item.title}
           </div>
-          <div className="mt-1 md:mt-1.5 line-clamp-2 text-secondary3 font-16 font-normal leading-[150%]">
+          <div className="mt-1 md:mt-1.5 md:line-clamp-2 text-secondary3 font-16 font-normal leading-[150%]">
             {item.type === "welcome"
               ? item.subtitle
               : item.subtitle
@@ -204,7 +207,7 @@ function NotificationRow({
           </div>
           {/* CTA below text on mobile */}
           <button
-            onClick={navigate}
+            onClick={(e) => e.stopPropagation()}
             className="sm:hidden max-[370px]:mt-0.5 mt-2 flex cursor-pointer items-center gap-0.5"
           >
             {!item.isRead ? <div className="h-2 w-2 rounded-full bg-[#B31B38]" /> : <div className="h-0 md:h-2 w-0 md:w-2" />}
@@ -218,7 +221,7 @@ function NotificationRow({
 
       {/* CTA on right on sm+ */}
       <button
-        onClick={navigate}
+        onClick={(e) => e.stopPropagation()}
         className="hidden sm:flex shrink-0 cursor-pointer items-center gap-0.5 md:gap-1.5"
       >
         {!item.isRead ? <div className="h-2 md:h-3 w-2 md:w-3 rounded-full bg-[#B31B38]" /> : <div className="h-2 md:h-3 w-2 md:w-3" />}
@@ -231,8 +234,7 @@ function NotificationRow({
   );
 }
 
-// ── Page ─────────────────────────────────────────────────────────────────────
-
+// Page 
 export default function NotificationsPage() {
   const queryClient = useQueryClient();
 
@@ -288,7 +290,7 @@ export default function NotificationsPage() {
         ) : (
           <div className={isBackgroundFetching ? "opacity-60 pointer-events-none transition-opacity" : ""}>
             {data
-              .filter((n) => !n.type.startsWith("interest"))
+              .filter((n) => !n.type.startsWith("interest") || n.type === "interest_reminder")
               .map((item) => (
                 <NotificationRow key={item.id} item={item} onRead={handleRead} />
               ))}

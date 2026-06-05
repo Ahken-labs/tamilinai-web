@@ -222,7 +222,7 @@ export default function AppHeader() {
   return (
     <>
       <header
-        className="font-poppins select-none sticky top-0 z-50 w-full bg-white/60 backdrop-blur-sm transition-transform duration-300"
+        className="font-poppins select-none sticky top-0 z-[100] w-full bg-white/60 backdrop-blur-sm transition-transform duration-300"
         style={isMobile && !navVisible ? { transform: "translateY(-100%)" } : undefined}
       >
         <div className="max-w-[1920px] mx-auto flex px-5 lg:px-10 max-[320px]:h-[56px] max-[768px]:h-[66px] h-[74px] max-[320px]:pt-2 pt-5 gap-5 min-[900px]:gap-6">
@@ -309,7 +309,7 @@ export default function AppHeader() {
 
               {/* Desktop settings dropdown */}
               <div
-                className={`absolute top-full right-0 mt-5 z-50 ${trustBadge && !isElite ? "w-[309px]" : "w-[270px]"} rounded-[16px] bg-white shadow-[0_0_16px_0_rgba(0,0,0,0.08)] p-2 transition-all duration-200 ease-out origin-top-right ${settingsOpen
+                className={`absolute top-full right-0 mt-5 z-[200] ${trustBadge && !isElite ? "w-[309px]" : "w-[270px]"} rounded-[16px] bg-white shadow-[0_0_16px_0_rgba(0,0,0,0.08)] p-2 transition-all duration-200 ease-out origin-top-right ${settingsOpen
                   ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
                   : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
                   }`}
@@ -442,14 +442,14 @@ export default function AppHeader() {
       <div
         onClick={closeMobile}
         aria-hidden="true"
-        className={`fixed inset-0 z-[55] bg-black/40 backdrop-blur-[2px] min-[900px]:hidden
+        className={`fixed inset-0 z-[110] bg-black/40 backdrop-blur-[2px] min-[900px]:hidden
           transition-opacity duration-300 ease-in-out
           ${mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
       />
 
       {/* Drawer panel */}
       <div
-        className={`fixed top-0 right-0 h-full z-[60] w-[min(72vw,320px)] bg-white
+        className={`fixed top-0 right-0 h-full z-[120] w-[min(72vw,320px)] bg-white
           shadow-[-8px_0_32px_0_rgba(0,0,0,0.13)] flex flex-col min-[900px]:hidden
           transition-transform duration-300 ease-[cubic-bezier(.4,0,.2,1)]
           ${mobileOpen ? "translate-x-0" : "translate-x-full"}`}

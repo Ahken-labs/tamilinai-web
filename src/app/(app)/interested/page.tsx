@@ -9,39 +9,18 @@ import InterestCard from "../../../components/app/InterestCard";
 import InterestCardSkeleton from "../../../components/app/skeleton-layout/InterestCardSkeleton";
 import { getSentInterests, getReceivedInterests } from "../../../lib/api/interests";
 import { sentInterestToCard, receivedInterestToCard } from "../../../types/interest";
-import { RedDotIcon } from "../../../assets/Icons";
+import { RedDotIcon, EmptyReceivedIcon, EmptySentIcon, EmptyAcceptedIcon, EmptyDeclinedIcon } from "../../../assets/Icons";
 import { readMeCache } from "../../../components/AppHeader";
+import EmptyState from "@/src/components/common-layout/EmptyState";
 
 const SKELETON_COUNT = 4;
 
-const EMPTY_MESSAGES: Record<string, { title: string; subtitle: string }> = {
-  received: {
-    title: "No interests received yet",
-    subtitle: "When someone likes your profile and sends an interest, it will appear here.",
-  },
-  sent: {
-    title: "You haven't sent any interests yet",
-    subtitle: "Browse matches and send an interest to someone you like — they could be the one!",
-  },
-  accepted: {
-    title: "No accepted connections yet",
-    subtitle: "Accept a received interest or wait for yours to be accepted. Good things take time.",
-  },
-  declined: {
-    title: "Nothing declined",
-    subtitle: "All clear here — no declined interests on either side.",
-  },
+const EMPTY_CONTENT = {
+  received: { icon: <EmptyReceivedIcon />, title: "No interests received yet", subtitle: "Don't wait! The best way to get noticed is to stay active and send interests to others first.", btText: "Find your match" },
+  sent:     { icon: <EmptySentIcon />,     title: "You haven't made a move yet", subtitle: "Take the first step! Send an interest to let someone know you want to connect.", btText: "Explore profiles" },
+  accepted: { icon: <EmptyAcceptedIcon />, title: "No accepted connections yet", subtitle: "Once someone accepts your interest, or you accept theirs, you can start chatting with them here.", btText: "Send more interests" },
+  declined: { icon: <EmptyDeclinedIcon />, title: "No declined profiles", subtitle: "Profiles you pass on, and those who politely pass on your interest, will be archived here. So far, your slate is clean!", btText: "Explore matches" },
 };
-
-function EmptyState({ tab }: { tab: string }) {
-  const msg = EMPTY_MESSAGES[tab] ?? EMPTY_MESSAGES.received;
-  return (
-    <div className="flex flex-col items-center justify-center py-24 text-center px-4">
-      <p className="font-poppins text-[16px] font-semibold text-[#444444]">{msg.title}</p>
-      <p className="mt-2 font-poppins text-[14px] font-normal text-[#888888] max-w-[360px]">{msg.subtitle}</p>
-    </div>
-  );
-}
 
 function InterestedContent() {
   const router = useRouter();
@@ -109,7 +88,7 @@ function InterestedContent() {
   });
 
   const hasNewReceived = receivedItems.some((i) => i.isNew);
-  const hasNewSent = sentItems.some((i) => i.isNew || i.isReminderDue);
+  const hasNewSent = sentItems.some((i) => i.isNew);
   const hasNewAccepted = acceptedItems.some((i) => i.isNew);
   const hasNewDeclined = declinedItems.some((i) => i.isNew);
 
@@ -173,7 +152,7 @@ function InterestedContent() {
             </div>
           </div>
         ) : (
-          <EmptyState tab={activeTab} />
+          <EmptyState {...(EMPTY_CONTENT[activeTab as keyof typeof EMPTY_CONTENT] ?? EMPTY_CONTENT.received)} onAction={() => router.push("/matches")} />
         )}
       </div>
     </main>

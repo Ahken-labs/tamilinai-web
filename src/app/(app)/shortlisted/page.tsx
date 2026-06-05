@@ -10,6 +10,8 @@ import type { BrowseProfile } from "../../../types/user";
 import type { Profile } from "../../../types/profile";
 import { formatHeight } from "../../../utils/heightUtils";
 import { calculateAge } from "../../../utils/calculateAge";
+import EmptyState from "@/src/components/common-layout/EmptyState";
+import { EmptyShortlistedIcon } from "@/src/assets/Icons";
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 
@@ -82,12 +84,14 @@ function ShortlistedContent() {
             </p>
           </div>
         ) : profiles.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 text-center">
-            <p className="font-poppins text-[16px] font-medium text-[#888888]">
-              No shortlisted profiles yet.
-              <br />- Team Inai -
-            </p>
-          </div>
+          <EmptyState
+            icon={<EmptyShortlistedIcon />}
+            title="Your shortlist is empty"
+            subtitle="Tap the bookmark icon on profiles you like to safely save them here for later."
+            btText="Browse profiles"
+            className="mx-0"
+            onAction={() => window.location.href = "/matches"}
+          />
         ) : (
           <div className={showFetchingOverlay ? "opacity-60 pointer-events-none transition-opacity" : ""}>
             {profiles.map((profile) => (

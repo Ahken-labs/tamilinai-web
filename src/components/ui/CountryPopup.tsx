@@ -31,8 +31,8 @@ export function SelectionPopup({ title, subtitle, onClose, children, onConfirm, 
               <h2 className="fonts-24 font-semibold leading-[150%] text-dark">{title}</h2>
               <p className="mt-1 fonts-16 font-normal leading-[150%] text-dark">{subtitle}</p>
             </div>
-            <button type="button" onClick={onClose} className="shrink-0 cursor-pointer" aria-label="Close">
-              <CloseCircleIcon />
+            <button type="button" onClick={onClose} className="shrink-0 cursor-pointer transition hover:opacity-80" aria-label="Close">
+              <CloseCircleIcon className="h-8 w-8 transition-transform duration-200 hover:scale-110 active:scale-95" />
             </button>
           </div>
         </div>

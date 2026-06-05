@@ -164,24 +164,17 @@ export default function CloseAccountPage() {
                 ))}
               </div>
 
-              <textarea
-                value={otherText}
-                onChange={(e) => setOtherText(e.target.value)}
-                disabled={selected !== 5}
-                placeholder={
-                  selected === 5
-                    ? "Tell us more"
-                    : "Please let us know what happened so we can keep our community safe."
-                }
-                className={`
-                  w-full h-20 p-4 mt-4 sm:mt-5 md:mt-6 rounded-[20px]
-                  border font-16 leading-[150%] resize-none outline-none
-                  ${selected === 5
-                    ? "border-[#767676] bg-[#F2F2F2] text-[#656565]"
-                    : "border-[#767676] bg-[#F2F2F2] text-[#656565]"}
-                  focus:border-[#B31B38]
-                `}
-              />
+              <div
+                className="overflow-hidden transition-all duration-300 ease-in-out"
+                style={{ maxHeight: selected === 5 ? 120 : 0, marginTop: selected === 5 ? undefined : 0 }}
+              >
+                <textarea
+                  value={otherText}
+                  onChange={(e) => setOtherText(e.target.value)}
+                  placeholder="Tell us more"
+                  className="w-full h-20 p-4 mt-4 sm:mt-5 md:mt-6 rounded-[20px] border border-[#767676] bg-[#F2F2F2] text-[#656565] font-16 leading-[150%] resize-none outline-none focus:border-[#B31B38]"
+                />
+              </div>
             </>
           ) : step === 2 ? (
             <div className="mt-4 sm:mt-5 md:mt-6 flex flex-col">
@@ -275,17 +268,19 @@ export default function CloseAccountPage() {
               ) : (
                 <Button
                   text="Cancel"
-                  onPress={() => setStep(2)}
+                  onPress={() => router.push("/matches")}
                   className="flex-1 w-full !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
                 />
               )}
 
               {step === 1 ? (
-                <Button
-                  text="Continue"
-                  onPress={handleContinue}
-                  className="flex-1 !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
-                />
+                <div className="flex-1">
+                  <Button
+                    text="Continue"
+                    onPress={handleContinue}
+                    className="w-full !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
+                  />
+                </div>
               ) : step === 2 ? (
                 <Button
                   text="Proceed to delete"

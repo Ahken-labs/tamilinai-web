@@ -86,6 +86,8 @@ export default function TrustBadgePage() {
         subtitleMarginTop="mt-4 sm:mt-5 md:mt-6.5 lg:mt-8"
         childrenTopMargin="mt-4 sm:mt-5 md:mt-6"
         paddingBottom="pb-4 sm:pb-5 md:pb-6"
+        rounded="rounded-[32px] sm:rounded-[20px]"
+        paddingHorizontal = "max-[500px]:px-3 px-4 md:px-6"
       >
         <div>
           {/* Progress bar */}
@@ -105,7 +107,7 @@ export default function TrustBadgePage() {
           {/* Tasks */}
           <div className="mt-5 flex flex-col gap-4 sm:mt-5 md:mt-6">
             {tasks.map(({ text, Icon, verified, actionLabel, href }) => (
-              <div key={text} className="flex items-center justify-between gap-4 px-4 py-1 md:py-2">
+              <div key={text} className="flex items-center justify-between max-[500px]:gap-2 gap-4 max-[500px]:px-2 px-4 py-1 md:py-2">
                 <div className="flex min-w-0 items-center gap-2 sm:gap-3 md:gap-4">
                   <Icon className="h-4 sm:h-4.5 md:h-5.5 lg:h-6 w-4 sm:w-4.5 md:w-5.5 lg:w-6 shrink-0 text-dark" />
                   <span className="text-dark font-16 font-normal leading-[150%]">{text}</span>

@@ -47,7 +47,7 @@ export default function IncomingPhotoRequestCard({ profileId, profileName, type,
           ? `${profileName} wishes to view your photo.`
           : `${profileName} wishes to view your photo.`}
       </p>
-      <div className="mt-4 md:mt-5 flex gap-3 md:gap-4">
+      <div className="mt-4 md:mt-5 flex flex-row max-[500px]:flex-col gap-3 md:gap-4">
         {type === "upload" ? (
           <Button
             text={loading === "accept" ? "..." : "Upload photo"}

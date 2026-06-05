@@ -20,7 +20,7 @@ import MatchPreferencesCard from "@/src/components/profile/MatchPreferencesCard"
 import MatchInterestCard from "@/src/components/profile/MatchInterestCard";
 import IncomingPhotoRequestCard from "@/src/components/profile/IncomingPhotoRequestCard";
 import Match_ContactSection_Card from "@/src/components/profile/Match_ContactSection_Card";
-import { getProfile, requestPhotoAccess, requestPhotoUpload } from "@/src/lib/api/profiles";
+import { getProfile, requestPhotoAccess, requestPhotoUpload, requestProfileCompletion } from "@/src/lib/api/profiles";
 import { getMe } from "@/src/lib/api/user";
 import type { ProfileDetail } from "@/src/types/user";
 import { UserProfileSkeletonBody } from "@/src/components/app/skeleton-layout/UserProfileSkeleton";
@@ -40,7 +40,7 @@ function formatIncome(amount?: number, currency?: string): string {
   return `${amount.toLocaleString()} ${c}`;
 }
 
-type FieldRow = { label: string; value: string };
+type FieldRow = { label: string; value: string; fieldKey?: string };
 type SectionData = {
   icon: React.ReactNode;
   title: string;
@@ -79,27 +79,27 @@ function buildSections(p: ProfileDetail, interestStatus: "sent" | "received" | "
       title: "Basic Info",
       left: [
         { label: "Gender", value: p.gender ? p.gender.charAt(0).toUpperCase() + p.gender.slice(1) : "Not specified" },
-        { label: "Marital status", value: (pr.maritalStatus ? (MARITAL_FROM_BE[pr.maritalStatus] ?? pr.maritalStatus) : "Not specified") },
+        { label: "Marital status", value: (pr.maritalStatus ? (MARITAL_FROM_BE[pr.maritalStatus] ?? pr.maritalStatus) : "Not specified"), fieldKey: pr.maritalStatus ? undefined : 'maritalStatus' },
         { label: "Languages spoken", value: pr.languagesSpoken?.join(", ") || "Not specified" },
       ],
       right: [
-        { label: "Height", value: pr.heightCm ? formatHeight(pr.heightCm) : "Not specified" },
-        { label: "Weight", value: formatWeight(pr.weightKg) },
+        { label: "Height", value: pr.heightCm ? formatHeight(pr.heightCm) : "Not specified", fieldKey: pr.heightCm ? undefined : 'heightCm' },
+        { label: "Weight", value: formatWeight(pr.weightKg), fieldKey: pr.weightKg ? undefined : 'weightKg' },
         { label: "Any physical challenge", value: pr.hasPhysicalChallenge ? (pr.disabilityType ?? "Yes") : "No" },
-        { label: "Body type", value: (pr.physicalBuild ? (BUILD_FROM_BE[pr.physicalBuild] ?? pr.physicalBuild) : "Not specified") },
+        { label: "Body type", value: (pr.physicalBuild ? (BUILD_FROM_BE[pr.physicalBuild] ?? pr.physicalBuild) : "Not specified"), fieldKey: pr.physicalBuild ? undefined : 'physicalBuild' },
       ],
     },
     {
       icon: <WorkBriefcaseIcon strokeWidth={2} className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
       title: "Career & Education",
       left: [
-        { label: "Education", value: pr.education ?? "Not specified" },
-        { label: "Education detail", value: pr.educationDetail ?? "Not specified" },
+        { label: "Education", value: pr.education ?? "Not specified", fieldKey: pr.education ? undefined : 'education' },
+        { label: "Education detail", value: pr.educationDetail ?? "Not specified", fieldKey: pr.educationDetail ? undefined : 'educationDetail' },
       ],
       right: [
-        { label: "Sector", value: pr.sector ?? "Not specified" },
-        { label: "Occupation", value: pr.occupation ?? "Not specified" },
-        { label: "Monthly income", value: formatIncome(pr.monthlyIncome, pr.incomeCurrency) },
+        { label: "Sector", value: pr.sector ?? "Not specified", fieldKey: pr.sector ? undefined : 'sector' },
+        { label: "Occupation", value: pr.occupation ?? "Not specified", fieldKey: pr.occupation ? undefined : 'occupation' },
+        { label: "Monthly income", value: formatIncome(pr.monthlyIncome, pr.incomeCurrency), fieldKey: pr.monthlyIncome ? undefined : 'monthlyIncome' },
       ],
     },
     ...(interestStatus === "declined"
@@ -152,42 +152,42 @@ function buildSections(p: ProfileDetail, interestStatus: "sent" | "received" | "
       icon: <StepFamilyIcon strokeWidth="4" className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
       title: "Family Background",
       left: [
-        { label: "Father's occupation", value: pr.fatherOccupation ?? "Not specified" },
-        { label: "Mom's occupation", value: pr.motherOccupation ?? "Not specified" },
+        { label: "Father's occupation", value: pr.fatherOccupation ?? "Not specified", fieldKey: pr.fatherOccupation ? undefined : 'fatherOccupation' },
+        { label: "Mom's occupation", value: pr.motherOccupation ?? "Not specified", fieldKey: pr.motherOccupation ? undefined : 'motherOccupation' },
         { label: "Family origin / Ancestral", value: pr.familyOrigin ?? "Not specified" },
       ],
       right: [
-        { label: "Number of brother(s)", value: pr.brotherCount != null ? String(pr.brotherCount) : "Not specified" },
-        { label: "Brother(s) married", value: pr.brothersMarried != null ? String(pr.brothersMarried) : "Not specified" },
-        { label: "Number of sister(s)", value: pr.sisterCount != null ? String(pr.sisterCount) : "Not specified" },
-        { label: "Sister(s) married", value: pr.sistersMarried != null ? String(pr.sistersMarried) : "Not specified" },
+        { label: "Number of brother(s)", value: pr.brotherCount != null ? String(pr.brotherCount) : "Not specified", fieldKey: pr.brotherCount != null ? undefined : 'brotherCount' },
+        { label: "Brother(s) married", value: pr.brothersMarried != null ? String(pr.brothersMarried) : "Not specified", fieldKey: pr.brothersMarried != null ? undefined : 'brothersMarried' },
+        { label: "Number of sister(s)", value: pr.sisterCount != null ? String(pr.sisterCount) : "Not specified", fieldKey: pr.sisterCount != null ? undefined : 'sisterCount' },
+        { label: "Sister(s) married", value: pr.sistersMarried != null ? String(pr.sistersMarried) : "Not specified", fieldKey: pr.sistersMarried != null ? undefined : 'sistersMarried' },
       ],
     },
     {
       icon: <CasteCircleIcon strokeWidth="2" className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
       title: "Religion and Caste",
-      left: [{ label: "Religion", value: pr.religion ?? "Not specified" }],
-      right: [{ label: "Caste", value: pr.caste ?? "Not specified" }],
+      left: [{ label: "Religion", value: pr.religion ?? "Not specified", fieldKey: pr.religion ? undefined : 'religion' }],
+      right: [{ label: "Caste", value: pr.caste ?? "Not specified", fieldKey: pr.caste ? undefined : 'caste' }],
     },
     {
       icon: <LocationPinIcon strokeWidth="2" className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
       title: "Location",
       left: [
-        { label: "City", value: pr.city ?? "Not specified" },
-        { label: "Country", value: pr.country ?? "Not specified" },
+        { label: "City", value: pr.city ?? "Not specified", fieldKey: pr.city ? undefined : 'city' },
+        { label: "Country", value: pr.country ?? "Not specified", fieldKey: pr.country ? undefined : 'country' },
       ],
       right: [
-        { label: "Citizenship", value: pr.citizenship ?? "Not specified" },
-        { label: "Resident status", value: (pr.residentStatus ? (RESIDENT_FROM_BE[pr.residentStatus] ?? pr.residentStatus) : "Not specified") },
+        { label: "Citizenship", value: pr.citizenship ?? "Not specified", fieldKey: pr.citizenship ? undefined : 'citizenship' },
+        { label: "Resident status", value: (pr.residentStatus ? (RESIDENT_FROM_BE[pr.residentStatus] ?? pr.residentStatus) : "Not specified"), fieldKey: pr.residentStatus ? undefined : 'residentStatus' },
       ],
     },
     {
       icon: <WineGlassIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
       title: "Lifestyle",
-      left: [{ label: "Diet habit", value: (pr.dietHabit && DIET_FROM_BE[pr.dietHabit]) ?? "Not specified" }],
+      left: [{ label: "Diet habit", value: (pr.dietHabit && DIET_FROM_BE[pr.dietHabit]) ?? "Not specified", fieldKey: pr.dietHabit ? undefined : 'dietHabit' }],
       right: [
-        { label: "Smoking habit", value: (pr.smokingHabit && SMOKE_FROM_BE[pr.smokingHabit]) ?? "Not specified" },
-        { label: "Drinking habit", value: (pr.drinkingHabit && DRINK_FROM_BE[pr.drinkingHabit]) ?? "Not specified" },
+        { label: "Smoking habit", value: (pr.smokingHabit && SMOKE_FROM_BE[pr.smokingHabit]) ?? "Not specified", fieldKey: pr.smokingHabit ? undefined : 'smokingHabit' },
+        { label: "Drinking habit", value: (pr.drinkingHabit && DRINK_FROM_BE[pr.drinkingHabit]) ?? "Not specified", fieldKey: pr.drinkingHabit ? undefined : 'drinkingHabit' },
       ],
     },
     ...(pr.hobbies && pr.hobbies.length > 0
@@ -267,9 +267,13 @@ function UserProfileContent() {
   }, [isLoading, isError, profile, router]);
 
   const [photoActionLoading, setPhotoActionLoading] = useState(false);
+  const [photoLightbox, setPhotoLightbox] = useState(false);
   const [optimisticPhotoAccess, setOptimisticPhotoAccess] = useState<'locked' | 'pending' | 'accepted' | 'declined' | null | undefined>(undefined);
   const [optimisticUploadRequested, setOptimisticUploadRequested] = useState<boolean | undefined>(undefined);
   const [incomingDismissed, setIncomingDismissed] = useState(false);
+  const [sessionRequestedFields, setSessionRequestedFields] = useState<Set<string>>(
+    () => new Set(profile?.profileRequestedFields ?? [])
+  );
 
   if (isError && !isLoading && !profile) return null;
 
@@ -345,6 +349,20 @@ function UserProfileContent() {
 
   const sections = buildSections(profile, interestStatus, handleInterestAction, profile.contactBlurred, viewerIsElite);
 
+  const apiRequestStatus = profile.profileRequestStatus ?? 'none';
+  const requestsLocked = apiRequestStatus === 'notified';
+  const allRequested = apiRequestStatus === 'notified';
+
+  async function handleFieldRequest(fieldKey: string) {
+    if (requestsLocked) return;
+    setSessionRequestedFields(prev => new Set([...prev, fieldKey]));
+    try {
+      await requestProfileCompletion(profileId, [fieldKey]);
+    } catch {
+      setSessionRequestedFields(prev => { const n = new Set(prev); n.delete(fieldKey); return n; });
+    }
+  }
+
   const profileInterestStatus = profile.interestStatus as string | undefined;
   const isConnected = profileInterestStatus === "accepted";
 
@@ -372,7 +390,10 @@ function UserProfileContent() {
         {/* Image + right details row */}
         <div className="flex max-[370px]:gap-3 max-[500px]:gap-4 gap-6 sm:px-6 px-4 max-[370px]:px-2 max-[500px]:pt-4 pt-6">
           {/* Image */}
-          <div className="relative shrink-0 w-[165px] h-[218.664px] rounded-[20px] overflow-hidden bg-[#D9D9D9] transition-all duration-300">
+          <div
+            className="relative shrink-0 w-[165px] h-[218.664px] rounded-[20px] overflow-hidden bg-[#D9D9D9] transition-all duration-300"
+            onClick={hasPhoto ? () => setPhotoLightbox(true) : undefined}
+          >
             {hasPhoto ? (
               <ProtectedPhoto
                 src={photoSrc}
@@ -470,7 +491,7 @@ function UserProfileContent() {
             </>
           )}
           {sections.filter((s) => !s.hidden).map((section) => (
-            <SectionCard key={section.title} section={section} />
+            <SectionCard key={section.title} section={section} sessionRequestedFields={sessionRequestedFields} allRequested={allRequested} requestsLocked={requestsLocked} onFieldRequest={handleFieldRequest} />
           ))}
         </div>
       </div>
@@ -481,7 +502,10 @@ function UserProfileContent() {
           {/* Sticky Image */}
           <div className="shrink-0 min-[520px]:sticky min-[520px]:top-[172px] mb-0 min-[520px]:mb-16 sm:mb-18 md:mb-26">
             <div className="relative h-[133px] sm:h-[160px] md:h-[213px] lg:h-[266px] w-[100px] sm:w-[120px] md:w-[160px] lg:w-[200px]">
-              <div className="relative z-10 h-[133px] sm:h-[160px] md:h-[213px] lg:h-[266px] overflow-hidden rounded-[16px] bg-[#D9D9D9]">
+              <div
+                className="relative z-10 h-[133px] sm:h-[160px] md:h-[213px] lg:h-[266px] overflow-hidden rounded-[16px] bg-[#D9D9D9]"
+                onClick={hasPhoto ? () => setPhotoLightbox(true) : undefined}
+              >
                 {hasPhoto ? (
                   <ProtectedPhoto
                     src={photoSrc}
@@ -650,7 +674,7 @@ function UserProfileContent() {
                 </>
               )}
               {sections.filter((s) => !s.hidden).map((section) => (
-                <SectionCard key={section.title} section={section} />
+                <SectionCard key={section.title} section={section} sessionRequestedFields={sessionRequestedFields} allRequested={allRequested} requestsLocked={requestsLocked} onFieldRequest={handleFieldRequest} />
               ))}
             </div>
           </div>
@@ -674,6 +698,40 @@ function UserProfileContent() {
           trigger={upgradePopupTrigger}
           onClose={() => setUpgradePopupTrigger(null)}
         />
+      )}
+
+      {/* Photo lightbox */}
+      {photoLightbox && hasPhoto && (
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4"
+          onClick={() => setPhotoLightbox(false)}
+          style={{ animation: "fadeIn 0.2s ease" }}
+        >
+          <style>{`
+            @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+            @keyframes zoomIn { from { transform: scale(0.85); opacity: 0 } to { transform: scale(1); opacity: 1 } }
+          `}</style>
+          <div
+            className="relative overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+            style={{ animation: "zoomIn 0.25s cubic-bezier(0.34,1.56,0.64,1)" }}
+          >
+            <ProtectedPhoto
+              src={photoSrc}
+              alt={profile.name}
+              width={800}
+              height={1000}
+              className="max-h-[90vh] max-w-[90vw] w-auto h-auto object-contain"
+            />
+          </div>
+          <button
+            className="absolute top-4 right-4 flex h-[36px] w-[36px] items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white text-xl transition-colors"
+            onClick={() => setPhotoLightbox(false)}
+            aria-label="Close"
+          >
+            ✕
+          </button>
+        </div>
       )}
     </main>
   );
@@ -712,7 +770,14 @@ function QuickRow({
   );
 }
 
-function SectionCard({ section }: { section: SectionData }) {
+type RequestProps = {
+  sessionRequestedFields: Set<string>;
+  allRequested: boolean;
+  requestsLocked: boolean;
+  onFieldRequest: (key: string) => void;
+};
+
+function SectionCard({ section, sessionRequestedFields, allRequested, requestsLocked, onFieldRequest }: { section: SectionData } & RequestProps) {
   return (
     <div id={section.title === "Contact" ? "contact-section" : undefined} className="rounded-[16px] bg-light max-[370px]:px-3 max-[370px]:py-2 px-4 py-4 md:py-5 md:py-5 font-poppins">
       <div className="flex items-center justify-between max-[370px]:gap-1 gap-2 text-dark md:gap-3">
@@ -727,15 +792,15 @@ function SectionCard({ section }: { section: SectionData }) {
         section.extra
       ) : (
         <div className="grid grid-cols-1 gap-0 min-[700px]:grid-cols-2 min-[700px]:gap-4 min-[767px]:max-[867px]:grid-cols-1 min-[767px]:max-[867px]:gap-0">
-          <InfoColumn items={section.left} />
-          <InfoColumn items={section.right ?? []} borderLeft />
+          <InfoColumn items={section.left} sessionRequestedFields={sessionRequestedFields} allRequested={allRequested} requestsLocked={requestsLocked} onFieldRequest={onFieldRequest} />
+          <InfoColumn items={section.right ?? []} borderLeft sessionRequestedFields={sessionRequestedFields} allRequested={allRequested} requestsLocked={requestsLocked} onFieldRequest={onFieldRequest} />
         </div>
       )}
     </div>
   );
 }
 
-function InfoColumn({ items, borderLeft = false }: { items: FieldRow[]; borderLeft?: boolean }) {
+function InfoColumn({ items, borderLeft = false, sessionRequestedFields, allRequested, requestsLocked, onFieldRequest }: { items: FieldRow[]; borderLeft?: boolean } & RequestProps) {
   return (
     <div
       className={`flex flex-col max-[500px]:gap-[11px] gap-3 max-[500px]:mt-2 mt-3 md:mt-4 font-poppins ${
@@ -744,12 +809,28 @@ function InfoColumn({ items, borderLeft = false }: { items: FieldRow[]; borderLe
           : ""
       }`}
     >
-      {items.map((item) => (
-        <div key={item.label} className="grid grid-cols-1 min-[310px]:grid-cols-2 gap-x-4 gap-y-1 items-start">
-          <span className="text-[14px] md:text-[16px] font-normal leading-[150%] text-secondary3">{item.label}</span>
-          <span className="text-[14px] md:text-[16px] font-normal leading-[150%] text-dark break-words">{item.value}</span>
-        </div>
-      ))}
+      {items.map((item) => {
+        const isRequested = !!item.fieldKey && (sessionRequestedFields.has(item.fieldKey) || allRequested);
+        const canRequest = !!item.fieldKey && item.value === "Not specified" && !isRequested && !requestsLocked;
+        return (
+          <div key={item.label} className="grid grid-cols-1 min-[310px]:grid-cols-2 gap-x-4 gap-y-1 items-start">
+            <span className="text-[14px] md:text-[16px] font-normal leading-[150%] text-secondary3">{item.label}</span>
+            {isRequested ? (
+              <span className="text-[14px] md:text-[16px] font-normal leading-[150%] text-[#AAAAAA]">Requested</span>
+            ) : canRequest ? (
+              <button
+                type="button"
+                onClick={() => onFieldRequest(item.fieldKey!)}
+                className="text-left text-[14px] md:text-[16px] font-normal leading-[150%] text-dark underline cursor-pointer"
+              >
+                Request
+              </button>
+            ) : (
+              <span className="text-[14px] md:text-[16px] font-normal leading-[150%] text-dark break-words">{item.value}</span>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

@@ -74,3 +74,7 @@ export function declinePhotoRequest(requesterId: string): Promise<{ message: str
 export function revealContact(userId: string): Promise<{ phone?: string; countryCode?: string; email?: string }> {
   return http(`/api/profiles/${userId}/contact`, { method: 'POST' });
 }
+
+export function requestProfileCompletion(userId: string, fields: string[]): Promise<{ status: 'pending' | 'notified' }> {
+  return http(`/api/profiles/${userId}/completion-request`, { method: 'POST', body: JSON.stringify({ fields }) });
+}
