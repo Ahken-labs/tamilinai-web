@@ -9,8 +9,6 @@ import { GoHeartFill } from "react-icons/go";
 import { FaWhatsapp } from "react-icons/fa";
 import { readMeCache } from "@/src/components/AppHeader";
 import { ELITE_PLANS, getPricing, getSavePct } from "@/src/constants/elitePlans";
-// import Link from "next/link";
-// import { CONTACT } from "@/src/lib/contact";
 
 const eliteBenefits = [
     { icon: <FaWhatsapp className="h-6 w-6" />, text: "Talk to matches directly", },
@@ -21,7 +19,6 @@ const eliteBenefits = [
 
 export default function EliteUpgradePage() {
     const router = useRouter();
-
     // Defer localStorage read to after mount to avoid SSR/client hydration mismatch
     const [countryCode, setCountryCode] = useState<string | undefined>(undefined);
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -87,9 +84,9 @@ export default function EliteUpgradePage() {
 
                             <Button text={`Get ${basic.label}`} iconLeft={<GoHeartFill className="w-3 md:w-4 h-3 md:h-4" />} className="w-full" onPress={() => goToCheckout(basic.key)} />
 
-                            <div className="flex items-start gap-2 text-left">
+                            <div className="flex md:items-start items-center gap-2 text-left">
                                 <CheckboxIcon
-                                    className="w-4 sm:w-5 md:w-6 h-4 sm:h-5 md:h-6 cursor-pointer"
+                                    className="w-6 h-6 cursor-pointer shrink-0"
                                     checked={agreed.basic}
                                     onClick={() => setAgreed((prev) => ({ ...prev, basic: !prev.basic }))}
                                 />
@@ -158,7 +155,7 @@ export default function EliteUpgradePage() {
 
                                 <div className="flex md:items-start items-center gap-2 text-left">
                                     <CheckboxIcon
-                                        className="w-4 sm:w-5 md:w-6 h-4 sm:h-5 md:h-6 cursor-pointer"
+                                        className="w-6 h-6 cursor-pointer shrink-0"
                                         checked={agreed.pro}
                                         onClick={() => setAgreed((prev) => ({ ...prev, pro: !prev.pro }))}
                                     />
@@ -228,7 +225,7 @@ export default function EliteUpgradePage() {
 
                                 <div className="flex md:items-start items-center gap-2 text-left">
                                     <CheckboxIcon
-                                        className="w-4 sm:w-5 md:w-6 h-4 sm:h-5 md:h-6 cursor-pointer"
+                                        className="w-6 h-6 cursor-pointer shrink-0"
                                         checked={agreed.max}
                                         onClick={() => setAgreed((prev) => ({ ...prev, max: !prev.max }))}
                                     />
@@ -254,7 +251,7 @@ export default function EliteUpgradePage() {
                         </div>
                     </div>
                     <div className="md:mt-10 mt-8">
-                        <h1 className="text-center text-dark font-semibold fonts-24">why Elite membership?</h1>
+                        <h1 className="text-center text-dark font-semibold fonts-24">Why Elite membership?</h1>
                         <div className="mt-4 md:mt-6">
                             {/* box */}
                             <div className="mt-4 md:mt-6 grid grid-cols-2 max-[500px]:gap-2 gap-3">
@@ -274,15 +271,6 @@ export default function EliteUpgradePage() {
                                 ))}
                             </div>
                         </div>
-                        {/* <div className="mt-8 sm:mt-10 md:mt-14 justify-center items-center flex gap-3 md:gap-4" >
-                            <span className="font-16 text-dark text-center">Have any queries or need help in making payment?</span>
-                            <Link
-                                href={CONTACT.whatsappUrl}
-                                className="font-16 py-0.5 px-3 text-dark border rounded-[41px] transition-colors duration-200 hover:bg-[#25D366] hover:border-[#075e54] hover:text-white active:bg-[#075e54] active:border-[#075e54] active:text-white"
-                            >
-                                WhatsApp us
-                            </Link>
-                        </div> */}
                     </div>
                 </div>
             </div>

@@ -7,8 +7,8 @@ import { ChevronIcon, Logo, TamilLanguageIcon } from "../assets/Icons";
 import Link from "next/link";
 
 const LANGUAGES = [
-  { label: "ஆங்கிலம்", value: "en" as const },
-  { label: "Tamil", value: "ta" as const },
+  { label: "English", value: "en" as const },
+  { label: "தமிழ்", value: "ta" as const },
 ];
 
 export default function Header() {
@@ -34,7 +34,6 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", close);
   }, []);
 
-  const currentLang = LANGUAGES.find((l) => l.value === lang) ?? LANGUAGES[0];
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/60 backdrop-blur-sm">
@@ -62,7 +61,7 @@ export default function Header() {
               className="flex items-center gap-2 cursor-pointer select-none"
             >
               <span className="font-tamil text-[16px] font-medium text-dark">
-                {currentLang.label}
+                {lang === "en" ? "ஆங்கிலம்" : "Tamil"}
               </span>
               <ChevronIcon open={desktopOpen} />
             </button>

@@ -484,7 +484,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
                     </div>
 
                     {showAboutPartner && (
-                      <div className="pt-6 md:pt-7 lg:pt-8 pb-6 flex flex-col gap-2">
+                      <div className="pt-6 md:pt-7 lg:pt-8 pb-0 flex flex-col gap-2">
                         <span className="font-poppins text-[16px] font-medium text-dark leading-[150%]">
                           About my partner (optional)
                         </span>

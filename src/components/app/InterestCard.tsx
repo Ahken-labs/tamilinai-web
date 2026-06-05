@@ -15,7 +15,7 @@ import {
   ChevronRightIcon,
 } from "../../assets/Icons";
 
-// ── Badge components ──────────────────────────────────────────────────────────
+// Badge components
 
 function SentBadge() {
   return (
@@ -57,7 +57,7 @@ function AcceptedCheckBadge() {
   );
 }
 
-// ── Photo section ─────────────────────────────────────────────────────────────
+// Photo section 
 
 function PhotoSection({ interest }: { interest: Interest }) {
   const isPrivate = interest.isPhotoPrivate;
@@ -91,7 +91,7 @@ function PhotoSection({ interest }: { interest: Interest }) {
     : status === "declined_by_me" ? <DeclinedBadge />
     : status === "skipped_by_them" ? <SkippedBadge />
     : <ReceivedBadge />;
-  const cornerClass = isSent ? "left-0" : "right-0";
+  const cornerClass = isSent ? "left-0 bottom-[-4px] left-[-8px]" : "right-0 bottom-[-4px] right-[-8px]";
 
   return (
     <div className="relative flex-shrink-0 max-[500px]:w-10 w-14 max-[500px]:h-10 h-14">
@@ -104,12 +104,12 @@ function PhotoSection({ interest }: { interest: Interest }) {
           sizes="56px"
         />
       </div>
-      <div className={`absolute bottom-0 ${cornerClass}`}>{badge}</div>
+      <div className={`absolute  ${cornerClass}`}>{badge}</div>
     </div>
   );
 }
 
-// ── Content helpers ───────────────────────────────────────────────────────────
+// Content helpers
 
 function getTitle(status: InterestCardStatus, name: string): string {
   switch (status) {
@@ -137,7 +137,7 @@ function getDatePrefix(status: InterestCardStatus): string {
   }
 }
 
-// ── Main component ────────────────────────────────────────────────────────────
+// Main component
 
 interface InterestCardProps {
   interest: Interest;
@@ -178,7 +178,7 @@ export default function InterestCard({ interest, isLast = false }: InterestCardP
 
   if (status === "sent_interest") {
     actionEl = (
-      <button className={actionClass(isNew)} onClick={goToProfile}>
+      <button className={actionClass(isNew)} onClick={(e) => { e.stopPropagation(); goToProfile(); }}>
         {isNew && <RedDotIcon className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3" />}
         {isNew ? "Send reminder" : "See status"}
         <ChevronRightIcon className="w-4 sm:w-5 h-4 sm:h-5 shrink-0 text-[#B31B38]" />
@@ -186,15 +186,15 @@ export default function InterestCard({ interest, isLast = false }: InterestCardP
     );
   } else if (status === "sent_reminder") {
     actionEl = (
-      <button className={actionClass(isNew)} onClick={goToProfile}>
-        {(isNew || interest.isReminderDue) && <RedDotIcon className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3" />}
+      <button className={actionClass(isNew)} onClick={(e) => { e.stopPropagation(); goToProfile(); }}>
+        {isNew && <RedDotIcon className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3" />}
         See reminder
         <ChevronRightIcon className="w-4 sm:w-5 h-4 sm:h-5 shrink-0 text-[#B31B38]" />
       </button>
     );
   } else if (isReceived) {
     actionEl = (
-      <button className={actionClass(isNew)} onClick={goToProfile}>
+      <button className={actionClass(isNew)} onClick={(e) => { e.stopPropagation(); goToProfile(); }}>
         {isNew && <RedDotIcon className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3" />}
         See full profile
         <ChevronRightIcon className="w-4 sm:w-5 h-4 sm:h-5 shrink-0 text-[#B31B38]" />
@@ -202,7 +202,7 @@ export default function InterestCard({ interest, isLast = false }: InterestCardP
     );
   } else if (status === "accepted_by_them" || status === "accepted_by_me") {
     actionEl = (
-      <button className={actionClass(isNew)} onClick={() => { markSeen(); router.push(`/user-profile?id=${profileId}#contact-section`); }}>
+      <button className={actionClass(isNew)} onClick={(e) => { e.stopPropagation(); markSeen(); router.push(`/user-profile?id=${profileId}#contact-section`); }}>
         {isNew && <RedDotIcon className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3" />}
         Start chat
         <ChevronRightIcon className="w-4 sm:w-5 h-4 sm:h-5 shrink-0 text-[#B31B38]" />
@@ -210,7 +210,7 @@ export default function InterestCard({ interest, isLast = false }: InterestCardP
     );
   } else if (status === "skipped_by_them") {
     actionEl = (
-      <button className={actionClass(isNew)} onClick={() => { markSeen(); router.push("/matches"); }}>
+      <button className={actionClass(isNew)} onClick={(e) => { e.stopPropagation(); markSeen(); router.push("/matches"); }}>
         {isNew && <RedDotIcon className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3" />}
         View similar matches
         <ChevronRightIcon className="w-4 sm:w-5 h-4 sm:h-5 shrink-0 text-[#B31B38]" />
@@ -218,7 +218,7 @@ export default function InterestCard({ interest, isLast = false }: InterestCardP
     );
   } else if (status === "declined_by_me") {
     actionEl = (
-      <button className={actionClass(isNew)} onClick={goToProfile}>
+      <button className={actionClass(isNew)} onClick={(e) => { e.stopPropagation(); goToProfile(); }}>
         {isNew && <RedDotIcon className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3" />}
         View profile
         <ChevronRightIcon className="w-4 sm:w-5 h-4 sm:h-5 shrink-0 text-[#B31B38]" />
@@ -227,7 +227,7 @@ export default function InterestCard({ interest, isLast = false }: InterestCardP
   }
 
   return (
-    <div onClick={markSeen} className={`font-poppins select-none flex items-center gap-3 md:gap-4 px-2 sm:px-3 md:px-4 py-4 md:py-6 ${isNew ? "bg-[#FFF0F3]" : "bg-white"} ${!isLast ? "border-b border-[#EAEAEA]" : "border-b border-[#EAEAEA]"}`}>
+    <div onClick={() => { markSeen(); status === "skipped_by_them" ? router.push("/matches") : status === "accepted_by_them" || status === "accepted_by_me" ? (markSeen(), router.push(`/user-profile?id=${profileId}#contact-section`)) : router.push(`/user-profile?id=${profileId}`); }} className={`font-poppins select-none flex items-center gap-3 md:gap-4 px-2 sm:px-3 md:px-4 py-4 md:py-6 cursor-pointer ${isNew ? "bg-[#FFF0F3]" : "bg-white"} ${!isLast ? "border-b border-[#EAEAEA]" : "border-b border-[#EAEAEA]"}`}>
       {/* Photo — non-navigating, CTA handles navigation */}
       <div className="shrink-0">
         <PhotoSection interest={interest} />

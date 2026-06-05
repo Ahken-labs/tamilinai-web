@@ -114,6 +114,8 @@ export interface ProfileDetail {
   contactBlurred?: boolean;
   viewerIsElite?: boolean;
   partnerPreferences?: PartnerPreferences | null;
+  profileRequestStatus?: 'none' | 'pending' | 'notified';
+  profileRequestedFields?: string[];
   profile: UserProfileSection & {
     photoAccess?: 'locked' | 'pending' | 'accepted' | 'declined' | null;
     familyOrigin?: string;

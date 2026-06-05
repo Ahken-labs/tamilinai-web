@@ -376,8 +376,6 @@ export default function MyProfilePage() {
 
       // Force section remount so they display fresh saved values
       setSectionRevision(r => r + 1);
-      // If profile now complete, switch to preview
-      if (fresh.isProfileComplete) setActiveTab("preview_my_profile");
     } catch (err) { console.error("Done save failed:", err); }
     finally { setSaving(false); }
   };
@@ -984,7 +982,7 @@ function buildSections(me: Me | null, onDirty: () => void, partnerCompleted: num
     {
       id: "partner",
       title: "Partner preference",
-      icon: <HeartIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
+      icon: <HeartIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" strokeWidth={2} />,
       completed: partnerCompleted,
       total: 12,
       body: <PartnerPreferenceSection key={key} onDirty={onDirty} />,
@@ -1082,16 +1080,19 @@ function ExpandableSection({
           <div className="flex items-center gap-1 md:gap-2 shrink-0">
             <span className="max-[410px]:hidden text-[14px] md:text-[16px] font-medium leading-[150%] text-secondary4">{statusText}</span>
             {!allDone && <div className="max-[410px]:hidden h-2 md:h-3 w-2 md:w-3 rounded-full bg-[#B31B38]" />}
-            <ChevronIcon open={open} stroke="#B31B38" strokeWidth={1.5} className="w-4 h-4" />
+            <ChevronIcon open={open} stroke="#B31B38" strokeWidth={1.5} className="w-4 h-4 transition-transform duration-300 ease-in-out" />
           </div>
         </button>
       )}
 
-      {open && (
+      <div
+        className="overflow-hidden transition-all duration-300 ease-in-out"
+        style={{ maxHeight: open ? 2000 : 0 }}
+      >
         <div className={`px-4 md:px-5 pb-4 md:pb-5 pt-1 md:pt-2${isPreview ? " pointer-events-none select-none" : ""}`}>
           {section.body}
         </div>
-      )}
+      </div>
     </div>
   );
 }
