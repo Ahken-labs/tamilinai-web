@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import DropdownField from "../../common-layout/DropdownField";
 import FormRow from "../../common-layout/FormRow";
 import { RELIGION_OPTIONS, CASTE_OPTIONS_HINDU, CASTE_OPTIONS_CHRISTIAN } from "@/src/constants/profiles";
@@ -25,17 +25,10 @@ export default function ReligionCasteSection({ me, onDirty }: Props) {
   const p = me?.profile;
 
   const [opens, setOpens] = useState<Record<OpenKey, boolean>>(ALL_CLOSED);
-  const [religion, setReligion] = useState(p?.religion ?? "");
-  const [caste, setCaste] = useState(p?.caste ?? "");
+  const [religion, setReligion] = useState(() => { const d = getDraft(); return d?.religion ?? p?.religion ?? ""; });
+  const [caste, setCaste] = useState(() => { const d = getDraft(); return d?.caste ?? p?.caste ?? ""; });
   const [casteOther, setCasteOther] = useState("");
   const [casteOtherError, setCasteOtherError] = useState("");
-
-  useEffect(() => {
-    const saved = getDraft();
-    if (!saved) return;
-    if (saved.religion !== undefined) setReligion(saved.religion);
-    if (saved.caste !== undefined) setCaste(saved.caste);
-  }, []);
 
   const setOpen = (key: OpenKey) => (val: boolean) => {
     if (key === "caste" && val && !religion) {
