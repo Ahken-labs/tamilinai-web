@@ -69,6 +69,7 @@ export const SECTOR = [
 export const RELIGION_OPTIONS = [
   "Hindu",
   "Christian",
+  "Prefer not to say",
 ];
 
 export const CASTE_OPTIONS = [

@@ -56,12 +56,18 @@ export default function PersonalDetailsForm() {
   const [occupation, setOccupation] = useState(saved.occupation ?? "");
   const [religion, setReligion] = useState(saved.religion ?? "");
   const [caste, setCaste] = useState(saved.caste ?? "");
+  const [casteOther, setCasteOther] = useState(saved.casteOther ?? "");
   const [country, setCountry] = useState(saved.country ?? "");
   const [city, setCity] = useState(saved.city ?? "");
   const [citizenship, setCitizenship] = useState(saved.citizenship ?? "");
 
-  const setOpen = (key: OpenKey) => (val: boolean) =>
+  const setOpen = (key: OpenKey) => (val: boolean) => {
+    if (key === "caste" && val && !religion) {
+      setOpens({ ...ALL_CLOSED, religion: true });
+      return;
+    }
     setOpens({ ...ALL_CLOSED, [key]: val });
+  };
 
   const filtEducation = useMemo(() => filterItems(EDUCATION_OPTIONS, education), [education]);
   const filtReligion = useMemo(() => filterItems(RELIGION_OPTIONS, religion), [religion]);
@@ -71,6 +77,11 @@ export default function PersonalDetailsForm() {
   const casteOptions = useMemo(() => {
     if (religion === "Hindu") return CASTE_OPTIONS_HINDU;
     if (religion === "Christian") return CASTE_OPTIONS_CHRISTIAN;
+    if (religion === "Prefer not to say") {
+      const tail = ["Other", "Prefer not to say"];
+      const merged = [...CASTE_OPTIONS_HINDU, ...CASTE_OPTIONS_CHRISTIAN].filter(c => !tail.includes(c));
+      return [...new Set(merged), ...tail];
+    }
     return [];
   }, [religion]);
 
@@ -82,7 +93,7 @@ export default function PersonalDetailsForm() {
   function persist() {
     try {
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
-        education, occupation, religion, caste, country, city, citizenship,
+        education, occupation, religion, caste, casteOther, country, city, citizenship,
       }));
     } catch { /* storage unavailable */ }
   }
@@ -98,6 +109,7 @@ export default function PersonalDetailsForm() {
     if (!occupation.trim()) errs.occupation = "*Occupation is required";
     if (!religion) errs.religion = "*Religion is required";
     if (!caste) errs.caste = "*Caste or denomination is required";
+    if (caste === "Other" && !casteOther.trim()) errs.casteOther = "*Please specify your caste";
     if (!country) errs.country = "*Country is required";
     if (!city) errs.city = "*District or city is required";
     if (!citizenship) errs.citizenship = "*Citizenship is required";
@@ -108,7 +120,7 @@ export default function PersonalDetailsForm() {
     persist();
     router.push("/photo-upload");
 
-    savePersonalDetails({ education, occupation, religion, caste, country, city, citizenship })
+    savePersonalDetails({ education, occupation, religion, caste: caste === "Other" ? casteOther.trim() : caste, country, city, citizenship })
       .catch(() => { /* user can re-enter in profile */ });
   }
 
@@ -207,11 +219,22 @@ export default function PersonalDetailsForm() {
               value={caste}
               open={opens.caste}
               setOpen={setOpen("caste")}
-              onSelect={setCaste}
+              onSelect={(v) => { setCaste(v); setCasteOther(""); }}
               items={filtCaste}
               dropdownClassName="max-h-[220px]"
             />
           </FormRow>
+
+          {caste === "Other" && (
+            <FormRow label="Please specify" align="center" required error={errors.casteOther}>
+              <input
+                value={casteOther}
+                onChange={(e) => setCasteOther(e.target.value)}
+                placeholder="Type here..."
+                className="flex h-[40px] w-full items-center rounded-[12px] border border-[#F2F2F2] bg-[#F2F2F2] px-4 text-[16px] text-dark outline-none placeholder:text-[#525252]"
+              />
+            </FormRow>
+          )}
 
           <hr className="border-0 border-t border-[#EAEAEA]" />
 
