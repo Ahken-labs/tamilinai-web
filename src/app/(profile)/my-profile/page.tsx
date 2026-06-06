@@ -1086,8 +1086,8 @@ function ExpandableSection({
       )}
 
       <div
-        className="overflow-hidden transition-all duration-300 ease-in-out"
-        style={{ maxHeight: open ? 2000 : 0 }}
+        className="transition-all duration-300 ease-in-out"
+        style={{ maxHeight: open ? 2000 : 0, overflow: open ? "visible" : "hidden" }}
       >
         <div className={`px-4 md:px-5 pb-4 md:pb-5 pt-1 md:pt-2${isPreview ? " pointer-events-none select-none" : ""}`}>
           {section.body}
