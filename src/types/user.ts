@@ -109,6 +109,7 @@ export interface ProfileDetail {
   // Photo request state
   incomingPhotoRequest?: { type: 'access' | 'upload' } | null;
   myPhotoUploadRequestPending?: boolean;
+  photoUnderReview?: boolean;
   photoAccessRetryAfter?: string | null;
   photoAccessMaxed?: boolean;
   contactBlurred?: boolean;

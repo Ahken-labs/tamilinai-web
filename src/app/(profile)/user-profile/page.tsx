@@ -306,8 +306,9 @@ function UserProfileContent() {
     // eslint-disable-next-line react-hooks/purity
     ? Math.max(1, Math.ceil((accessRetryAfter.getTime() - Date.now()) / (24 * 60 * 60 * 1000)))
     : 0;
+  const photoUnderReview = profile.photoUnderReview ?? false;
   const hasPhoto = !isPrivate && !!pr.photoUrl;
-  const noPhotoCase = !pr.photoUrl && !isPrivate;
+  const noPhotoCase = !pr.photoUrl && !isPrivate && !photoUnderReview;
   const placeholder = profile.gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png";
 
   const photoSrc = hasPhoto ? pr.photoUrl! : placeholder;
@@ -412,8 +413,11 @@ function UserProfileContent() {
                 className={`object-cover${interestStatus === "declined" ? " grayscale" : ""}`}
               />
             )}
-            {(noPhotoCase || isPrivate) && (
+            {(noPhotoCase || isPrivate || photoUnderReview) && (
               <div className="absolute left-1/2 -translate-x-1/2 z-20 bottom-2">
+                {photoUnderReview && (
+                  <div className="inline-flex items-center justify-center rounded-full bg-[#F2F2F2] py-[11px] px-2 text-[14px] md:text-[16px] font-medium text-[#656565] whitespace-nowrap">Photo under review</div>
+                )}
                 {noPhotoCase && !resolvedUploadRequested && (
                   <Button text={photoActionLoading ? "loading..." : "Request photo"} onPress={handleRequestPhotoUpload} disabled={photoActionLoading} iconLeft={<NotifPhotoUploadIcon className="w-4 h-4 shrink-0 text-white" />} className="!py-1.5 !px-3 !text-[14px] whitespace-nowrap" />
                 )}
@@ -526,8 +530,11 @@ function UserProfileContent() {
                   />
                 )}
               </div>
-              {(noPhotoCase || isPrivate) && (
+              {(noPhotoCase || isPrivate || photoUnderReview) && (
                 <div className="absolute left-1/2 -translate-x-1/2 z-20 bottom-1">
+                  {photoUnderReview && (
+                    <div className="inline-flex items-center justify-center rounded-full bg-[#F2F2F2] py-[11px] px-2 text-[14px] md:text-[16px] font-medium text-[#656565] whitespace-nowrap">Photo under review</div>
+                  )}
                   {noPhotoCase && !resolvedUploadRequested && (
                     <Button
                       text={photoActionLoading ? "loading..." : "Request photo"}

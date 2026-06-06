@@ -23,18 +23,30 @@ type Props = { me: Me | null; onDirty: () => void };
 
 export default function ReligionCasteSection({ me, onDirty }: Props) {
   const p = me?.profile;
-  const saved = getDraft();
 
   const [opens, setOpens] = useState<Record<OpenKey, boolean>>(ALL_CLOSED);
-  const [religion, setReligion] = useState(saved?.religion ?? p?.religion ?? "");
-  const [caste, setCaste] = useState(saved?.caste ?? p?.caste ?? "");
+  const [religion, setReligion] = useState(() => { const d = getDraft(); return d?.religion ?? p?.religion ?? ""; });
+  const [caste, setCaste] = useState(() => { const d = getDraft(); return d?.caste ?? p?.caste ?? ""; });
+  const [casteOther, setCasteOther] = useState("");
+  const [casteOtherError, setCasteOtherError] = useState("");
 
-  const setOpen = (key: OpenKey) => (val: boolean) => setOpens({ ...ALL_CLOSED, [key]: val });
+  const setOpen = (key: OpenKey) => (val: boolean) => {
+    if (key === "caste" && val && !religion) {
+      setOpens({ ...ALL_CLOSED, religion: true });
+      return;
+    }
+    setOpens({ ...ALL_CLOSED, [key]: val });
+  };
   const sync = (partial: Record<string, unknown>) => mergeDraft(partial, onDirty);
 
   let casteOptions: string[] = [];
   if (religion === "Hindu") casteOptions = CASTE_OPTIONS_HINDU;
   else if (religion === "Christian") casteOptions = CASTE_OPTIONS_CHRISTIAN;
+  else if (religion === "Prefer not to say") {
+    const tail = ["Other", "Prefer not to say"];
+    const merged = [...CASTE_OPTIONS_HINDU, ...CASTE_OPTIONS_CHRISTIAN].filter(c => !tail.includes(c));
+    casteOptions = [...new Set(merged), ...tail];
+  }
 
   return (
     <div className="pt-3 md:pt-4 font-poppins">
@@ -46,8 +58,26 @@ export default function ReligionCasteSection({ me, onDirty }: Props) {
         </FormRow>
 
         <FormRow leftWidth={leftWidth} required label="Caste or denomination" align="center">
-          <DropdownField typeable compact placeholder={religion ? "Select caste / denomination" : "Select religion first"} value={caste} open={opens.caste} setOpen={setOpen("caste")} onSelect={v => { setCaste(v); sync({ caste: v }); }} items={casteOptions} dropdownClassName="max-h-[300px]" />
+          <DropdownField typeable compact placeholder={religion ? "Select caste / denomination" : "Select religion first"} value={caste} open={opens.caste} setOpen={setOpen("caste")} onSelect={v => { setCaste(v); setCasteOther(""); sync({ caste: v === "Other" ? "" : v }); }} items={casteOptions} dropdownClassName="max-h-[300px]" />
         </FormRow>
+
+        {caste === "Other" && (
+          <FormRow leftWidth={leftWidth} required label="Please specify" align="center" error={casteOtherError}>
+            <input
+              value={casteOther}
+              onChange={(e) => {
+                setCasteOther(e.target.value);
+                setCasteOtherError("");
+                sync({ caste: e.target.value.trim() });
+              }}
+              onBlur={() => {
+                if (!casteOther.trim()) setCasteOtherError("*Please specify your caste");
+              }}
+              placeholder="Type here..."
+              className="flex h-[40px] w-full items-center rounded-[12px] border border-[#F2F2F2] bg-[#F2F2F2] px-4 text-[16px] text-dark outline-none placeholder:text-[#525252]"
+            />
+          </FormRow>
+        )}
 
       </div>
     </div>
