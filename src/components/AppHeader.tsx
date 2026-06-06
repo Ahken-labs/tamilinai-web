@@ -58,6 +58,7 @@ export default function AppHeader() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const settingsRef = useRef<HTMLDivElement>(null);
   const [openModal, setOpenModal] = useState<null | "search" | "edit">(null);
   const [logoutOpen, setLogoutOpen] = useState(false);
 
@@ -109,6 +110,18 @@ export default function AppHeader() {
     select: (data) => data.some((item) => item.isNew),
   });
   const hasUnreadInterest = hasUnreadInterestSent || hasUnreadInterestReceived;
+
+  // Close settings dropdown on outside click
+  useEffect(() => {
+    if (!settingsOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (settingsRef.current && !settingsRef.current.contains(e.target as Node)) {
+        setSettingsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [settingsOpen]);
 
   // Global SSE — runs on every page so new notifications arrive in real time
   useEffect(() => {
@@ -272,7 +285,7 @@ export default function AppHeader() {
           <div className="hidden min-[900px]:flex items-center gap-3 flex-1 justify-end">
 
             {/* ── Desktop profile/settings button ── */}
-            <div className="hidden min-[900px]:relative mb-2 min-[900px]:flex items-center">
+            <div ref={settingsRef} className="hidden min-[900px]:relative mb-2 min-[900px]:flex items-center">
               <button
                 type="button"
                 onClick={() => { setMobileOpen(false); setSettingsOpen((v) => !v); }}
