@@ -12,6 +12,7 @@ import { COUNTRIES } from "../../constants/countries";
 import FormCardLayout from "../common-layout/FormCardLayout";
 import { forgotPassword } from "../../lib/api/auth";
 import { ApiError } from "../../lib/api/client";
+import { sanitizePhoneInput, validatePhone, validateEmail } from "../../utils/validation";
 import { useLoadingText } from "../../hooks/useLoadingText";
 
 type Method = "sms" | "email";
@@ -24,6 +25,7 @@ export default function ForgotPasswordForm() {
   const [countryCode, setCountryCode] = useState(COUNTRIES[0]);
   const [countryOpen, setCountryOpen] = useState(false);
   const [error, setError] = useState<string | undefined>();
+  const [emailWarning, setEmailWarning] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
   const loadingText = useLoadingText(loading, "send");
 
@@ -31,18 +33,23 @@ export default function ForgotPasswordForm() {
     setMethod(m);
     setValue("");
     setError(undefined);
+    setEmailWarning(undefined);
     setCountryOpen(false);
   };
 
   const handleSend = async () => {
-    if (!value.trim()) {
-      setError(t("Fill_all_the_Input_fields"));
-      return;
+    if (method === "sms") {
+      const err = validatePhone(value, countryCode);
+      if (err) { setError(err); return; }
+    } else {
+      const { error: err, warning } = validateEmail(value);
+      if (err) { setError(err); return; }
+      setEmailWarning(warning ?? undefined);
     }
     setLoading(true);
     try {
       if (method === "sms") {
-        const code = countryCode.match(/\(\+\d+\)/)?.[0] ?? countryCode;
+        const code = countryCode.match(/\+\d+/)?.[0] ?? countryCode;
         const smsRes = await forgotPassword({ channel: "sms", phone: value, countryCode: code });
         sessionStorage.setItem("otp_sms_sent_at", String(Date.now()));
         sessionStorage.setItem("otp_sms_cd", String(smsRes.cooldownSeconds ?? 60));
@@ -98,7 +105,7 @@ export default function ForgotPasswordForm() {
         <div className="flex flex-col max-[500px]:gap-4 gap-6 md:gap-8">
           <CountryCodeSelect
             value={countryCode}
-            onChange={setCountryCode}
+            onChange={(val) => { setCountryCode(val); setValue(""); setError(undefined); }}
             open={countryOpen}
             setOpen={setCountryOpen}
             label="Country code"
@@ -106,7 +113,7 @@ export default function ForgotPasswordForm() {
           <InputBox
             value={value}
             onChange={(val) => {
-              setValue(val);
+              setValue(sanitizePhoneInput(val, countryCode));
               setError(undefined);
             }}
             label={t("Your_mobile_number")}
@@ -116,17 +123,23 @@ export default function ForgotPasswordForm() {
           />
         </div>
       ) : (
-        <InputBox
-          value={value}
-          onChange={(val) => {
-            setValue(val);
-            setError(undefined);
-          }}
-          label={t("Your_email_address")}
-          type="email"
-          className="bg-cartbox2 border-gray1"
-          error={error}
-        />
+        <div className="flex flex-col gap-1">
+          <InputBox
+            value={value}
+            onChange={(val) => {
+              setValue(val);
+              setError(undefined);
+              setEmailWarning(undefined);
+            }}
+            label={t("Your_email_address")}
+            type="email"
+            className="bg-cartbox2 border-gray1"
+            error={error}
+          />
+          {emailWarning && (
+            <p className="text-[13px] text-primary">*{emailWarning}</p>
+          )}
+        </div>
       )}
     </div>
 
