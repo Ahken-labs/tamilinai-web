@@ -60,7 +60,7 @@ export default function CountryCodeSelect({ value, onChange, open, setOpen, labe
       </button>
 
       {open && (
-        <div className="absolute left-0 top-[calc(100%+4px)] z-30 min-w-[220px] rounded-xl border border-[#E0E0E0] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.1)]">
+        <div className="absolute left-0 top-[calc(100%+4px)] z-30 w-full min-w-[220px] rounded-xl border border-[#E0E0E0] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.1)]">
           {/* Search box */}
           <div className="p-2 border-b border-[#F0F0F0]">
             <input
@@ -76,7 +76,7 @@ export default function CountryCodeSelect({ value, onChange, open, setOpen, labe
           {/* List */}
           <div className="max-h-[200px] overflow-y-auto">
             {filtered.length === 0 ? (
-              <p className="px-4 py-3 text-[13px] text-[#999]">No results</p>
+              <p className="px-4 py-3 text-[14px] text-center text-[#999]">No results</p>
             ) : (
               filtered.map((item) => {
                 const isSelected = item === value;

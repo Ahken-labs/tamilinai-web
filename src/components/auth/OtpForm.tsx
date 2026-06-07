@@ -46,7 +46,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
   const email = searchParams?.email ?? "";
 
   const [method, setMethod] = useState<"sms" | "email">(
-    variant === "register" ? "email" : (phone ? "sms" : "email")
+    phone ? "sms" : "email"
   );
   const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const [error, setError] = useState("");
