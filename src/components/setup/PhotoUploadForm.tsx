@@ -466,6 +466,7 @@ export default function PhotoUploadForm() {
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [cropSrc, setCropSrc] = useState<string | null>(null);
   const buildAboutMeData = useCallback(() => {
+    if (typeof window === "undefined") return {};
     const basic = JSON.parse(sessionStorage.getItem("inai_setup_basic") ?? "{}");
     const personal = JSON.parse(sessionStorage.getItem("inai_setup_personal") ?? "{}");
     const user = JSON.parse(localStorage.getItem("tamilinai_user") ?? "{}");
@@ -481,9 +482,8 @@ export default function PhotoUploadForm() {
     };
   }, []);
 
-  const initialSuggestion = generateAboutMe(buildAboutMeData());
-  const [aboutMe, setAboutMe] = useState(initialSuggestion);
-  const [aboutMeError, setAboutMeError] = useState<{ message: string; offendingWord: string } | null>(() => validateAboutMe(initialSuggestion));
+  const [aboutMe, setAboutMe] = useState(() => generateAboutMe(buildAboutMeData()));
+  const [aboutMeError, setAboutMeError] = useState<{ message: string; offendingWord: string } | null>(null);
   const [agreed, setAgreed] = useState(true);
   const [showError, setShowError] = useState(false);
   const [openPrivacy, setOpenPrivacy] = useState(false);
