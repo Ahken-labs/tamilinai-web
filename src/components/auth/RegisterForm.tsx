@@ -19,6 +19,7 @@ import { AUTO_GENDER, PROFILES } from "@/src/constants/profiles";
 import { useLoadingText } from "../../hooks/useLoadingText";
 import { register } from "../../lib/api/auth";
 import { ApiError } from "../../lib/api/client";
+import { sanitizePhoneInput, validatePhone, validateEmail } from "../../utils/validation";
 
 type RegisterFormProps = {
     variant?: "hero" | "modal";
@@ -53,6 +54,7 @@ export default function RegisterForm({
         name?: string;
         phone?: string;
         email?: string;
+        emailWarning?: string;
         submit?: string;
     }>({});
     const [loading, setLoading] = useState(false);
@@ -93,8 +95,11 @@ export default function RegisterForm({
 
         if (!gender) nextErrors.gender = "*Gender is Required";
         if (!fullName.trim()) nextErrors.name = "*Name is Required";
-        if (!phone.trim()) nextErrors.phone = "*Phone number is required";
-        if (!email.trim()) nextErrors.email = "*Email is Required";
+        const phoneErr = validatePhone(phone, countryCode);
+        if (phoneErr) nextErrors.phone = phoneErr;
+        const { error: emailErr, warning: emailWarn } = validateEmail(email);
+        if (emailErr) nextErrors.email = emailErr;
+        if (emailWarn) nextErrors.emailWarning = emailWarn;
 
         setErrors(nextErrors);
         return Object.keys(nextErrors).length === 0;
@@ -202,14 +207,15 @@ export default function RegisterForm({
             <div className="grid grid-cols-1 max-[500px]:gap-4 gap-5 min-[500px]:grid-cols-[120px_1fr]">
                 <CountryCodeSelect
                     value={countryCode}
-                    onChange={setCountryCode}
+                    onChange={(val) => { setCountryCode(val); setPhone(""); setErrors((prev) => ({ ...prev, phone: undefined })); }}
                     open={activeDropdown === "country"}
                     setOpen={(val) => setActiveDropdown(val ? "country" : "")}
                 />
                 <InputBox
                     value={phone}
                     onChange={(val) => {
-                        setPhone(val);
+                        const sanitized = sanitizePhoneInput(val, countryCode);
+                        setPhone(sanitized);
                         setErrors((prev) => ({ ...prev, phone: undefined }));
                     }}
                     label={t("Phone_number")}
@@ -218,16 +224,21 @@ export default function RegisterForm({
                 />
             </div>
 
-            <InputBox
-                value={email}
-                onChange={(val) => {
-                    setEmail(val);
-                    setErrors((prev) => ({ ...prev, email: undefined }));
-                }}
-                label={t("Email")}
-                type="email"
-                error={errors.email}
-            />
+            <div className="flex flex-col gap-1">
+                <InputBox
+                    value={email}
+                    onChange={(val) => {
+                        setEmail(val);
+                        setErrors((prev) => ({ ...prev, email: undefined, emailWarning: undefined }));
+                    }}
+                    label={t("Email")}
+                    type="email"
+                    error={errors.email}
+                />
+                {errors.emailWarning && (
+                    <p className="text-[13px] text-primary">*{errors.emailWarning}</p>
+                )}
+            </div>
 
             {errors.submit && (
                 <p className="text-[14px] text-[#B31B38]">{errors.submit}</p>
