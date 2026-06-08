@@ -44,7 +44,7 @@ export default function ForgotPasswordForm() {
     } else {
       const { error: err, warning } = validateEmail(value);
       if (err) { setError(err); return; }
-      setEmailWarning(warning ?? undefined);
+      if (warning) { setEmailWarning(warning); return; }
     }
     setLoading(true);
     try {

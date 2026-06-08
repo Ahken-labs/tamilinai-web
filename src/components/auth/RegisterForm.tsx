@@ -99,7 +99,7 @@ export default function RegisterForm({
         if (phoneErr) nextErrors.phone = phoneErr;
         const { error: emailErr, warning: emailWarn } = validateEmail(email);
         if (emailErr) nextErrors.email = emailErr;
-        if (emailWarn) nextErrors.emailWarning = emailWarn;
+        if (emailWarn && !errors.emailWarning) nextErrors.emailWarning = emailWarn;
 
         setErrors(nextErrors);
         return Object.keys(nextErrors).length === 0;

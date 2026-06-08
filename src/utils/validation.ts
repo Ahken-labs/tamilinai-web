@@ -107,14 +107,17 @@ export function validatePhone(phone: string, countryString: string): string | nu
 
 // Common typos: wrong domain → suggested correction
 const DOMAIN_TYPOS: Record<string, string> = {
-  'gmial.com': 'gmail.com', 'gmai.com': 'gmail.com', 'gamil.com': 'gmail.com',
+  'gmial.com': 'gmail.com', 'gmai.com': 'gmail.com', 'gamil.com': 'gmail.com','gamil.cm': 'gmail.com',
   'gmail.con': 'gmail.com', 'gmail.comm': 'gmail.com', 'gmail.coom': 'gmail.com',
-  'gmail.co': 'gmail.com', 'gmaill.com': 'gmail.com', 'gmal.com': 'gmail.com', 'gmail.om': 'gmail.com',
+  'gmail.co': 'gmail.com', 'gmail.cm': 'gmail.com', 'gmail.ocm': 'gmail.com', 'gmail.cmo': 'gmail.com',
+  'gmaill.com': 'gmail.com', 'gmal.com': 'gmail.com', 'gmail.om': 'gmail.com','gmail.copm': 'gmail.com',
+  'gmail.coim': 'gmail.com','gmail.dom': 'gmail.com','gmail.fom': 'gmail.com','gmail.vom': 'gmail.com',
+  'gmail.xom': 'gmail.com','gmail.conm': 'gmail.com',
   'gmaial.com': 'gmail.com','gmeil.com': 'gmail.com','gmil.com': 'gmail.com', 'gmsil.com': 'gmail.com',
   'yahooo.com': 'yahoo.com', 'yaho.com': 'yahoo.com', 'yahoo.con': 'yahoo.com',
-  'yahoo.comm': 'yahoo.com', 'yhaoo.com': 'yahoo.com',
+  'yahoo.comm': 'yahoo.com', 'yhaoo.com': 'yahoo.com', 'yahoo.cm': 'yahoo.com', 'yahoo.co': 'yahoo.com',
   'hotmial.com': 'hotmail.com', 'hotmail.con': 'hotmail.com', 'hotmail.comm': 'hotmail.com',
-  'hotmai.com': 'hotmail.com', 'homail.com': 'hotmail.com',
+  'hotmai.com': 'hotmail.com', 'homail.com': 'hotmail.com', 'hotmail.cm': 'hotmail.com',
   'outloo.com': 'outlook.com', 'outlok.com': 'outlook.com', 'outlook.con': 'outlook.com',
   'outlook.comm': 'outlook.com',
   'iclod.com': 'icloud.com', 'icloud.con': 'icloud.com', 'icloud.comm': 'icloud.com',
