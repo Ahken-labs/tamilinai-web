@@ -15,7 +15,7 @@
         "Email_Address": "Email Address",
         "Email": "Email",
         "Country_code": "Country code",
-        "Phone_number": "WhatsApp / mobile",
+        "Phone_number": "WhatsApp",
         "OTP_will_be_sent_to_his_number": "OTP will be sent to this number",
         "Continue_for_Free": "Continue for Free",
         "Takes_2_minutes_Your_data_is_never_shared_without_your_permission": "Takes 2 minutes. 100% Data Privacy Guaranteed.",
@@ -80,8 +80,6 @@
         "FAQ5_Answer": "Yes. Inai.lk lets you filter matches by district — Jaffna, Kilinochchi, Vavuniya, Batticaloa, Trincomalee, Nuwara Eliya, Kandy, Colombo and more. Find a partner who shares your regional roots and cultural values.",
         "FAQ6": "Is it free to register and create a profile on Inai.lk - Sri Lankan Tamil matrimony?",
         "FAQ6_Answer": "Yes — creating your profile and browsing matches is completely free. To send messages and view contact details directly, upgrade to a membership plan. No hidden fees, cancel anytime.",
-        
-        
         "Home": "Home",
         "About_Us": "About Us",
         "Join_Now": "Join Now",
@@ -204,7 +202,7 @@
         "Email_Address": "மின்னஞ்சல் முகவரி",
         "Email": "மின்னஞ்சல்",
         "Country_code": "நாட்டுக் குறியீடு",
-        "Phone_number": "வாட்ஸ்அப் / கைபேசி",
+        "Phone_number": "வாட்ஸ்அப்",
         "OTP_will_be_sent_to_his_number": "இந்த எண்ணுக்கு OTP அனுப்பப்படும்.",
         "Continue_for_Free": "இலவசமாகத் தொடரவும்",
         "Takes_2_minutes_Your_data_is_never_shared_without_your_permission": "வெறும் 2 நிமிடங்கள் தான். உங்கள் அனுமதியின்றி எந்த தகவலும் பகிரப்படாது.",
@@ -256,8 +254,6 @@
         "Find_Matches":"பொருத்தங்களைக் கண்டறியவும்",
         "Need_Help_Finding_a_Match": "எங்கிருந்து தொடங்குவது என்று தெரியவில்லையா?",
         "Chat_with_Tamilinais_friendly_support_team_for_profile_creation_photo_uploads_or_personalized_matchmaking_assistance": "Inai.lk குழு, உங்கள் சுயவிவரத்தை உருவாக்கவும், தமிழிலோ அல்லது ஆங்கிலத்திலோ உங்கள் முதல் பொருத்தங்களைக் கண்டறியவும் உதவும். உங்கள் பயணத்தை நாங்கள் புரிந்துகொள்கிறோம்.",
-
-
         "WhatsApp": "வாட்ஸ்அப்",
         "Your_Questions_Answered": "உங்கள் கேள்விகளுக்குரிய பதில்கள்.",
         "FAQ1": "ஈழத் தமிழர்களுக்கான (இலங்கைத் தமிழர்கள்) சிறந்த மற்றும் பாதுகாப்பான திருமண வலைத்தளம் எது?",
