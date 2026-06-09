@@ -371,10 +371,10 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
               <button
                 type="button"
                 onClick={method === "sms" ? handleSwitchToEmail : handleSwitchToSms}
-                className="flex items-center text-[14px] md:text-[16px] font-medium text-dark underline leading-[150%] cursor-pointer hover:opacity-70 select-none"
+                className="flex items-center text-[14px] md:text-[16px] font-medium text-[#222222] underline leading-[150%] cursor-pointer hover:text-[#B31B38] select-none"
               >
                 {method === "sms" ? t("Verify_via_Email") : t("Verify_via_SMS")}
-                <ChevronIcon open={false} className="ml-1 w-3 h-3 md:w-4 md:h-4 rotate-270" />
+                <ChevronIcon open={false} className="ml-1 w-3 h-3 md:w-4 md:h-4 rotate-270" stroke="currentColor" />
               </button>
             </div>
           )}

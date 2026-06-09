@@ -1,9 +1,11 @@
-import AboutSection from "./sections/AboutSection";
-import ContactSection from "./sections/ContactSection";
-import FAQSection from "./sections/FAQSection";
-import { HelpSection } from "./sections/HelpSection";
+import ContactInfoSection from "@/src/components/profile/sections/ContactInfoSection";
 import HeroSection from "./sections/HeroSection";
 import HowItWorksSection from "./sections/HowItWorksSection";
+import ContactSection from "./sections/ContactSection";
+import DiasporaSection from "./sections/DiasporaSection";
+import { HelpSection } from "./sections/HelpSection";
+import FAQSection from "./sections/FAQSection";
+import AboutSection from "./sections/AboutSection";
 
 export default function HomePage() {
   return (
@@ -12,11 +14,12 @@ export default function HomePage() {
         <HeroSection />
       </section>
       <HowItWorksSection />
+      <section>
+        <ContactSection />
+      </section>
+      <DiasporaSection />
       <section id="about">
         <AboutSection />
-      </section>
-      <section id="contact">
-        <ContactSection />
       </section>
       <HelpSection />
       <section id="faq">

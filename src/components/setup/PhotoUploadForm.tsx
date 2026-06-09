@@ -371,7 +371,7 @@
 
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Button from "../common-layout/Button";
@@ -458,6 +458,8 @@ export default function PhotoUploadForm() {
   const router = useRouter();
   const { t } = useLang();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => { router.prefetch("/matches"); }, [router]);
 
   const gender = typeof window !== "undefined" ? (sessionStorage.getItem("inai_setup_gender") ?? "female") : "female";
   const placeholderSrc = gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png";

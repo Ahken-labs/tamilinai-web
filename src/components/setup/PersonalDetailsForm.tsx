@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRightIcon, ChevronIcon } from "../../assets/Icons";
 import Button from "../common-layout/Button";
@@ -36,6 +36,8 @@ const STORAGE_KEY = "inai_setup_personal";
 export default function PersonalDetailsForm() {
   const router = useRouter();
   const { t } = useLang();
+
+  useEffect(() => { router.prefetch("/photo-upload"); }, [router]);
 
   const [opens, setOpens] = useState<Record<OpenKey, boolean>>(ALL_CLOSED);
   const [errors, setErrors] = useState<Record<string, string>>({});
