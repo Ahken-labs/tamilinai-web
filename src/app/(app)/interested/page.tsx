@@ -143,7 +143,7 @@ function InterestedContent() {
             <div className="max-[400px]:my-0 max-[500px]:my-4 my-6 max-[400px]:mx-0 max-[500px]:mx-2 mx-4 max-[370px]:rounded-[0px] max-[500px]:rounded-[12px] rounded-[16px] overflow-hidden">
             {items.map((item, idx) => (
               <InterestCard
-                key={item.id}
+                key={item.cardKey ?? item.id}
                 interest={item}
                 isLast={idx === items.length - 1}
                 onAction={handleAction}

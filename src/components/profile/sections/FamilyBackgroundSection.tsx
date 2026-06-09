@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import DropdownField from "../../common-layout/DropdownField";
 import FormRow from "../../common-layout/FormRow";
 import type { Me } from "@/src/types/user";
@@ -22,6 +22,8 @@ const ALL_CLOSED: Record<OpenKey, boolean> = { brothers: false, brothersMarried:
 type Props = { me: Me | null; onDirty: () => void };
 
 export default function FamilyBackgroundSection({ me, onDirty }: Props) {
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
+
   const p = me?.profile;
   const saved = getDraft();
 
@@ -41,27 +43,27 @@ export default function FamilyBackgroundSection({ me, onDirty }: Props) {
       <div className="flex flex-col gap-6 md:gap-8">
 
         <FormRow leftWidth={leftWidth} label="Father's occupation" align="center">
-          <input value={fatherOccupation} onChange={e => { setFatherOccupation(e.target.value); sync({ fatherOccupation: e.target.value }); }} placeholder="Type here" className="font-poppins flex-1 h-[40px] border-[rgba(179,27,56,0.25)] w-full items-center rounded-[12px] border bg-[#FFF0F3] px-4 text-[16px] text-dark outline-none placeholder:text-[#656565]" />
+          <input value={fatherOccupation} onChange={e => { setFatherOccupation(e.target.value); sync({ fatherOccupation: e.target.value }); }} placeholder="Type here" className={`font-poppins flex-1 h-[40px] w-full items-center rounded-[12px] border px-4 text-[16px] text-dark outline-none placeholder:text-[#656565] ${mounted && fatherOccupation ? "border-[#F2F2F2] bg-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)] bg-[#FFF0F3]"}`} />
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Mom's occupation" align="center">
-          <input value={motherOccupation} onChange={e => { setMotherOccupation(e.target.value); sync({ motherOccupation: e.target.value }); }} placeholder="Type here" className="font-poppins flex-1 h-[40px] border-[rgba(179,27,56,0.25)] w-full items-center rounded-[12px] border bg-[#FFF0F3] px-4 text-[16px] text-dark outline-none placeholder:text-[#656565]" />
+          <input value={motherOccupation} onChange={e => { setMotherOccupation(e.target.value); sync({ motherOccupation: e.target.value }); }} placeholder="Type here" className={`font-poppins flex-1 h-[40px] w-full items-center rounded-[12px] border px-4 text-[16px] text-dark outline-none placeholder:text-[#656565] ${mounted && motherOccupation ? "border-[#F2F2F2] bg-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)] bg-[#FFF0F3]"}`} />
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Number of brother(s)" align="center">
-          <DropdownField typeable compact placeholder="Select" bgClassName="bg-[#FFF0F3]" borderClassName="border-[rgba(179,27,56,0.25)]" textClassName="text-[#656565]" value={brothers} open={opens.brothers} setOpen={setOpen("brothers")} onSelect={v => { setBrothers(v); sync({ brothers: v }); }} items={NUMBER_OPTIONS} />
+          <DropdownField typeable compact placeholder="Select" bgClassName={mounted && brothers ? "bg-[#F2F2F2]" : "bg-[#FFF0F3]"} borderClassName={mounted && brothers ? "border-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)]"} textClassName={mounted && brothers ? "text-[#222222]" : "text-[#656565]"} value={brothers} open={opens.brothers} setOpen={setOpen("brothers")} onSelect={v => { setBrothers(v); sync({ brothers: v }); }} items={NUMBER_OPTIONS} />
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Brother(s) married" align="center">
-          <DropdownField typeable compact placeholder="Select" bgClassName="bg-[#FFF0F3]" borderClassName="border-[rgba(179,27,56,0.25)]" textClassName="text-[#656565]" value={brothersMarried} open={opens.brothersMarried} setOpen={setOpen("brothersMarried")} onSelect={v => { setBrothersMarried(v); sync({ brothersMarried: v }); }} items={NUMBER_OPTIONS} />
+          <DropdownField typeable compact placeholder="Select" bgClassName={mounted && brothersMarried ? "bg-[#F2F2F2]" : "bg-[#FFF0F3]"} borderClassName={mounted && brothersMarried ? "border-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)]"} textClassName={mounted && brothersMarried ? "text-[#222222]" : "text-[#656565]"} value={brothersMarried} open={opens.brothersMarried} setOpen={setOpen("brothersMarried")} onSelect={v => { setBrothersMarried(v); sync({ brothersMarried: v }); }} items={NUMBER_OPTIONS} />
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Number of sister(s)" align="center">
-          <DropdownField typeable compact placeholder="Select" bgClassName="bg-[#FFF0F3]" borderClassName="border-[rgba(179,27,56,0.25)]" textClassName="text-[#656565]" value={sisters} open={opens.sisters} setOpen={setOpen("sisters")} onSelect={v => { setSisters(v); sync({ sisters: v }); }} items={NUMBER_OPTIONS} />
+          <DropdownField typeable compact placeholder="Select" bgClassName={mounted && sisters ? "bg-[#F2F2F2]" : "bg-[#FFF0F3]"} borderClassName={mounted && sisters ? "border-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)]"} textClassName={mounted && sisters ? "text-[#222222]" : "text-[#656565]"} value={sisters} open={opens.sisters} setOpen={setOpen("sisters")} onSelect={v => { setSisters(v); sync({ sisters: v }); }} items={NUMBER_OPTIONS} />
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Sister(s) married" align="center">
-          <DropdownField typeable compact placeholder="Select" bgClassName="bg-[#FFF0F3]" borderClassName="border-[rgba(179,27,56,0.25)]" textClassName="text-[#656565]" value={sistersMarried} open={opens.sistersMarried} setOpen={setOpen("sistersMarried")} onSelect={v => { setSistersMarried(v); sync({ sistersMarried: v }); }} items={NUMBER_OPTIONS} />
+          <DropdownField typeable compact placeholder="Select" bgClassName={mounted && sistersMarried ? "bg-[#F2F2F2]" : "bg-[#FFF0F3]"} borderClassName={mounted && sistersMarried ? "border-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)]"} textClassName={mounted && sistersMarried ? "text-[#222222]" : "text-[#656565]"} value={sistersMarried} open={opens.sistersMarried} setOpen={setOpen("sistersMarried")} onSelect={v => { setSistersMarried(v); sync({ sistersMarried: v }); }} items={NUMBER_OPTIONS} />
         </FormRow>
 
       </div>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { FaWhatsapp } from "react-icons/fa6";
 
@@ -54,6 +55,7 @@ export default function Match_ContactSection_Card({
   onAction,
 }: Props) {
   const [pending, setPending] = useState(false);
+  const queryClient = useQueryClient();
   const isMale = gender === "male";
   const she = isMale ? "He" : "She";
   const she_l = isMale ? "he" : "she";
@@ -64,6 +66,7 @@ export default function Match_ContactSection_Card({
     setPending(true);
     try {
       await fn();
+      queryClient.invalidateQueries({ queryKey: ["interests", "sent"] });
       onAction?.();
     } catch (err) {
       if (err instanceof ApiError && err.status === 409) onAction?.();
@@ -154,7 +157,7 @@ function SentPendingBody({
   onSendReminder: () => void;
 }) {
   const reminderAt = lastSentAt
-    ? new Date(new Date(lastSentAt).getTime() + 3 * 24 * 60 * 60 * 1000)
+    ? new Date(new Date(lastSentAt).getTime() + 2 * 24 * 60 * 60 * 1000)
     : null;
   const countdownText = reminderAt ? formatCountdown(reminderAt) : null;
 
@@ -185,7 +188,7 @@ function SentPendingBody({
         </div>
       )}
 
-      {/* First interest sent, 3-day wait not over */}
+      {/* First interest sent, 2-day wait not over */}
       {sendCount === 1 && !isReminderDue && (
         <>
           <div className="mt-4 md:mt-5 text-center text-[14px] md:text-[16px] font-medium leading-[150%] text-secondary4">
@@ -199,7 +202,7 @@ function SentPendingBody({
         </>
       )}
 
-      {/* 3 days passed — show Send reminder button */}
+      {/* 2 days passed — show Send reminder button */}
       {sendCount === 1 && isReminderDue && (
         <>
           <div className="mt-4 md:mt-5 text-center text-[14px] md:text-[16px] font-medium leading-[150%] text-secondary4">

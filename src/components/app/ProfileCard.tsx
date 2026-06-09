@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import ProtectedPhoto from "../common-layout/ProtectedPhoto";
 import ProtectedImage from "../common-layout/ProtectedImage";
 import { useRouter } from "next/navigation";
@@ -51,6 +52,7 @@ const TAG_STYLES: Record<string, string> = {
 
 export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: ProfileCardProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [shortlisted, setShortlisted] = useState(profile.isShortlisted ?? false);
   const [shortlistPending, setShortlistPending] = useState(false);
   const [interestSent, setInterestSent] = useState(
@@ -93,6 +95,7 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
       const res = await sendInterest(profile.id);
       setInterestSent(true);
       if (res.message?.includes('Mutual')) setMutualMatch(true);
+      queryClient.invalidateQueries({ queryKey: ["interests"] });
       onInterestSent?.();
     } catch (err) {
       if (err instanceof ApiError && err.status === 409) { setInterestSent(true); onInterestSent?.(); }

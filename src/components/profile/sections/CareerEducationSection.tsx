@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import DropdownField from "../../common-layout/DropdownField";
 import FormRow from "../../common-layout/FormRow";
 import { EDUCATION_OPTIONS, SECTOR } from "@/src/constants/profiles";
@@ -23,6 +23,8 @@ const ALL_CLOSED: Record<OpenKey, boolean> = { education: false, sector: false, 
 type Props = { me: Me | null; onDirty: () => void };
 
 export default function CareerEducationSection({ me, onDirty }: Props) {
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
+
   const p = me?.profile;
   const saved = getDraft();
 
@@ -42,25 +44,25 @@ export default function CareerEducationSection({ me, onDirty }: Props) {
       <div className="flex flex-col gap-6 md:gap-8">
 
         <FormRow leftWidth={leftWidth} required label="Highest education" align="center">
-          <DropdownField typeable compact placeholder="Select" value={highestEducation} open={opens.education} setOpen={setOpen("education")} onSelect={v => { setHighestEducation(v); sync({ education: v }); }} items={EDUCATION_OPTIONS} />
+          <DropdownField typeable compact placeholder="Select" value={highestEducation} open={opens.education} setOpen={setOpen("education")} onSelect={v => { setHighestEducation(v); sync({ education: v }); }} items={EDUCATION_OPTIONS} bgClassName={mounted && highestEducation ? "bg-[#F2F2F2]" : "bg-[#FFF0F3]"} borderClassName={mounted && highestEducation ? "border-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)]"} textClassName={mounted && highestEducation ? "text-[#222222]" : "text-[#656565]"} />
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Education detail" align="center">
-          <input value={educationDetail} onChange={e => { setEducationDetail(e.target.value); sync({ educationDetail: e.target.value }); }} placeholder="Type here" className="font-poppins flex-1 h-[40px] border-[rgba(179,27,56,0.25)] w-full items-center rounded-[12px] border bg-[#FFF0F3] px-4 text-[16px] text-dark outline-none placeholder:text-[#656565]" />
+          <input value={educationDetail} onChange={e => { setEducationDetail(e.target.value); sync({ educationDetail: e.target.value }); }} placeholder="Type here" className={`font-poppins flex-1 h-[40px] w-full items-center rounded-[12px] border px-4 text-[16px] text-dark outline-none placeholder:text-[#656565] ${mounted && educationDetail ? "border-[#F2F2F2] bg-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)] bg-[#FFF0F3]"}`} />
         </FormRow>
 
         <FormRow leftWidth={leftWidth} required label="Occupation" align="center">
-          <input value={occupation} onChange={e => { setOccupation(e.target.value); sync({ occupation: e.target.value }); }} placeholder="Enter your job / work" className="flex h-[40px] w-full items-center rounded-[12px] border border-[#F2F2F2] bg-[#F2F2F2] px-4 text-[16px] text-dark outline-none placeholder:text-[#525252]" />
+          <input value={occupation} onChange={e => { setOccupation(e.target.value); sync({ occupation: e.target.value }); }} placeholder="Enter your job / work" className={`flex h-[40px] w-full items-center rounded-[12px] border px-4 text-[16px] text-dark outline-none placeholder:text-[#525252] ${mounted && occupation ? "border-[#F2F2F2] bg-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)] bg-[#FFF0F3]"}`} />
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Sector" align="center">
-          <DropdownField typeable compact placeholder="Select sector" bgClassName="bg-[#FFF0F3]" borderClassName="border-[rgba(179,27,56,0.25)]" textClassName="text-[#656565]" value={sector} open={opens.sector} setOpen={setOpen("sector")} onSelect={v => { setSector(v); sync({ sector: v }); }} items={SECTOR} />
+          <DropdownField typeable compact placeholder="Select sector" textClassName={mounted && sector ? "text-[#222222]" : "text-[#656565]"} value={sector} open={opens.sector} setOpen={setOpen("sector")} onSelect={v => { setSector(v); sync({ sector: v }); }} items={SECTOR} bgClassName={mounted && sector ? "bg-[#F2F2F2]" : "bg-[#FFF0F3]"} borderClassName={mounted && sector ? "border-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)]"} />
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Monthly income">
           <div className="flex gap-4 max-[400px]:flex-col flex-wrap">
-            <DropdownField typeable compact placeholder="Select currency" value={currency} open={opens.currency} setOpen={setOpen("currency")} onSelect={v => { setCurrency(v); sync({ currency: v }); }} items={CURRENCY_OPTIONS} dropdownClassName="max-h-[300px]" className="flex-1" bgClassName="bg-[#FFF0F3]" borderClassName="border-[rgba(179,27,56,0.25)]" textClassName="text-[#656565]" />
-            <input value={monthlyIncome} onChange={e => { setMonthlyIncome(e.target.value); sync({ monthlyIncome: e.target.value }); }} placeholder="Enter monthly income" className="flex-1 max-[400]:py-[10px] h-[40px] border-[rgba(179,27,56,0.25)] w-full items-center rounded-[12px] border bg-[#FFF0F3] px-4 text-[16px] text-dark outline-none placeholder:text-[#656565]" />
+            <DropdownField typeable compact placeholder="Select currency" value={currency} open={opens.currency} setOpen={setOpen("currency")} onSelect={v => { setCurrency(v); sync({ currency: v }); }} items={CURRENCY_OPTIONS} dropdownClassName="max-h-[300px] min-[401px]:min-w-[200px]" className="flex-1 min-[401px]:max-w-[200px]" textClassName={mounted && currency ? "text-[#222222]" : "text-[#656565]"} bgClassName={mounted && currency ? "bg-[#F2F2F2]" : "bg-[#FFF0F3]"} borderClassName={mounted && currency ? "border-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)]"} />
+            <input value={monthlyIncome} onChange={e => { setMonthlyIncome(e.target.value); sync({ monthlyIncome: e.target.value }); }} placeholder="Enter monthly income" className={`flex-1 max-[400]:py-[10px] h-[40px] w-full items-center rounded-[12px] border px-4 text-[16px] text-dark outline-none placeholder:text-[#656565] ${mounted && monthlyIncome ? "border-[#F2F2F2] bg-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)] bg-[#FFF0F3]"}`} />
           </div>
         </FormRow>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import EliteUpgradePopup from "../common-layout/EliteUpgradePopup";
 import ProtectedPhoto from "../common-layout/ProtectedPhoto";
 import { FaWhatsapp } from "react-icons/fa6";
@@ -75,6 +76,7 @@ export default function MatchInterestCard({
     const me = readMeCache();
     const myPhoto = me?.profile?.photoUrl ?? (me?.gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png");
     const router = useRouter();
+    const queryClient = useQueryClient();
     const [pending, setPending] = useState(false);
     const [showLimitPopup, setShowLimitPopup] = useState(false);
     const [mutualAccepted, setMutualAccepted] = useState(false);
@@ -111,6 +113,7 @@ export default function MatchInterestCard({
                 setMutualAccepted(true);
             }
             setChangeMindMode(false);
+            queryClient.invalidateQueries({ queryKey: ["interests"] });
             onAction?.();
         } catch (err) {
             if (err instanceof ApiError && err.status === 409) onAction?.();
@@ -174,7 +177,7 @@ export default function MatchInterestCard({
         const effectiveIsReminderDue = isReminderDue || (
             changeMindMode && status === "declined" && !!lastSentAt &&
             // eslint-disable-next-line react-hooks/purity
-            Date.now() - new Date(lastSentAt).getTime() >= 3 * 24 * 60 * 60 * 1000
+            Date.now() - new Date(lastSentAt).getTime() >= 2 * 24 * 60 * 60 * 1000
         );
 
         if (sendCount === 0) {
@@ -221,8 +224,8 @@ export default function MatchInterestCard({
         }
 
         if (sendCount === 1 && !effectiveIsReminderDue) {
-            // First interest sent, 3-day wait not yet over — show countdown
-            const reminderAt = lastSentAt ? new Date(new Date(lastSentAt).getTime() + 3 * 24 * 60 * 60 * 1000) : null;
+            // First interest sent, 2-day wait not yet over — show countdown
+            const reminderAt = lastSentAt ? new Date(new Date(lastSentAt).getTime() + 2 * 24 * 60 * 60 * 1000) : null;
             const countdownText = reminderAt ? formatCountdown(reminderAt) : null;
             return (
                 <CardShell>

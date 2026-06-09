@@ -207,7 +207,7 @@ function NotificationRow({
           </div>
           {/* CTA below text on mobile */}
           <button
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => { e.stopPropagation(); navigate(); }}
             className="sm:hidden max-[370px]:mt-0.5 mt-2 flex cursor-pointer items-center gap-0.5"
           >
             {!item.isRead ? <div className="h-2 w-2 rounded-full bg-[#B31B38]" /> : <div className="h-0 md:h-2 w-0 md:w-2" />}
@@ -221,7 +221,7 @@ function NotificationRow({
 
       {/* CTA on right on sm+ */}
       <button
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e) => { e.stopPropagation(); navigate(); }}
         className="hidden sm:flex shrink-0 cursor-pointer items-center gap-0.5 md:gap-1.5"
       >
         {!item.isRead ? <div className="h-2 md:h-3 w-2 md:w-3 rounded-full bg-[#B31B38]" /> : <div className="h-2 md:h-3 w-2 md:w-3" />}
