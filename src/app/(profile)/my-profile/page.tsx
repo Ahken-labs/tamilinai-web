@@ -108,6 +108,15 @@ export default function MyProfilePage() {
   const [aboutMe, setAboutMe] = useState("");
   const [aboutMeDirty, setAboutMeDirty] = useState(false);
   const [aboutMeError, setAboutMeError] = useState<{ message: string; offendingWord: string } | null>(null);
+  const [aboutMeFocused, setAboutMeFocused] = useState(false);
+  const aboutMeTextareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    const el = aboutMeTextareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [aboutMe]);
 
   // Saving
   const [saving, setSaving] = useState(false);
@@ -544,12 +553,24 @@ export default function MyProfilePage() {
                   </p>
                 ) : (
                   <div>
-                    <div className={`rounded-[12px] border bg-[#FFF0F3] ${aboutMeError ? "border-[#B31B38]" : "border-[rgba(179,27,56,0.25)]"}`}>
+                    <div className={`rounded-[12px] border transition-colors ${
+                      aboutMeError
+                        ? "bg-[#FFF0F3] border-[#B31B38]"
+                        : aboutMe && !aboutMeFocused
+                          ? "bg-[#F2F2F2] border-[#F2F2F2]"
+                          : "bg-[#FFF0F3] border-[rgba(179,27,56,0.25)]"
+                    }`}>
                       <textarea
+                        ref={(el) => {
+                          aboutMeTextareaRef.current = el;
+                          if (el) { el.style.height = "auto"; el.style.height = `${el.scrollHeight}px`; }
+                        }}
                         value={aboutMe}
                         onChange={(e) => handleAboutMeChange(e.target.value)}
+                        onFocus={() => setAboutMeFocused(true)}
+                        onBlur={() => setAboutMeFocused(false)}
                         placeholder="A few words about yourself, your values, what you're looking for."
-                        className="md:h-20 h-22 w-full resize-none bg-transparent p-3 text-[14px] md:text-[16px] text-dark outline-none placeholder:text-[#B31B38]"
+                        className="min-h-20 w-full resize-none bg-transparent p-3 text-[14px] md:text-[16px] text-dark outline-none placeholder:text-[#B31B38] overflow-hidden"
                       />
                     </div>
                     <span className="mt-[5px] md:mt-[7px] block text-[12px] md:text-[14px]" style={{ minHeight: "1.2em" }}>

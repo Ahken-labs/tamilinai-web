@@ -165,7 +165,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
     }
   }
 
-  function handleResendError(err: unknown, revertMethod?: "email" | "sms") {
+  function handleResendError(err: unknown, revertMethod?: "email" | "sms", channel?: "email" | "sms") {
     if (err instanceof ApiError) {
       if (err.code === "BAN") {
         setIsBanned(true);
@@ -174,7 +174,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
       }
       if (err.code === "SESSION_LOCK" || err.code === "COOLDOWN") {
         const secs = err.retryAfter ?? 900;
-        applyResendResult(method === "email" ? "email" : "sms", secs);
+        applyResendResult(channel ?? method, secs);
         return;
       }
       setErrorMsg(err.message);
@@ -194,15 +194,23 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
       const res = await resendOtp(registrationKey, "sms");
       applyResendResult("sms", res.cooldownSeconds ?? 60);
     } catch (err) {
-      handleResendError(err, "email");
+      handleResendError(err, "email", "sms");
     }
   };
 
-  const handleSwitchToEmail = () => {
+  const handleSwitchToEmail = async () => {
     if (isExpired || isBanned) { router.replace("/"); return; }
     setMethod("email");
     setDigits(Array(OTP_LENGTH).fill(""));
     setError("");
+    if (emailCountdown > 0) return;
+    try {
+      const registrationKey = sessionStorage.getItem("inai_reg_key") ?? "";
+      const res = await resendOtp(registrationKey, "email");
+      applyResendResult("email", res.cooldownSeconds ?? 60);
+    } catch (err) {
+      handleResendError(err, "sms", "email");
+    }
   };
 
   const handleResend = async () => {

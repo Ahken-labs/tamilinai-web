@@ -486,7 +486,7 @@ export default function PhotoUploadForm() {
 
   const [aboutMe, setAboutMe] = useState(() => generateAboutMe(buildAboutMeData()));
   const [aboutMeError, setAboutMeError] = useState<{ message: string; offendingWord: string } | null>(null);
-  const [spinKey, setSpinKey] = useState(0);
+  const [isSpinning, setIsSpinning] = useState(false);
   const [agreed, setAgreed] = useState(true);
   const [showError, setShowError] = useState(false);
   const [openPrivacy, setOpenPrivacy] = useState(false);
@@ -684,14 +684,14 @@ export default function PhotoUploadForm() {
             <button
               type="button"
               onClick={() => {
-                setSpinKey(k => k + 1);
+                setIsSpinning(true);
+                setTimeout(() => setIsSpinning(false), 600);
                 const suggestion = generateAboutMe(buildAboutMeData());
                 handleAboutMeChange(suggestion);
               }}
               className="flex items-center gap-1 text-[13px] text-primary underline cursor-pointer hover:opacity-70 select-none"
             >
               <svg
-                key={spinKey}
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -699,8 +699,7 @@ export default function PhotoUploadForm() {
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="w-[15px] h-[15px]"
-                style={{ animation: spinKey > 0 ? "spin 0.5s ease-in-out 1" : "none" }}
+                className={`w-[15px] h-[15px] ${isSpinning ? "animate-spin" : ""}`}
               >
                 <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
                 <path d="M3 3v5h5" />

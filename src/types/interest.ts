@@ -10,6 +10,7 @@ export interface SentInterest {
   photoAccess?: string;
   status: InterestStatus;
   viewStatus?: string;
+  cardType?: 'interest' | 'reminder';
   sendCount: number;
   lastSentAt: string;
   respondedAt?: string;
@@ -27,6 +28,7 @@ export interface ReceivedInterest {
   photoAccess?: string;
   status: InterestStatus;
   viewStatus?: string;
+  cardType?: 'interest' | 'reminder';
   sendCount: number;
   lastSentAt: string;
   respondedAt?: string;
@@ -47,6 +49,7 @@ export type InterestCardStatus =
 
 export interface Interest {
   id: string;
+  cardKey?: string;
   displayId?: string;
   profileName: string;
   profilePhoto?: string;
@@ -73,17 +76,12 @@ export function sentInterestToCard(s: SentInterest, myPhoto?: string): Interest 
   let cardStatus: InterestCardStatus;
   if (s.status === "accepted") cardStatus = "accepted_by_them";
   else if (s.status === "declined") cardStatus = "skipped_by_them";
-  // sent_reminder = 3-day window passed (isReminderDue) OR reminder already sent (viewStatus)
-  else if (s.isReminderDue || s.viewStatus === "sent_reminder") cardStatus = "sent_reminder";
-  else {
-    if (s.status !== "pending" && s.status !== "withdrawn") {
-      console.warn("[sentInterestToCard] Unexpected status:", s.status);
-    }
-    cardStatus = "sent_interest";
-  }
+  else if (s.viewStatus === "sent_reminder") cardStatus = "sent_reminder";
+  else cardStatus = "sent_interest";
 
   return {
     id: s.receiverId,
+    cardKey: s.cardType === 'reminder' ? `${s.receiverId}-reminder` : s.receiverId,
     displayId: s.displayId,
     profileName: s.name,
     gender: s.gender,
@@ -101,16 +99,12 @@ export function receivedInterestToCard(r: ReceivedInterest, myPhoto?: string): I
   let cardStatus: InterestCardStatus;
   if (r.status === "accepted") cardStatus = "accepted_by_me";
   else if (r.status === "declined") cardStatus = "declined_by_me";
-  else if (r.sendCount > 1) cardStatus = "received_reminder";
-  else {
-    if (r.status !== "pending" && r.status !== "withdrawn") {
-      console.warn("[receivedInterestToCard] Unexpected status:", r.status);
-    }
-    cardStatus = "received_interest";
-  }
+  else if (r.viewStatus === "received_reminder") cardStatus = "received_reminder";
+  else cardStatus = "received_interest";
 
   return {
     id: r.senderId,
+    cardKey: r.cardType === 'reminder' ? `${r.senderId}-reminder` : r.senderId,
     displayId: r.displayId,
     profileName: r.name,
     gender: r.gender,

@@ -45,7 +45,7 @@ export default function DropdownField({
   className = "",
   dropdownClassName = "",
   itemClassName = "",
-  height = "auto",
+  height = "h-[40px]",
   borderClassName,
   openBorderClassName,
   bgClassName = "bg-[#F2F2F2]",
@@ -185,7 +185,9 @@ export default function DropdownField({
           className={`absolute left-0 right-0 top-[calc(100%+4px)] z-30 overflow-y-auto rounded-xl border border-[#E0E0E0] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.1)] ${dropdownClassName}`}
           style={{ maxHeight: height }}
         >
-          {filteredItems.map((item, index) => {
+          {filteredItems.length === 0 ? (
+            <p className="px-4 py-3 text-[14px] text-center text-[#999]">No results</p>
+          ) : filteredItems.map((item, index) => {
             const isSelected = item === value;
             const isSuggested = isFiltering && index === 0;
 

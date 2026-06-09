@@ -114,7 +114,7 @@ export default function ProtectedPhoto({ src, alt, fill, width, height, classNam
   }
 
   return (
-    <div className="relative w-full h-full select-none">
+    <div className="relative w-full h-full select-none overflow-hidden rounded-[inherit]">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={displaySrc}
@@ -135,7 +135,7 @@ export default function ProtectedPhoto({ src, alt, fill, width, height, classNam
       />
 
       {blurred && (
-        <div className="absolute inset-0 z-30 backdrop-blur-xl bg-black/10" />
+        <div className="absolute inset-0 z-30 backdrop-blur-xl bg-black/10 rounded-[inherit]" />
       )}
 
       {watermark && (

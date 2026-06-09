@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import DropdownField from "../../common-layout/DropdownField";
 import FormRow from "../../common-layout/FormRow";
 import { RELIGION_OPTIONS, CASTE_OPTIONS_HINDU, CASTE_OPTIONS_CHRISTIAN } from "@/src/constants/profiles";
@@ -22,6 +22,8 @@ const ALL_CLOSED: Record<OpenKey, boolean> = { religion: false, caste: false };
 type Props = { me: Me | null; onDirty: () => void };
 
 export default function ReligionCasteSection({ me, onDirty }: Props) {
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
+
   const p = me?.profile;
 
   const [opens, setOpens] = useState<Record<OpenKey, boolean>>(ALL_CLOSED);
@@ -54,11 +56,11 @@ export default function ReligionCasteSection({ me, onDirty }: Props) {
 
         <FormRow leftWidth={leftWidth} required label="Religion" align="center">
           <DropdownField typeable compact placeholder="Select religion" value={religion} open={opens.religion} setOpen={setOpen("religion")}
-            onSelect={v => { setReligion(v); setCaste(""); sync({ religion: v, caste: "" }); }} items={RELIGION_OPTIONS} />
+            onSelect={v => { setReligion(v); setCaste(""); sync({ religion: v, caste: "" }); }} items={RELIGION_OPTIONS} bgClassName={mounted && religion ? "bg-[#F2F2F2]" : "bg-[#FFF0F3]"} borderClassName={mounted && religion ? "border-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)]"} textClassName={mounted && religion ? "text-[#222222]" : "text-[#656565]"} />
         </FormRow>
 
         <FormRow leftWidth={leftWidth} required label="Caste or denomination" align="center">
-          <DropdownField typeable compact placeholder={religion ? "Select caste / denomination" : "Select religion first"} value={caste} open={opens.caste} setOpen={setOpen("caste")} onSelect={v => { setCaste(v); setCasteOther(""); sync({ caste: v === "Other" ? "" : v }); }} items={casteOptions} dropdownClassName="max-h-[300px]" />
+          <DropdownField typeable compact placeholder={mounted && religion ? "Select caste / denomination" : "Select religion first"} value={caste} open={opens.caste} setOpen={setOpen("caste")} onSelect={v => { setCaste(v); setCasteOther(""); sync({ caste: v === "Other" ? "" : v }); }} items={casteOptions} dropdownClassName="max-h-[300px]" bgClassName={mounted && caste ? "bg-[#F2F2F2]" : "bg-[#FFF0F3]"} borderClassName={mounted && caste ? "border-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)]"} textClassName={mounted && caste ? "text-[#222222]" : "text-[#656565]"} />
         </FormRow>
 
         {caste === "Other" && (
@@ -74,7 +76,7 @@ export default function ReligionCasteSection({ me, onDirty }: Props) {
                 if (!casteOther.trim()) setCasteOtherError("*Please specify your caste");
               }}
               placeholder="Type here..."
-              className="flex h-[40px] w-full items-center rounded-[12px] border border-[#F2F2F2] bg-[#F2F2F2] px-4 text-[16px] text-dark outline-none placeholder:text-[#525252]"
+              className={`flex h-[40px] w-full items-center rounded-[12px] border px-4 text-[16px] text-dark outline-none placeholder:text-[#525252] ${mounted && casteOther ? "border-[#F2F2F2] bg-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)] bg-[#FFF0F3]"}`}
             />
           </FormRow>
         )}

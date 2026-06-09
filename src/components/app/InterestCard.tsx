@@ -154,7 +154,6 @@ export default function InterestCard({ interest, isLast = false }: InterestCardP
   const { status, id: profileId, profileName } = interest;
 
   const isSent = status === "sent_interest" || status === "sent_reminder";
-  const isReceived = status === "received_interest" || status === "received_reminder";
   const isNew = interest.isNew;
 
   function markSeen() {
@@ -180,7 +179,7 @@ export default function InterestCard({ interest, isLast = false }: InterestCardP
     actionEl = (
       <button className={actionClass(isNew)} onClick={(e) => { e.stopPropagation(); goToProfile(); }}>
         {isNew && <RedDotIcon className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3" />}
-        {isNew ? "Send reminder" : "See status"}
+        See status
         <ChevronRightIcon className="w-4 sm:w-5 h-4 sm:h-5 shrink-0 text-[#B31B38]" />
       </button>
     );
@@ -192,7 +191,15 @@ export default function InterestCard({ interest, isLast = false }: InterestCardP
         <ChevronRightIcon className="w-4 sm:w-5 h-4 sm:h-5 shrink-0 text-[#B31B38]" />
       </button>
     );
-  } else if (isReceived) {
+  } else if (status === "received_reminder") {
+    actionEl = (
+      <button className={actionClass(isNew)} onClick={(e) => { e.stopPropagation(); goToProfile(); }}>
+        {isNew && <RedDotIcon className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3" />}
+        See reminder
+        <ChevronRightIcon className="w-4 sm:w-5 h-4 sm:h-5 shrink-0 text-[#B31B38]" />
+      </button>
+    );
+  } else if (status === "received_interest") {
     actionEl = (
       <button className={actionClass(isNew)} onClick={(e) => { e.stopPropagation(); goToProfile(); }}>
         {isNew && <RedDotIcon className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3" />}

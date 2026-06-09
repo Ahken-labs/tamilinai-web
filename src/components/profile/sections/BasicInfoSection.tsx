@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { ChevronIcon, RadioCircleIcon, SearchIcon, CloseCircleIcon } from "../../../assets/Icons";
 import DropdownField from "../../common-layout/DropdownField";
@@ -144,6 +144,8 @@ const ALL_CLOSED: Record<OpenKey, boolean> = { height: false, weight: false, phy
 type Props = { me: Me | null; onDirty: () => void };
 
 export default function BasicInfoSection({ me, onDirty }: Props) {
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
+
   const p = me?.profile;
   const saved = getDraft();
   const dob = parseDOB(saved?.dateOfBirth ?? p?.dateOfBirth);
@@ -188,13 +190,13 @@ export default function BasicInfoSection({ me, onDirty }: Props) {
               else if (trimmed !== name) { setName(trimmed); sync({ name: trimmed }); }
             }}
             placeholder="Your name"
-            className="flex h-[40px] w-full items-center rounded-[12px] border border-[#F2F2F2] bg-[#F2F2F2] px-4 text-[16px] text-dark outline-none placeholder:text-[#525252]" />
+            className={`flex h-[40px] w-full items-center rounded-[12px] border px-4 text-[16px] text-dark outline-none placeholder:text-[#525252] ${mounted && name ? "border-[#F2F2F2] bg-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)] bg-[#FFF0F3]"}`} />
         </FormRow>
         <FormRow leftWidth={leftWidth} label="Date of birth" required>
           <div className="flex gap-4 flex-wrap">
-            <DropdownField typeable compact placeholder="Year" value={birthYear} open={dobOpen.year} setOpen={setDobFieldOpen("year")} onSelect={wrappedSetYear} items={filtYears} dropdownClassName="max-h-[300px]" className="flex-1" />
-            <DropdownField typeable compact placeholder="Month" value={birthMonth} open={dobOpen.month} setOpen={setDobFieldOpen("month")} onSelect={wrappedSetMonth} items={filtMonths} dropdownClassName="max-h-[300px]" className="flex-1" />
-            <DropdownField typeable compact placeholder="Day" value={birthDay} open={dobOpen.day} setOpen={setDobFieldOpen("day")} onSelect={wrappedSetDay} items={filtDays} dropdownClassName="max-h-[300px]" className="flex-1" />
+            <DropdownField typeable compact placeholder="Year" value={birthYear} open={dobOpen.year} setOpen={setDobFieldOpen("year")} onSelect={wrappedSetYear} items={filtYears} dropdownClassName="max-h-[300px]" className="flex-1" bgClassName={mounted && birthYear ? "bg-[#F2F2F2]" : "bg-[#FFF0F3]"} borderClassName={mounted && birthYear ? "border-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)]"} />
+            <DropdownField typeable compact placeholder="Month" value={birthMonth} open={dobOpen.month} setOpen={setDobFieldOpen("month")} onSelect={wrappedSetMonth} items={filtMonths} dropdownClassName="max-h-[300px]" className="flex-1" bgClassName={mounted && birthMonth ? "bg-[#F2F2F2]" : "bg-[#FFF0F3]"} borderClassName={mounted && birthMonth ? "border-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)]"} />
+            <DropdownField typeable compact placeholder="Day" value={birthDay} open={dobOpen.day} setOpen={setDobFieldOpen("day")} onSelect={wrappedSetDay} items={filtDays} dropdownClassName="max-h-[300px]" className="flex-1" bgClassName={mounted && birthDay ? "bg-[#F2F2F2]" : "bg-[#FFF0F3]"} borderClassName={mounted && birthDay ? "border-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)]"} />
           </div>
         </FormRow>
 
@@ -210,11 +212,11 @@ export default function BasicInfoSection({ me, onDirty }: Props) {
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Height" align="center" required>
-          <DropdownField typeable compact placeholder="Enter height in Cm" value={height} open={opens.height} setOpen={setOpen("height")} onSelect={v => { setHeight(v); sync({ height: v }); }} items={filtHeights} dropdownClassName="max-h-[200px]" />
+          <DropdownField typeable compact placeholder="Enter height in Cm" value={height} open={opens.height} setOpen={setOpen("height")} onSelect={v => { setHeight(v); sync({ height: v }); }} items={filtHeights} dropdownClassName="max-h-[200px]" bgClassName={mounted && height ? "bg-[#F2F2F2]" : "bg-[#FFF0F3]"} borderClassName={mounted && height ? "border-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)]"} />
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Weight" align="center" required>
-          <DropdownField typeable compact placeholder="Enter weight in Kg" value={weight} open={opens.weight} setOpen={setOpen("weight")} onSelect={v => { setWeight(v); sync({ weight: v }); }} items={filtWeights} dropdownClassName="max-h-[200px]" />
+          <DropdownField typeable compact placeholder="Enter weight in Kg" value={weight} open={opens.weight} setOpen={setOpen("weight")} onSelect={v => { setWeight(v); sync({ weight: v }); }} items={filtWeights} dropdownClassName="max-h-[200px]" bgClassName={mounted && weight ? "bg-[#F2F2F2]" : "bg-[#FFF0F3]"} borderClassName={mounted && weight ? "border-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)]"} />
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Any physical challenge?" required>
@@ -235,14 +237,16 @@ export default function BasicInfoSection({ me, onDirty }: Props) {
         )}
 
         <FormRow leftWidth={leftWidth} label="Physical build" align="center">
-          <DropdownField typeable compact placeholder="Select fitness type" value={physBuild} open={opens.physBuild} setOpen={setOpen("physBuild")} onSelect={v => { setPhysBuild(v); sync({ physBuild: v }); }} items={PHYSICAL_BUILD_OPTIONS} bgClassName="bg-[#FFF0F3]" borderClassName="border-[rgba(179,27,56,0.25)]" textClassName="text-[#656565]" />
+          <DropdownField typeable compact placeholder="Select fitness type" value={physBuild} open={opens.physBuild} setOpen={setOpen("physBuild")} onSelect={v => { setPhysBuild(v); sync({ physBuild: v }); }} items={PHYSICAL_BUILD_OPTIONS} bgClassName={mounted && physBuild ? "bg-[#F2F2F2]" : "bg-[#FFF0F3]"} borderClassName={mounted && physBuild ? "border-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)]"} textClassName={mounted && physBuild ? "text-[#222222]" : "text-[#656565]"} />
         </FormRow>
 
         <FormRow leftWidth={leftWidth} label="Languages spoken" align="center">
           <div className="max-[500px]:mt-0.5 mt-3 md:mt-0">
-            <button type="button" onClick={() => setLangPopupOpen(true)} className="flex py-5 px-4 items-center w-full rounded-[12px] border border-[rgba(179,27,56,0.25)] bg-[#FFF0F3] cursor-pointer">
+            <button type="button" onClick={() => setLangPopupOpen(true)} className={`flex py-5 px-4 items-center w-full rounded-[12px] border cursor-pointer ${mounted && languages.length > 0 ? "border-[#F2F2F2] bg-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)] bg-[#FFF0F3]"}`}>
               <div className="flex flex-wrap gap-2 sm:gap-3 md:gap-4 flex-1 min-w-0">
-                {languages.map(lang => <span key={lang} className="px-3 py-1 rounded-[48px] bg-white text-[16px] font-normal text-dark">{lang}</span>)}
+                {languages.length > 0
+                  ? languages.map(lang => <span key={lang} className="px-3 py-1 rounded-[48px] bg-white text-[16px] font-normal text-dark">{lang}</span>)
+                  : <span className="text-[16px] font-normal text-[#525252]">Select languages</span>}
               </div>
               <ChevronIcon open={false} className="shrink-0 ml-2 w-3.5 h-3 md:w-4 md:h-4 transition-transform duration-200" />
             </button>
