@@ -14,7 +14,7 @@ export default function HomePage() {
         <HeroSection />
       </section>
       <HowItWorksSection />
-      <section>
+      <section id="contact">
         <ContactSection />
       </section>
       <DiasporaSection />
