@@ -123,6 +123,81 @@ export interface ProfileDetail {
   };
 }
 
+// Above-fold summary (GET /api/profiles/:id/summary)
+export interface ProfileSummary {
+  id: string;
+  displayId: string;
+  name: string;
+  gender?: string;
+  isElite: boolean;
+  trustBadge: boolean;
+  profileCompletionScore: number;
+  isShortlisted: boolean;
+  isPhoneVerified?: boolean;
+  isEmailVerified?: boolean;
+  interestStatus?: 'none' | 'sent' | 'received' | 'declined';
+  interestIsAccepted?: boolean;
+  interestSendCount?: number;
+  interestReceiveCount?: number;
+  interestLastSentAt?: string | null;
+  isReminderDue?: boolean;
+  incomingPhotoRequest?: { type: 'access' | 'upload' } | null;
+  myPhotoUploadRequestPending?: boolean;
+  photoUnderReview?: boolean;
+  photoAccessRetryAfter?: string | null;
+  photoAccessMaxed?: boolean;
+  viewerIsElite?: boolean;
+  profile: {
+    dateOfBirth?: string | null;
+    heightCm?: number | null;
+    education?: string | null;
+    occupation?: string | null;
+    photoUrl?: string | null;
+    photoAccess?: 'locked' | 'pending' | 'accepted' | 'declined' | null;
+  };
+}
+
+// Section data (GET /api/profiles/:id/details)
+export interface ProfileDetails {
+  contactBlurred?: boolean;
+  viewerIsElite?: boolean;
+  phone?: string;
+  countryCode?: string;
+  email?: string;
+  partnerPreferences?: PartnerPreferences | null;
+  profileRequestStatus?: 'none' | 'pending' | 'notified';
+  profileRequestedFields?: string[];
+  profile: {
+    maritalStatus?: string;
+    weightKg?: number;
+    hasPhysicalChallenge?: boolean;
+    disabilityType?: string;
+    educationDetail?: string;
+    sector?: string;
+    monthlyIncome?: number;
+    incomeCurrency?: string;
+    religion?: string;
+    caste?: string;
+    country?: string;
+    city?: string;
+    citizenship?: string;
+    aboutMe?: string;
+    physicalBuild?: string;
+    languagesSpoken?: string[];
+    dietHabit?: string;
+    smokingHabit?: string;
+    drinkingHabit?: string;
+    hobbies?: string[];
+    residentStatus?: string;
+    fatherOccupation?: string;
+    motherOccupation?: string;
+    brotherCount?: number;
+    brothersMarried?: number;
+    sisterCount?: number;
+    sistersMarried?: number;
+  } | null;
+}
+
 // Setup payload (POST /api/user/profile/setup — multipart)
 export interface SetupPayload {
   dateOfBirth?: string;

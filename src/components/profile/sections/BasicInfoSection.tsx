@@ -13,6 +13,7 @@ import Button from "../../common-layout/Button";
 import type { Me } from "@/src/types/user";
 import { MARITAL_FROM_BE, BUILD_FROM_BE, toCmDisplay, toKgDisplay, parseDOB } from "@/src/utils/profileMappers";
 import { DRAFT_KEYS } from "@/src/constants/profileDraftKeys";
+import { useLoadingText } from "@/src/hooks/useLoadingText";
 
 const KEY = DRAFT_KEYS.basic;
 
@@ -141,9 +142,9 @@ function LanguagePopup({ initialSelected, onClose, onConfirm }: {
 
 type OpenKey = "height" | "weight" | "physBuild";
 const ALL_CLOSED: Record<OpenKey, boolean> = { height: false, weight: false, physBuild: false };
-type Props = { me: Me | null; onDirty: () => void };
+type Props = { me: Me | null; onDirty: () => void; onSave: () => Promise<void> };
 
-export default function BasicInfoSection({ me, onDirty }: Props) {
+export default function BasicInfoSection({ me, onDirty, onSave }: Props) {
   const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
 
   const p = me?.profile;
@@ -164,6 +165,12 @@ export default function BasicInfoSection({ me, onDirty }: Props) {
   const [languages, setLanguages] = useState<string[]>(saved?.languages ?? p?.languagesSpoken ?? ["Tamil"]);
   const [langPopupOpen, setLangPopupOpen] = useState(false);
   const [opens, setOpens] = useState<Record<OpenKey, boolean>>(ALL_CLOSED);
+  const [saving, setSaving] = useState(false);
+  const [saveReady, setSaveReady] = useState(false);
+  const loadingText = useLoadingText(saving, "save");
+
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setSaveReady(true); }, []);
 
   const setOpen = (key: OpenKey) => (val: boolean) => setOpens({ ...ALL_CLOSED, [key]: val });
   const filtHeights = useMemo(() => filterItems(HEIGHTS, height), [height]);
@@ -175,6 +182,27 @@ export default function BasicInfoSection({ me, onDirty }: Props) {
   const wrappedSetYear = (y: string) => { setYear(y); sync({ birthYear: y, birthMonth, birthDay }); };
   const wrappedSetMonth = (m: string) => { setMonth(m); sync({ birthYear, birthMonth: m, birthDay }); };
   const wrappedSetDay = (d: string) => { setBirthDay(d); sync({ birthYear, birthMonth, birthDay: d }); };
+
+  const serverDob = parseDOB(p?.dateOfBirth);
+  const isDirty = saveReady && (
+    name !== serverName ||
+    birthYear !== serverDob.year ||
+    birthMonth !== serverDob.month ||
+    birthDay !== serverDob.day ||
+    maritalStatus !== (MARITAL_FROM_BE[p?.maritalStatus ?? ""] ?? "Unmarried") ||
+    height !== toCmDisplay(p?.heightCm) ||
+    weight !== toKgDisplay(p?.weightKg) ||
+    physicalChallenge !== (p?.hasPhysicalChallenge ? "yes" : "no") ||
+    disability !== (p?.disabilityType ?? "") ||
+    physBuild !== (BUILD_FROM_BE[p?.physicalBuild ?? ""] ?? "") ||
+    JSON.stringify([...languages].sort()) !== JSON.stringify([...(p?.languagesSpoken ?? ["Tamil"])].sort())
+  );
+
+  async function handleSave() {
+    if (saving) return;
+    setSaving(true);
+    try { await onSave(); } finally { setSaving(false); }
+  }
 
   return (
     <div className="pt-3 md:pt-4 font-poppins">
@@ -194,9 +222,9 @@ export default function BasicInfoSection({ me, onDirty }: Props) {
         </FormRow>
         <FormRow leftWidth={leftWidth} label="Date of birth" required>
           <div className="flex gap-4 flex-wrap">
-            <DropdownField typeable compact placeholder="Year" value={birthYear} open={dobOpen.year} setOpen={setDobFieldOpen("year")} onSelect={wrappedSetYear} items={filtYears} dropdownClassName="max-h-[300px]" className="flex-1" bgClassName={mounted && birthYear ? "bg-[#F2F2F2]" : "bg-[#FFF0F3]"} borderClassName={mounted && birthYear ? "border-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)]"} />
+            <DropdownField typeable numberOnly compact placeholder="Year" value={birthYear} open={dobOpen.year} setOpen={setDobFieldOpen("year")} onSelect={wrappedSetYear} items={filtYears} dropdownClassName="max-h-[300px]" className="flex-1" bgClassName={mounted && birthYear ? "bg-[#F2F2F2]" : "bg-[#FFF0F3]"} borderClassName={mounted && birthYear ? "border-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)]"} />
             <DropdownField typeable compact placeholder="Month" value={birthMonth} open={dobOpen.month} setOpen={setDobFieldOpen("month")} onSelect={wrappedSetMonth} items={filtMonths} dropdownClassName="max-h-[300px]" className="flex-1" bgClassName={mounted && birthMonth ? "bg-[#F2F2F2]" : "bg-[#FFF0F3]"} borderClassName={mounted && birthMonth ? "border-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)]"} />
-            <DropdownField typeable compact placeholder="Day" value={birthDay} open={dobOpen.day} setOpen={setDobFieldOpen("day")} onSelect={wrappedSetDay} items={filtDays} dropdownClassName="max-h-[300px]" className="flex-1" bgClassName={mounted && birthDay ? "bg-[#F2F2F2]" : "bg-[#FFF0F3]"} borderClassName={mounted && birthDay ? "border-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)]"} />
+            <DropdownField typeable numberOnly compact placeholder="Day" value={birthDay} open={dobOpen.day} setOpen={setDobFieldOpen("day")} onSelect={wrappedSetDay} items={filtDays} dropdownClassName="max-h-[300px]" className="flex-1" bgClassName={mounted && birthDay ? "bg-[#F2F2F2]" : "bg-[#FFF0F3]"} borderClassName={mounted && birthDay ? "border-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)]"} />
           </div>
         </FormRow>
 
@@ -256,6 +284,15 @@ export default function BasicInfoSection({ me, onDirty }: Props) {
 
       {langPopupOpen && (
         <LanguagePopup initialSelected={languages} onClose={() => setLangPopupOpen(false)} onConfirm={langs => { setLanguages(langs); sync({ languages: langs }); }} />
+      )}
+
+      {isDirty && (
+        <div className="mt-6 md:mt-8 pt-4 border-t border-[#EAEAEA]">
+          <div className="flex">
+            <div className="flex-1 hidden min-[500px]:block" />
+            <Button text={saving ? loadingText : "Save"} onPress={handleSave} className="flex-1" />
+          </div>
+        </div>
       )}
     </div>
   );

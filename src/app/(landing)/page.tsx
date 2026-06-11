@@ -1,4 +1,3 @@
-import ContactInfoSection from "@/src/components/profile/sections/ContactInfoSection";
 import HeroSection from "./sections/HeroSection";
 import HowItWorksSection from "./sections/HowItWorksSection";
 import ContactSection from "./sections/ContactSection";

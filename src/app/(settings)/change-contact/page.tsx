@@ -10,6 +10,7 @@ import CountryCodeSelect from "@/src/components/more/CountryCodeSelect";
 import FormCardLayout from "@/src/components/common-layout/FormCardLayout";
 import { readMeCache, writeMeCache, invalidateMeCache } from "@/src/components/AppHeader";
 import { COUNTRIES } from "@/src/constants/countries";
+import { sanitizePhoneInput, validatePhone, validateEmail } from "@/src/utils/validation";
 import { ApiError } from "@/src/lib/api/client";
 import {
   requestEmailChange, confirmEmailChange,
@@ -31,9 +32,13 @@ function ChangeContactContent() {
   const params = useSearchParams();
   const type = params.get("type") === "email" ? "email" : "phone";
 
+  const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setMounted(true); }, []);
+
   const me = readMeCache();
   const currentValue = type === "email" ? (me?.email ?? "") : (me?.phone ?? "");
-  const currentDisplay = currentValue;
+  const currentDisplay = mounted ? currentValue : "";
 
   // Step 1 — request
   const [step, setStep] = useState<Step>("request");
@@ -76,11 +81,16 @@ function ChangeContactContent() {
     if (!trimmed) { setInputError("Please enter a value."); return; }
 
     if (type === "email") {
+      const { error: emailErr, warning: emailWarn } = validateEmail(trimmed);
+      if (emailErr) { setInputError(emailErr); return; }
+      if (emailWarn) { setInputError(emailWarn); return; }
       if (trimmed.toLowerCase() === currentValue.toLowerCase()) {
         setInputError("This is already your current email address.");
         return;
       }
     } else {
+      const phoneErr = validatePhone(trimmed, countryCode);
+      if (phoneErr) { setInputError(phoneErr); return; }
       const code = extractCode(countryCode);
       if (trimmed === currentValue && code === (me?.countryCode ?? "")) {
         setInputError("This is already your current phone number.");
@@ -187,7 +197,7 @@ function ChangeContactContent() {
         title={`Change your ${label}`}
         subtitle={currentDisplay ? `Are you sure you want to change from ${currentDisplay}?` : `Enter your new ${label.toLowerCase()}`}
         footer={
-          <div className="flex gap-3">
+          <div className="flex max-[355px]:flex-col-reverse gap-3">
             <Button
               text="Go back"
               onPress={() => router.back()}
@@ -214,7 +224,7 @@ function ChangeContactContent() {
             />
             <InputBox
               value={value}
-              onChange={(v) => { setValue(v); setInputError(""); }}
+              onChange={(v) => { setValue(sanitizePhoneInput(v, countryCode)); setInputError(""); }}
               label={`New ${label}`}
               type="tel"
               className="bg-cartbox2 border-gray1"

@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState, useEffect, useMemo } from "react";
 import { useScrollHide } from "@/src/hooks/useScrollHide";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -20,10 +20,10 @@ import MatchPreferencesCard from "@/src/components/profile/MatchPreferencesCard"
 import MatchInterestCard from "@/src/components/profile/MatchInterestCard";
 import IncomingPhotoRequestCard from "@/src/components/profile/IncomingPhotoRequestCard";
 import Match_ContactSection_Card from "@/src/components/profile/Match_ContactSection_Card";
-import { getProfile, requestPhotoAccess, requestPhotoUpload, requestProfileCompletion } from "@/src/lib/api/profiles";
+import { getProfileSummary, getProfileDetails, requestPhotoAccess, requestPhotoUpload, requestProfileCompletion } from "@/src/lib/api/profiles";
 import { getMe } from "@/src/lib/api/user";
 import type { ProfileDetail } from "@/src/types/user";
-import { UserProfileSkeletonBody } from "@/src/components/app/skeleton-layout/UserProfileSkeleton";
+import { UserProfileSkeletonBody, MobileSectionsSkeleton, DesktopSectionsSkeleton } from "@/src/components/app/skeleton-layout/UserProfileSkeleton";
 import { calculateAge } from "@/src/utils/calculateAge";
 import { DIET_FROM_BE, SMOKE_FROM_BE, DRINK_FROM_BE, MARITAL_FROM_BE, BUILD_FROM_BE, RESIDENT_FROM_BE } from "@/src/utils/profileMappers";
 import EliteUpgradePopup, { shouldShowWeeklyNudge, markWeeklyNudgeSeen, type EliteUpgradeTrigger } from "@/src/components/common-layout/EliteUpgradePopup";
@@ -86,7 +86,7 @@ function buildSections(p: ProfileDetail, interestStatus: "sent" | "received" | "
         { label: "Height", value: pr.heightCm ? formatHeight(pr.heightCm) : "Not specified", fieldKey: pr.heightCm ? undefined : 'heightCm' },
         { label: "Weight", value: formatWeight(pr.weightKg), fieldKey: pr.weightKg ? undefined : 'weightKg' },
         { label: "Any physical challenge", value: pr.hasPhysicalChallenge ? (pr.disabilityType ?? "Yes") : "No" },
-        { label: "Body type", value: (pr.physicalBuild ? (BUILD_FROM_BE[pr.physicalBuild] ?? pr.physicalBuild) : "Not specified"), fieldKey: pr.physicalBuild ? undefined : 'physicalBuild' },
+        { label: "Physical build", value: (pr.physicalBuild ? (BUILD_FROM_BE[pr.physicalBuild] ?? pr.physicalBuild) : "Not specified"), fieldKey: pr.physicalBuild ? undefined : 'physicalBuild' },
       ],
     },
     {
@@ -220,17 +220,76 @@ function UserProfileContent() {
   const backBarVisible = useScrollHide();
 
   function handleInterestAction() {
-    queryClient.invalidateQueries({ queryKey: ["profile", id] });
+    queryClient.invalidateQueries({ queryKey: ["profile-summary", id] });
+    queryClient.invalidateQueries({ queryKey: ["profile-details", id] });
   }
 
-  const { data: profile, isLoading, isFetching, isError } = useQuery({
-    queryKey: ["profile", id],
-    queryFn: () => getProfile(id),
+  const { data: summary, isLoading: summaryLoading, isFetching: summaryFetching, isError: summaryError } = useQuery({
+    queryKey: ["profile-summary", id],
+    queryFn: () => getProfileSummary(id),
     enabled: !!id,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 1 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     refetchOnWindowFocus: false,
+    retry: false,
   });
+
+  const { data: details, isLoading: detailsLoading } = useQuery({
+    queryKey: ["profile-details", id],
+    queryFn: () => getProfileDetails(id),
+    enabled: !!id && !!summary,
+    staleTime: 15 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+
+  // Merge summary + details into a ProfileDetail-compatible object.
+  // Top content renders as soon as summary arrives; sections render when details arrives.
+  const profile: ProfileDetail | null = useMemo(() => summary ? {
+    id:                     summary.id,
+    displayId:              summary.displayId,
+    name:                   summary.name,
+    gender:                 summary.gender,
+    isElite:                summary.isElite,
+    trustBadge:             summary.trustBadge,
+    profileCompletionScore: summary.profileCompletionScore,
+    isShortlisted:          summary.isShortlisted,
+    isPhoneVerified:        summary.isPhoneVerified,
+    isEmailVerified:        summary.isEmailVerified,
+    interestStatus:         summary.interestStatus,
+    interestIsAccepted:     summary.interestIsAccepted,
+    interestSendCount:      summary.interestSendCount,
+    interestReceiveCount:   summary.interestReceiveCount,
+    interestLastSentAt:     summary.interestLastSentAt,
+    isReminderDue:          summary.isReminderDue,
+    incomingPhotoRequest:   summary.incomingPhotoRequest,
+    myPhotoUploadRequestPending: summary.myPhotoUploadRequestPending,
+    photoUnderReview:       summary.photoUnderReview,
+    photoAccessRetryAfter:  summary.photoAccessRetryAfter,
+    photoAccessMaxed:       summary.photoAccessMaxed,
+    viewerIsElite:          summary.viewerIsElite,
+    contactBlurred:         details?.contactBlurred,
+    phone:                  details?.phone,
+    countryCode:            details?.countryCode,
+    email:                  details?.email,
+    partnerPreferences:     details?.partnerPreferences ?? null,
+    profileRequestStatus:   details?.profileRequestStatus ?? 'none',
+    profileRequestedFields: details?.profileRequestedFields ?? [],
+    profile: {
+      dateOfBirth: summary.profile.dateOfBirth ?? undefined,
+      heightCm:    summary.profile.heightCm ?? undefined,
+      education:   summary.profile.education ?? undefined,
+      occupation:  summary.profile.occupation ?? undefined,
+      photoUrl:    summary.profile.photoUrl ?? undefined,
+      photoAccess: summary.profile.photoAccess,
+      ...(details?.profile ?? {}),
+    },
+  } : null, [summary, details]);
+
+  const isLoading = summaryLoading;
+  const isFetching = summaryFetching;
+  const isError = summaryError;
 
   // Hits React Query cache if AppHeader already loaded it — zero network cost
   const { data: me, isLoading: isMeLoading } = useQuery({
@@ -494,9 +553,13 @@ function UserProfileContent() {
               )}
             </>
           )}
-          {sections.filter((s) => !s.hidden).map((section) => (
-            <SectionCard key={section.title} section={section} sessionRequestedFields={sessionRequestedFields} allRequested={allRequested} requestsLocked={requestsLocked} onFieldRequest={handleFieldRequest} />
-          ))}
+          {!!detailsLoading ? (
+            <MobileSectionsSkeleton />
+          ) : (
+            sections.filter((s) => !s.hidden).map((section) => (
+              <SectionCard key={section.title} section={section} sessionRequestedFields={sessionRequestedFields} allRequested={allRequested} requestsLocked={requestsLocked} onFieldRequest={handleFieldRequest} />
+            ))
+          )}
         </div>
       </div>
 
@@ -680,9 +743,13 @@ function UserProfileContent() {
                   )}
                 </>
               )}
-              {sections.filter((s) => !s.hidden).map((section) => (
-                <SectionCard key={section.title} section={section} sessionRequestedFields={sessionRequestedFields} allRequested={allRequested} requestsLocked={requestsLocked} onFieldRequest={handleFieldRequest} />
-              ))}
+              {!!detailsLoading ? (
+                <DesktopSectionsSkeleton />
+              ) : (
+                sections.filter((s) => !s.hidden).map((section) => (
+                  <SectionCard key={section.title} section={section} sessionRequestedFields={sessionRequestedFields} allRequested={allRequested} requestsLocked={requestsLocked} onFieldRequest={handleFieldRequest} />
+                ))
+              )}
             </div>
           </div>
         </div>

@@ -57,11 +57,6 @@ function readDraft<T>(key: string): T | null {
   try { const r = sessionStorage.getItem(key); return r ? JSON.parse(r) as T : null; } catch { return null; }
 }
 
-function hasSectionDrafts(): boolean {
-  const keys = [DRAFT_KEYS.basic, DRAFT_KEYS.career, DRAFT_KEYS.family, DRAFT_KEYS.religion,
-  DRAFT_KEYS.location, DRAFT_KEYS.lifestyle, DRAFT_KEYS.hobbies, DRAFT_KEYS.partner];
-  return keys.some(k => sessionStorage.getItem(k) !== null);
-}
 
 function clearAllDrafts() {
   Object.values(DRAFT_KEYS).forEach(k => sessionStorage.removeItem(k));
@@ -122,9 +117,7 @@ export default function MyProfilePage() {
   const [saving, setSaving] = useState(false);
   const loadingText = useLoadingText(saving, "save");
 
-  // True when any section has written a draft to sessionStorage
-  const [draftsExist, setDraftsExist] = useState(false);
-  // Incremented on every onDirty call so buildSections re-reads sessionStorage even when draftsExist is already true
+  // Incremented on every onDirty call so buildSections re-reads sessionStorage
   const [draftTick, setDraftTick] = useState(0);
   // Incremented after Done to force section remount with fresh me data
   const [sectionRevision, setSectionRevision] = useState(0);
@@ -134,16 +127,13 @@ export default function MyProfilePage() {
   const aboutMeRef = useRef<HTMLDivElement>(null);
   const [openSectionId, setOpenSectionId] = useState<string>("contact");
 
-  const handleDirty = useCallback(() => { setDraftsExist(true); setDraftTick(t => t + 1); }, []);
+  const handleDirty = useCallback(() => { setDraftTick(t => t + 1); }, []);
   const tabBarVisible = useScrollHide();
   // Load me (cache first, then fresh)
   useEffect(() => {
-    // Check session drafts immediately (handles page reload with pending drafts)
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setDraftsExist(hasSectionDrafts());
-
     const cached = readMeCache();
     if (cached) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMe(cached);
       setOpenSectionId(getFirstIncomplete(cached));
       setAboutMe(sessionStorage.getItem(ABOUT_ME_KEY) ?? cached.profile?.aboutMe ?? "");
@@ -176,7 +166,7 @@ export default function MyProfilePage() {
   const hasPhoto = !!(me?.profile?.photoUrl || pendingPhoto);
   const isNew = me?.createdAt ? isAccountNew(me.createdAt) : false;
 
-  const hasPendingChanges = pendingPhoto !== null || aboutMeDirty || draftsExist;
+  const hasPendingChanges = pendingPhoto !== null || aboutMeDirty;
 
   // File picker handler
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -361,7 +351,6 @@ export default function MyProfilePage() {
       if (saves.length === 0) {
         // Nothing actually changed — just clear drafts and return
         clearAllDrafts();
-        setDraftsExist(false);
         setAboutMeDirty(false);
         return;
       }
@@ -370,7 +359,6 @@ export default function MyProfilePage() {
 
       // Clear all drafts
       clearAllDrafts();
-      setDraftsExist(false);
       setPendingPhoto(null);
       setAboutMeDirty(false);
 
@@ -389,8 +377,156 @@ export default function MyProfilePage() {
     finally { setSaving(false); }
   };
 
+  // ── Shared post-save refresh ──────────────────────────────────────────────────
+  async function refreshAfterSave() {
+    invalidateMeCache();
+    const fresh = await getMe();
+    writeMeCache(fresh);
+    setMe(fresh);
+    window.dispatchEvent(new CustomEvent("me-updated"));
+    if (fresh.profile?.photoUrl) setPreviewUrl(null);
+    if (!sessionStorage.getItem(ABOUT_ME_KEY)) setAboutMe(fresh.profile?.aboutMe ?? "");
+    setSectionRevision(r => r + 1);
+  }
+
+  const sectionDiff = (a: unknown, b: unknown): boolean => {
+    const norm = (v: unknown) => (v === null || v === undefined ? null : v);
+    const na = norm(a); const nb = norm(b);
+    if (Array.isArray(na) && Array.isArray(nb))
+      return JSON.stringify([...na].sort()) !== JSON.stringify([...nb].sort());
+    return na !== nb;
+  };
+
+  // ── Per-section save handlers ─────────────────────────────────────────────────
+  async function handleSaveBasic() {
+    const bd = readDraft<{ name?: string; birthYear: string; birthMonth: string; birthDay: string; maritalStatus: string; height: string; weight: string; physicalChallenge: string; disability: string; physBuild: string; languages: string[] }>(DRAFT_KEYS.basic);
+    if (!bd) return;
+    const bp = me?.profile;
+    const saves: Promise<unknown>[] = [];
+    const draftName = bd.name?.trim();
+    if (draftName && draftName.length >= 3 && !/^\d+$/.test(draftName) && sectionDiff(draftName, me?.name))
+      saves.push(updateMe({ name: draftName }));
+    const dob = formatDOB(bd.birthYear, bd.birthMonth, bd.birthDay) ?? bp?.dateOfBirth;
+    const marital = bd.maritalStatus ? (MARITAL_TO_BE[bd.maritalStatus] ?? bd.maritalStatus) : bp?.maritalStatus;
+    const heightCm = bd.height ? parseCm(bd.height) : bp?.heightCm;
+    const weightKg = bd.weight ? parseKg(bd.weight) : bp?.weightKg;
+    const hasPhys = bd.physicalChallenge !== undefined ? bd.physicalChallenge === "yes" : (bp?.hasPhysicalChallenge ?? false);
+    const disType = hasPhys ? (bd.disability || bp?.disabilityType || undefined) : undefined;
+    const basicChanged = sectionDiff(dob, bp?.dateOfBirth) || sectionDiff(marital, bp?.maritalStatus) || sectionDiff(heightCm, bp?.heightCm) || sectionDiff(weightKg, bp?.weightKg) || sectionDiff(hasPhys, bp?.hasPhysicalChallenge ?? false) || (hasPhys && sectionDiff(disType, bp?.disabilityType));
+    if (basicChanged && dob && marital) saves.push(saveBasicDetails({ dateOfBirth: dob, maritalStatus: marital as Parameters<typeof saveBasicDetails>[0]["maritalStatus"], heightCm, weightKg, hasPhysicalChallenge: hasPhys, disabilityType: disType }));
+    const lifestylePayload: LifestyleDetailsPayload = {};
+    if (bd.physBuild) { const be = BUILD_TO_BE[bd.physBuild]; if (be && sectionDiff(be, bp?.physicalBuild)) lifestylePayload.physicalBuild = be; }
+    if (bd.languages?.length && sectionDiff(bd.languages, bp?.languagesSpoken ?? ["Tamil"])) lifestylePayload.languagesSpoken = bd.languages;
+    if (Object.keys(lifestylePayload).length) saves.push(saveLifestyleDetails(lifestylePayload));
+    if (saves.length) await Promise.all(saves);
+    sessionStorage.removeItem(DRAFT_KEYS.basic);
+    await refreshAfterSave();
+  }
+
+  async function handleSaveCareer() {
+    const cd = readDraft<{ education: string; educationDetail: string; occupation: string; sector: string; currency: string; monthlyIncome: string }>(DRAFT_KEYS.career);
+    if (!cd) return;
+    const bp = me?.profile;
+    const careerPayload: Parameters<typeof saveCareerDetails>[0] = {};
+    const income = cd.monthlyIncome ? Number(cd.monthlyIncome) : undefined;
+    const currency = cd.currency ? cd.currency.substring(0, 3) : undefined;
+    if (cd.education && sectionDiff(cd.education, bp?.education)) careerPayload.education = cd.education;
+    if (cd.educationDetail && sectionDiff(cd.educationDetail, bp?.educationDetail)) careerPayload.educationDetail = cd.educationDetail;
+    if (cd.occupation && sectionDiff(cd.occupation, bp?.occupation)) careerPayload.occupation = cd.occupation;
+    if (cd.sector && sectionDiff(cd.sector, bp?.sector)) careerPayload.sector = cd.sector;
+    if (income !== undefined && sectionDiff(income, bp?.monthlyIncome)) careerPayload.monthlyIncome = income;
+    if (currency && sectionDiff(currency, bp?.incomeCurrency)) careerPayload.incomeCurrency = currency;
+    if (Object.keys(careerPayload).length) await saveCareerDetails(careerPayload);
+    sessionStorage.removeItem(DRAFT_KEYS.career);
+    await refreshAfterSave();
+  }
+
+  async function handleSaveFamily() {
+    const fd = readDraft<{ fatherOccupation: string; motherOccupation: string; brothers: string; brothersMarried: string; sisters: string; sistersMarried: string }>(DRAFT_KEYS.family);
+    if (!fd) return;
+    const bp = me?.profile;
+    const familyPayload: Parameters<typeof saveFamilyDetails>[0] = {};
+    const bc = fd.brothers !== "" ? Number(fd.brothers) : undefined;
+    const bm = fd.brothersMarried !== "" ? Number(fd.brothersMarried) : undefined;
+    const sc = fd.sisters !== "" ? Number(fd.sisters) : undefined;
+    const sm = fd.sistersMarried !== "" ? Number(fd.sistersMarried) : undefined;
+    if (fd.fatherOccupation && sectionDiff(fd.fatherOccupation, bp?.fatherOccupation)) familyPayload.fatherOccupation = fd.fatherOccupation;
+    if (fd.motherOccupation && sectionDiff(fd.motherOccupation, bp?.motherOccupation)) familyPayload.motherOccupation = fd.motherOccupation;
+    if (bc !== undefined && sectionDiff(bc, bp?.brotherCount)) familyPayload.brotherCount = bc;
+    if (bm !== undefined && sectionDiff(bm, bp?.brothersMarried)) familyPayload.brothersMarried = bm;
+    if (sc !== undefined && sectionDiff(sc, bp?.sisterCount)) familyPayload.sisterCount = sc;
+    if (sm !== undefined && sectionDiff(sm, bp?.sistersMarried)) familyPayload.sistersMarried = sm;
+    if (Object.keys(familyPayload).length) await saveFamilyDetails(familyPayload);
+    sessionStorage.removeItem(DRAFT_KEYS.family);
+    await refreshAfterSave();
+  }
+
+  async function handleSaveLifestyle() {
+    const lsd = readDraft<{ dietHabit: string; smokingHabit: string; drinkingHabit: string }>(DRAFT_KEYS.lifestyle);
+    if (!lsd) return;
+    const bp = me?.profile;
+    const lifestylePayload: LifestyleDetailsPayload = {};
+    const dietBE = lsd.dietHabit ? (DIET_TO_BE[lsd.dietHabit] ?? undefined) : undefined;
+    const smokeBE = lsd.smokingHabit ? (SMOKE_TO_BE[lsd.smokingHabit] ?? undefined) : undefined;
+    const drinkBE = lsd.drinkingHabit ? (DRINK_TO_BE[lsd.drinkingHabit] ?? undefined) : undefined;
+    if (dietBE && sectionDiff(dietBE, bp?.dietHabit)) lifestylePayload.dietHabit = dietBE;
+    if (smokeBE && sectionDiff(smokeBE, bp?.smokingHabit)) lifestylePayload.smokingHabit = smokeBE;
+    if (drinkBE && sectionDiff(drinkBE, bp?.drinkingHabit)) lifestylePayload.drinkingHabit = drinkBE;
+    if (Object.keys(lifestylePayload).length) await saveLifestyleDetails(lifestylePayload);
+    sessionStorage.removeItem(DRAFT_KEYS.lifestyle);
+    await refreshAfterSave();
+  }
+
+  async function handleSaveLocation() {
+    const ld = readDraft<{ countryLivingIn: string; city: string; citizenship: string; residentStatus: string }>(DRAFT_KEYS.location);
+    if (!ld) return;
+    const bp = me?.profile;
+    const saves: Promise<unknown>[] = [];
+    const personalPayload: PersonalDetailsPayload = {};
+    if (ld.countryLivingIn && sectionDiff(ld.countryLivingIn, bp?.country)) personalPayload.country = ld.countryLivingIn;
+    if (ld.city && sectionDiff(ld.city, bp?.city)) personalPayload.city = ld.city;
+    if (ld.citizenship && sectionDiff(ld.citizenship, bp?.citizenship)) personalPayload.citizenship = ld.citizenship;
+    if (Object.keys(personalPayload).length) saves.push(savePersonalDetails(personalPayload));
+    if (ld.residentStatus) { const resBE = RESIDENT_TO_BE[ld.residentStatus] ?? ld.residentStatus; if (sectionDiff(resBE, bp?.residentStatus)) saves.push(saveLifestyleDetails({ residentStatus: resBE })); }
+    if (saves.length) await Promise.all(saves);
+    sessionStorage.removeItem(DRAFT_KEYS.location);
+    await refreshAfterSave();
+  }
+
+  async function handleSaveReligion() {
+    const rd = readDraft<{ religion: string; caste: string }>(DRAFT_KEYS.religion);
+    if (!rd) return;
+    const bp = me?.profile;
+    const personalPayload: PersonalDetailsPayload = {};
+    if (rd.religion && sectionDiff(rd.religion, bp?.religion)) personalPayload.religion = rd.religion;
+    if (rd.caste && sectionDiff(rd.caste, bp?.caste)) personalPayload.caste = rd.caste;
+    if (Object.keys(personalPayload).length) await savePersonalDetails(personalPayload);
+    sessionStorage.removeItem(DRAFT_KEYS.religion);
+    await refreshAfterSave();
+  }
+
+  async function handleSaveHobbies() {
+    const hd = readDraft<{ hobbies: string[] }>(DRAFT_KEYS.hobbies);
+    if (!hd?.hobbies) return;
+    const bp = me?.profile;
+    if (sectionDiff(hd.hobbies, bp?.hobbies)) await saveLifestyleDetails({ hobbies: hd.hobbies });
+    sessionStorage.removeItem(DRAFT_KEYS.hobbies);
+    await refreshAfterSave();
+  }
+
+  async function handleSavePartner() {
+    const ppd = readDraft<Record<string, unknown>>(DRAFT_KEYS.partner);
+    if (!ppd) return;
+    await savePartnerPreferences(ppd as Parameters<typeof savePartnerPreferences>[0]);
+    sessionStorage.removeItem(DRAFT_KEYS.partner);
+    getPartnerPreferences().then(prefs => {
+      try { sessionStorage.setItem("inai_partner_pref", JSON.stringify({ data: prefs, expiresAt: Date.now() + 30 * 60 * 1000 })); } catch {}
+    }).catch(() => {});
+    await refreshAfterSave();
+  }
+
   return (
-    <main className="min-h-screen bg-[#F8F5F2] font-poppins select-none max-[500px]:pb-10 pb-4">
+    <main className="min-h-screen bg-[#F8F5F2] font-poppins select-none max-[500px]:pb-10 pb-20 sm:pb-15">
       {/* Tab bar */}
       <div className="sticky max-[320px]:top-[56px] max-[768px]:top-[65px] top-[74px] z-30 w-full bg-white/60 backdrop-blur-sm border-t border-[#EEEEEE] transition-transform duration-300" style={!tabBarVisible ? { transform: "translateY(-110%)" } : undefined}>
 
@@ -608,6 +744,7 @@ export default function MyProfilePage() {
                     onDirty={handleDirty}
                     revision={sectionRevision}
                     draftTick={draftTick}
+                    saves={{ basic: handleSaveBasic, career: handleSaveCareer, family: handleSaveFamily, religion: handleSaveReligion, location: handleSaveLocation, lifestyle: handleSaveLifestyle, hobbies: handleSaveHobbies, partner: handleSavePartner }}
                   />
                 )}
               </div>
@@ -665,7 +802,8 @@ function PhotoVisibilityRow({
   const [saving, setSaving] = useState(false);
 
   async function handleSelect(value: VisibilityValue) {
-    if (value === selected || saving) return;
+    if (saving) return;
+    if (value === selected) { setOpen(false); return; }
     setSelected(value);
     setOpen(false);
     setSaving(true);
@@ -888,7 +1026,9 @@ function computePartnerCompleted(): number {
   } catch { return 0; }
 }
 
-function buildSections(me: Me | null, onDirty: () => void, partnerCompleted: number, revision: number, _draftTick = 0): SectionItem[] {
+type SectionSaves = { basic: () => Promise<void>; career: () => Promise<void>; family: () => Promise<void>; religion: () => Promise<void>; location: () => Promise<void>; lifestyle: () => Promise<void>; hobbies: () => Promise<void>; partner: () => Promise<void> };
+
+function buildSections(me: Me | null, onDirty: () => void, partnerCompleted: number, revision: number, _draftTick = 0, saves?: SectionSaves): SectionItem[] {
   const p = me?.profile;
   const key = `${me?.id ?? "loading"}_${revision}`;
 
@@ -918,22 +1058,47 @@ function buildSections(me: Me | null, onDirty: () => void, partnerCompleted: num
   const basicComplete = basicFields.filter(Boolean).length;
   const basicTotal = hasPhysChallenge ? 9 : 8;
 
+  // Draft reads for live completion counts (gated behind _draftTick so SSR gets zeros)
+  const cd  = _draftTick > 0 ? readDraft<Record<string, unknown>>(DRAFT_KEYS.career)   : null;
+  const fd  = _draftTick > 0 ? readDraft<Record<string, unknown>>(DRAFT_KEYS.family)   : null;
+  const rd  = _draftTick > 0 ? readDraft<Record<string, unknown>>(DRAFT_KEYS.religion) : null;
+  const lod = _draftTick > 0 ? readDraft<Record<string, unknown>>(DRAFT_KEYS.location) : null;
+  const lsd = _draftTick > 0 ? readDraft<Record<string, unknown>>(DRAFT_KEYS.lifestyle): null;
+  const hd  = _draftTick > 0 ? readDraft<{ hobbies?: string[] }>(DRAFT_KEYS.hobbies)  : null;
+
   // Career: education, educationDetail, occupation, sector, monthlyIncome (5)
   const careerComplete = [
-    p?.education, p?.educationDetail, p?.occupation, p?.sector, nn(p?.monthlyIncome),
+    cd?.education ?? p?.education,
+    cd?.educationDetail ?? p?.educationDetail,
+    cd?.occupation ?? p?.occupation,
+    cd?.sector ?? p?.sector,
+    cd?.monthlyIncome !== undefined ? cd.monthlyIncome : nn(p?.monthlyIncome),
   ].filter(Boolean).length;
 
   // Family: fatherOcc, motherOcc, brotherCount, brothersMarried, sisterCount, sistersMarried (6)
   const familyComplete = [
-    p?.fatherOccupation, p?.motherOccupation,
-    nn(p?.brotherCount), nn(p?.brothersMarried), nn(p?.sisterCount), nn(p?.sistersMarried),
+    fd?.fatherOccupation ?? p?.fatherOccupation,
+    fd?.motherOccupation ?? p?.motherOccupation,
+    fd?.brothers !== undefined ? fd.brothers : nn(p?.brotherCount),
+    fd?.brothersMarried !== undefined ? fd.brothersMarried : nn(p?.brothersMarried),
+    fd?.sisters !== undefined ? fd.sisters : nn(p?.sisterCount),
+    fd?.sistersMarried !== undefined ? fd.sistersMarried : nn(p?.sistersMarried),
   ].filter(Boolean).length;
 
   // Location: country, city, citizenship, residentStatus (4)
-  const locationComplete = [p?.country, p?.city, p?.citizenship, p?.residentStatus].filter(Boolean).length;
+  const locationComplete = [
+    lod?.countryLivingIn ?? p?.country,
+    lod?.city ?? p?.city,
+    lod?.citizenship ?? p?.citizenship,
+    lod?.residentStatus ?? p?.residentStatus,
+  ].filter(Boolean).length;
 
   // Lifestyle: diet, smoking, drinking (3)
-  const lifestyleComplete = [p?.dietHabit, p?.smokingHabit, p?.drinkingHabit].filter(Boolean).length;
+  const lifestyleComplete = [
+    lsd?.dietHabit ?? p?.dietHabit,
+    lsd?.smokingHabit ?? p?.smokingHabit,
+    lsd?.drinkingHabit ?? p?.drinkingHabit,
+  ].filter(Boolean).length;
 
   return [
     {
@@ -950,7 +1115,7 @@ function buildSections(me: Me | null, onDirty: () => void, partnerCompleted: num
       icon: <ProfileBoxIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
       completed: basicComplete,
       total: basicTotal,
-      body: <BasicInfoSection key={key} me={me} onDirty={onDirty} />,
+      body: <BasicInfoSection key={key} me={me} onDirty={onDirty} onSave={saves!.basic} />,
     },
     {
       id: "career",
@@ -958,7 +1123,7 @@ function buildSections(me: Me | null, onDirty: () => void, partnerCompleted: num
       icon: <WorkBriefcaseIcon strokeWidth={2} className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
       completed: careerComplete,
       total: 5,
-      body: <CareerEducationSection key={key} me={me} onDirty={onDirty} />,
+      body: <CareerEducationSection key={key} me={me} onDirty={onDirty} onSave={saves!.career} />,
     },
     {
       id: "family",
@@ -966,15 +1131,15 @@ function buildSections(me: Me | null, onDirty: () => void, partnerCompleted: num
       icon: <StepFamilyIcon strokeWidth="4" className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
       completed: familyComplete,
       total: 6,
-      body: <FamilyBackgroundSection key={key} me={me} onDirty={onDirty} />,
+      body: <FamilyBackgroundSection key={key} me={me} onDirty={onDirty} onSave={saves!.family} />,
     },
     {
       id: "religion",
       title: "Religion and Caste",
       icon: <CasteCircleIcon strokeWidth="2" className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
-      completed: [p?.religion, p?.caste].filter(Boolean).length,
+      completed: [rd?.religion ?? p?.religion, rd?.caste ?? p?.caste].filter(Boolean).length,
       total: 2,
-      body: <ReligionCasteSection key={key} me={me} onDirty={onDirty} />,
+      body: <ReligionCasteSection key={key} me={me} onDirty={onDirty} onSave={saves!.religion} />,
     },
     {
       id: "location",
@@ -982,7 +1147,7 @@ function buildSections(me: Me | null, onDirty: () => void, partnerCompleted: num
       icon: <LocationPinIcon strokeWidth="2" className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
       completed: locationComplete,
       total: 4,
-      body: <LocationSection key={key} me={me} onDirty={onDirty} />,
+      body: <LocationSection key={key} me={me} onDirty={onDirty} onSave={saves!.location} />,
     },
     {
       id: "lifestyle",
@@ -990,15 +1155,15 @@ function buildSections(me: Me | null, onDirty: () => void, partnerCompleted: num
       icon: <WineGlassIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
       completed: lifestyleComplete,
       total: 3,
-      body: <LifestyleSection key={key} me={me} onDirty={onDirty} />,
+      body: <LifestyleSection key={key} me={me} onDirty={onDirty} onSave={saves!.lifestyle} />,
     },
     {
       id: "hobbies",
       title: "Interests & Hobbies",
       icon: <PaintBrushIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
-      completed: (p?.hobbies?.length ?? 0) > 0 ? 1 : 0,
+      completed: (hd?.hobbies ?? p?.hobbies ?? []).length > 0 ? 1 : 0,
       total: 1,
-      body: <InterestsHobbiesSection key={key} me={me} onDirty={onDirty} />,
+      body: <InterestsHobbiesSection key={key} me={me} onDirty={onDirty} onSave={saves!.hobbies} />,
     },
     {
       id: "partner",
@@ -1006,7 +1171,7 @@ function buildSections(me: Me | null, onDirty: () => void, partnerCompleted: num
       icon: <HeartIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" strokeWidth={2} />,
       completed: partnerCompleted,
       total: 12,
-      body: <PartnerPreferenceSection key={key} onDirty={onDirty} />,
+      body: <PartnerPreferenceSection key={key} onDirty={onDirty} onSave={saves!.partner} />,
     },
   ];
 }
@@ -1019,6 +1184,7 @@ function ExpandableSections({
   isPreview = false,
   revision = 0,
   draftTick = 0,
+  saves,
 }: {
   me: Me | null;
   openId: string;
@@ -1027,6 +1193,7 @@ function ExpandableSections({
   isPreview?: boolean;
   revision?: number;
   draftTick?: number;
+  saves?: SectionSaves;
 }) {
   // mounted gates sessionStorage reads — prevents SSR/client hydration mismatch
   const [mounted, setMounted] = useState(false);
@@ -1035,7 +1202,7 @@ function ExpandableSections({
   const [partnerCompleted, setPartnerCompleted] = useState(0);
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { if (mounted) setPartnerCompleted(computePartnerCompleted()); }, [revision, mounted, draftTick]);
-  const sections = buildSections(me, onDirty, partnerCompleted, revision, mounted ? draftTick : 0);
+  const sections = buildSections(me, onDirty, partnerCompleted, revision, mounted ? draftTick : 0, saves);
 
   return (
     <>

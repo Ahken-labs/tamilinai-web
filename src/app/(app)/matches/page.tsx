@@ -23,7 +23,7 @@ const CARDS_PER_PAGE = 10;
 const TABS = [
   { label: "Best match", value: "best" },
   { label: "Elite match", value: "elite" },
-  { label: "Viewed not connected", shortLabel: "Viewed", value: "viewed" },
+  { label: "Viewed", value: "viewed" },
 ];
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
@@ -192,7 +192,7 @@ function MatchesContent() {
         <div className="px-4 lg:px-8 pt-[12px] sm:pt-[27px] pb-4 flex flex-col gap-4 max-w-[1024px] mx-auto">
 
           {showSkeletons ? (
-            Array.from({ length: 3 }).map((_, i) => <ProfileCardSkeleton key={i} />)
+            Array.from({ length: 10 }).map((_, i) => <ProfileCardSkeleton key={i} />)
           ) : isError ? (
             <div className="flex flex-col items-center justify-center py-24 text-center">
               {searchFilters ? (

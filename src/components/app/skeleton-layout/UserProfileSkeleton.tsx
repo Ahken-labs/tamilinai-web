@@ -1,3 +1,51 @@
+export function MobileSectionsSkeleton() {
+  return (
+    <div className="space-y-4 animate-pulse">
+      {[2, 4, 3, 3, 2, 2, 2].map((rows, si) => (
+        <div key={si} className="rounded-[16px] bg-white p-4">
+          <div className="flex items-center gap-2">
+            <div className="h-4 w-4 rounded bg-[#E8E8E8] shrink-0" />
+            <div className="h-5 w-32 rounded-full bg-[#E8E8E8]" />
+          </div>
+          <div className="mt-3 h-px bg-[#F0F0F0]" />
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            {Array.from({ length: rows }).map((_, ri) => (
+              <div key={ri} className="grid grid-cols-2 gap-4 items-center col-span-2">
+                <div className="h-3.5 rounded-full bg-[#E8E8E8]" />
+                <div className="h-3.5 rounded-full bg-[#E8E8E8]" style={{ width: `${60 + (ri % 2) * 25}%` }} />
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function DesktopSectionsSkeleton() {
+  return (
+    <div className="space-y-4 md:space-y-6 animate-pulse">
+      {[2, 4, 3, 3, 2, 2, 2].map((rows, si) => (
+        <div key={si} className="rounded-[16px] bg-white p-4 md:p-5">
+          <div className="flex items-center gap-2 md:gap-3">
+            <div className="h-4 w-4 md:h-5 md:w-5 rounded bg-[#E8E8E8] shrink-0" />
+            <div className="h-5 w-32 rounded-full bg-[#E8E8E8]" />
+          </div>
+          <div className="mt-3 md:mt-4 h-[1px] bg-[#F0F0F0]" />
+          <div className="mt-3 md:mt-4 grid grid-cols-1 min-[700px]:grid-cols-2 gap-3">
+            {Array.from({ length: rows }).map((_, ri) => (
+              <div key={ri} className="grid grid-cols-2 gap-4 items-center">
+                <div className="h-3.5 w-full rounded-full bg-[#E8E8E8]" />
+                <div className="h-3.5 rounded-full bg-[#E8E8E8]" style={{ width: `${60 + (ri % 2) * 25}%` }} />
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function UserProfileSkeletonBody() {
   return (
     <div className="animate-pulse">

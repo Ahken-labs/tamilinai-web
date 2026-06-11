@@ -7,6 +7,7 @@ import { INTEREST_GROUPS } from "@/src/constants/profiles";
 import Button from "../../common-layout/Button";
 import type { Me } from "@/src/types/user";
 import { DRAFT_KEYS } from "@/src/constants/profileDraftKeys";
+import { useLoadingText } from "@/src/hooks/useLoadingText";
 
 const KEY = DRAFT_KEYS.hobbies;
 
@@ -14,9 +15,9 @@ function getDraft() {
   try { const r = sessionStorage.getItem(KEY); return r ? JSON.parse(r) : null; } catch { return null; }
 }
 
-type Props = { me: Me | null; onDirty: () => void };
+type Props = { me: Me | null; onDirty: () => void; onSave: () => Promise<void> };
 
-export default function InterestsHobbiesSection({ me, onDirty }: Props) {
+export default function InterestsHobbiesSection({ me, onDirty, onSave }: Props) {
   const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
 
   const saved = getDraft();
@@ -24,7 +25,13 @@ export default function InterestsHobbiesSection({ me, onDirty }: Props) {
   const [selected, setSelected] = useState<string[]>(saved?.hobbies ?? me?.profile?.hobbies ?? []);
   const [draft, setDraft] = useState<string[]>([]);
   const [search, setSearch] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [saveReady, setSaveReady] = useState(false);
+  const loadingText = useLoadingText(saving, "save");
   const tagsRowRef = useRef<HTMLDivElement>(null);
+
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setSaveReady(true); }, []);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -49,6 +56,16 @@ export default function InterestsHobbiesSection({ me, onDirty }: Props) {
     setDraft(prev => prev.includes(item) ? prev.filter(x => x !== item) : [...prev, item]);
   }
 
+  const isDirty = saveReady && (
+    JSON.stringify([...selected].sort()) !== JSON.stringify([...(me?.profile?.hobbies ?? [])].sort())
+  );
+
+  async function handleSave() {
+    if (saving) return;
+    setSaving(true);
+    try { await onSave(); } finally { setSaving(false); }
+  }
+
   function handleConfirm() {
     setSelected(draft);
     setOpen(false);
@@ -69,6 +86,15 @@ export default function InterestsHobbiesSection({ me, onDirty }: Props) {
           <span key={item} className="inline-flex items-center rounded-[48px] border border-[rgba(179,27,56,0.25)] bg-[#FFF0F3] px-3 py-1 text-[16px] text-[#656565] leading-[150%]">{item}</span>
         ))}
       </div>
+
+      {isDirty && (
+        <div className="mt-6 md:mt-8 pt-4 border-t border-[#EAEAEA]">
+          <div className="flex">
+            <div className="flex-1 hidden min-[500px]:block" />
+            <Button text={saving ? loadingText : "Save"} onPress={handleSave} className="flex-1" />
+          </div>
+        </div>
+      )}
 
       {open && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-end min-[500px]:items-center justify-center min-[500px]:p-4 bg-black/50">

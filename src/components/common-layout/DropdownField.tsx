@@ -33,6 +33,7 @@ type DropdownFieldProps = {
   textClassName?: string;
   typeable?: boolean; // true = input + dropdown
   compact?: boolean;  // 40px height, no floating label — for profile forms
+  numberOnly?: boolean; // strip non-numeric characters on input
 };
 
 export default function DropdownField({
@@ -52,6 +53,7 @@ export default function DropdownField({
   textClassName,
   typeable = false,
   compact = false,
+  numberOnly = false,
 }: DropdownFieldProps) {
   const [focused, setFocused] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -126,7 +128,7 @@ export default function DropdownField({
                 placeholder={placeholder}
                 onFocus={() => { setFocused(true); setOpen(true); }}
                 onBlur={handleBlur}
-                onChange={(e) => { onSelect(e.target.value); setOpen(true); }}
+                onChange={(e) => { const v = numberOnly ? e.target.value.replace(/\D/g, "") : e.target.value; onSelect(v); setOpen(true); }}
                 onKeyDown={handleKeyDown}
                 className={`w-full min-w-8 bg-transparent text-[16px] outline-none placeholder:text-[#525252] ${textClassName ?? "text-dark"}`}
               />

@@ -68,6 +68,7 @@ function getCtaConfig(type: string, fromUserId?: string): { label: string; href:
     case "elite_expiring_3d":
     case "elite_expired":         return { label: "Renew",             href: "/elite-upgrade" };
     case "promo":                 return { label: "Claim offer",       href: "/elite-upgrade" };
+    case "admin_broadcast":       return { label: "Explore features",  href: "/matches" };
     case "profile_viewed":        return { label: "See all viewers",   href: "/my-profile" };
     case "profile_completion_request": return { label: "Update profile", href: "/my-profile" };
     case "birthday":              return { label: "View matches",      href: "/matches" };
@@ -91,6 +92,7 @@ function NotifIcon({ type }: { type: string }) {
     case "payment_success":       return <NotifPaymentSuccessIcon className={ICON_CLS} />;
     case "payment_failed":        return <NotifPaymentFailedIcon className={ICON_CLS} />;
     case "promo":                 return <NotifPromoIcon className={ICON_CLS} />;
+    case "admin_broadcast":       return null; // uses logo avatar like welcome
     case "birthday":              return <CakeIcon className={ICON_CLS} />;
     case "profile_viewed":        return <ProfileBoxIcon className={ICON_CLS} />;
     case "profile_completion_request": return <ProfileCompletionRequestIcon className={ICON_CLS} />;
@@ -103,7 +105,7 @@ function NotifIcon({ type }: { type: string }) {
 function NotifAvatar({ item }: { item: AppNotification }) {
   const me = readMeCache();
 
-  if (item.type === "welcome") {
+  if (item.type === "welcome" || item.type === "admin_broadcast") {
     return (
       <div
         className="pt-[7.8px] pr-[10.6px] pb-[10.6px] pl-[7.8px] md:pt-[9.8px] md:pr-[12.6px] md:pb-[12.6px] md:pl-[9.8px] h-10 w-10 md:h-14 md:w-14 shrink-0 rounded-[28px] bg-[#B31B41] flex items-center justify-center"

@@ -381,7 +381,7 @@ import { SecurityIcon, CheckmarkIcon, CameraIcon, CheckboxIcon } from "@/src/ass
 import { useLang } from "@/src/context/LangContext";
 import { countWords } from "@/src/utils/wordCount";
 import { validateAboutMe, splitHighlight } from "@/src/utils/aboutMeValidation";
-import { generateAboutMe } from "@/src/utils/generateAboutMe";
+import { generateAboutMe, ABOUT_ME_TEMPLATE_COUNT } from "@/src/utils/generateAboutMe";
 import PrivacyPopup from "../footer/PrivacyPopup";
 import { submitProfileSetup } from "../../lib/api/user";
 import PhotoCropModal from "../app/PhotoCropModal";
@@ -484,7 +484,8 @@ export default function PhotoUploadForm() {
     };
   }, []);
 
-  const [aboutMe, setAboutMe] = useState(() => generateAboutMe(buildAboutMeData()));
+  const [templateIndex, setTemplateIndex] = useState(0);
+  const [aboutMe, setAboutMe] = useState(() => generateAboutMe({ ...buildAboutMeData(), templateIndex: 0 }));
   const [aboutMeError, setAboutMeError] = useState<{ message: string; offendingWord: string } | null>(null);
   const [isSpinning, setIsSpinning] = useState(false);
   const [agreed, setAgreed] = useState(true);
@@ -686,7 +687,9 @@ export default function PhotoUploadForm() {
               onClick={() => {
                 setIsSpinning(true);
                 setTimeout(() => setIsSpinning(false), 600);
-                const suggestion = generateAboutMe(buildAboutMeData());
+                const nextIndex = (templateIndex + 1) % ABOUT_ME_TEMPLATE_COUNT;
+                setTemplateIndex(nextIndex);
+                const suggestion = generateAboutMe({ ...buildAboutMeData(), templateIndex: nextIndex });
                 handleAboutMeChange(suggestion);
               }}
               className="flex items-center gap-1 text-[13px] text-primary underline cursor-pointer hover:opacity-70 select-none"
