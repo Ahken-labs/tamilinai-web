@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import DropdownField from "../../common-layout/DropdownField";
 import FormRow from "../../common-layout/FormRow";
+import Button from "../../common-layout/Button";
 import { EDUCATION_OPTIONS, SECTOR } from "@/src/constants/profiles";
 import { CURRENCY_OPTIONS } from "@/src/constants/currencies";
 import type { Me } from "@/src/types/user";
 import { DRAFT_KEYS } from "@/src/constants/profileDraftKeys";
+import { useLoadingText } from "@/src/hooks/useLoadingText";
 
 const KEY = DRAFT_KEYS.career;
 const leftWidth = "w-[100px] sm:w-[120px] md:w-[140px] lg:w-[250px]";
@@ -20,9 +22,9 @@ function mergeDraft(partial: Record<string, unknown>, onDirty: () => void) {
 
 type OpenKey = "education" | "sector" | "currency";
 const ALL_CLOSED: Record<OpenKey, boolean> = { education: false, sector: false, currency: false };
-type Props = { me: Me | null; onDirty: () => void };
+type Props = { me: Me | null; onDirty: () => void; onSave: () => Promise<void> };
 
-export default function CareerEducationSection({ me, onDirty }: Props) {
+export default function CareerEducationSection({ me, onDirty, onSave }: Props) {
   const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
 
   const p = me?.profile;
@@ -35,9 +37,30 @@ export default function CareerEducationSection({ me, onDirty }: Props) {
   const [sector, setSector] = useState(saved?.sector ?? p?.sector ?? "");
   const [currency, setCurrency] = useState(saved?.currency ?? p?.incomeCurrency ?? "");
   const [monthlyIncome, setMonthlyIncome] = useState(saved?.monthlyIncome ?? (p?.monthlyIncome != null ? String(p.monthlyIncome) : ""));
+  const [saving, setSaving] = useState(false);
+  const [saveReady, setSaveReady] = useState(false);
+  const loadingText = useLoadingText(saving, "save");
+
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setSaveReady(true); }, []);
 
   const setOpen = (key: OpenKey) => (val: boolean) => setOpens({ ...ALL_CLOSED, [key]: val });
   const sync = (partial: Record<string, unknown>) => mergeDraft(partial, onDirty);
+
+  const isDirty = saveReady && (
+    highestEducation !== (p?.education ?? "") ||
+    educationDetail !== (p?.educationDetail ?? "") ||
+    occupation !== (p?.occupation ?? "") ||
+    sector !== (p?.sector ?? "") ||
+    currency !== (p?.incomeCurrency ?? "") ||
+    monthlyIncome !== (p?.monthlyIncome != null ? String(p.monthlyIncome) : "")
+  );
+
+  async function handleSave() {
+    if (saving) return;
+    setSaving(true);
+    try { await onSave(); } finally { setSaving(false); }
+  }
 
   return (
     <div className="pt-3 md:pt-4 font-poppins">
@@ -62,11 +85,20 @@ export default function CareerEducationSection({ me, onDirty }: Props) {
         <FormRow leftWidth={leftWidth} label="Monthly income">
           <div className="flex gap-4 max-[400px]:flex-col flex-wrap">
             <DropdownField typeable compact placeholder="Select currency" value={currency} open={opens.currency} setOpen={setOpen("currency")} onSelect={v => { setCurrency(v); sync({ currency: v }); }} items={CURRENCY_OPTIONS} dropdownClassName="max-h-[300px] min-[401px]:min-w-[200px]" className="flex-1 min-[401px]:max-w-[200px]" textClassName={mounted && currency ? "text-[#222222]" : "text-[#656565]"} bgClassName={mounted && currency ? "bg-[#F2F2F2]" : "bg-[#FFF0F3]"} borderClassName={mounted && currency ? "border-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)]"} />
-            <input value={monthlyIncome} onChange={e => { setMonthlyIncome(e.target.value); sync({ monthlyIncome: e.target.value }); }} placeholder="Enter monthly income" className={`flex-1 max-[400]:py-[10px] h-[40px] w-full items-center rounded-[12px] border px-4 text-[16px] text-dark outline-none placeholder:text-[#656565] ${mounted && monthlyIncome ? "border-[#F2F2F2] bg-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)] bg-[#FFF0F3]"}`} />
+            <input value={monthlyIncome} onChange={e => { const v = e.target.value.replace(/\D/g, ""); setMonthlyIncome(v); sync({ monthlyIncome: v }); }} placeholder="Enter monthly income" className={`flex-1 max-[400]:py-[10px] h-[40px] w-full items-center rounded-[12px] border px-4 text-[16px] text-dark outline-none placeholder:text-[#656565] ${mounted && monthlyIncome ? "border-[#F2F2F2] bg-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)] bg-[#FFF0F3]"}`} />
           </div>
         </FormRow>
 
       </div>
+
+      {isDirty && (
+        <div className="mt-6 md:mt-8 pt-4 border-t border-[#EAEAEA]">
+          <div className="flex">
+            <div className="flex-1 hidden min-[500px]:block" />
+            <Button text={saving ? loadingText : "Save"} onPress={handleSave} className="flex-1" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

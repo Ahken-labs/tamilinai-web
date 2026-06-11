@@ -1,5 +1,5 @@
 import { http } from './client';
-import type { BrowseProfile, ProfileDetail } from '../../types/user';
+import type { BrowseProfile, ProfileDetail, ProfileSummary, ProfileDetails } from '../../types/user';
 
 export interface ProfileFilters {
   displayId?: string;
@@ -39,6 +39,14 @@ export function getProfiles(filters?: ProfileFilters): Promise<ProfilesResponse>
 
 export function getProfile(userId: string): Promise<ProfileDetail> {
   return http(`/api/profiles/${userId}`);
+}
+
+export function getProfileSummary(userId: string): Promise<ProfileSummary> {
+  return http(`/api/profiles/${userId}/summary`);
+}
+
+export function getProfileDetails(userId: string): Promise<ProfileDetails> {
+  return http(`/api/profiles/${userId}/details`);
 }
 
 export function getShortlisted(page = 1, limit = 10): Promise<ProfilesResponse> {

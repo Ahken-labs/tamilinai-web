@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import DropdownField from "../../common-layout/DropdownField";
 import FormRow from "../../common-layout/FormRow";
+import Button from "../../common-layout/Button";
 import { RELIGION_OPTIONS, CASTE_OPTIONS_HINDU, CASTE_OPTIONS_CHRISTIAN } from "@/src/constants/profiles";
 import type { Me } from "@/src/types/user";
 import { DRAFT_KEYS } from "@/src/constants/profileDraftKeys";
+import { useLoadingText } from "@/src/hooks/useLoadingText";
 
 const KEY = DRAFT_KEYS.religion;
 const leftWidth = "w-[100px] sm:w-[120px] md:w-[140px] lg:w-[250px]";
@@ -19,9 +21,9 @@ function mergeDraft(partial: Record<string, unknown>, onDirty: () => void) {
 
 type OpenKey = "religion" | "caste";
 const ALL_CLOSED: Record<OpenKey, boolean> = { religion: false, caste: false };
-type Props = { me: Me | null; onDirty: () => void };
+type Props = { me: Me | null; onDirty: () => void; onSave: () => Promise<void> };
 
-export default function ReligionCasteSection({ me, onDirty }: Props) {
+export default function ReligionCasteSection({ me, onDirty, onSave }: Props) {
   const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
 
   const p = me?.profile;
@@ -31,6 +33,12 @@ export default function ReligionCasteSection({ me, onDirty }: Props) {
   const [caste, setCaste] = useState(() => { const d = getDraft(); return d?.caste ?? p?.caste ?? ""; });
   const [casteOther, setCasteOther] = useState("");
   const [casteOtherError, setCasteOtherError] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [saveReady, setSaveReady] = useState(false);
+  const loadingText = useLoadingText(saving, "save");
+
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setSaveReady(true); }, []);
 
   const setOpen = (key: OpenKey) => (val: boolean) => {
     if (key === "caste" && val && !religion) {
@@ -48,6 +56,17 @@ export default function ReligionCasteSection({ me, onDirty }: Props) {
     const tail = ["Other", "Prefer not to say"];
     const merged = [...CASTE_OPTIONS_HINDU, ...CASTE_OPTIONS_CHRISTIAN].filter(c => !tail.includes(c));
     casteOptions = [...new Set(merged), ...tail];
+  }
+
+  const isDirty = saveReady && (
+    religion !== (p?.religion ?? "") ||
+    caste !== (p?.caste ?? "")
+  );
+
+  async function handleSave() {
+    if (saving) return;
+    setSaving(true);
+    try { await onSave(); } finally { setSaving(false); }
   }
 
   return (
@@ -82,6 +101,15 @@ export default function ReligionCasteSection({ me, onDirty }: Props) {
         )}
 
       </div>
+
+      {isDirty && (
+        <div className="mt-6 md:mt-8 pt-4 border-t border-[#EAEAEA]">
+          <div className="flex">
+            <div className="flex-1 hidden min-[500px]:block" />
+            <Button text={saving ? loadingText : "Save"} onPress={handleSave} className="flex-1" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

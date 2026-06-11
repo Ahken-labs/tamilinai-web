@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { RadioCircleIcon } from "../../../assets/Icons";
 import DropdownField, { MultiSelectDropdown } from "../../common-layout/DropdownField";
 import FormRow from "../../common-layout/FormRow";
+import Button from "../../common-layout/Button";
 import CountryPopup from "../../ui/CountryPopup";
 import {
   EDUCATION_OPTIONS,
@@ -17,6 +18,7 @@ import { filterItems } from "../../../utils/formUtils";
 import { countWords } from "../../../utils/wordCount";
 import { DRAFT_KEYS } from "@/src/constants/profileDraftKeys";
 import type { PartnerPreferences } from "@/src/types/user";
+import { useLoadingText } from "../../../hooks/useLoadingText";
 
 const KEY = DRAFT_KEYS.partner;
 const MODAL_CACHE_KEY = "inai_partner_pref";
@@ -98,10 +100,30 @@ function getInitialDraft(): Record<string, unknown> {
   return getDraft() ?? {};
 }
 
-export default function PartnerPreferenceSection({ onDirty }: { onDirty?: () => void }) {
+export default function PartnerPreferenceSection({ onDirty, onSave }: { onDirty?: () => void; onSave?: () => Promise<void> }) {
   const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
 
-  const sync = (partial: Record<string, unknown>) => mergeDraft(partial, onDirty ?? (() => {}));
+  const [saving, setSaving] = useState(false);
+  const [saveReady, setSaveReady] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const loadingText = useLoadingText(saving, "save");
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSaveReady(true);
+    try { if (sessionStorage.getItem(KEY)) setDirty(true); } catch {}
+  }, []);
+
+  const sync = (partial: Record<string, unknown>) => {
+    mergeDraft(partial, onDirty ?? (() => {}));
+    setDirty(true);
+  };
+
+  async function handleSave() {
+    if (saving || !onSave) return;
+    setSaving(true);
+    try { await onSave(); } finally { setSaving(false); }
+  }
 
   // useState(fn) — fn runs once on mount, reads sessionStorage on the client
   const [init] = useState(getInitialDraft);
@@ -147,10 +169,10 @@ export default function PartnerPreferenceSection({ onDirty }: { onDirty?: () => 
       <div className="flex flex-col gap-6">
         <FormRow leftWidth={leftWidth} label="Age" required>
           <div className="flex items-center gap-2 md:gap-4">
-            <DropdownField typeable compact placeholder="Min" value={ageMin} open={ageMinOpen} setOpen={setAgeMinOpen}
+            <DropdownField typeable numberOnly compact placeholder="Min" value={ageMin} open={ageMinOpen} setOpen={setAgeMinOpen}
               onSelect={v => { setAgeMin(v); sync({ ageMin: v }); }} items={filterItems(AGE_OPTIONS, ageMin)} className="flex-1" dropdownClassName="max-h-[200px]" bgClassName={mounted && ageMin ? "bg-[#F2F2F2]" : "bg-[#FFF0F3]"} borderClassName={mounted && ageMin ? "border-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)]"} textClassName={mounted && ageMin ? "text-[#222222]" : "text-[#656565]"} />
             <span className="text-[16px] font-medium text-dark shrink-0">to</span>
-            <DropdownField typeable compact placeholder="Max" value={ageMax} open={ageMaxOpen} setOpen={setAgeMaxOpen}
+            <DropdownField typeable numberOnly compact placeholder="Max" value={ageMax} open={ageMaxOpen} setOpen={setAgeMaxOpen}
               onSelect={v => { setAgeMax(v); sync({ ageMax: v }); }} items={filterItems(AGE_OPTIONS, ageMax)} className="flex-1" dropdownClassName="max-h-[200px]" bgClassName={mounted && ageMax ? "bg-[#F2F2F2]" : "bg-[#FFF0F3]"} borderClassName={mounted && ageMax ? "border-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)]"} textClassName={mounted && ageMax ? "text-[#222222]" : "text-[#656565]"} />
           </div>
         </FormRow>
@@ -261,6 +283,15 @@ export default function PartnerPreferenceSection({ onDirty }: { onDirty?: () => 
           </FormRow>
         </div>
       </div>
+
+      {saveReady && dirty && (
+        <div className="mt-6 md:mt-8 pt-4 border-t border-[#EAEAEA]">
+          <div className="flex">
+            <div className="flex-1 hidden min-[500px]:block" />
+            <Button text={saving ? loadingText : "Save"} onPress={handleSave} className="flex-1" />
+          </div>
+        </div>
+      )}
 
       {countryPopupOpen && (
         <CountryPopup

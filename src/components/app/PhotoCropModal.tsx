@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { useScrollLock } from "../../hooks/useScrollLock";
+import { useLoadingText } from "../../hooks/useLoadingText";
 import Cropper, { type Area } from "react-easy-crop";
 import Button from "../common-layout/Button";
 
@@ -50,6 +51,7 @@ export default function PhotoCropModal({ imageSrc, onConfirm, onClose }: Props) 
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const [working, setWorking] = useState(false);
+  const loadingText = useLoadingText(working, "upload");
 
   const onCropComplete = useCallback((_: Area, pixels: Area) => {
     setCroppedAreaPixels(pixels);
@@ -109,7 +111,7 @@ export default function PhotoCropModal({ imageSrc, onConfirm, onClose }: Props) 
           className="flex-1 !bg-white !text-[#222] hover:!bg-[#F0F0F0]"
         />
         <Button
-          text={working ? "Cropping…" : "Use this photo"}
+          text={working ? loadingText : "Upload photo"}
           onPress={handleUse}
           className="flex-1"
         />
