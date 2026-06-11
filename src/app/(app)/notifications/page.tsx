@@ -243,9 +243,9 @@ export default function NotificationsPage() {
   const { data, isLoading, isFetching, isError } = useQuery({
     queryKey: ["notifications"],
     queryFn: getNotifications,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0,
     gcTime: 10 * 60 * 1000,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
   });
 
   const isBackgroundFetching = isFetching && !isLoading;
@@ -253,18 +253,22 @@ export default function NotificationsPage() {
   // SSE lives in AppHeader (always connected) — no duplicate connection needed here
 
   function handleRead(id: string) {
-    queryClient.setQueryData<AppNotification[]>(["notifications"], (old) =>
+    const setRead = () => queryClient.setQueryData<AppNotification[]>(["notifications"], (old) =>
       old?.map((n) => (n.id === id ? { ...n, isRead: true } : n))
     );
-    markNotificationRead(id).catch(() => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
-    });
-    // Sync unread dot in other open tabs
-    try {
-      const ch = new BroadcastChannel("inai_notifications");
-      ch.postMessage({ type: "notifications_read" });
-      ch.close();
-    } catch { /* unsupported */ }
+    setRead();
+    markNotificationRead(id)
+      .then(() => {
+        setRead(); // re-apply after API so any SSE refetch doesn't win
+        try {
+          const ch = new BroadcastChannel("inai_notifications");
+          ch.postMessage({ type: "notifications_read" });
+          ch.close();
+        } catch { /* unsupported */ }
+      })
+      .catch(() => {
+        queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      });
   }
 
   return (
