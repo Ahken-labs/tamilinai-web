@@ -25,6 +25,8 @@ import { getProfilePhotoSrc } from "../../../utils/profilePhoto";
 import { readMeCache } from "../../../components/AppHeader";
 import type { AppNotification } from "../../../types/notification";
 import NotificationSkeleton from "../../../components/app/skeleton-layout/NotificationSkeleton";
+import EmptyState from "../../../components/common-layout/EmptyState";
+import { EmptyNotificationsIcon } from "@/src/assets/Icons";
 
 const SKELETON_COUNT = 5;
 
@@ -238,6 +240,7 @@ function NotificationRow({
 
 // Page 
 export default function NotificationsPage() {
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   const { data, isLoading, isFetching, isError } = useQuery({
@@ -285,14 +288,13 @@ export default function NotificationsPage() {
             </p>
           </div>
         ) : !data || data.filter((n) => !n.type.startsWith("interest")).length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 text-center">
-            <p className="font-poppins text-[16px] font-semibold text-[#444444]">
-              No notifications yet
-            </p>
-            <p className="mt-2 font-poppins text-[14px] font-normal text-[#888888] max-w-[320px]">
-              You&apos;ll see updates here when your photo is reviewed, someone views your profile, or your payment status changes.
-            </p>
-          </div>
+          <EmptyState
+            icon={<EmptyNotificationsIcon className="w-24 h-[90px]" />}
+            title="No new updates right now"
+            subtitle="When you get a new match, message, or profile view, we will let you know right here."
+            btText="Discover new matches"
+            onAction={() => router.push("/matches")}
+          />
         ) : (
           <div className={isBackgroundFetching ? "opacity-60 pointer-events-none transition-opacity" : ""}>
             {data
