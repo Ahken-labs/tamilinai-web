@@ -12,12 +12,21 @@ export interface AboutMeError {
 const filter = new Filter();
 
 const SOCIAL_PLATFORMS = [
-  "facebook", "fb", "whatsapp", "wa", "instagram", "insta",
-  "linkedin", "twitter", "x.com", "snapchat", "snap", "telegram",
-  "tiktok", "tik tok", "youtube", "yt", "wechat", "viber",
-  "skype", "discord", "reddit", "pinterest", "tumblr", "signal", "xx", "x", "fbook",
-  "wap", "onlyfans", "wp"
+  "facebook", "fb", "whatsapp", "wa", "wp", "wap","wapp", "instagram", "insta","ig","instagrame",
+  "linkedin","linkdin","linkedine", "twitter","twr","twtr","tweet", "snapchat", "snap","schat", "telegram","telegrame",
+  "tgram", "tktok", "tictok","tictoc","tiktock",
+  "tiktok", "youtube", "yt","ytube", "wechat","wchat", "viber",
+  "skype", "discord", "reddit", "pinterest", "tumblr", "signal", 
+  "onlyfans",  "face bk","fbook","face/book" ,"faceebook","fbk"
 ];
+
+// Catches platform names even when user inserts spaces/dashes/dots between letters
+// e.g. "face book", "what-sapp", "insta.gram", "you tube" all get caught
+function flexPattern(platform: string): RegExp {
+  const clean = platform.replace(/[\s\-_.]/g, "");
+  const inner = clean.split("").map(escapeRe).join("[\\s\\-_.]*");
+  return new RegExp(`(?<![a-zA-Z])${inner}(?![a-zA-Z])`, "i");
+}
 
 // Email must be checked BEFORE URL so "user@gmail.com" is caught as email not URL
 const EMAIL_PATTERN = /\b[\w.+-]+@[\w-]+\.[a-z]{2,}\b/gi;
@@ -29,13 +38,14 @@ const CONSONANT_MASH = /\b[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]{4,}\b/g;
 export function validateAboutMe(text: string): AboutMeError | null {
   if (!text.trim()) return null;
 
-  // 1. Social media / messaging platforms
+  // 1. Social media / messaging platforms (flex pattern catches spaced variants like "face book")
   for (const platform of SOCIAL_PLATFORMS) {
-    const re = new RegExp(`(?<![a-z])${escapeRe(platform)}(?![a-z])`, "i");
-    if (re.test(text)) {
+    const match = flexPattern(platform).exec(text);
+    if (match) {
+      const found = match[0];
       return {
-        message: `"${platform}" — social media and messaging platform names aren't allowed here.`,
-        offendingWord: platform,
+        message: `"${found}" — social media and messaging platform names aren't allowed here.`,
+        offendingWord: found,
       };
     }
   }

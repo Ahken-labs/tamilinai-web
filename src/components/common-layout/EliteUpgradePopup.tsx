@@ -69,7 +69,7 @@ export default function EliteUpgradePopup({ onClose }: Props) {
 
       {/* ── MOBILE card (≤500px) ── */}
       <div
-        className="min-[501px]:hidden font-poppins relative z-10 w-full max-w-[752px] max-[500px]:rounded-t-[20px] max-[500px]:rounded-b-none rounded-[16px] overflow-hidden shadow-2xl"
+        className="min-[500px]:hidden font-poppins relative z-10 w-full max-w-[752px] max-[500px]:rounded-t-[20px] max-[500px]:rounded-b-none rounded-[16px] overflow-hidden shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Desktop background image */}
