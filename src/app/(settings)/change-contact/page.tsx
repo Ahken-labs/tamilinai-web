@@ -234,7 +234,7 @@ function ChangeContactContent() {
         ) : (
           <InputBox
             value={value}
-            onChange={(v) => { setValue(v); setInputError(""); }}
+            onChange={(v) => { setValue(v.toLowerCase().replace(/\s/g, '').replace(/\+[^@]*(?=@)/, '')); setInputError(""); }}
             label={`New ${label}`}
             type="email"
             className="bg-cartbox2 border-gray1"

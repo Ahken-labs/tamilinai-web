@@ -262,7 +262,7 @@ export default function AppHeader() {
           <nav className="flex items-center justify-between min-[420px]:mx-3 min-[500px]:mx-10 min-[600px]:mx-20 min-[720px]:mx-30 min-[900px]:justify-center min-[500px]:mx-0 min-[900px]:justify-center min-[900px]:mx-0 min-[900px]:gap-5 lg:gap-9 flex-1 mt-0">
             {NAV_TABS.map(({ labelKey, href, Icon }) => {
               const active = pathname.startsWith(href);
-              const showDot = (!active && labelKey === "Notifications" && hasUnread) || (!active && labelKey === "Interested" && hasUnreadInterest);
+              const showDot = (labelKey === "Notifications" && hasUnread) || (labelKey === "Interested" && hasUnreadInterest);
               return (
                 <Link
                   key={href}
@@ -559,7 +559,7 @@ export default function AppHeader() {
             </p>
             {NAV_TABS.map(({ labelKey, href, Icon }) => {
               const active = pathname.startsWith(href);
-              const showDot = (!active && labelKey === "Notifications" && hasUnread) || (!active && labelKey === "Interested" && hasUnreadInterest);
+              const showDot = (labelKey === "Notifications" && hasUnread) || (labelKey === "Interested" && hasUnreadInterest);
               return (
                 <Link
                   key={href}

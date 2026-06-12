@@ -29,6 +29,7 @@ import { shortlistProfile, unshortlistProfile } from "../../lib/api/profiles";
 import { sendInterest } from "../../lib/api/interests";
 import { ApiError } from "../../lib/api/client";
 import { readMeCache } from "../AppHeader";
+import { useToast } from "../ui/Toast";
 
 interface ProfileCardProps {
   profile: Profile;
@@ -53,6 +54,7 @@ const TAG_STYLES: Record<string, string> = {
 export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: ProfileCardProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
   const [shortlisted, setShortlisted] = useState(profile.isShortlisted ?? false);
   const [shortlistPending, setShortlistPending] = useState(false);
   const [interestSent, setInterestSent] = useState(
@@ -77,9 +79,13 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
     try {
       if (next) {
         await shortlistProfile(profile.id);
+        queryClient.invalidateQueries({ queryKey: ["shortlisted"] });
+        toast({ type: "success", title: "Added to shortlist", message: `${profile.name} has been shortlisted.` });
       } else {
         await unshortlistProfile(profile.id);
+        queryClient.invalidateQueries({ queryKey: ["shortlisted"] });
         onUnshortlist?.();
+        toast({ type: "neutral", title: "Removed from shortlist", message: `${profile.name} has been removed.` });
       }
     } catch {
       setShortlisted(!next); // revert on error
@@ -89,12 +95,25 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
   }
 
   async function handleSendInterest() {
-    if (interestPending || interestSent) return;
+    if (interestPending) return;
+    if (mutualMatch) {
+      toast({ type: "success", title: "Already connected 🎉", message: `You and ${profile.name} are matched.` });
+      return;
+    }
+    if (interestSent) {
+      toast({ type: "neutral", title: "Interest already sent", message: "Wait for their response." });
+      return;
+    }
     setInterestPending(true);
     try {
       const res = await sendInterest(profile.id);
       setInterestSent(true);
-      if (res.message?.includes('Mutual')) setMutualMatch(true);
+      if (res.message?.includes('Mutual')) {
+        setMutualMatch(true);
+        toast({ type: "success", title: "It's a match! 🎉", message: `${profile.name} already sent you interest.` });
+      } else {
+        toast({ type: "success", title: "Interest sent!", message: `${profile.name} will be notified.` });
+      }
       queryClient.invalidateQueries({ queryKey: ["interests"] });
       onInterestSent?.();
     } catch (err) {

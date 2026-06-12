@@ -20,6 +20,7 @@ import { useLoadingText } from "../../hooks/useLoadingText";
 import { register } from "../../lib/api/auth";
 import { ApiError } from "../../lib/api/client";
 import { sanitizePhoneInput, validatePhone, validateEmail } from "../../utils/validation";
+import { useToast } from "../ui/Toast";
 
 type RegisterFormProps = {
     variant?: "hero" | "modal";
@@ -34,6 +35,7 @@ export default function RegisterForm({
 }: RegisterFormProps) {
     const { t } = useLang();
     const router = useRouter();
+    const { toast } = useToast();
     useScrollLock(variant === "modal" && open);
 
     const [mounted, setMounted] = useState(variant === "hero" ? true : open);
@@ -106,7 +108,10 @@ export default function RegisterForm({
     };
 
     const handleSubmit = async () => {
-        if (!validate()) return;
+        if (!validate()) {
+            toast({ type: "error", title: "Please fill in all required fields" });
+            return;
+        }
         const code = countryCode.match(/\+\d+/)?.[0] ?? countryCode;
         setLoading(true);
         setErrors((prev) => ({ ...prev, submit: undefined }));
@@ -199,7 +204,11 @@ export default function RegisterForm({
 
             <InputBox
                 value={fullName}
-                onChange={setFullName}
+                onChange={(val) => {
+                    const sanitized = val.replace(/[^a-zA-Z]/g, "");
+                    setFullName(sanitized);
+                    setErrors((prev) => ({ ...prev, name: undefined }));
+                }}
                 label={t("Name")}
                 error={errors.name}
             />
@@ -228,7 +237,7 @@ export default function RegisterForm({
                 <InputBox
                     value={email}
                     onChange={(val) => {
-                        setEmail(val);
+                        setEmail(val.toLowerCase().replace(/\s/g, '').replace(/\+[^@]*(?=@)/, ''));
                         setErrors((prev) => ({ ...prev, email: undefined, emailWarning: undefined }));
                     }}
                     label={t("Email")}
