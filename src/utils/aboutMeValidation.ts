@@ -14,7 +14,7 @@ const filter = new Filter();
 const SOCIAL_PLATFORMS = [
   "facebook", "fb", "whatsapp", "wa", "wp", "wap","wapp", "instagram", "insta","ig","instagrame",
   "linkedin","linkdin","linkedine", "twitter","twr","twtr","tweet", "snapchat", "snap","schat", "telegram","telegrame",
-  "tgram", "tktok", "tictok","tictoc","tiktock",
+  "tgram", "tktok", "tictok","tictoc","tiktock","tinder", "x","tndr", "bumble", "id",
   "tiktok", "youtube", "yt","ytube", "wechat","wchat", "viber",
   "skype", "discord", "reddit", "pinterest", "tumblr", "signal", 
   "onlyfans",  "face bk","fbook","face/book" ,"faceebook","fbk"
