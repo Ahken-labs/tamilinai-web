@@ -205,7 +205,8 @@ export default function RegisterForm({
             <InputBox
                 value={fullName}
                 onChange={(val) => {
-                    const sanitized = val.replace(/[^a-zA-Z]/g, "");
+                    const letters = val.replace(/[^a-zA-Z]/g, "");
+                    const sanitized = letters.length > 0 ? letters[0].toUpperCase() + letters.slice(1).toLowerCase() : "";
                     setFullName(sanitized);
                     setErrors((prev) => ({ ...prev, name: undefined }));
                 }}
