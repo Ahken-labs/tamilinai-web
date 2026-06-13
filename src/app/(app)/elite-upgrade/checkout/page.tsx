@@ -57,7 +57,7 @@ const ELEMENT_STYLE = {
   base: {
     fontSize: "16px",
     color: "#222222",
-    fontFamily: '"Poppins", sans-serif',
+    fontFamily: "Poppins",
     "::placeholder": { color: "#525252" },
   },
   invalid: { color: "#B31B38" },

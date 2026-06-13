@@ -282,7 +282,7 @@ export default function AppHeader() {
           </nav>
 
           {/* Right: Profile + Settings — desktop only */}
-          <div className="hidden min-[900px]:flex items-center gap-3 flex-1 justify-end">
+          <div className="font-poppins hidden min-[900px]:flex items-center gap-3 flex-1 justify-end">
 
             {/* ── Desktop profile/settings button ── */}
             <div ref={settingsRef} className="hidden min-[900px]:relative mb-2 min-[900px]:flex items-center">
@@ -299,10 +299,10 @@ export default function AppHeader() {
                 <div className="w-8 h-8 rounded-full overflow-hidden border border-white bg-[#D9D9D9] relative">
                   <ProtectedImage src={photo} fill className="object-cover" alt="my profile" sizes="32px" />
                 </div>
-                <div className="flex flex-col gap-1">
+                <div className="font-poppins flex flex-col gap-1">
                   {!trustBadge ? (
                     <>
-                      <span className="text-[12px] md:text-[14px] font-semibold text-[#525252] leading-none">Profile points</span>
+                      <span className="font-poppins text-[12px] md:text-[14px] font-semibold text-[#525252] leading-none">Profile points</span>
                       <div className="flex items-center gap-2">
                         <div className="w-[52px] h-2 bg-white rounded-[19px] overflow-hidden">
                           <div className="h-full bg-[#B31B38] rounded-[19px] transition-[width] duration-700 ease-in-out" style={{ width: `${getProgressWidth(score)}%` }} />
@@ -354,7 +354,7 @@ export default function AppHeader() {
                       <span className="ml-auto rounded-[41px] bg-[#B31B38] px-2 py-[2px] text-white font-poppins font-16 font-normal leading-[150%]">Upgrade</span>
                     </Link>
                   ) : null}
-                  <div className="w-full flex flex-col z-20 gap-2">
+                  <div className="font-poppins w-full flex flex-col z-20 gap-2">
                     {[
                       { text: "Complete / Edit profile", Icon: EditIcon, href: "/my-profile" },
                       ...(trustBadge || isElite ? [] : [{ text: "Upgrade to Elite", Icon: EliteIcon, href: "/elite-upgrade" }]),
@@ -431,7 +431,7 @@ export default function AppHeader() {
             <div className="flex flex-col gap-0.5">
               {!trustBadge ? (
                 <>
-                  <span className="text-[12px] md:text-[14px] font-semibold text-[#525252] leading-none">Profile points</span>
+                  <span className="font-poppins text-[12px] md:text-[14px] font-semibold text-[#525252] leading-none">Profile points</span>
                   <div className="flex items-center gap-1.5">
                     <div className="w-[40px] h-2 bg-white rounded-[19px] overflow-hidden">
                       <div className="h-full bg-[#B31B38] rounded-[19px] transition-[width] duration-700 ease-in-out" style={{ width: `${getProgressWidth(score)}%` }} />
@@ -470,9 +470,9 @@ export default function AppHeader() {
 
         {/* ── Header: avatar + user info + close ── */}
         <div className="flex items-center justify-between px-4 pt-5 pb-4 border-b border-[#EAEAEA] shrink-0">
-          <div className="flex items-center gap-3 min-w-0">
+          <Link href="/my-profile" onClick={closeMobile} className="flex items-center gap-3 min-w-0">
             <div
-              className="w-10 h-10 rounded-full overflow-hidden border border-[#E0E0E0] bg-[#D9D9D9] relative shrink-0"
+              className="font-poppins w-10 h-10 rounded-full overflow-hidden border border-[#E0E0E0] bg-[#D9D9D9] relative shrink-0"
               style={
                 isElite && trustBadge
                   ? { boxShadow: "0 0 0 2px #FFD9A0" }
@@ -482,14 +482,14 @@ export default function AppHeader() {
               <ProtectedImage src={photo} fill className="object-cover" alt="my profile" sizes="40px" />
             </div>
             <div className="min-w-0">
-              <div className="text-[15px] font-semibold text-[#222222] leading-tight truncate">{displayName}</div>
-              <div className="text-[13px] font-normal text-[#888888] leading-tight">({displayId})</div>
+              <div className="font-poppins text-[15px] font-semibold text-[#222222] leading-tight truncate">{displayName}</div>
+              <div className="font-poppins text-[13px] font-normal text-[#888888] leading-tight">({displayId})</div>
             </div>
-          </div>
+          </Link>
           {/* Close button */}
           <button
             onClick={closeMobile}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#F0F0F0] transition-colors duration-150 shrink-0 ml-2"
+            className="cursor-pointer w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#F0F0F0] transition-colors duration-150 shrink-0 ml-2"
             aria-label="Close menu"
           >
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -503,23 +503,27 @@ export default function AppHeader() {
 
           {/* Profile progress */}
           {!trustBadge && (
-            <div className="px-4 py-3.5 border-b border-[#F0F0F0]">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[12px] md:text-[14px] font-semibold text-[#525252] uppercase tracking-wide">Profile points</span>
+            <Link
+              href="/my-profile"
+              className="block px-4 py-3.5 border-b border-[#F0F0F0] cursor-pointer"
+              onClick={closeMobile}
+            >
+              <div className="font-poppins flex items-center justify-between mb-2">
+                <span className="font-poppins text-[12px] md:text-[14px] font-semibold text-[#525252] uppercase tracking-wide">Profile points</span>
                 <span className="text-[16px] font-semibold text-[#B31B38]">{score}%</span>
               </div>
               <div className="w-full h-2 bg-[#EBEBEB] rounded-[19px] overflow-hidden">
                 <div
-                  className="h-full bg-[#B31B38] rounded-[19px] transition-[width] duration-700 ease-in-out"
+                  className="font-poppins h-full bg-[#B31B38] rounded-[19px] transition-[width] duration-700 ease-in-out"
                   style={{ width: `${getProgressWidth(score)}%` }}
                 />
               </div>
-            </div>
+            </Link>
           )}
 
           {/* Trust badge / Elite upgrade CTA — mirrors desktop */}
           {!trustBadge ? (
-            <div className="px-3 pt-3 pb-1">
+            <div className="font-poppins px-3 pt-3 pb-1">
               <Link
                 href="/trust-badge"
                 onClick={closeMobile}
@@ -552,47 +556,9 @@ export default function AppHeader() {
             </div>
           ) : null}
 
-          {/* Nav tabs section */}
-          {/* <div className="px-3 pt-4 pb-1">
-            <p className="px-2 pb-1.5 text-[10.5px] font-semibold text-[#BBBBBB] uppercase tracking-[0.08em]">
-              Navigation
-            </p>
-            {NAV_TABS.map(({ labelKey, href, Icon }) => {
-              const active = pathname.startsWith(href);
-              const showDot = (labelKey === "Notifications" && hasUnread) || (labelKey === "Interested" && hasUnreadInterest);
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  onClick={closeMobile}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-[10px] mb-0.5 transition-colors duration-150 ${active ? "bg-[#fdf0f2]" : "hover:bg-[#F7F7F7]"
-                    }`}
-                >
-                  <div className="relative shrink-0">
-                    <Icon
-                      className="w-[18px] h-[18px]"
-                      style={{ color: active ? "#B31B38" : "#888888" }}
-                    />
-                    {showDot && <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-[#B31B38]" />}
-                  </div>
-                  <span
-                    className={`text-[14px] leading-[150%] flex-1 ${active ? "text-[#222222] font-semibold" : "text-[#6B6B6B] font-normal"
-                      }`}
-                  >
-                    {(labelKey) as string}
-                  </span>
-                  {active && <div className="w-[6px] h-[6px] rounded-full bg-[#B31B38] shrink-0" />}
-                </Link>
-              );
-            })}
-          </div> */}
-
-          {/* Divider */}
-          {/* <div className="mx-4 my-2 border-t border-[#F0F0F0]" /> */}
-
           {/* Account section — mirrors desktop dropdown items exactly */}
-          <div className="px-3 pb-4 mt-3">
-            <p className="px-2 pb-1.5 text-[10.5px] font-semibold text-[#BBBBBB] uppercase tracking-[0.08em]">
+          <div className="font-poppins px-3 pb-4 mt-3">
+            <p className="font-poppins px-2 pb-1.5 text-[10.5px] font-semibold text-[#BBBBBB] uppercase tracking-[0.08em]">
               Account
             </p>
             {[
@@ -655,5 +621,3 @@ export default function AppHeader() {
     </>
   );
 }
-
-// Note: breakpoint uses min-[900px] instead of md

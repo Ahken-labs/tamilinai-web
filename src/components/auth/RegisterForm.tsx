@@ -237,8 +237,10 @@ export default function RegisterForm({
                 <InputBox
                     value={email}
                     onChange={(val) => {
-                        setEmail(val.toLowerCase().replace(/\s/g, '').replace(/\+[^@]*(?=@)/, ''));
-                        setErrors((prev) => ({ ...prev, email: undefined, emailWarning: undefined }));
+                        const sanitized = val.toLowerCase().replace(/\s/g, '').replace(/\+[^@]*(?=@)/, '');
+                        setEmail(sanitized);
+                        const { warning } = validateEmail(sanitized);
+                        setErrors((prev) => ({ ...prev, email: undefined, emailWarning: warning ?? undefined }));
                     }}
                     label={t("Email")}
                     type="email"
