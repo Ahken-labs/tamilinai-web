@@ -210,7 +210,7 @@ export default function BasicInfoSection({ me, onDirty, onSave }: Props) {
         <FormRow leftWidth={leftWidth} required label="Name" align="center">
           <input
             value={name}
-            onChange={e => { setName(e.target.value); sync({ name: e.target.value }); }}
+            onChange={e => { const v = e.target.value.replace(/[^a-zA-Z]/g, ""); setName(v); sync({ name: v }); }}
             onBlur={() => {
               const trimmed = name.trim();
               const invalid = !trimmed || trimmed.length < 3 || /^\d+$/.test(trimmed);

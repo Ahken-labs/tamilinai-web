@@ -25,7 +25,7 @@ input, textarea, select {
   font-family: var(--font-arima), cursive;
 }
 .font-poppins {
-  font-family: var(--font-poppins), sans-serif;
+  font-family: var(--font-poppins);
 }
 .font-tamil {
   font-family: var(--font-tamil), sans-serif;
