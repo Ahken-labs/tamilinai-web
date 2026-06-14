@@ -1115,7 +1115,7 @@ function buildSections(me: Me | null, onDirty: () => void, partnerCompleted: num
       icon: <ProfileBoxIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
       completed: basicComplete,
       total: basicTotal,
-      body: <BasicInfoSection key={key} me={me} onDirty={onDirty} onSave={saves!.basic} />,
+      body: saves ? <BasicInfoSection key={key} me={me} onDirty={onDirty} onSave={saves.basic} /> : null,
     },
     {
       id: "career",
@@ -1123,7 +1123,7 @@ function buildSections(me: Me | null, onDirty: () => void, partnerCompleted: num
       icon: <WorkBriefcaseIcon strokeWidth={2} className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
       completed: careerComplete,
       total: 5,
-      body: <CareerEducationSection key={key} me={me} onDirty={onDirty} onSave={saves!.career} />,
+      body: saves ? <CareerEducationSection key={key} me={me} onDirty={onDirty} onSave={saves.career} /> : null,
     },
     {
       id: "family",
@@ -1131,7 +1131,7 @@ function buildSections(me: Me | null, onDirty: () => void, partnerCompleted: num
       icon: <StepFamilyIcon strokeWidth="4" className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
       completed: familyComplete,
       total: 6,
-      body: <FamilyBackgroundSection key={key} me={me} onDirty={onDirty} onSave={saves!.family} />,
+      body: saves ? <FamilyBackgroundSection key={key} me={me} onDirty={onDirty} onSave={saves.family} /> : null,
     },
     {
       id: "religion",
@@ -1139,7 +1139,7 @@ function buildSections(me: Me | null, onDirty: () => void, partnerCompleted: num
       icon: <CasteCircleIcon strokeWidth="2" className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
       completed: [rd?.religion ?? p?.religion, rd?.caste ?? p?.caste].filter(Boolean).length,
       total: 2,
-      body: <ReligionCasteSection key={key} me={me} onDirty={onDirty} onSave={saves!.religion} />,
+      body: saves ? <ReligionCasteSection key={key} me={me} onDirty={onDirty} onSave={saves.religion} /> : null,
     },
     {
       id: "location",
@@ -1147,7 +1147,7 @@ function buildSections(me: Me | null, onDirty: () => void, partnerCompleted: num
       icon: <LocationPinIcon strokeWidth="2" className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
       completed: locationComplete,
       total: 4,
-      body: <LocationSection key={key} me={me} onDirty={onDirty} onSave={saves!.location} />,
+      body: saves ? <LocationSection key={key} me={me} onDirty={onDirty} onSave={saves.location} /> : null,
     },
     {
       id: "lifestyle",
@@ -1155,7 +1155,7 @@ function buildSections(me: Me | null, onDirty: () => void, partnerCompleted: num
       icon: <WineGlassIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
       completed: lifestyleComplete,
       total: 3,
-      body: <LifestyleSection key={key} me={me} onDirty={onDirty} onSave={saves!.lifestyle} />,
+      body: saves ? <LifestyleSection key={key} me={me} onDirty={onDirty} onSave={saves.lifestyle} /> : null,
     },
     {
       id: "hobbies",
@@ -1163,7 +1163,7 @@ function buildSections(me: Me | null, onDirty: () => void, partnerCompleted: num
       icon: <PaintBrushIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" />,
       completed: (hd?.hobbies ?? p?.hobbies ?? []).length > 0 ? 1 : 0,
       total: 1,
-      body: <InterestsHobbiesSection key={key} me={me} onDirty={onDirty} onSave={saves!.hobbies} />,
+      body: saves ? <InterestsHobbiesSection key={key} me={me} onDirty={onDirty} onSave={saves.hobbies} /> : null,
     },
     {
       id: "partner",
@@ -1171,7 +1171,7 @@ function buildSections(me: Me | null, onDirty: () => void, partnerCompleted: num
       icon: <HeartIcon className="h-4 w-4 md:h-4.5 lg:h-5 md:w-4.5 lg:w-5" strokeWidth={2} />,
       completed: partnerCompleted,
       total: 12,
-      body: <PartnerPreferenceSection key={key} onDirty={onDirty} onSave={saves!.partner} />,
+      body: saves ? <PartnerPreferenceSection key={key} onDirty={onDirty} onSave={saves.partner} /> : null,
     },
   ];
 }
