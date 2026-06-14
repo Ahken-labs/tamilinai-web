@@ -71,7 +71,7 @@ function getCtaConfig(type: string, fromUserId?: string): { label: string; href:
     case "elite_expired":         return { label: "Renew",             href: "/elite-upgrade" };
     case "promo":                 return { label: "Claim offer",       href: "/elite-upgrade" };
     case "admin_broadcast":       return { label: "See profile",        href: "/my-profile" };
-    case "profile_viewed":        return { label: "See all viewers",   href: "/my-profile" };
+    case "profile_viewed":        return { label: "See all viewers",   href: "/matches" };
     case "profile_completion_request": return { label: "Update profile", href: "/my-profile" };
     case "birthday":              return { label: "View matches",      href: "/matches" };
     default:                      return { label: "View",              href: "/matches" };
