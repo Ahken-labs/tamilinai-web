@@ -70,7 +70,7 @@ function getCtaConfig(type: string, fromUserId?: string): { label: string; href:
     case "elite_expiring_3d":
     case "elite_expired":         return { label: "Renew",             href: "/elite-upgrade" };
     case "promo":                 return { label: "Claim offer",       href: "/elite-upgrade" };
-    case "admin_broadcast":       return { label: "Explore features",  href: "/matches" };
+    case "admin_broadcast":       return { label: "See profile",        href: "/my-profile" };
     case "profile_viewed":        return { label: "See all viewers",   href: "/my-profile" };
     case "profile_completion_request": return { label: "Update profile", href: "/my-profile" };
     case "birthday":              return { label: "View matches",      href: "/matches" };
@@ -199,7 +199,7 @@ function NotificationRow({
         </div>
 
         <div className="min-w-0 flex-1">
-          <div className="truncate text-dark text-[14px] sm:text-[16px] md:text-[18px] font-medium leading-[150%]">
+          <div className={`truncate text-dark text-[14px] sm:text-[16px] md:text-[18px] leading-[150%] ${item.isRead ? "font-medium" : "font-bold"}`}>
             {item.title}
           </div>
           <div className="mt-1 md:mt-1.5 md:line-clamp-2 text-secondary3 font-16 font-normal leading-[150%]">
@@ -215,7 +215,7 @@ function NotificationRow({
             className="sm:hidden max-[370px]:mt-0.5 mt-2 flex cursor-pointer items-center gap-0.5"
           >
             {!item.isRead ? <div className="h-2 w-2 rounded-full bg-[#B31B38]" /> : <div className="h-0 md:h-2 w-0 md:w-2" />}
-            <span className="font-poppins text-primary font-16 font-normal mb-0.5 leading-[150%] whitespace-nowrap">
+            <span className={`font-poppins text-primary font-16 mb-0.5 leading-[150%] whitespace-nowrap ${!item.isRead ? "font-semibold" : "font-normal"}`}>
               {label}
             </span>
             <ChevronRightIcon className="h-4 w-4 text-[#B31B38]" />
@@ -229,7 +229,7 @@ function NotificationRow({
         className="hidden sm:flex shrink-0 cursor-pointer items-center gap-0.5 md:gap-1.5"
       >
         {!item.isRead ? <div className="h-2 md:h-3 w-2 md:w-3 rounded-full bg-[#B31B38]" /> : <div className="h-2 md:h-3 w-2 md:w-3" />}
-        <span className="font-poppins text-primary font-16 font-normal mb-0.5 leading-[150%] whitespace-nowrap">
+        <span className={`font-poppins text-primary font-16 mb-0.5 leading-[150%] whitespace-nowrap ${!item.isRead ? "font-semibold" : "font-normal"}`}>
           {label}
         </span>
         <ChevronRightIcon className="h-4 w-4 md:h-6 md:w-6 text-[#B31B38]" />
