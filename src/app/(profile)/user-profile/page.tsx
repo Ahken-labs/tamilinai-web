@@ -26,7 +26,7 @@ import type { ProfileDetail } from "@/src/types/user";
 import { UserProfileSkeletonBody, MobileSectionsSkeleton, DesktopSectionsSkeleton } from "@/src/components/app/skeleton-layout/UserProfileSkeleton";
 import { calculateAge } from "@/src/utils/calculateAge";
 import { DIET_FROM_BE, SMOKE_FROM_BE, DRINK_FROM_BE, MARITAL_FROM_BE, BUILD_FROM_BE, RESIDENT_FROM_BE } from "@/src/utils/profileMappers";
-import EliteUpgradePopup, { shouldShowWeeklyNudge, markWeeklyNudgeSeen, type EliteUpgradeTrigger } from "@/src/components/common-layout/EliteUpgradePopup";
+import EliteUpgradePopup, { shouldShowWeeklyNudge, markWeeklyNudgeSeen, type EliteUpgradeTrigger } from "@/src/components/ui/EliteUpgradePopup";
 
 function formatWeight(kg?: number): string {
   if (!kg) return "Not specified";

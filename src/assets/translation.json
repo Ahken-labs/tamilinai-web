@@ -184,7 +184,9 @@
         "App_Interested": "Interested",
         "App_Search": "Search",
         "App_My_Profile": "My Profile",
-        "App_Settings": "Settings"
+        "App_Settings": "Settings",
+        "Ratings_and_reviews":"Ratings and reviews",
+        "Pricing":"Pricing"
     },
     "ta": {
         "Already_a_member": "ஏற்கனவே உறுப்பினரா?",
@@ -372,6 +374,8 @@
         "App_Interested": "விருப்பமானவர்",
         "App_Search": "தேடு",
         "App_My_Profile": "என் சுயவிவரம்",
-        "App_Settings": "அமைப்புகள்"
+        "App_Settings": "அமைப்புகள்",
+        "Ratings_and_reviews":"மதிப்பீடுகள்",
+        "Pricing":"விலை நிர்ணயம்"
     }
 }

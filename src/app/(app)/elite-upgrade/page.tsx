@@ -9,6 +9,8 @@ import { GoHeartFill } from "react-icons/go";
 import { FaWhatsapp } from "react-icons/fa";
 import { readMeCache } from "@/src/components/AppHeader";
 import { ELITE_PLANS, getPricing, getSavePct } from "@/src/constants/elitePlans";
+import ReviewSection from "@/src/components/review/ReviewSection";
+import ReviewFAQSection from "@/src/components/review/ReviewFAQSection";
 
 const eliteBenefits = [
     { icon: <FaWhatsapp className="h-6 w-6" />, text: "Talk to matches directly", },
@@ -250,7 +252,14 @@ export default function EliteUpgradePage() {
                             </div>
                         </div>
                     </div>
-                    <div className="md:mt-10 mt-8">
+
+                </div>
+            </div>
+
+                    <ReviewSection />
+                    <ReviewFAQSection/>
+                     <div className="mx-auto flex max-w-[1024px] flex-col px-4 lg:px-10">
+                    <div className="mt-14">
                         <h1 className="text-center text-dark font-semibold fonts-24">Why Elite membership?</h1>
                         <div className="mt-4 md:mt-6">
                             {/* box */}
@@ -272,8 +281,9 @@ export default function EliteUpgradePage() {
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                    </div>
+
+
         </main>
     );
 }
