@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import EliteUpgradePopup from "../common-layout/EliteUpgradePopup";
+import EliteUpgradePopup from "../ui/EliteUpgradePopup";
 import ProtectedPhoto from "../common-layout/ProtectedPhoto";
 import { FaWhatsapp } from "react-icons/fa6";
 import { useRouter } from "next/navigation";

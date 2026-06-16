@@ -24,7 +24,7 @@ import {
   ShieldLockIcon,
 } from "../../assets/Icons";
 import Button from "../common-layout/Button";
-import EliteUpgradePopup from "../common-layout/EliteUpgradePopup";
+import EliteUpgradePopup from "../ui/EliteUpgradePopup";
 import { shortlistProfile, unshortlistProfile } from "../../lib/api/profiles";
 import { sendInterest } from "../../lib/api/interests";
 import { ApiError } from "../../lib/api/client";

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useScrollLock } from "../../hooks/useScrollLock";
 import { EliteCrownIcon, HeadphoneSupportIcon, InfinityIcon, StarBadgeIcon, TrophyIcon, UserSearchIcon, WhatsAppIcon } from "@/src/assets/Icons";
 import { FiX } from "react-icons/fi";
-import Button from "./Button";
+import Button from "../common-layout/Button";
 // ── Weekly nudge helpers ──────────────────────────────────────────────────────
 const WEEKLY_KEY = "inai_elite_nudge_at";
 

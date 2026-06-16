@@ -13,6 +13,7 @@ import RefundPolicyPopup from "./footer/RefundPolicyPopup";
 
 import translations from "../assets/translation.json";
 import { CONTACT } from "../lib/contact";
+import { GoogleReviewTag, TrustpilotReviewTag, InaiReviewTag } from "./review/ReviewTag";
 
 type FooterVariant = "landing" | "app";
 
@@ -28,6 +29,8 @@ const NAV_LEFT = [
   { label: "Terms_Conditions", href: "/terms", appHref: "/terms" },
   { label: "Privacy_Policy", href: "/privacy", appHref: "/privacy" },
   { label: "Refund_Return_Policy", href: "/refund-policy", appHref: "/refund-policy" },
+  { label: "Ratings_and_reviews", href: "", appHref: "" },
+  { label: "Pricing", href: "", appHref: "" },
 ] as const;
 
 // Social links
@@ -152,8 +155,13 @@ export default function Footer({ variant = "landing" }: FooterProps) {
               </a>
               <span className={`font-poppins font-normal text-[15px] leading-[200%] ${isApp ? "text-[#464646]" : "text-white"} block`}>{CONTACT.address.line1}</span>
               <span className={`font-poppins font-normal text-[15px] leading-[200%] ${isApp ? "text-[#464646]" : "text-white"} block`}>{CONTACT.address.line2}</span>
+              {/* primary placeholder number */}
               <a href={CONTACT.whatsappUrl} target="_blank" rel="noopener noreferrer" className={`${navLinkClass} no-underline`}>
-                +{CONTACT.whatsappNumber}
+                +94 77 075 0760
+              </a>
+              {/* secondary placeholder number */}
+              <a href={CONTACT.whatsappUrl} target="_blank" rel="noopener noreferrer" className={`${navLinkClass} no-underline`}>
+                +94 75 020 7507
               </a>
               <button type="button" onClick={copyEmail} className={`cursor-pointer text-left ${navLinkClass}`}>
                 {emailCopied ? "Copied!" : CONTACT.email}
@@ -162,11 +170,16 @@ export default function Footer({ variant = "landing" }: FooterProps) {
 
           </div>
 
-          {/* Col 3 — Description (pushed right on desktop) */}
+          {/* Col 3 — Description + Review tags (pushed right on desktop) */}
           <div className="min-[890px]:ml-auto select-none">
             <p className={`font-poppins font-normal md:text-[16px] text-[14px] leading-[150%] ${isApp ? "text-[#464646] " : "text-white"}`}>
               {t("Footer_parah")}
             </p>
+            <div className="mt-6 flex flex-wrap gap-4 overflow-visible">
+              <GoogleReviewTag />
+              <TrustpilotReviewTag />
+              <InaiReviewTag />
+            </div>
           </div>
         </div>
 

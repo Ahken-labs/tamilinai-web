@@ -16,7 +16,7 @@ import {
 } from "@/src/assets/Icons";
 import { sendInterest, respondToInterest } from "@/src/lib/api/interests";
 import { ApiError } from "@/src/lib/api/client";
-import EliteUpgradePopup from "@/src/components/common-layout/EliteUpgradePopup";
+import EliteUpgradePopup from "@/src/components/ui/EliteUpgradePopup";
 
 type StatusType = "sent" | "received" | "recived" | "declined";
 

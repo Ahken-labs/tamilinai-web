@@ -1,5 +1,5 @@
 export const CONTACT = {
-  whatsappNumber: "94750207507",
+  whatsappNumber: "94770750760",
   get whatsappUrl() {
     return `https://wa.me/${this.whatsappNumber}`;
   },
