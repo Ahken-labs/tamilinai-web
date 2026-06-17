@@ -110,7 +110,7 @@ function ReviewCard({ review }: { review: Review }) {
 
 export default function ReviewSection() {
   return (
-    <section className="bg-white py-16 px-4 font-poppins">
+    <section className="bg-white py-16 px-4 sm:px-6 font-poppins">
       {/* Title */}
       <h2 className="m-0 text-center text-[#000] text-[20px] font-semibold font-poppins">
         Ratings and reviews
