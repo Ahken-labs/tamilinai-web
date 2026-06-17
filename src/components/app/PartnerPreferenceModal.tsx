@@ -107,7 +107,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
   const [ageError, setAgeError] = useState("");
   const [heightError, setHeightError] = useState("");
   const [isLifestyleOpen, setIsLifestyleOpen] = useState(false);
-  const [activeSearchTab, setActiveSearchTab] = useState<"search" | "advanced">("advanced");
+  const [activeSearchTab, setActiveSearchTab] = useState<"search" | "advanced">("search");
   const [searchQuery, setSearchQuery] = useState("");
   const [marital, setMarital] = useState("Unmarried");
   const [physical, setPhysical] = useState("Open to all");
@@ -280,6 +280,8 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
             </span>
             {variant === "search" && (
               <div className="flex-1 flex justify-center">
+                {/* invisible spacer balances the close button so toggle is truly centered on mobile */}
+                <div className="max-[500px]:block hidden w-8 shrink-0" />
                 <ToggleTabs
                   tabs={SEARCH_TABS}
                   activeTab={activeSearchTab}
