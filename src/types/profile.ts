@@ -12,6 +12,7 @@ export interface Profile {
   caste: string;
   isVerified: boolean;
   isElite: boolean;
+  elitePlanKey?: string | null;
   isNew: boolean;
   isViewed: boolean;
   photo?: string;

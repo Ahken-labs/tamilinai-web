@@ -59,7 +59,7 @@ const FAQS: FAQItem[] = [
 
 export default function ReviewFAQSection() {
   return (
-    <section className="bg-[#F2F2F2] py-16 px-4 sm:px-6 font-poppins">
+    <section className="bg-[#F2F2F2] pb-6 sm:pb-16 pt-16 px-4 sm:px-6 font-poppins">
       <div className="max-w-[800px] mx-auto">
         {/* Title */}
         <h2 className="m-0 text-center text-[#000] text-[20px] font-semibold leading-normal">
@@ -76,19 +76,19 @@ export default function ReviewFAQSection() {
               </p>
 
               {/* Answer */}
-              <p className="mt-2 text-[#2C303A] text-[16px] font-normal leading-[150%]">
+              <p className="mt-2 text-[#2C303A] text-[14px] sm:text-[15px] md:text-[16px] font-normal leading-[150%]">
                 {item.a}
               </p>
 
               {/* Points */}
               {item.points && (
-                <div className="ml-1 mt-1 flex flex-col gap-1">
+                <div className="max-[500px]:ml-0 ml-1 mt-3 sm:mt-1 flex flex-col gap-1">
                   {item.points.map((pt, i) => (
-                    <div key={i} className="flex items-start gap-5">
-                      <span className="text-[#2C303A] font-poppins text-[16px] font-normal leading-[140%] w-[157px] shrink-0 flex items-center gap-1">
+                    <div key={i} className="flex items-start max-[500px]:gap-2 gap-5">
+                      <span className="text-[#2C303A] font-poppins text-[14px] sm:text-[15px] md:text-[16px] font-normal leading-[140%] max-[370px]:w-[137px] w-[147px] sm:w-[157px] shrink-0 flex items-center gap-1">
                         <span className="mr-1">•</span>{pt.label}
                       </span>
-                      <span className={`text-[#2C303A] font-poppins text-[16px] leading-[140%] ${pt.valueMedium ? "font-medium" : "font-normal"}`}>
+                      <span className={`text-[#2C303A] font-poppins text-[14px] sm:text-[15px] md:text-[16px] leading-[140%] ${pt.valueMedium ? "font-medium" : "font-normal"}`}>
                         {pt.value}
                       </span>
                     </div>
@@ -98,7 +98,7 @@ export default function ReviewFAQSection() {
 
               {/* Note (bold label + text) */}
               {item.note && (
-                <p className="m-0 mt-1 text-[#2C303A] text-[16px] font-normal leading-[150%]">
+                <p className="mt-3 sm:mt-1 text-[#2C303A] text-[14px] sm:text-[15px] md:text-[16px] font-normal leading-[150%]">
                   <span className="font-medium">Important:</span> {item.note}
                 </p>
               )}

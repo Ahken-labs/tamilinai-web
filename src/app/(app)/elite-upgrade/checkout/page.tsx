@@ -10,7 +10,7 @@ import {
   NotifPromoIcon, InterestLockIcon,
 } from "@/src/assets/Icons";
 import { readMeCache } from "@/src/components/AppHeader";
-import { ELITE_PLANS, getPlanByKey, getPricing, getSavePct, isSriLanka } from "@/src/constants/elitePlans";
+import { ELITE_PLANS, getPlanByKey, getPricing, isSriLanka } from "@/src/constants/elitePlans";
 import { GoHeartFill } from "react-icons/go";
 import Button from "@/src/components/common-layout/Button";
 import Link from "next/link";
@@ -291,7 +291,6 @@ function PlanSummary({
   months,
   total,
   features,
-  savePct,
   planKey,
   currency,
   onPromoApplied,
@@ -302,7 +301,6 @@ function PlanSummary({
   months: number;
   total: string;
   features: string[];
-  savePct?: number;
   planKey: string;
   currency: "lkr" | "usd";
   onPromoApplied: (code: string) => void;
@@ -359,9 +357,6 @@ function PlanSummary({
             {symbol} {perMonth} /month
           </span>
         </div>
-        {savePct && (
-          <div className="mt-2 italic font-16 leading-[100%] text-[#8D5900]">Save {savePct}%</div>
-        )}
 
         {/* Line items */}
         <div className="flex flex-col border-t border-[#D8D8D8] mt-4 py-3 gap-1">
@@ -463,7 +458,6 @@ function CheckoutContent() {
 
   const plan = getPlanByKey(planKey) ?? ELITE_PLANS[0];
   const pricing = getPricing(plan, countryCode);
-  const savePct = getSavePct(plan, countryCode);
   const currency: "lkr" | "usd" = isSriLanka(countryCode) ? "lkr" : "usd";
 
   const [promoCode, setPromoCode] = useState("");
@@ -498,7 +492,7 @@ function CheckoutContent() {
             months={plan.months}
             total={pricing.total}
             features={plan.features}
-            savePct={savePct}
+
             planKey={plan.key}
             currency={currency}
             onPromoApplied={handlePromoApplied}

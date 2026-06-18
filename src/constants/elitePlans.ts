@@ -1,75 +1,67 @@
-// ── Elite plan config ─────────────────────────────────────────────────────────
-// Edit prices and features here — nowhere else needs to change.
+// Elite plan config — edit prices and features here
 
 export type PlanKey = "basic" | "pro" | "max";
 
 export interface PlanPricing {
-  symbol: string;          // currency symbol
-  perMonth: string;        // e.g. "1,725" or "14.99"
-  total: string;           // e.g. "3,450" or "29.98"
+  symbol: string;
+  perMonth: string;
+  total: string;
 }
 
 export interface ElitePlan {
   key: PlanKey;
-  label: string;           // "Elite basic" | "Elite pro" | "Elite max"
+  label: string;
   months: number;
-  savePctLkr?: number;     // save % shown for LKR users
-  savePctUsd?: number;     // save % shown for USD users
+  tagLine?: string;
   lkr: PlanPricing;
-  usd: PlanPricing;
-  features: string[];      // bullet points shown on both plan card and checkout summary
-  boostWeeks: string;      // e.g. "1 week" | "2 weeks" | "4 weeks"
-  whatsappLimit: number;   // 30 | 60 | 90
+  gbp: PlanPricing;
+  features: string[];
 }
 
 export const ELITE_PLANS: ElitePlan[] = [
   {
     key: "basic",
     label: "Elite basic",
-    months: 2,
-    lkr: { symbol: "Rs", perMonth: "1,725", total: "3,450" },
-    usd: { symbol: "$",  perMonth: "14.99", total: "29.98" },
-    boostWeeks: "1 week",
-    whatsappLimit: 30,
+    months: 3,
+    lkr: { symbol: "Rs", perMonth: "1,967", total: "5,900" },
+    gbp: { symbol: "£",  perMonth: "13",    total: "39" },
     features: [
-      "Boost your profile **1 week**",
-      "Send unlimited interest requests",
-      "Connect with up to 30 inai.lk users via WhatsApp",
+      "Unlimited profiles",
+      "Unlimited interest requests",
+      "Connect with up to **20 verified profiles** total",
+      "1-week ad profile boost per month **(for 3 months)**",
     ],
   },
   {
     key: "pro",
     label: "Elite pro",
-    months: 3,
-    savePctLkr: 14,
-    savePctUsd: 13,
-    lkr: { symbol: "Rs", perMonth: "1,483", total: "4,450" },
-    usd: { symbol: "$",  perMonth: "12.99", total: "38.97" },
-    boostWeeks: "2 weeks",
-    whatsappLimit: 60,
+    months: 6,
+    tagLine: "Save 16%",
+    lkr: { symbol: "Rs", perMonth: "1,650", total: "9,900" },
+    gbp: { symbol: "£",  perMonth: "11.50", total: "69" },
     features: [
-      "Boost your profile **2 weeks**",
-      "Send unlimited interest requests",
-      "Connect with up to 60 inai.lk users via WhatsApp",
-      "Priority customer service",
+      "Unlimited profiles",
+      "Unlimited interest requests",
+      "Connect with up to **50 verified profiles** total",
+      "1-week ad profile boost per month **(for 6 months)**",
+      "Hand-curated matches sent to your WhatsApp **twice a month.**",
     ],
   },
   {
     key: "max",
-    label: "Elite max",
-    months: 6,
-    savePctLkr: 28,
-    savePctUsd: 33,
-    lkr: { symbol: "Rs", perMonth: "1,241", total: "7,450" },
-    usd: { symbol: "$",  perMonth: "9.99",  total: "59.94" },
-    boostWeeks: "4 weeks",
-    whatsappLimit: 90,
+    label: "Elite VIP",
+    months: 10,
+    tagLine: "Full-service matchmaking.",
+    lkr: { symbol: "Rs", perMonth: "2,490", total: "24,900" },
+    gbp: { symbol: "£",  perMonth: "17.90", total: "179" },
     features: [
-      "Boost your profile **4 weeks**",
-      "Send unlimited interest requests",
-      "Connect with up to 90 inai.lk users via WhatsApp",
+      "Unlimited profiles",
+      "Unlimited interest requests",
+      "Connect with up to **120 verified profiles** total",
+      "1-week ad profile boost per month **(for 10 months)**",
+      "**Weekly** hand-curated matches sent to your WhatsApp.",
       "Priority customer service",
-      "Dedicated support from Inai team",
+      "Personalized dedicated matchmaker",
     ],
   },
 ];
@@ -78,16 +70,10 @@ export function getPlanByKey(key: string): ElitePlan | undefined {
   return ELITE_PLANS.find((p) => p.key === key);
 }
 
-/** Returns true for Sri Lanka (+94), false for all other country codes */
 export function isSriLanka(countryCode?: string | null): boolean {
   return (countryCode ?? "").replace(/\s/g, "") === "+94";
 }
 
 export function getPricing(plan: ElitePlan, countryCode?: string | null): PlanPricing {
-  return isSriLanka(countryCode) ? plan.lkr : plan.usd;
-}
-
-/** Returns the save% for the user's currency, or undefined for basic (no badge) */
-export function getSavePct(plan: ElitePlan, countryCode?: string | null): number | undefined {
-  return isSriLanka(countryCode) ? plan.savePctLkr : plan.savePctUsd;
+  return isSriLanka(countryCode) ? plan.lkr : plan.gbp;
 }
