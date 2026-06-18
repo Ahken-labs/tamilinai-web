@@ -4,13 +4,13 @@ import Image from "next/image";
 import ProtectedImage from "@/src/components/common-layout/ProtectedImage";
 import Link from "next/link";
 import {
-  AboutMeIcon, EliteCrownIcon, ProfileVerifiedBadgeIcon, UnionDesignIcon,
+  AboutMeIcon, EliteCrownIcon, EliteProIcon, EliteVIPIcon, ProfileVerifiedBadgeIcon, UnionDesignIcon,
   GlobeIcon, InterestLockIcon, ChevronIcon, CameraIcon,
   ProfileBoxIcon, WorkBriefcaseIcon, StepFamilyIcon, CasteCircleIcon,
   LocationPinIcon, WineGlassIcon, PaintBrushIcon, HeartIcon,
   CheckmarkIcon, ChevronRightIcon,
 } from "@/src/assets/Icons";
-import { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Button from "@/src/components/common-layout/Button";
 import {
   getMe, uploadPhoto, savePersonalDetails, saveBasicDetails,
@@ -610,12 +610,20 @@ export default function MyProfilePage() {
                 {/* Row 1: My profile + tag */}
                 <div className="flex items-center justify-between">
                   <span className="text-[#222] text-[16px] font-semibold leading-[150%]">My profile</span>
-                  {isElite ? (
-                    <div className="flex items-center gap-1 rounded-[38px] bg-[#FFDED3] px-2 py-[2px]">
-                      <EliteCrownIcon className="w-3.5 h-3.5 shrink-0" />
-                      <span className="text-[#A97216] text-[14px] font-normal leading-[150%]">Elite</span>
-                    </div>
-                  ) : isNew ? (
+                  {isElite ? (() => {
+                    const ELITE_UI = {
+                      basic: { label: "Elite basic", bg: "#FFDED3", color: "#725E4C", iconFill: "#725E4C", Icon: EliteCrownIcon },
+                      pro:   { label: "Elite pro",   bg: "#FFDED3", color: "#B31B38", iconFill: "#B31B38", Icon: EliteProIcon },
+                      max:   { label: "Elite VIP",   bg: "#222222", color: "#FFDED3", iconFill: "#FFDED3", Icon: EliteVIPIcon },
+                    } as Record<string, { label: string; bg: string; color: string; iconFill: string; Icon: React.ComponentType<{ className?: string; fill?: string }> }>;
+                    const ui = ELITE_UI[me?.elitePlanKey ?? ""] ?? ELITE_UI.basic;
+                    return (
+                      <div className="flex items-center gap-1 rounded-[38px] px-2 py-[2px]" style={{ background: ui.bg }}>
+                        <ui.Icon className="w-3.5 h-3.5 shrink-0" fill={ui.iconFill} />
+                        <span className="text-[14px] font-normal leading-[150%]" style={{ color: ui.color }}>{ui.label}</span>
+                      </div>
+                    );
+                  })() : isNew ? (
                     <div className="flex items-center rounded-[38px] bg-[#D5ECFF] px-3 py-[2px]">
                       <span className="text-[14px] font-normal leading-[150%] text-[#5D5D5D]">New</span>
                     </div>
@@ -649,12 +657,20 @@ export default function MyProfilePage() {
                 </div>
 
                 {/* One tag: Elite has priority, then New (< 30 days), else nothing */}
-                {isElite ? (
-                  <div className="flex items-center gap-1 rounded-[38px] bg-[#FFDED3] px-2 py-[2px]">
-                    <EliteCrownIcon className="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5 shrink-0" />
-                    <span className="text-[#A97216] text-[14px] md:text-[16px] font-normal leading-[150%]">Elite</span>
-                  </div>
-                ) : isNew ? (
+                {isElite ? (() => {
+                    const ELITE_UI = {
+                      basic: { label: "Elite basic", bg: "#FFDED3", color: "#725E4C", iconFill: "#725E4C", Icon: EliteCrownIcon },
+                      pro:   { label: "Elite pro",   bg: "#FFDED3", color: "#B31B38", iconFill: "#B31B38", Icon: EliteProIcon },
+                      max:   { label: "Elite VIP",   bg: "#222222", color: "#FFDED3", iconFill: "#FFDED3", Icon: EliteVIPIcon },
+                    } as Record<string, { label: string; bg: string; color: string; iconFill: string; Icon: React.ComponentType<{ className?: string; fill?: string }> }>;
+                    const ui = ELITE_UI[me?.elitePlanKey ?? ""] ?? ELITE_UI.basic;
+                    return (
+                      <div className="flex items-center gap-1 rounded-[38px] px-2 py-[2px]" style={{ background: ui.bg }}>
+                        <ui.Icon className="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5 shrink-0" fill={ui.iconFill} />
+                        <span className="text-[14px] md:text-[16px] font-normal leading-[150%]" style={{ color: ui.color }}>{ui.label}</span>
+                      </div>
+                    );
+                  })() : isNew ? (
                   <div className="flex items-center rounded-[38px] bg-[#D5ECFF] px-3 py-[2px]">
                     <span className="text-[14px] md:text-[16px] font-normal leading-[150%] text-[#5D5D5D]">New</span>
                   </div>

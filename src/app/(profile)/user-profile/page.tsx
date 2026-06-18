@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useEffect, useMemo } from "react";
+import React, { Suspense, useState, useEffect, useMemo } from "react";
 import { useScrollHide } from "@/src/hooks/useScrollHide";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -9,7 +9,7 @@ import ProtectedImage from "@/src/components/common-layout/ProtectedImage";
 import { formatHeight } from "@/src/utils/heightUtils";
 import {
   AboutMeIcon, CakeIcon, CheckmarkIcon, ChevronRightIcon, CasteCircleIcon,
-  EducationCapIcon, EliteCrownIcon, HeightRulerIcon, LocationPinIcon,
+  EducationCapIcon, EliteCrownIcon, EliteProIcon, EliteVIPIcon, HeightRulerIcon, LocationPinIcon,
   NotifPhotoUploadIcon, PaintBrushIcon, ProfileBoxIcon, ProfileVerifiedBadgeIcon, UnionDesignIcon,
   WineGlassIcon, WorkBriefcaseIcon, StepFamilyIcon,
   ShieldLockRedIcon,
@@ -252,6 +252,7 @@ function UserProfileContent() {
     name:                   summary.name,
     gender:                 summary.gender,
     isElite:                summary.isElite,
+    elitePlanKey:           summary.elitePlanKey,
     trustBadge:             summary.trustBadge,
     profileCompletionScore: summary.profileCompletionScore,
     isShortlisted:          summary.isShortlisted,
@@ -508,12 +509,20 @@ function UserProfileContent() {
             <p className="font-poppins text-[14px] text-dark font-normal">{profile.displayId}</p>
             {/* Tags */}
             <div className="flex flex-wrap gap-2 mt-1">
-              {profile.isElite ? (
-                <div className="flex items-center gap-1 rounded-[38px] bg-[#FFDED3] px-2 py-[4.5px]">
-                  <EliteCrownIcon className="w-4 h-4 shrink-0" />
-                  <span className="text-[#A97216] text-[14px] font-normal leading-[150%]">Elite</span>
-                </div>
-              ) : (
+              {profile.isElite ? (() => {
+                const ELITE_UI = {
+                  basic: { label: "Elite basic", bg: "#FFDED3", color: "#725E4C", iconFill: "#725E4C", Icon: EliteCrownIcon },
+                  pro:   { label: "Elite pro",   bg: "#FFDED3", color: "#B31B38", iconFill: "#B31B38", Icon: EliteProIcon },
+                  max:   { label: "Elite VIP",   bg: "#222222", color: "#FFDED3", iconFill: "#FFDED3", Icon: EliteVIPIcon },
+                } as Record<string, { label: string; bg: string; color: string; iconFill: string; Icon: React.ComponentType<{ className?: string; fill?: string }> }>;
+                const ui = ELITE_UI[profile.elitePlanKey ?? ""] ?? ELITE_UI.basic;
+                return (
+                  <div className="flex items-center gap-1 rounded-[38px] px-2 py-[4.5px]" style={{ background: ui.bg }}>
+                    <ui.Icon className="w-4 h-4 shrink-0" fill={ui.iconFill} />
+                    <span className="text-[14px] font-normal leading-[150%]" style={{ color: ui.color }}>{ui.label}</span>
+                  </div>
+                );
+              })() : (
                 <div className="flex items-center rounded-[38px] bg-[#D5ECFF] px-2 py-[4.5px]">
                   <span className="text-[14px] font-normal leading-[150%] text-[#5D5D5D]">New</span>
                 </div>
@@ -666,12 +675,20 @@ function UserProfileContent() {
                   <ProfileVerifiedBadgeIcon className="h-4 sm:h-5 lg:h-6 w-4 sm:w-5 lg:w-6 shrink-0" />
                 )}
               </div>
-              {profile.isElite ? (
-                <div className="flex items-center gap-1 rounded-[38px] bg-[#FFDED3] px-2 py-[2px]">
-                  <EliteCrownIcon className="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5 shrink-0" />
-                  <span className="text-[#A97216] text-[14px] md:text-[16px] font-normal leading-[150%]">Elite</span>
-                </div>
-              ) : (
+              {profile.isElite ? (() => {
+                const ELITE_UI = {
+                  basic: { label: "Elite basic", bg: "#FFDED3", color: "#725E4C", iconFill: "#725E4C", Icon: EliteCrownIcon },
+                  pro:   { label: "Elite pro",   bg: "#FFDED3", color: "#B31B38", iconFill: "#B31B38", Icon: EliteProIcon },
+                  max:   { label: "Elite VIP",   bg: "#222222", color: "#FFDED3", iconFill: "#FFDED3", Icon: EliteVIPIcon },
+                } as Record<string, { label: string; bg: string; color: string; iconFill: string; Icon: React.ComponentType<{ className?: string; fill?: string }> }>;
+                const ui = ELITE_UI[profile.elitePlanKey ?? ""] ?? ELITE_UI.basic;
+                return (
+                  <div className="flex items-center gap-1 rounded-[38px] px-2 py-[2px]" style={{ background: ui.bg }}>
+                    <ui.Icon className="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5 shrink-0" fill={ui.iconFill} />
+                    <span className="text-[14px] md:text-[16px] font-normal leading-[150%]" style={{ color: ui.color }}>{ui.label}</span>
+                  </div>
+                );
+              })() : (
                 <div className="flex items-center rounded-[38px] bg-[#D5ECFF] px-3 py-[2px]">
                   <span className="text-[14px] md:text-[16px] font-normal leading-[150%] text-[#5D5D5D]">New</span>
                 </div>

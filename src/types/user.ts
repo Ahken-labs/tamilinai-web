@@ -50,6 +50,7 @@ export interface Me {
   isPhoneVerified: boolean;
   isProfileComplete: boolean;
   isElite: boolean;
+  elitePlanKey?: string | null;
   eliteExpiresAt?: string;
   isOnBreak: boolean;
   breakEndsAt?: string;
@@ -66,6 +67,7 @@ export interface BrowseProfile {
   displayId: string;
   name: string;
   isElite: boolean;
+  elitePlanKey?: string | null;
   trustBadge: boolean;
   gender?: string;
   dateOfBirth?: string;
@@ -91,6 +93,7 @@ export interface ProfileDetail {
   name: string;
   gender?: string;
   isElite: boolean;
+  elitePlanKey?: string | null;
   trustBadge: boolean;
   profileCompletionScore: number;
   isShortlisted: boolean;
@@ -130,6 +133,7 @@ export interface ProfileSummary {
   name: string;
   gender?: string;
   isElite: boolean;
+  elitePlanKey?: string | null;
   trustBadge: boolean;
   profileCompletionScore: number;
   isShortlisted: boolean;

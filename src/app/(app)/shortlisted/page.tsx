@@ -35,6 +35,7 @@ function toCardProfile(p: BrowseProfile): Profile {
     caste: p.caste ?? "",
     isVerified: p.trustBadge ?? false,
     isElite: p.isElite,
+    elitePlanKey: p.elitePlanKey,
     isNew: isNewProfile(p.createdAt),
     isViewed: p.isViewed ?? false,
     photo: p.photoUrl ?? undefined,
