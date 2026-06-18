@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import ProtectedPhoto from "../common-layout/ProtectedPhoto";
 import ProtectedImage from "../common-layout/ProtectedImage";
 import { useRouter } from "next/navigation";
 import { Profile } from "../../types/profile";
+import { EliteBasicTag, EliteProTag, EliteMaxTag, NewTag, ViewedTag } from "../ui/Tags";
 import {
   ProfileVerifiedBadgeIcon,
-  EliteCrownIcon, EliteProIcon, EliteVIPIcon,
   CakeIcon,
   LocationPinIcon,
   EducationCapIcon,
@@ -20,7 +20,6 @@ import {
   ShortlistIcon,
   ShortlistRemoveIcon,
   SendInterestMsgIcon,
-  ViewedIcon,
   ShieldLockIcon,
 } from "../../assets/Icons";
 import Button from "../common-layout/Button";
@@ -37,28 +36,25 @@ interface ProfileCardProps {
   onInterestSent?: () => void;
 }
 
-const ELITE_PLAN_UI: Record<string, { label: string; bg: string; color: string; iconFill: string; Icon: React.ComponentType<{ className?: string; fill?: string }> }> = {
-  basic: { label: "Elite basic", bg: "#FFDED3", color: "#725E4C", iconFill: "#725E4C", Icon: EliteCrownIcon },
-  pro:   { label: "Elite pro",   bg: "#FFDED3", color: "#B31B38", iconFill: "#B31B38", Icon: EliteProIcon },
-  max:   { label: "Elite VIP",   bg: "#222222", color: "#FFDED3", iconFill: "#FFDED3", Icon: EliteVIPIcon },
-};
+type TagType = "elite" | "viewed" | "new";
 
-function getElitePlanUI(planKey?: string | null) {
-  return ELITE_PLAN_UI[planKey ?? ""] ?? ELITE_PLAN_UI.basic;
-}
-
-function getTags(profile: Profile): Array<{ label: string; type: "elite" | "viewed" | "new" }> {
-  const tags: Array<{ label: string; type: "elite" | "viewed" | "new" }> = [];
-  if (profile.isElite) tags.push({ label: getElitePlanUI(profile.elitePlanKey).label, type: "elite" });
-  if (profile.isViewed) tags.push({ label: "Viewed", type: "viewed" });
-  if (profile.isNew) tags.push({ label: "New", type: "new" });
+function getTags(profile: Profile): TagType[] {
+  const tags: TagType[] = [];
+  if (profile.isElite) tags.push("elite");
+  if (profile.isViewed) tags.push("viewed");
+  if (profile.isNew) tags.push("new");
   return tags.slice(0, 2);
 }
 
-const TAG_STYLES: Record<string, string> = {
-  viewed: "bg-[#EDEDED] text-[#222222]",
-  new: "bg-[#D5ECFF] text-[#5D5D5D]",
-};
+function TagItem({ type, planKey }: { type: TagType; planKey?: string | null }) {
+  if (type === "elite") {
+    if (planKey === "pro") return <EliteProTag />;
+    if (planKey === "max") return <EliteMaxTag />;
+    return <EliteBasicTag />;
+  }
+  if (type === "viewed") return <ViewedTag />;
+  return <NewTag />;
+}
 
 export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: ProfileCardProps) {
   const router = useRouter();
@@ -208,20 +204,9 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
             </h2>
             {/* Tags — desktop: beside name */}
             <div className="hidden min-[840px]:flex gap-2">
-              {tags.map((tag) => {
-                const eliteUi = tag.type === "elite" ? getElitePlanUI(profile.elitePlanKey) : null;
-                return (
-                  <span
-                    key={tag.type}
-                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-[14px] md:text-[16px] font-poppins font-medium leading-none ${TAG_STYLES[tag.type] ?? ""}`}
-                    style={eliteUi ? { background: eliteUi.bg, color: eliteUi.color } : undefined}
-                  >
-                    {tag.type === "elite" && eliteUi && <eliteUi.Icon className="w-4 md:w-5 h-4 md:h-5 shrink-0" fill={eliteUi.iconFill} />}
-                    {tag.type === "viewed" && <ViewedIcon />}
-                    {tag.label}
-                  </span>
-                );
-              })}
+              {tags.map((type) => (
+                <TagItem key={type} type={type} planKey={profile.elitePlanKey} />
+              ))}
             </div>
           </div>
 
@@ -233,20 +218,9 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
           {/* Tags — mobile: below ID */}
           {tags.length > 0 && (
             <div className="flex gap-2 mt-2 min-[840px]:hidden flex-wrap">
-              {tags.map((tag) => {
-                const eliteUi = tag.type === "elite" ? getElitePlanUI(profile.elitePlanKey) : null;
-                return (
-                  <span
-                    key={tag.type}
-                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-[14px] md:text-[16px] font-poppins font-medium leading-none ${TAG_STYLES[tag.type] ?? ""}`}
-                    style={eliteUi ? { background: eliteUi.bg, color: eliteUi.color } : undefined}
-                  >
-                    {tag.type === "elite" && eliteUi && <eliteUi.Icon className="w-4 md:w-5 h-4 md:h-5 shrink-0" fill={eliteUi.iconFill} />}
-                    {tag.type === "viewed" && <ViewedIcon />}
-                    {tag.label}
-                  </span>
-                );
-              })}
+              {tags.map((type) => (
+                <TagItem key={type} type={type} planKey={profile.elitePlanKey} />
+              ))}
             </div>
           )}
 
