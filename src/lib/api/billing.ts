@@ -1,4 +1,5 @@
 import { http, ApiError } from './client';
+import API_BASE_URL from './config';
 
 export interface SubscriptionDetail {
   id: string;
@@ -133,5 +134,65 @@ export async function requestRefund(
   return http('/api/billing/request-refund', {
     method: 'POST',
     body: JSON.stringify({ reason, otherText }),
+  });
+}
+
+// Returns the user's pending bank transfer order (planKey only), or null
+export async function getPendingBankTransfer(): Promise<{ planKey: string } | null> {
+  try {
+    return await http<{ planKey: string } | null>('/api/billing/bank-transfer/pending');
+  } catch {
+    return null;
+  }
+}
+
+// Step 1: upload file to R2 only — no order created yet
+export function preUploadReceipt(
+  file: File,
+  onProgress: (pct: number) => void,
+  oldReceiptKey?: string,
+): { cancel: () => void; promise: Promise<{ receiptUrl: string; receiptPublicId: string }> } {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('tamilinai_access_token') : null;
+  const xhr = new XMLHttpRequest();
+
+  const promise = new Promise<{ receiptUrl: string; receiptPublicId: string }>((resolve, reject) => {
+    xhr.open('POST', `${API_BASE_URL}/api/billing/bank-transfer/pre-upload`);
+    if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100));
+    };
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        onProgress(100);
+        resolve(JSON.parse(xhr.responseText));
+      } else {
+        reject(new Error(`Upload failed: ${xhr.status}`));
+      }
+    };
+
+    xhr.onerror = () => reject(new Error('Upload failed'));
+    xhr.onabort = () => reject(new Error('aborted'));
+
+    const formData = new FormData();
+    formData.append('receipt', file);
+    if (oldReceiptKey) formData.append('oldReceiptKey', oldReceiptKey);
+    xhr.send(formData);
+  });
+
+  return { cancel: () => xhr.abort(), promise };
+}
+
+// Step 2: create the order with the already-uploaded receipt — triggers admin notification
+export async function createBankTransferOrder(
+  planKey: string,
+  promoCode?: string,
+  receiptUrl?: string,
+  receiptPublicId?: string,
+): Promise<{ orderId: string }> {
+  return http('/api/billing/bank-transfer/order', {
+    method: 'POST',
+    body: JSON.stringify({ planKey, promoCode, receiptUrl, receiptPublicId }),
   });
 }

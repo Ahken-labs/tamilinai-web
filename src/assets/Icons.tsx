@@ -879,6 +879,17 @@ export function VerifiedShieldIcon({
   );
 }
 
+export function VerifiedCheckCircleIcon({
+  className = "w-8 h-8 shrink-0", ...props
+}: IconProps) {
+  return (
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} {...props}>
+      <path d="M15.9974 29.3332C23.3307 29.3332 29.3307 23.3332 29.3307 15.9998C29.3307 8.6665 23.3307 2.6665 15.9974 2.6665C8.66406 2.6665 2.66406 8.6665 2.66406 15.9998C2.66406 23.3332 8.66406 29.3332 15.9974 29.3332Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M10.3359 15.9999L14.1093 19.7732L21.6693 12.2266" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function SearchMinusIcon({
   className = "w-6 h-6 shrink-0", ...props }: IconProps) {
   return (
@@ -1198,11 +1209,11 @@ export function TermsIcon({ className = "w-6 h-6", ...props
   );
 }
 
-export function WhatsAppIcon({ className = "w-5 h-5 shrink-0", stroke = "#222222", fill = "#222222", ...props
-}: IconProps & { stroke?: string; fill?: string; }) {
+export function WhatsAppIcon({ className = "w-5 h-5 shrink-0", stroke = "#222222", fill = "#222222", strokeWidth = "1.2", ...props
+}: IconProps & { stroke?: string; fill?: string; strokeWidth?: string; }) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" className={className}  {...props} >
-      <path d="M5.7474 17.1647C6.9974 17.9147 8.4974 18.3314 9.9974 18.3314C14.5807 18.3314 18.3307 14.5814 18.3307 9.99807C18.3307 5.41473 14.5807 1.66473 9.9974 1.66473C5.41406 1.66473 1.66406 5.41473 1.66406 9.99807C1.66406 11.4981 2.08073 12.9147 2.7474 14.1647L2.0311 16.9197C1.86883 17.5438 2.4465 18.1078 3.06655 17.9307L5.7474 17.1647Z" stroke={stroke} strokeWidth="1.2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5.7474 17.1647C6.9974 17.9147 8.4974 18.3314 9.9974 18.3314C14.5807 18.3314 18.3307 14.5814 18.3307 9.99807C18.3307 5.41473 14.5807 1.66473 9.9974 1.66473C5.41406 1.66473 1.66406 5.41473 1.66406 9.99807C1.66406 11.4981 2.08073 12.9147 2.7474 14.1647L2.0311 16.9197C1.86883 17.5438 2.4465 18.1078 3.06655 17.9307L5.7474 17.1647Z" stroke={stroke} strokeWidth={strokeWidth} strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M13.75 12.3718C13.75 12.5068 13.72 12.6456 13.6561 12.7806C13.5923 12.9156 13.5096 13.0431 13.4007 13.1631C13.2167 13.3656 13.0139 13.5118 12.7848 13.6056C12.5595 13.6993 12.3153 13.7481 12.0525 13.7481C11.6694 13.7481 11.26 13.6581 10.8281 13.4743C10.3962 13.2906 9.96432 13.0431 9.53618 12.7318C9.10428 12.4168 8.69492 12.0681 8.30433 11.6818C7.9175 11.2918 7.56823 10.8831 7.25651 10.4556C6.94855 10.0281 6.70068 9.60058 6.52041 9.17683C6.34014 8.74933 6.25 8.34058 6.25 7.95058C6.25 7.69558 6.29507 7.45183 6.3852 7.22683C6.47534 6.99808 6.61805 6.78808 6.8171 6.60058C7.05746 6.36433 7.32036 6.24808 7.59827 6.24808C7.70343 6.24808 7.80859 6.27058 7.90248 6.31558C8.00013 6.36058 8.0865 6.42808 8.15411 6.52558L9.02541 7.75183C9.09301 7.84558 9.14184 7.93183 9.17564 8.01433C9.20944 8.09308 9.22822 8.17183 9.22822 8.24308C9.22822 8.33308 9.20193 8.42308 9.14935 8.50933C9.10053 8.59558 9.02917 8.68558 8.93903 8.77558L8.65361 9.07183C8.61229 9.11308 8.59352 9.16183 8.59352 9.22183C8.59352 9.25183 8.59727 9.27808 8.60478 9.30808C8.61605 9.33808 8.62732 9.36058 8.63483 9.38308C8.70243 9.50683 8.81885 9.66808 8.9841 9.86308C9.1531 10.0581 9.33337 10.2568 9.52867 10.4556C9.73147 10.6543 9.92677 10.8381 10.1258 11.0068C10.3211 11.1718 10.4826 11.2843 10.6103 11.3518C10.6291 11.3593 10.6516 11.3706 10.6779 11.3818C10.7079 11.3931 10.738 11.3968 10.7718 11.3968C10.8356 11.3968 10.8845 11.3743 10.9258 11.3331L11.2112 11.0518C11.3051 10.9581 11.3952 10.8868 11.4816 10.8418C11.568 10.7893 11.6544 10.7631 11.7482 10.7631C11.8196 10.7631 11.8947 10.7781 11.9773 10.8118C12.06 10.8456 12.1463 10.8943 12.2402 10.9581L13.4834 11.8393C13.581 11.9068 13.6486 11.9856 13.6899 12.0793C13.7275 12.1731 13.75 12.2668 13.75 12.3718Z" fill={fill} />
     </svg>
   );
@@ -1478,6 +1489,62 @@ export function EmptyDeclinedIcon(props: IconProps) {
         <linearGradient id="ed_p3" x1="42.4581" y1="34.8349" x2="36.495" y2="54.9974" gradientUnits="userSpaceOnUse"><stop stopColor="#DAD9D9"/><stop offset="1" stopColor="#AAAAAA"/></linearGradient>
         <linearGradient id="ed_p4" x1="55.8111" y1="35.9188" x2="51.0572" y2="55.5963" gradientUnits="userSpaceOnUse"><stop stopColor="#DAD9D9"/><stop offset="1" stopColor="#AAAAAA"/></linearGradient>
       </defs>
+    </svg>
+  );
+}
+
+export function CopyIcon({ className, ...props }: IconProps) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} {...props}>
+      <path d="M14.1663 11.1673V13.6673C14.1663 17.0007 12.8329 18.334 9.49959 18.334H6.33293C2.99959 18.334 1.66626 17.0007 1.66626 13.6673V10.5007C1.66626 7.16732 2.99959 5.83398 6.33293 5.83398H9.49959C12.077 5.83398 14.1663 7.924 14.1663 10.5007V11.1673" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M5.93628 3.60932C6.58836 2.26758 7.91532 1.69141 10.1065 1.69141H13.2732C16.6178 1.69141 17.9399 3.03006 17.9399 7.02474V9.52474C17.9399 11.3297 17.5489 12.5483 16.6611 13.2863" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+export function CopiedCheckIcon({ className, ...props }: IconProps) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} {...props}>
+      <path d="M3.5 10.5L7.5 14.5L16.5 5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+export function UploadIcon({ className, ...props }: IconProps) {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} {...props}>
+      <path d="M21.5066 15.1099V15.2399C21.5066 19.7099 19.7166 21.4999 15.2466 21.4999H8.73656C4.26656 21.4999 2.47656 19.7099 2.47656 15.2399V15.1099" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M12 15.0001V3.62012" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M15.3484 5.85L11.9984 2.5L8.64844 5.85" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+export function ReceiptFileIcon({ className, ...props }: IconProps) {
+  return (
+    <svg width="20" height="20" viewBox="220 13 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} {...props}>
+      <path d="M239.336 18.9998V21.0165C239.336 22.3332 238.503 23.1665 237.186 23.1665H234.336V17.3415C234.336 16.4165 235.094 15.6665 236.019 15.6665C236.928 15.6748 237.761 16.0415 238.361 16.6415C238.961 17.2498 239.336 18.0832 239.336 18.9998Z" stroke="currentColor" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M222.664 19.8332V31.4998C222.664 32.1915 223.447 32.5832 223.997 32.1665L225.422 31.0998C225.756 30.8498 226.222 30.8832 226.522 31.1832L227.906 32.5748C228.231 32.8998 228.764 32.8998 229.089 32.5748L230.489 31.1748C230.781 30.8832 231.247 30.8498 231.572 31.0998L232.997 32.1665C233.547 32.5748 234.331 32.1832 234.331 31.4998V17.3332C234.331 16.4165 235.081 15.6665 235.997 15.6665H226.831H225.997C223.497 15.6665 222.664 17.1582 222.664 18.9998V19.8332Z" stroke="currentColor" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M226.227 25.4416L230.777 20.8916" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M230.938 25.25H230.945" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M226.164 21.0835H226.172" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+export function ReceiptDocIcon({ className = "w-7 h-7 shrink-0", ...props }: IconProps) {
+  return (
+    <svg viewBox="0 0 39 39" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} {...props}>
+      <path d="M35.2 15.9992V23.9992C35.2 31.9992 32 35.1992 24 35.1992H14.4C6.39995 35.1992 3.19995 31.9992 3.19995 23.9992V14.3992C3.19995 6.39922 6.39995 3.19922 14.4 3.19922H22.4" fill="#FFD2DB" />
+      <path d="M35.1999 15.9992H28.7999C23.9999 15.9992 22.3999 14.3992 22.3999 9.59922V3.19922L35.1999 15.9992Z" fill="#BD8993" />
+      <path d="M11.2 20.8008H20.8" stroke="#BD8993" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M11.2 27.1992H17.6" stroke="#BD8993" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function ReuploadIcon({ className, ...props }: IconProps) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} {...props}>
+      <path d="M18.3307 9.99984C18.3307 14.5998 14.5974 18.3332 9.9974 18.3332C5.3974 18.3332 2.58906 13.6998 2.58906 13.6998M2.58906 17.8665V13.6998H6.35573M1.66406 9.99984C1.66406 5.39984 5.36406 1.6665 9.9974 1.6665C15.5557 1.6665 18.3307 6.29984 18.3307 6.29984M14.6307 6.29984H18.3307V2.13317" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   );
 }
