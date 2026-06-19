@@ -1,5 +1,18 @@
 // Elite plan config — edit prices and features here
 
+export interface BankDetail {
+  label: string;
+  displayValue: string;
+  copyValue: string;
+}
+
+export const BANK_DETAILS: BankDetail[] = [
+  { label: "Account name",   displayValue: "Ahken Nexus Pvt Ltd", copyValue: "Ahken Nexus Pvt Ltd" },
+  { label: "Bank",           displayValue: "Sampath Bank PLC",     copyValue: "Sampath Bank PLC" },
+  { label: "Account number", displayValue: "0148 1100 4426",       copyValue: "014811004426" },
+  { label: "Branch",         displayValue: "Kilinochchi",          copyValue: "Kilinochchi" },
+];
+
 export type PlanKey = "basic" | "pro" | "max";
 
 export interface PlanPricing {

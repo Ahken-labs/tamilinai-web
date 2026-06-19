@@ -62,6 +62,9 @@ function getCtaConfig(type: string, fromUserId?: string): { label: string; href:
     case "photo_request_declined":return { label: "View profile",      href: profileHref };
     case "payment_failed":        return { label: "Retry payment",     href: "/elite-upgrade" };
     case "payment_success":       return { label: "Explore features",  href: "/matches" };
+    case "bank_transfer_pending": return { label: "Check status",      href: "/elite-upgrade" };
+    case "bank_transfer_approved":return { label: "Explore features",  href: "/matches" };
+    case "bank_transfer_rejected":return { label: "Try again",         href: "/elite-upgrade" };
     case "interest_received":     return { label: "View",              href: "/interested" };
     case "interest_accepted":     return { label: "View match",        href: "/interested" };
     case "interest_declined":     return { label: "View",              href: "/interested" };
@@ -91,8 +94,11 @@ function NotifIcon({ type }: { type: string }) {
     case "photo_requested":       return <NotifPhotoUploadIcon className={ICON_CLS} />;
     case "photo_request_declined":return <NotifPhotoDeclinedIcon className={ICON_CLS} />;
     case "photo_added":           return <NotifPhotoAddedIcon className={ICON_CLS} />;
-    case "payment_success":       return <NotifPaymentSuccessIcon className={ICON_CLS} />;
-    case "payment_failed":        return <NotifPaymentFailedIcon className={ICON_CLS} />;
+    case "payment_success":
+    case "bank_transfer_approved":return <NotifPaymentSuccessIcon className={ICON_CLS} />;
+    case "payment_failed":
+    case "bank_transfer_rejected":return <NotifPaymentFailedIcon className={ICON_CLS} />;
+    case "bank_transfer_pending": return <NotifPaymentSuccessIcon className="h-5 w-5 md:h-6 md:w-6 text-[#A97216]" />;
     case "promo":                 return <NotifPromoIcon className={ICON_CLS} />;
     case "admin_broadcast":       return null; // uses logo avatar like welcome
     case "birthday":              return <CakeIcon className={ICON_CLS} />;
