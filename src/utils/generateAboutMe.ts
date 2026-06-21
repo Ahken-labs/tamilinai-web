@@ -76,7 +76,7 @@ export function generateAboutMe(data: AboutMeData): string {
   const firstName = name?.split(' ')[0] ?? '';
   const isSriLanka = !country || country.toLowerCase().includes('sri lanka');
   const marital = maritalStatus?.toLowerCase();
-  const neverMarried = !marital || marital === 'never married' || marital === 'single';
+  const neverMarried = !marital || marital === 'never married' || marital === 'single' || marital === 'unmarried';
   const a_occ = occ ? an(occ) : 'a';
   const isEarlyCareer = occ ? /intern|student|trainee|apprentice|fresher|graduate|part.time/i.test(occ) : false;
 
@@ -89,7 +89,7 @@ export function generateAboutMe(data: AboutMeData): string {
       occ ? ` and work as ${a_occ} ${occ}.` : (edu ? '.' : ''),
       neverMarried
         ? ` I'm looking forward to meeting someone special to build a meaningful life together.`
-        : ` I believe in second chances and am looking forward to finding a genuine partner.`,
+        : ` I'm looking forward to finding a genuine partner.`,
     ].filter(Boolean).join(''),
 
     // 2

@@ -41,13 +41,17 @@ export default function RegisterForm({
     const [mounted, setMounted] = useState(variant === "hero" ? true : open);
     const [animateIn, setAnimateIn] = useState(open);
 
-    const [profileFor, setProfileFor] = useState("");
-    const [gender, setGender] = useState<"" | "Male" | "Female">("");
-    const [countryCode, setCountryCode] = useState(COUNTRIES[0]);
+    const draft = typeof window !== "undefined"
+        ? (() => { try { return JSON.parse(sessionStorage.getItem("inai_reg_draft") ?? "null"); } catch { return null; } })()
+        : null;
 
-    const [fullName, setFullName] = useState("");
-    const [phone, setPhone] = useState("");
-    const [email, setEmail] = useState("");
+    const [profileFor, setProfileFor] = useState(draft?.profileFor ?? "");
+    const [gender, setGender] = useState<"" | "Male" | "Female">(draft?.gender ?? "");
+    const [countryCode, setCountryCode] = useState(draft?.countryCode ?? COUNTRIES[0]);
+
+    const [fullName, setFullName] = useState(draft?.fullName ?? "");
+    const [phone, setPhone] = useState(draft?.phone ?? "");
+    const [email, setEmail] = useState(draft?.email ?? "");
 
     const [activeDropdown, setActiveDropdown] = useState<"" | "profile" | "country">("");
 
@@ -125,6 +129,7 @@ export default function RegisterForm({
                 email: email.trim(),
                 channel: "sms",
             });
+            sessionStorage.setItem("inai_reg_draft", JSON.stringify({ profileFor, gender, countryCode, fullName, phone, email: email.trim() }));
             sessionStorage.setItem("inai_reg_key", res.registrationKey);
             sessionStorage.setItem("otp_sms_sent_at", String(Date.now()));
             sessionStorage.setItem("otp_sms_cd", String(res.cooldownSeconds ?? 60));

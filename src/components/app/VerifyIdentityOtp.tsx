@@ -162,7 +162,7 @@ export default function VerifyIdentityOtp({ method, maskedIdentifier }: Props) {
             </h1>
           </div>
 
-          <p className="max-[500px]:mt-2 mt-4 md:mt-6 lg:mt-10 font-18 font-normal text-dark leading-[150%]">
+          <p className="max-[500px]:mt-2 mt-4 md:mt-6 lg:mt-10 text-[16px] sm:text-[17px] md:text-[18px] font-normal text-dark leading-[150%]">
             {method === "phone" ? "We sent a WhatsApp code to" : "We sent a code to"}{" "}
             <span className="font-semibold select-none">{maskedIdentifier}</span>.{" "}
             Enter it below to verify.

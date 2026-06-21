@@ -137,6 +137,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
         const res = await verifyOtp({ otp, registrationKey });
         sessionStorage.setItem("inai_temp_token", res.tempToken);
         sessionStorage.removeItem("inai_reg_key");
+        sessionStorage.removeItem("inai_reg_draft");
         setSuccess(true);
         router.replace("/create-password");
       } else {
@@ -258,7 +259,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
           <div className="flex items-center gap-1">
             <button
               type="button"
-              onClick={() => router.back()}
+              onClick={() => variant === "register" ? router.push("/") : router.back()}
               className="min-[500px]:hidden flex items-center justify-center shrink-0"
             >
               <ChevronIcon open={false} className="w-5 h-5 rotate-90" />
@@ -357,7 +358,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
             <div className="hidden min-[500px]:block flex-1">
               <Button
                 text={t("Back")}
-                onPress={() => router.back()}
+                onPress={() => variant === "register" ? router.push("/") : router.back()}
                 className={`!w-full ${variant === "register" ? "!bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#ffe4e9]" : "!bg-white !text-[#B31B38] hover:!bg-[#F8F8F8]"}`}
               />
             </div>

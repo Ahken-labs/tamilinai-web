@@ -77,10 +77,10 @@ export default function SettingsPage() {
 
                                     {/* Text */}
                                     <div >
-                                        <div className="font-18 font-medium leading-[150%] text-dark">
+                                        <div className="text-[16px] sm:text-[17px] md:text-[18px] font-medium leading-[150%] text-dark">
                                             {title}
                                         </div>
-                                        <div className="mt-[4px] md:mt-[6px] font-16 font-normal leading-[150%] text-secondary3">
+                                        <div className="mt-[4px] md:mt-[6px] text-[14px] sm:text-[15px] md:text-[16px] font-normal leading-[150%] text-secondary3">
                                             {subtitle}
                                         </div>
                                     </div>

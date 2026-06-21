@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useScrollHide } from "@/src/hooks/useScrollHide";
 import { useQueryClient } from "@tanstack/react-query";
@@ -50,9 +50,11 @@ export default function BreakPage() {
   const [openBreakPopup, setOpenBreakPopup] = useState(false);
   const headerVisible = useScrollHide();
 
-  const me = readMeCache();
-  const gender = me?.gender?.toLowerCase() ?? "female";
-  const photoSrc = gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png";
+  const [photoSrc, setPhotoSrc] = useState("/images/no_photo.png");
+  useEffect(() => {
+    const gender = readMeCache()?.gender?.toLowerCase();
+    if (gender === "male") setPhotoSrc("/images/no_photo_male.png");
+  }, []);
 
   const selected = BREAK_OPTIONS[selectedOption];
   const durationDays = [7, 14, 30, 90][selectedOption];
@@ -77,11 +79,11 @@ export default function BreakPage() {
             <div className="absolute bottom-1 right-1 h-2 w-2 rounded-full border-[1.5px] border-[#F8F5F2] bg-[#17EA21]" />
           </div>
 
-          <span className="mt-2 text-center font-16 leading-[150%] text-dark">
+          <span className="mt-2 text-center text-[14px] sm:text-[15px] md:text-[16px] leading-[150%] text-dark">
             Profile is active & visible
           </span>
 
-          <p className="mt-4 md:mt-6 max-w-[483px] text-center font-16 leading-[150%] text-dark">
+          <p className="mt-4 md:mt-6 max-w-[483px] text-center text-[14px] sm:text-[15px] md:text-[16px] leading-[150%] text-dark">
             Need some time away? Pause your profile to keep your data safe and
             pick up right where you left off when you&apos;re ready.
           </p>
@@ -96,8 +98,8 @@ export default function BreakPage() {
                   className="flex flex-col items-start self-stretch rounded-[20px] bg-cartbox2 p-4 text-left cursor-pointer"
                 >
                   <RadioCircleIcon checked={selectedOption === index} />
-                  <div className="mt-3 font-18 font-medium leading-[150%] text-dark">{title}</div>
-                  <div className="font-16 mt-0.5 font-normal leading-[150%] text-secondary4">{subtitle}</div>
+                  <div className="mt-3 text-[16px] sm:text-[17px] md:text-[18px] font-medium leading-[150%] text-dark">{title}</div>
+                  <div className="text-[14px] sm:text-[15px] md:text-[16px] mt-0.5 font-normal leading-[150%] text-secondary4">{subtitle}</div>
                 </button>
               ))}
             </div>
@@ -106,10 +108,10 @@ export default function BreakPage() {
           <SectionBox title="What happens during your break">
             {BREAK_ITEMS.map(({ icon: Icon, title, subtitle }) => (
               <div key={title} className="flex items-center gap-3 md:gap-4 py-3">
-                <Icon className="h-4 w-4 shrink-0 text-dark sm:h-5 sm:w-5 md:h-6 md:w-6" />
+                <Icon className="h-5 w-5 shrink-0 text-dark sm:h-5.5 sm:w-5.5 md:h-6 md:w-6" />
                 <div>
-                  <div className="font-18 font-medium leading-[150%] text-dark">{title}</div>
-                  <div className="font-16 font-normal leading-[150%] text-secondary4">{subtitle}</div>
+                  <div className="text-[16px] sm:text-[17px] md:text-[18px] font-medium leading-[150%] text-dark">{title}</div>
+                  <div className="text-[14px] sm:text-[15px] md:text-[16px] font-normal leading-[150%] text-secondary4">{subtitle}</div>
                 </div>
               </div>
             ))}
@@ -138,7 +140,7 @@ export default function BreakPage() {
 function SectionBox({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mt-6 sm:mt-8 md:mt-10 w-full rounded-[20px] bg-light px-4 py-3 md:px-6 md:py-4">
-      <div className="mb-2 font-18 font-semibold leading-[150%] text-dark">{title}</div>
+      <div className="mb-2 text-[16px] sm:text-[17px] md:text-[18px] font-semibold leading-[150%] text-dark">{title}</div>
       {children}
     </div>
   );
@@ -192,29 +194,29 @@ function BreakConfirmPopup({
         </div>
 
         <div className="px-4 md:px-6 pt-4 pb-4 md:pb-6">
-          <p className="font-16 font-normal leading-[150%] text-dark">
+          <p className="text-[14px] sm:text-[15px] md:text-[16px] font-normal leading-[150%] text-dark">
             Your profile will be hidden from matches and search results. Relax —
             everything will be right here when you return, or log back in anytime to cancel your break early.
           </p>
 
           <div className="mt-4 md:mt-6 flex items-center justify-between max-[374px]:gap-0 gap-4">
             <div className="shrink-0">
-              <div className="font-16 font-medium leading-[150%] text-dark">Started</div>
-              <div className="mt-1 font-16 font-normal leading-[150%] text-dark">{startedDate}</div>
+              <div className="text-[14px] sm:text-[15px] md:text-[16px] font-medium leading-[150%] text-dark">Started</div>
+              <div className="mt-1 text-[14px] sm:text-[15px] md:text-[16px] font-normal leading-[150%] text-dark">{startedDate}</div>
             </div>
 
             <div className="relative flex-1 px-4">
               <div className="absolute left-0 right-0 top-1/2 h-[2px] -translate-y-1/2 bg-[#D8D8D8]" />
               <div className="absolute left-0 top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-[#D8D8D8]" />
               <div className="absolute right-0 top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-[#D8D8D8]" />
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#D8D8D8] px-2 py-[2px] font-14 font-normal leading-[150%] text-dark">
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#D8D8D8] px-2 py-[2px] text-[14px] font-normal leading-[150%] text-dark">
                 {durationLabel}
               </div>
             </div>
 
             <div className="shrink-0 text-right">
-              <div className="font-16 font-medium leading-[150%] text-dark">Returns</div>
-              <div className="mt-1 font-16 font-normal leading-[150%] text-dark">{returnsDate}</div>
+              <div className="text-[14px] sm:text-[15px] md:text-[16px] font-medium leading-[150%] text-dark">Returns</div>
+              <div className="mt-1 text-[14px] sm:text-[15px] md:text-[16px] font-normal leading-[150%] text-dark">{returnsDate}</div>
             </div>
           </div>
 

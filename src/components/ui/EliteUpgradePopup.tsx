@@ -3,9 +3,10 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useScrollLock } from "../../hooks/useScrollLock";
-import { EliteCrownIcon, HeadphoneSupportIcon, InfinityIcon, StarBadgeIcon, TrophyIcon, UserSearchIcon, WhatsAppIcon } from "@/src/assets/Icons";
+import { EliteProIcon, HeadphoneSupportIcon, InfinityIcon, StarBadgeIcon, TrophyIcon, UserSearchIcon, WhatsAppIcon } from "@/src/assets/Icons";
 import { FiX } from "react-icons/fi";
 import Button from "../common-layout/Button";
+import { EliteProTag } from "./Tags";
 // ── Weekly nudge helpers ──────────────────────────────────────────────────────
 const WEEKLY_KEY = "inai_elite_nudge_at";
 
@@ -151,10 +152,11 @@ export default function EliteUpgradePopup({ onClose }: Props) {
                   faster with
                 </p>
                 {/* Elite badge */}
-                <div className="inline-flex items-center gap-1 rounded-[40px] bg-[#FFDED3] px-2 max-[500px]:py-0 py-0.5">
+                {/* <div className="inline-flex items-center gap-1 rounded-[40px] bg-[#FFDED3] px-2 max-[500px]:py-0 py-0.5">
                   <EliteCrownIcon className="w-5 h-5 shrink-0" />
-                  <span className="font-poppins max-[500px]:text-[14px] text-[16px] sm:text-[18px] md:text-[20px] text-[#A97216]">Elite</span>
-                </div>
+                  <span className="font-poppins max-[500px]:text-[14px] text-[16px] sm:text-[18px] md:text-[20px] text-[#A97216]">Elite pro</span>
+                </div> */}
+                <EliteProTag />
               </div>
             </div>
             <ul className="mt-6  md:mt-8 flex flex-col gap-2 md:gap-3 max-w-[305px] relative z-10">
@@ -171,7 +173,7 @@ export default function EliteUpgradePopup({ onClose }: Props) {
             {/* CTA */}
             <Button text="View Elite plans"
               className="mt-6 !px-4 sm:!px-6 md:!px-8 max-[500px]:w-full relative z-10"
-              iconLeft={<EliteCrownIcon className="w-5 h-5 shrink-0" fill="#FFFFFF" />}
+              iconLeft={<EliteProIcon className="w-5 h-5 shrink-0" fill="#FFFFFF" />}
               onPress={handleUpgrade} />
           </div>
         </div>
@@ -230,10 +232,11 @@ export default function EliteUpgradePopup({ onClose }: Props) {
                 faster with
               </p>
               {/* Elite badge */}
-              <div className="inline-flex items-center gap-1 rounded-[40px] bg-[#FFDED3] px-2 py-0.5">
+              {/* <div className="inline-flex items-center gap-1 rounded-[40px] bg-[#FFDED3] px-2 py-0.5">
                 <EliteCrownIcon className="w-4 md:w-5 h-4 md:h-5 shrink-0" />
                 <span className="font-poppins text-[16px] sm:text-[18px] md:text-[20px] text-[#A97216]">Elite</span>
-              </div>
+              </div> */}
+              <EliteProTag/>
             </div>
           </div>
 
@@ -252,7 +255,7 @@ export default function EliteUpgradePopup({ onClose }: Props) {
           {/* CTA */}
           <Button text="View Elite plans"
             className="mt-6 !px-4 sm:!px-6 md:!px-8 "
-            iconLeft={<EliteCrownIcon className="w-4 md:w-5 h-4 md:h-5 shrink-0 " fill="#FFFFFF" />}
+            iconLeft={<EliteProIcon className="w-4 md:w-5 h-4 md:h-5 shrink-0 " fill="#FFFFFF" />}
             onPress={handleUpgrade} />
         </div>
       </div>

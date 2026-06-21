@@ -138,7 +138,7 @@ function UpdatePaymentModal({ onClose, onUpdated }: { onClose: () => void; onUpd
         <div className="font-poppins px-6 py-6 flex flex-col">
           <div className="flex items-center justify-between">
             <div>
-              <span className="font-18 font-semibold text-dark leading-[150%]">Update payment method</span>
+              <span className="text-[16px] sm:text-[17px] md:text-[18px] font-semibold text-dark leading-[150%]">Update payment method</span>
               <div className="flex items-center gap-1.5 mt-1">
                 <VisaIcon /><MasterCardIcon /><AmericanExpressIcon /><DiscoverIcon /><MaestroIcon />
               </div>
