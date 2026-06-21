@@ -250,7 +250,7 @@ export default function ChangePasswordPopup({ isOpen, onClose }: Props) {
                   return (
                     <div
                       key={rule.key}
-                      className={`font-14 font-normal leading-[125%] ${textClass}`}
+                      className={`text-[14px] font-normal leading-[125%] ${textClass}`}
                     >
                       • {rule.label}
                     </div>
@@ -286,7 +286,7 @@ export default function ChangePasswordPopup({ isOpen, onClose }: Props) {
 
             {showMatchLine && confirmPassword.length > 0 && newPassword.length > 0 && (
               <div
-                className={`mt-3 font-14 font-normal leading-[125%] ${
+                className={`mt-3 text-[14px] font-normal leading-[125%] ${
                   passwordsMatch ? "text-green" : "text-primary"
                 }`}
               >
@@ -295,8 +295,8 @@ export default function ChangePasswordPopup({ isOpen, onClose }: Props) {
             )}
           </div>
 
-          <div className="mt-8 flex w-full gap-4 sm:mt-10 md:mt-12">
-            <div className="flex-1" />
+          <div className="mt-8 flex w-full min-[500px]:gap-4 sm:mt-10 md:mt-12">
+            <div className="min-[500px]:flex-1" />
             <Button
               text={submitting ? loadingText : "Update password"}
               onPress={handleUpdatePassword}

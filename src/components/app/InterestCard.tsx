@@ -234,7 +234,7 @@ export default function InterestCard({ interest, isLast = false }: InterestCardP
   }
 
   return (
-    <div onClick={() => { markSeen(); if (status === "skipped_by_them") { router.push("/matches"); } else if (status === "accepted_by_them" || status === "accepted_by_me") { router.push(`/user-profile?id=${profileId}#contact-section`); } else { router.push(`/user-profile?id=${profileId}`); } }} className={`font-poppins select-none flex items-center gap-3 md:gap-4 px-2 sm:px-3 md:px-4 py-4 md:py-6 cursor-pointer ${isNew ? "bg-[#FFF0F3]" : "bg-white"} ${!isLast ? "border-b border-[#EAEAEA]" : "border-b border-[#EAEAEA]"}`}>
+    <div onClick={() => { markSeen(); if (status === "skipped_by_them") { router.push("/matches"); } else if (status === "accepted_by_them" || status === "accepted_by_me") { router.push(`/user-profile?id=${profileId}#contact-section`); } else { router.push(`/user-profile?id=${profileId}`); } }} className={`font-poppins select-none flex items-center gap-3 md:gap-4 px-4 sm:px-5 md:px-4 py-4 md:py-6 cursor-pointer ${isNew ? "bg-[#FFF0F3]" : "bg-white"} ${!isLast ? "border-b border-[#EAEAEA]" : "border-b border-[#EAEAEA]"}`}>
       {/* Photo — non-navigating, CTA handles navigation */}
       <div className="shrink-0">
         <PhotoSection interest={interest} />
