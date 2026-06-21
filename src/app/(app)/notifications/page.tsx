@@ -205,10 +205,10 @@ function NotificationRow({
         </div>
 
         <div className="min-w-0 flex-1">
-          <div className={`truncate text-dark text-[14px] sm:text-[16px] md:text-[18px] leading-[150%] ${item.isRead ? "font-medium" : "font-bold"}`}>
+          <div className={`text-dark text-[14px] sm:text-[16px] md:text-[18px] leading-[150%] ${item.isRead ? "font-medium" : "font-bold"}`}>
             {item.title}
           </div>
-          <div className="mt-1 md:mt-1.5 md:line-clamp-2 text-secondary3 font-16 font-normal leading-[150%]">
+          <div className="mt-1 md:mt-1.5 text-secondary3 font-16 font-normal leading-[150%]">
             {item.type === "welcome"
               ? item.subtitle
               : item.subtitle
