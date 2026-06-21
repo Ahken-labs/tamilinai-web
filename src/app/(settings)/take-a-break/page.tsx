@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useScrollHide } from "@/src/hooks/useScrollHide";
 import { useQueryClient } from "@tanstack/react-query";
@@ -50,11 +50,12 @@ export default function BreakPage() {
   const [openBreakPopup, setOpenBreakPopup] = useState(false);
   const headerVisible = useScrollHide();
 
-  const [photoSrc, setPhotoSrc] = useState("/images/no_photo.png");
-  useEffect(() => {
-    const gender = readMeCache()?.gender?.toLowerCase();
-    if (gender === "male") setPhotoSrc("/images/no_photo_male.png");
-  }, []);
+  const [photoSrc] = useState(() => {
+    if (typeof window === "undefined") return "/images/no_photo.png";
+    return readMeCache()?.gender?.toLowerCase() === "male"
+      ? "/images/no_photo_male.png"
+      : "/images/no_photo.png";
+  });
 
   const selected = BREAK_OPTIONS[selectedOption];
   const durationDays = [7, 14, 30, 90][selectedOption];
