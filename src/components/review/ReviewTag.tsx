@@ -8,7 +8,7 @@ const REVIEW_DATA = {
     href: "https://share.google/P4PazoF1xtCs8PFcQ",
   },
   trustpilot: {
-    rating: 3.6,
+    rating: 3.9,
     href: "https://www.trustpilot.com/review/inai.lk",
   },
   inai: {
