@@ -546,8 +546,11 @@ function UserProfileContent() {
             </>
           ) : (
             <>
+              {rawStatus === "none" && profile.incomingPhotoRequest && !incomingDismissed && (
+                <IncomingPhotoRequestCard profileId={profileId} profileName={profile.name} type={profile.incomingPhotoRequest.type} onDismiss={() => { setIncomingDismissed(true); handleInterestAction(); }} />
+              )}
               <MatchInterestCard profileId={profile.id} profileName={profile.name} gender={profile.gender} profilePhoto={profile.profile?.photoUrl} status={interestStatus} isElite={viewerIsElite} isAccepted={profile.interestIsAccepted ?? false} sendCount={sendCount} receivedCount={profile.interestReceiveCount ?? 1} isShortlisted={profile.isShortlisted} lastSentAt={profile.interestLastSentAt} isReminderDue={profile.isReminderDue ?? false} declinedByMe={declinedByMe} phone={viewerIsElite ? profile.phone : undefined} onAction={handleInterestAction} />
-              {profile.incomingPhotoRequest && !incomingDismissed && (
+              {rawStatus !== "none" && profile.incomingPhotoRequest && !incomingDismissed && (
                 <IncomingPhotoRequestCard profileId={profileId} profileName={profile.name} type={profile.incomingPhotoRequest.type} onDismiss={() => { setIncomingDismissed(true); handleInterestAction(); }} />
               )}
             </>
@@ -709,6 +712,17 @@ function UserProfileContent() {
                 </>
               ) : (
                 <>
+                  {rawStatus === "none" && profile.incomingPhotoRequest && !incomingDismissed && (
+                    <IncomingPhotoRequestCard
+                      profileId={profileId}
+                      profileName={profile.name}
+                      type={profile.incomingPhotoRequest.type}
+                      onDismiss={() => {
+                        setIncomingDismissed(true);
+                        handleInterestAction();
+                      }}
+                    />
+                  )}
                   <MatchInterestCard
                     profileId={profile.id}
                     profileName={profile.name}
@@ -726,7 +740,7 @@ function UserProfileContent() {
                     phone={viewerIsElite ? profile.phone : undefined}
                     onAction={handleInterestAction}
                   />
-                  {profile.incomingPhotoRequest && !incomingDismissed && (
+                  {rawStatus !== "none" && profile.incomingPhotoRequest && !incomingDismissed && (
                     <IncomingPhotoRequestCard
                       profileId={profileId}
                       profileName={profile.name}

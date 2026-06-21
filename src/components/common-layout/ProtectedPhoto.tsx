@@ -114,7 +114,7 @@ export default function ProtectedPhoto({ src, alt, fill, width, height, classNam
   }
 
   return (
-    <div className="relative w-full h-full select-none overflow-hidden rounded-[inherit]">
+    <div className="relative isolate w-full h-full select-none overflow-hidden rounded-[inherit]">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={displaySrc}
