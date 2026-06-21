@@ -146,7 +146,7 @@ export function PaymentForm({
   return (
     <div className="font-poppins min-w-[320px] w-full md:max-w-[640px] rounded-[24px] bg-white px-4 sm:px-5 md:px-6 py-4 sm:py-5 md:py-6 flex flex-col">
       <div className="flex items-center justify-between">
-        <span className="font-poppins font-18 font-semibold text-dark leading-[150%]">Credit or debit card</span>
+        <span className="font-poppins text-[16px] sm:text-[17px] md:text-[18px] font-semibold text-dark leading-[150%]">Credit or debit card</span>
         <CardIcon />
       </div>
       <div className="flex items-center gap-1.5 mt-1">

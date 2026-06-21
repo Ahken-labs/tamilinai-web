@@ -139,7 +139,7 @@ function MobileCarousel() {
         <div className="flex-shrink-0 w-4" />
       </div>
 
-      <div className="mt-8 flex justify-center items-center" style={{ gap: "8px" }}>
+      <div className="mt-8 h-3 flex justify-center items-center" style={{ gap: "8px" }}>
         {Array.from({ length: dotCount }, (_, i) => (
           <button
             key={i}

@@ -139,7 +139,7 @@ export default function CloseAccountPage() {
         minHeight=""
       >
         <>
-          <span className="select-none font-16 leading-[150%] text-dark">
+          <span className="select-none text-[14px] sm:text-[15px] md:text-[16px] leading-[150%] text-dark">
             {step === 1
               ? "Help us improve for others. This only takes a moment."
               : step === 2
@@ -157,7 +157,7 @@ export default function CloseAccountPage() {
                     className="w-full bg-cartbox2 rounded-[20px] p-4 flex items-center gap-2 md:gap-3 cursor-pointer"
                   >
                     <RadioCircleIcon checked={selected === index} />
-                    <span className="select-none font-16 leading-[150%] text-dark">
+                    <span className="select-none text-[14px] sm:text-[15px] md:text-[16px] leading-[150%] text-dark">
                       {text}
                     </span>
                   </div>
@@ -172,7 +172,7 @@ export default function CloseAccountPage() {
                   value={otherText}
                   onChange={(e) => setOtherText(e.target.value)}
                   placeholder="Tell us more"
-                  className="w-full h-20 p-4 mt-4 sm:mt-5 md:mt-6 rounded-[20px] border border-[#767676] bg-[#F2F2F2] text-[#656565] font-16 leading-[150%] resize-none outline-none focus:border-[#B31B38]"
+                  className="w-full h-20 p-4 mt-4 sm:mt-5 md:mt-6 rounded-[20px] border border-[#767676] bg-[#F2F2F2] text-[#656565] text-[14px] sm:text-[15px] md:text-[16px] leading-[150%] resize-none outline-none focus:border-[#B31B38]"
                 />
               </div>
             </>
@@ -180,12 +180,12 @@ export default function CloseAccountPage() {
             <div className="mt-4 sm:mt-5 md:mt-6 flex flex-col">
               {LOSS_ITEMS.map(({ icon: Icon, title, subtitle }) => (
                 <div key={title} className="flex items-center gap-3 md:gap-4 py-3">
-                  <Icon className="w-4 sm:w-5 md:w-6 h-4 sm:h-5 md:h-6 shrink-0 text-dark" />
+                  <Icon className="w-5 sm:w-5.5 md:w-6 h-5 sm:h-5.5 md:h-6 shrink-0 text-dark" />
                   <div>
-                    <div className="font-poppins font-18 font-medium leading-[150%] text-dark">
+                    <div className="font-poppins text-[16px] sm:text-[17px] md:text-[18px] font-medium leading-[150%] text-dark">
                       {title}
                     </div>
-                    <div className="font-poppins font-16 font-normal leading-[150%] text-secondary4">
+                    <div className="font-poppins text-[14px] sm:text-[15px] md:text-[16px] font-normal leading-[150%] text-secondary4">
                       {subtitle}
                     </div>
                   </div>
@@ -224,25 +224,25 @@ export default function CloseAccountPage() {
           <>
             {step === 1 ? (
               <div className="mt-0">
-                <span className="font-18 font-medium leading-[150%] text-dark">
+                <span className="text-[16px] sm:text-[17px] md:text-[18px] font-medium leading-[150%] text-dark">
                   You can hide your profile for a while instead. Your data stays safe and you can return any time.
                 </span>
               </div>
             ) : step === 2 ? (
               <div>
-                <span className="font-16 font-semibold leading-[150%] text-dark">
+                <span className="text-[14px] sm:text-[15px] md:text-[16px] font-semibold leading-[150%] text-dark">
                   Data retention policy
                 </span>
-                <p className="mt-2 md:mt-4 font-16 font-normal leading-[150%] text-dark">
+                <p className="mt-2 md:mt-4 text-[14px] sm:text-[15px] md:text-[16px] font-normal leading-[150%] text-dark">
                   In compliance with data protection regulations, your data will be permanently erased 30 days after your closure request. You will receive a final confirmation email once the deletion is complete.
                 </p>
               </div>
             ) : (
               <div>
-                <span className="font-16 font-semibold leading-[150%] text-dark">
+                <span className="text-[14px] sm:text-[15px] md:text-[16px] font-semibold leading-[150%] text-dark">
                   What happens next
                 </span>
-                <div className="mt-2 md:mt-4 flex flex-col gap-2 font-16 font-normal leading-[150%] text-dark">
+                <div className="mt-2 md:mt-4 flex flex-col gap-2 text-[14px] sm:text-[15px] md:text-[16px] font-normal leading-[150%] text-dark">
                   <div>1. Your profile is hidden immediately from other members.</div>
                   <div>2. You will receive a confirmation email shortly.</div>
                   <div>3. Your data will be permanently deleted in 30 days.</div>

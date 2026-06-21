@@ -148,7 +148,7 @@ export default function EliteUpgradeBody() {
     return (
         <main className="font-poppins select-none min-h-screen bg-[#F8F5F2] pb-20">
             <div className="mx-auto flex max-w-[1024px] flex-col px-0 min-[860px]:px-4 lg:px-10">
-                <div className="justify-center text-center pt-5 sm:pt-7 md:pt-7 lg:pt-10 mx-auto">
+                <div className="justify-center text-center pt-5 sm:pt-7 md:pt-7 lg:pt-10 mx-auto px-4">
                     <h1 className="font-medium text-[20px] sm:text-[24px] text-[#000]">This is One of Life&apos;s Most Precious Decisions.</h1>
                     <p className="text-[#525252] mt-1 text-[14px] sm:text-[15px] md:text-[16px]">Give your journey the time and quality it truly deserves to discover your perfect match.</p>
                 </div>
@@ -221,7 +221,7 @@ export default function EliteUpgradeBody() {
                             <div key={i} className="bg-light flex justify-center items-start max-[500px]:rounded-[8px] rounded-[20px] max-[500px]:px-2 px-4 md:px-6 py-4 md:py-6">
                                 <div className="flex flex-col items-center justify-center text-center">
                                     {b.icon}
-                                    <span className="mt-1 font-18 text-dark">{b.text}</span>
+                                    <span className="mt-1 text-[16px] sm:text-[17px] md:text-[18px] text-dark">{b.text}</span>
                                 </div>
                             </div>
                         ))}

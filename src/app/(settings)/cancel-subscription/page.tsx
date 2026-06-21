@@ -150,7 +150,7 @@ export default function CancelSubscriptionPage() {
           <TermsIcon className="w-6 h-6" />
         </div>
         <div>
-          <h2 className="font-medium font-18">Refund and cancellation policy</h2>
+          <h2 className="font-medium text-[16px] sm:text-[17px] md:text-[18px]">Refund and cancellation policy</h2>
           <p className="mt-1.5 font-16 text-[#767676]">Rules for cancelling your plan, downgrading, and refunds.</p>
         </div>
       </button>
