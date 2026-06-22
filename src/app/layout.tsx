@@ -38,6 +38,20 @@ export const metadata = {
     url: 'https://inai.lk',
     siteName: 'Inai',
     type: 'website',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Inai',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Inai',
+    description: 'Find your life partner on Inai — Tamil matrimony platform for Sri Lanka and the global diaspora.',
+    images: ['/og-image.png'],
   },
   icons: {
     icon: '/favicon.ico',
