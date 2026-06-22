@@ -58,7 +58,7 @@ export const metadata = {
     shortcut: '/favicon.ico',
     apple: '/apple-icon.png',
   },
-}; 
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
