@@ -133,7 +133,7 @@ export default function BasicDetailsForm() {
           <StepProgress currentStep={1} />
         </div>
 
-        <h1 className="mt-6 md:mt-8 lg:mt-10 fonts-24 font-semibold text-dark leading-[150%]">
+        <h1 className="mt-6 md:mt-8 lg:mt-10 font-24 font-semibold text-dark leading-[150%]">
           {t("Basic_details")}
         </h1>
 

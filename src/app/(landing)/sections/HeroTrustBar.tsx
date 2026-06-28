@@ -39,7 +39,7 @@ export default function HeroTrustBar() {
                             <TrustItem icon={<GlobeIcon className="w-4 lg:w-6 h-4 lg:h-6" />} text={t("12_countries")} />
                             <TrustItem icon={<TrustPrivacyIcon className="w-4 lg:w-6 h-4 lg:h-6" />} text={t("Free_to_join")} />
                         </div>
-                        <div className="flex items-center gap-[48px] pr-[48px] shrink-0">
+                        <div className="flex items-center gap-[48px] pr-[48px] shrink-0 h-5">
                             <TrustItem icon={<TrustVerifiedIcon className="w-4 lg:w-6 h-4 lg:h-6" />} text={t("Verified_Profiles")} />
                             <TrustItem icon={<GlobeIcon className="w-4 lg:w-6 h-4 lg:h-6" />} text={t("12_countries")} />
                             <TrustItem icon={<TrustPrivacyIcon className="w-4 lg:w-6 h-4 lg:h-6" />} text={t("Free_to_join")} />

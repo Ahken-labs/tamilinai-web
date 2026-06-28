@@ -215,7 +215,7 @@ export default function EliteUpgradeBody() {
 
             <div className="mx-auto flex max-w-[1024px] flex-col px-4 lg:px-10">
                 <div className="max-[500px]:mt-6 mt-8 sm:mt-10 md:mt-12 lg:mt-14">
-                    <h1 className="text-center text-dark font-semibold fonts-24">Why Elite membership?</h1>
+                    <h1 className="text-center text-dark font-semibold font-24">Why Elite membership?</h1>
                     <div className="mt-4 md:mt-6 grid grid-cols-2 max-[500px]:gap-2 gap-3">
                         {BENEFITS.map((b, i) => (
                             <div key={i} className="bg-light flex justify-center items-start max-[500px]:rounded-[8px] rounded-[20px] max-[500px]:px-2 px-4 md:px-6 py-4 md:py-6">

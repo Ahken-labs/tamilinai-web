@@ -71,7 +71,7 @@ function LanguagePopup({ initialSelected, onClose, onConfirm }: {
         <div className="shrink-0 px-4 md:px-5 pb-2 pt-4 md:pt-5">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0 flex-1">
-              <h2 className="fonts-24 font-semibold text-dark leading-[150%]">Languages spoken</h2>
+              <h2 className="font-24 font-semibold text-dark leading-[150%]">Languages spoken</h2>
               <p className="mt-1 font-16 font-normal text-dark leading-[150%]">Select languages you know and add them to your profile.</p>
             </div>
             <button type="button" onClick={onClose} className="cursor-pointer shrink-0"><CloseCircleIcon /></button>

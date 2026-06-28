@@ -1,6 +1,5 @@
 import HeroSection from "./sections/HeroSection";
-import HowItWorksSection from "./sections/HowItWorksSection";
-import ContactSection from "./sections/ContactSection";
+import WhyInaiSection from "./sections/WhyInaiSection";
 import DiasporaSection from "./sections/DiasporaSection";
 import { HelpSection } from "./sections/HelpSection";
 import FAQSection from "./sections/FAQSection";
@@ -12,9 +11,8 @@ export default function HomePage() {
       <section id="hero">
         <HeroSection />
       </section>
-      <HowItWorksSection />
       <section id="contact">
-        <ContactSection />
+        <WhyInaiSection />
       </section>
       <DiasporaSection />
       <section id="about">

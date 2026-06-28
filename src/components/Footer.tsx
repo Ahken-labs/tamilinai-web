@@ -30,7 +30,7 @@ const NAV_LEFT = [
   { label: "Privacy_Policy", href: "/privacy", appHref: "/privacy" },
   { label: "Refund_Return_Policy", href: "/refund-policy", appHref: "/refund-policy" },
   { label: "Ratings_and_reviews", href: "", appHref: "" },
-  { label: "Pricing", href: "", appHref: "" },
+  // { label: "Pricing", href: "", appHref: "" },
 ] as const;
 
 // Social links

@@ -631,7 +631,7 @@ export default function MyProfilePage() {
               </div>
 
               {/* ── Desktop header >500px ── */}
-              <h1 className="max-[500px]:hidden fonts-24 font-semibold text-dark">My profile</h1>
+              <h1 className="max-[500px]:hidden font-24 font-semibold text-dark">My profile</h1>
 
               {/* Name + badge + tag row */}
               <div className="max-[500px]:hidden mt-4 md:mt-6 flex items-center justify-between gap-4 flex-wrap">

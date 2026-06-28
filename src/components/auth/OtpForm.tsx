@@ -264,7 +264,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
             >
               <ChevronIcon open={false} className="w-5 h-5 rotate-90" />
             </button>
-            <h1 className="fonts-24 font-semibold text-dark leading-[150%]">
+            <h1 className="font-24 font-semibold text-dark leading-[150%]">
               {variant === "reset"
                 ? t("Enter_your_reset_code")
                 : method === "email"

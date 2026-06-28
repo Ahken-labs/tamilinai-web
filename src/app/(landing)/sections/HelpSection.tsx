@@ -48,7 +48,7 @@ export function HelpSection() {
             {t("Need_Help_Finding_a_Match")}
           </h2>
           <p className="mt-2 text-dark text-[15px] lg:text-[16px] max-w-[330px] md:max-w-[510px] mx-auto lg-max-w-none" >
-            {t("Chat_with_Tamilinais_friendly_support_team_for_profile_creation_photo_uploads_or_personalized_matchmaking_assistance")}
+            {t("Help_parah")}
           </p>
 
           {/* CTA WhatsApp */}

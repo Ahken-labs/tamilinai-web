@@ -1,6 +1,5 @@
 import HeroSection from "../sections/HeroSection";
-import HowItWorksSection from "../sections/HowItWorksSection";
-import ContactSection from "../sections/ContactSection";
+import WhyInaiSection from "../sections/WhyInaiSection";
 import DiasporaSection from "../sections/DiasporaSection";
 import AboutSection from "../sections/AboutSection";
 import { HelpSection } from "../sections/HelpSection";
@@ -20,9 +19,8 @@ export default function FAQPage() {
       <section id="hero">
         <HeroSection />
       </section>
-      <HowItWorksSection />
       <section id="contact">
-        <ContactSection />
+        <WhyInaiSection />
       </section>
       <DiasporaSection />
       <section id="about">

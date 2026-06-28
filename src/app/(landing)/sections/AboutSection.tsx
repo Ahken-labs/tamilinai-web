@@ -55,8 +55,9 @@ export default function AboutSection() {
                         className="mt-2 font-medium text-dark1 italic text-center leading-[150%]
                     font-28
                     max-w-[328px] md:max-w-[640px] mx-auto" >
-                        <span className="block">&ldquo;{t("More_than_just_matchmaking")}</span>
-                        <span className="block">{t("We_are_your_bridge_to_home")}&rdquo;</span>
+                        <span className="block">{t("More_than_a_directory")}</span>
+                        <span className="block">{t("A_trusted_space_for")}</span>
+                        <span className="block">{t("life_most_important_connections")}</span>
 
                     </h2>
                     <p className="mt-5 md:text-[16px] text-[15px] leading-[150%] text-dark font-normal text-center">
@@ -64,7 +65,7 @@ export default function AboutSection() {
                         {t("vision_parah2")}
                     </p>
                     <Button
-                        text={t("Begin_your_journey")}
+                        text={t("Join_our_verified_network")}
                         className="mt-5 !md:text-[16px] !text-[15px]"
                         onPress={() => setOpenForm(true)}
                     />

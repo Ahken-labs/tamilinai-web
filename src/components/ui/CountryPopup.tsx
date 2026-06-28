@@ -28,8 +28,8 @@ export function SelectionPopup({ title, subtitle, onClose, children, onConfirm, 
         <div className="shrink-0 px-4 md:px-5 pt-4 md:pt-5 pb-2">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0 flex-1">
-              <h2 className="fonts-24 font-semibold leading-[150%] text-dark">{title}</h2>
-              <p className="mt-1 fonts-16 font-normal leading-[150%] text-dark">{subtitle}</p>
+              <h2 className="font-24 font-semibold leading-[150%] text-dark">{title}</h2>
+              <p className="mt-1 text-[14px] sm:text-[15px] md:text-[16px] font-normal leading-[150%] text-dark">{subtitle}</p>
             </div>
             <button type="button" onClick={onClose} className="shrink-0 cursor-pointer transition hover:opacity-80" aria-label="Close">
               <CloseCircleIcon className="h-8 w-8 transition-transform duration-200 hover:scale-110 active:scale-95" />

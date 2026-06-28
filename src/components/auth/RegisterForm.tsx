@@ -276,7 +276,7 @@ export default function RegisterForm({
                         className={`absolute right-0 top-0 z-10 h-full w-auto scale-x-[-1] ${HERO_BTN_ICON_COLOR}`}
                     />
                     <span className="relative z-20 flex select-none items-center gap-2 px-4">
-                        {loading ? loadingText : t("Create_my_free_profile")}
+                        {loading ? loadingText : t("Create_my_profile")}
                         {!loading && <ArrowRightIcon />}
                     </span>
                 </button>
@@ -331,7 +331,7 @@ export default function RegisterForm({
                 {/* Header — fixed inside the sheet on mobile */}
                 <div className="shrink-0 flex items-start justify-between gap-4 px-4 md:px-6 pt-6 pb-3 min-[500px]:pb-0">
                     <div className="flex flex-col">
-                        <h2 className="text-left fonts-24 font-semibold leading-[1.5] text-dark">
+                        <h2 className="text-left font-24 font-semibold leading-[1.5] text-dark">
                             {t("Create_your_free_profile")}
                         </h2>
                         <p className="text-[14px] mt-1 md:text-[16px] font-normal leading-[150%] text-secondary3">

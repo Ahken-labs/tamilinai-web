@@ -179,7 +179,7 @@ function MatchesContent() {
                 onClick={handleClearSearch}
                 className="flex items-center gap-1 "
               >
-                <span className="font-poppins fonts-24 font-semibold text-dark">Search results</span>
+                <span className="font-poppins font-24 font-semibold text-dark">Search results</span>
                 <IoCloseOutline className="cursor-pointer w-4 md:w-6 h-4 md:h-6 hover:bg-[#F2F2F2] rounded-full transition-colors" />
               </button>
             </div>

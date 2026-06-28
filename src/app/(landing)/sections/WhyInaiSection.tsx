@@ -3,7 +3,6 @@
 import Button from "@/src/components/common-layout/Button";
 import RegisterForm from "@/src/components/auth/RegisterForm";
 import { useLang } from "@/src/context/LangContext";
-import Image from "next/image";
 import { useState } from "react";
 import { CommunityIcon, Logo, StepFamilyIcon, TamilLetterIcon } from "@/src/assets/Icons";
 
@@ -26,83 +25,14 @@ const TRUST_CARDS = [
 ] as const;
 
 // ─── Main export ────
-export default function ContactSection() {
-  const [imageLoaded, setImageLoaded] = useState(false);
+export default function WhyInaiSection() {
   const { t } = useLang();
   const [openForm, setOpenForm] = useState(false);
 
 
   return (
     <>
-      <section
-        className="relative w-full font-poppins overflow-hidden"
-        style={{
-          background: "linear-gradient(180deg, #FFF7F0 0%, #FFEBEB 100%)",
-        }}
-      >
-        <div className="flex flex-col items-center px-5 pb-10 sm:pb-12 md:pb-14 lg:pb-18">
-
-          <h2
-            className="font-bold text-center leading-[150%] text-dark1
-              font-32 lg:mt-15 md:mt-14 mt-12"
-          >
-            {t("Your_profile_stays_under_your_control")}
-          </h2>
-          <div className="mt-4">
-            <p className="text-[15px] md:text-[16px] font-normal leading-[150%] text-dark text-center max-w-[730px]" >
-              {t("We_built_privacy_into_every_part_of_Inai_lk_not_as_a_feature_you_activate")}
-            </p>
-            <p className="text-[15px] md:text-[16px] font-normal leading-[150%] text-dark text-center max-w-[730px]" >
-              {t("but_as_the_foundation_of_how_the_platform_works")}
-            </p>
-          </div>
-          {/* Phone image — simple CSS skeleton via bg + opacity trick */}
-          <div
-            className="relative mx-auto border-b-2 border-[#FFDED3]/50 w-full mt-6 md:mt-8 lg:mt-10"
-            style={{ maxWidth: 565 }}
-          >
-            {/* Skeleton: just a rounded bg that disappears once image loads */}
-            {!imageLoaded && (
-              <div className="absolute inset-0 rounded-[32px] bg-[#e8d5d5] animate-pulse" />
-            )}
-            <Image
-              src="/images/sample_profile_phone.webp"
-              alt="Privacy control demo on phone"
-              width={565}
-              height={320}
-              sizes="(max-width: 768px) 100vw, 565px"
-              onLoad={() => setImageLoaded(true)}
-              style={{
-                width: "100%",
-                objectFit: "contain",
-                opacity: imageLoaded ? 1 : 0,
-                transition: "opacity 0.4s ease",
-              }}
-            />
-          </div>
-          <div className="mt-6 md:mt-8 lg:mt-10 flex flex-col items-center gap-5">
-            <PrivacyCard
-              title={t("Your_contact_details_are_private")}
-              desc={t("No_one_can_see_your_phone_number_or_email_until_a_mutual_match")}
-              badge={t("Always_on")}
-            />
-            <PrivacyCard
-              title={t("Your_photo_only_who_you_allow")}
-              desc={t("Choose_who_sees_your_photo_everyone_only_people_whose_interest")}
-              badge={t("You_decide")}
-            />
-          </div>
-          {/* CTA */}
-          <Button
-            text={t("Create_my_profile")}
-            className="lg:mt-10 md:mt-8 mt-6 !md:text-[16px] !text-[15px]"
-            onPress={() => setOpenForm(true)}
-          />
-        </div>
-      </section>
-
-
-      <section className="pt-14 md:pt-16 lg:pt-20 w-full bg-light font-poppins  lg:px-10">
+      <section className="pt-14 md:pt-16 lg:pt-20 w-full bg-light font-poppins lg:px-10">
         <h3 className="md:text-[16px] text-[15px] text-dark font-medium text-center">{t("Why_Inai")}</h3>
         <h2
           className="font-bold text-dark1 text-center font-32 mt-1 md:mt-2 max-w-[320px] md:max-w-[480px] lg:max-w-[600px] mx-auto" >

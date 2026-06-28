@@ -104,7 +104,7 @@ export default function InterestsHobbiesSection({ me, onDirty, onSave }: Props) 
             <div className="shrink-0 px-4 pt-4 pb-2 md:px-5 md:pt-5">
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0 flex-1">
-                  <h2 className="fonts-24 font-semibold leading-[150%] text-dark">Interests & Hobbies</h2>
+                  <h2 className="font-24 font-semibold leading-[150%] text-dark">Interests & Hobbies</h2>
                   <p className="mt-1 font-16 font-normal leading-[150%] text-dark">Add your hobbies to find matches with similar interests.</p>
                 </div>
                 <button type="button" onClick={() => setOpen(false)} className="shrink-0 cursor-pointer" aria-label="Close"><CloseCircleIcon /></button>

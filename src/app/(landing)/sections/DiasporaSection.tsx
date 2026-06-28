@@ -51,7 +51,7 @@ export default function DiasporaSection() {
                 </div>
                 <div className="justify-center flex mt-5 lg:mt-8">
                     <Button
-                        text={t("Find_Matches")}
+                        text={t("Begin_your_journey")}
                         className="!md:text-[16px] !text-[15px]"
                         onPress={() => setOpenForm(true)}
                     />
