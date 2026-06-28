@@ -4,37 +4,48 @@ import { useLang } from "@/src/context/LangContext";
 import Button from "@/src/components/common-layout/Button";
 import RegisterForm from "@/src/components/auth/RegisterForm";
 import { CheckmarkIcon, EliteProIcon } from "@/src/assets/Icons";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
 export default function CardsSection() {
     const { t } = useLang();
     const [openForm, setOpenForm] = useState(false);
+    const [visible, setVisible] = useState(false);
+    const sectionRef = useRef<HTMLElement>(null);
+
+    useEffect(() => {
+        const el = sectionRef.current;
+        if (!el) return;
+        const observer = new IntersectionObserver(
+            ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect(); } },
+            { threshold: 0.15 }
+        );
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, []);
 
     return (
         <section
+            ref={sectionRef}
             className="w-full font-poppins"
             style={{ background: "linear-gradient(180deg, #FFEBEB 0%, #FFF7F0 100%)" }}
         >
-            {/* Cards slide up from below into fan position, one by one, then stay */}
+            {/* Cards animate in only once the section enters the viewport */}
             <style>{`
                 @keyframes cardSlideIn {
-                    from {
-                        opacity: 0;
-                        transform: translateY(80px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0px);
-                    }
+                    from { opacity: 0; transform: translateY(80px); }
+                    to   { opacity: 1; transform: translateY(0px); }
                 }
-                .card-1 {
+                .card-1 { opacity: 0; }
+                .card-2 { opacity: 0; }
+                .card-3 { opacity: 0; }
+                .cards-visible .card-1 {
                     animation: cardSlideIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) 1.2s both;
                 }
-                .card-2 {
+                .cards-visible .card-2 {
                     animation: cardSlideIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.70s both;
                 }
-                .card-3 {
+                .cards-visible .card-3 {
                     animation: cardSlideIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
                 }
             `}</style>
@@ -54,7 +65,7 @@ export default function CardsSection() {
                 </h2>
 
                 {/* Card fan — landscape 1200x882 cards, fanned from center bottom */}
-                <div className="mt-6 sm:mt-7 md:mt-8 lg:mt-10 relative flex items-center justify-center w-full min-w-[320px] max-w-[1200px] aspect-[1200/882]" style={{ overflow: "visible" }}>
+                <div className={`mt-6 sm:mt-7 md:mt-8 lg:mt-10 relative flex items-center justify-center w-full min-w-[320px] max-w-[1200px] aspect-[1200/882]${visible ? " cards-visible" : ""}`} style={{ overflow: "visible" }}>
                     {/* card3 — back, rotated right */}
                     <div
                         className="card-1 absolute inset-0 flex items-center justify-center"
