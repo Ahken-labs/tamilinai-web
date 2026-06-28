@@ -30,24 +30,16 @@ export default function CardsSection() {
             className="w-full font-poppins"
             style={{ background: "linear-gradient(180deg, #FFEBEB 0%, #FFF7F0 100%)" }}
         >
-            {/* Cards animate in only once the section enters the viewport */}
+            {/* Cards slide up from below into fan position, one by one, then stay */}
             <style>{`
                 @keyframes cardSlideIn {
                     from { opacity: 0; transform: translateY(80px); }
                     to   { opacity: 1; transform: translateY(0px); }
                 }
-                .card-1 { opacity: 0; }
-                .card-2 { opacity: 0; }
-                .card-3 { opacity: 0; }
-                .cards-visible .card-1 {
-                    animation: cardSlideIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) 1.2s both;
-                }
-                .cards-visible .card-2 {
-                    animation: cardSlideIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.70s both;
-                }
-                .cards-visible .card-3 {
-                    animation: cardSlideIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
-                }
+                .card-1, .card-2, .card-3 { opacity: 0; }
+                .cards-visible .card-1 { animation: cardSlideIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) 1.2s both; }
+                .cards-visible .card-2 { animation: cardSlideIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.70s both; }
+                .cards-visible .card-3 { animation: cardSlideIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both; }
             `}</style>
 
             <div className="py-10 sm:py-16 md:py-20 lg:py-25 px-4 sm:px-6 md:px-10 flex flex-col items-center">
