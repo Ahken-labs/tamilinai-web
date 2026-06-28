@@ -5,9 +5,12 @@ import AboutSection from "../sections/AboutSection";
 import { HelpSection } from "../sections/HelpSection";
 import FAQSection from "../sections/FAQSection";
 import SectionScroller from "../SectionScroller";
+import BusinessSection from "../sections/BusinessSection";
+import CardsSection from "../sections/CardsSection";
+import AdvantageSection from "../sections/AdvantageSection";
 
 export const metadata = {
-  title: "FAQ — Inai Tamil Matrimony",
+  title: "FAQ - Inai Tamil Matrimony",
   description: "Frequently asked questions about Inai Tamil Matrimony. How to create a profile, search for matches, send interests, and membership options.",
   alternates: { canonical: "https://inai.lk/faq" },
 };
@@ -19,9 +22,11 @@ export default function FAQPage() {
       <section id="hero">
         <HeroSection />
       </section>
-      <section id="contact">
-        <WhyInaiSection />
-      </section>
+      <BusinessSection />
+      <CardsSection />
+      <AdvantageSection/>
+
+      <WhyInaiSection />
       <DiasporaSection />
       <section id="about">
         <AboutSection />

@@ -1,8 +1,11 @@
 @import "tailwindcss";
 
 html {
-  scroll-behavior: smooth !important;
+  scroll-behavior: auto;
 }
+/* html {
+  scroll-behavior: smooth !important;
+} */
 
 body {
   -webkit-user-select: none;
@@ -272,6 +275,7 @@ input, textarea, select {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;

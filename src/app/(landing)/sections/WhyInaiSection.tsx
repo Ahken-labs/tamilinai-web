@@ -32,10 +32,10 @@ export default function WhyInaiSection() {
 
   return (
     <>
-      <section className="pt-14 md:pt-16 lg:pt-20 w-full bg-light font-poppins lg:px-10">
-        <h3 className="md:text-[16px] text-[15px] text-dark font-medium text-center">{t("Why_Inai")}</h3>
+      <section className="py-10 sm:py-12 md:py-14 lg:py-20 w-full bg-light font-poppins lg:px-10">
+        <h3 className="text-[16px] sm:text-[17px] md:text-[18px] lg:text-[20px] text-dark font-medium text-center">{t("Why_Inai")}</h3>
         <h2
-          className="font-bold text-dark1 text-center font-32 mt-1 md:mt-2 max-w-[320px] md:max-w-[480px] lg:max-w-[600px] mx-auto" >
+          className="font-bold text-dark1 text-center text-[24px] sm:text-[30px] md:text-[36px] lg:text-[40px] mt-1 md:mt-2 max-w-[380px] sm:max-w-[480px] md:max-w-[580px] lg:max-w-[640px] mx-auto" >
           {t("The_only_platform_built_exclusively_for_SriLankan_Tamils")}
         </h2>
 
@@ -130,36 +130,6 @@ function TrustCard({
       <span className="font-normal leading-[150%] text-dark lg:text-[16px] text-[14px] mt-2 lg:pr-4">
         {desc}
       </span>
-    </div>
-  );
-}
-
-function PrivacyCard({
-  title,
-  desc,
-  badge,
-}: {
-  title: string;
-  desc: string;
-  badge: string;
-}) {
-  return (
-    <div className="w-full max-w-[460px] rounded-[16px] bg-light p-4">
-
-      <h2 className="md:text-[18px] text-[16px] font-semibold text-dark text-center">
-        {title}
-      </h2>
-
-      <p className="mt-2 md:text-[16px] text-[15px] text-dark text-center leading-[150%]">
-        {desc}
-      </p>
-
-      <div className="mt-3 flex justify-center">
-        <div className="md:text-[16px] text-[15px] rounded-[48px] bg-[#FFDED3] px-3 py-1">
-          {badge}
-        </div>
-      </div>
-
     </div>
   );
 }

@@ -5,9 +5,12 @@ import AboutSection from "../sections/AboutSection";
 import { HelpSection } from "../sections/HelpSection";
 import FAQSection from "../sections/FAQSection";
 import SectionScroller from "../SectionScroller";
+import BusinessSection from "../sections/BusinessSection";
+import CardsSection from "../sections/CardsSection";
+import AdvantageSection from "../sections/AdvantageSection";
 
 export const metadata = {
-  title: "About Inai — Tamil Matrimony Sri Lanka",
+  title: "About Inai - Tamil Matrimony Sri Lanka",
   description: "Learn about Inai, the Tamil matrimony platform connecting Sri Lankan Tamils and the global diaspora. Rooted in Tamil values, built for modern families.",
   alternates: { canonical: "https://inai.lk/about" },
 };
@@ -19,9 +22,11 @@ export default function AboutPage() {
       <section id="hero">
         <HeroSection />
       </section>
-      <section id="contact">
-        <WhyInaiSection />
-      </section>
+      <BusinessSection />
+      <CardsSection />
+      <AdvantageSection />
+
+      <WhyInaiSection />
       <DiasporaSection />
       <section id="about">
         <AboutSection />
