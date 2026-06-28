@@ -167,7 +167,7 @@ export default function PersonalDetailsForm() {
           >
             <ChevronIcon open={false} className="mt-1 w-5 h-5 rotate-90" />
           </button>
-          <h1 className="fonts-24 font-semibold text-dark leading-[150%]">
+          <h1 className="font-24 font-semibold text-dark leading-[150%]">
             {t("Education_Religion_Location")}
           </h1>
         </div>

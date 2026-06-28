@@ -10,7 +10,7 @@ export function HelpSection() {
   const { t } = useLang();
   return (
     <section
-      className="relative w-full overflow-hidden mt-10 lg:mt-18 font-poppins"
+      className="relative w-full overflow-hidden font-poppins"
       style={{
         background: "linear-gradient(180deg, #FFF7F0 0%, #FFEBEB 100%)",
       }}
@@ -44,11 +44,11 @@ export function HelpSection() {
 
         <div className="flex flex-col text-center lg:text-left max-w-[620px]">
           <h2
-            className="font-bold text-dark font-32">
+            className="font-bold text-dark text-[24px] sm:text-[26px] md:text-[28px] lg:text-[32px]">
             {t("Need_Help_Finding_a_Match")}
           </h2>
-          <p className="mt-2 text-dark text-[15px] lg:text-[16px] max-w-[330px] md:max-w-[510px] mx-auto lg-max-w-none" >
-            {t("Chat_with_Tamilinais_friendly_support_team_for_profile_creation_photo_uploads_or_personalized_matchmaking_assistance")}
+          <p className="mt-2 text-dark text-[16px] md:max-w-[582px] mx-auto lg-max-w-none" >
+            {t("Help_parah")}
           </p>
 
           {/* CTA WhatsApp */}

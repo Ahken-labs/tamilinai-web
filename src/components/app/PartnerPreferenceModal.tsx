@@ -260,7 +260,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
           <div className="shrink-0 bg-[#F0F0F0] px-4 md:px-5 lg:px-6 py-4 md:py-5 lg:py-6">
             <div className="flex items-center gap-3">
               <div className="min-w-0 flex-1">
-                <p className="font-poppins fonts-16 font-normal text-dark leading-[150%]">
+                <p className="font-poppins text-[14px] sm:text-[15px] md:text-[16px] font-normal text-dark leading-[150%]">
                   You successfully registered!
                 </p>
                 <p className="font-poppins text-[16px] md:text-[18px] font-medium text-dark leading-[150%]">
@@ -275,7 +275,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
         {/* Header: search or edit */}
         {(variant === "search" || variant === "edit") && (
           <div className="shrink-0 bg-white border-b border-[#EAEAEA] rounded-t-[20px] px-6 pt-4 md:pt-5.5 pb-4 md:pb-5.5 flex items-center gap-4">
-            <span className={`font-poppins fonts-24 font-semibold text-[dark leading-[150%] shrink-0${variant === "search" ? " max-[500px]:hidden" : ""}`}>
+            <span className={`font-poppins font-24 font-semibold text-[dark leading-[150%] shrink-0${variant === "search" ? " max-[500px]:hidden" : ""}`}>
               {variant === "search" ? "Search" : "Edit partner preference"}
             </span>
             {variant === "search" && (

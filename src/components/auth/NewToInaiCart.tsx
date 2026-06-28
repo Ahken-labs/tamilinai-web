@@ -21,7 +21,7 @@ export default function NewToInaiCart({ className }: NewToInaiCartProps) {
   return (
     <>
     < div className={`w-full rounded-[16px] sm:rounded-[20px] bg-[#EAEAEA] p-4 md:p-6 ${className ?? ""}`}>
-        <p className="fonts-24 font-semibold text-dark leading-[150%]">
+        <p className="font-24 font-semibold text-dark leading-[150%]">
           {t("New_to_Inai")}
         </p>
         <div className="mt-4 sm:mt-5">

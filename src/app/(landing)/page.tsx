@@ -1,10 +1,12 @@
 import HeroSection from "./sections/HeroSection";
-import HowItWorksSection from "./sections/HowItWorksSection";
-import ContactSection from "./sections/ContactSection";
+import WhyInaiSection from "./sections/WhyInaiSection";
 import DiasporaSection from "./sections/DiasporaSection";
 import { HelpSection } from "./sections/HelpSection";
 import FAQSection from "./sections/FAQSection";
 import AboutSection from "./sections/AboutSection";
+import BusinessSection from "./sections/BusinessSection";
+import CardsSection from "./sections/CardsSection";
+import AdvantageSection from "./sections/AdvantageSection";
 
 export default function HomePage() {
   return (
@@ -12,10 +14,11 @@ export default function HomePage() {
       <section id="hero">
         <HeroSection />
       </section>
-      <HowItWorksSection />
-      <section id="contact">
-        <ContactSection />
-      </section>
+      <BusinessSection />
+      <CardsSection />
+      <AdvantageSection />
+
+      <WhyInaiSection />
       <DiasporaSection />
       <section id="about">
         <AboutSection />

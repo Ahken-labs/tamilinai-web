@@ -107,7 +107,7 @@ function TagShell({
       <div className="w-11 h-11 shrink-0 flex items-center justify-center">{icon}</div>
       <div className="flex flex-col gap-0.5">
         <div className="flex items-center gap-2">
-          <span className="text-[#242424] text-[18px] font-poppins font-semibold">
+          <span className="text-[#242424] text-[18px] font-poppins font-semibold inline-block w-[2.4ch] text-right tabular-nums">
             {animated.toFixed(1)}
           </span>
           {stars}

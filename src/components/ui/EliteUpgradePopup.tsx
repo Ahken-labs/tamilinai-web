@@ -129,7 +129,7 @@ export default function EliteUpgradePopup({ onClose }: Props) {
             {/* Heading */}
             <div className="max-w-[224px] max-[500px]:pt-[125px] min-[380px]:pt-[133px] min-[430px]:pt-[144px] min-[470px]:pt-[155px] relative z-10">
               <p
-                className="fonts-24 font-bold leading-[130%]"
+                className="font-24 font-bold leading-[130%]"
                 style={{
                   background: "linear-gradient(90deg, #B31B38 0%, #222 100%)",
                   WebkitBackgroundClip: "text",
@@ -141,7 +141,7 @@ export default function EliteUpgradePopup({ onClose }: Props) {
               </p>
               <div className="flex gap-3 mt-1 items-center">
                 <p
-                  className="fonts-24 font-bold leading-[130%]"
+                  className="font-24 font-bold leading-[130%]"
                   style={{
                     background: "linear-gradient(90deg, #B31B38 0%, #222 100%)",
                     WebkitBackgroundClip: "text",
@@ -208,7 +208,7 @@ export default function EliteUpgradePopup({ onClose }: Props) {
           {/* Heading */}
           <div className="max-w-[224px]">
             <p
-              className="fonts-24 font-bold leading-[130%]"
+              className="font-24 font-bold leading-[130%]"
               style={{
                 background: "linear-gradient(90deg, #B31B38 0%, #222 100%)",
                 WebkitBackgroundClip: "text",
@@ -221,7 +221,7 @@ export default function EliteUpgradePopup({ onClose }: Props) {
             </p>
             <div className="flex gap-3 mt-1 items-center">
               <p
-                className="fonts-24 font-bold leading-[130%]"
+                className="font-24 font-bold leading-[130%]"
                 style={{
                   background: "linear-gradient(90deg, #B31B38 0%, #222 100%)",
                   WebkitBackgroundClip: "text",

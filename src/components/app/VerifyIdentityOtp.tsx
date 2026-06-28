@@ -157,7 +157,7 @@ export default function VerifyIdentityOtp({ method, maskedIdentifier }: Props) {
             >
               <ChevronIcon open={false} className="w-5 h-5 rotate-90" />
             </button>
-            <h1 className="fonts-24 font-semibold text-dark leading-[150%]">
+            <h1 className="font-24 font-semibold text-dark leading-[150%]">
               {method === "phone" ? "Verify your phone" : "Verify your email"}
             </h1>
           </div>

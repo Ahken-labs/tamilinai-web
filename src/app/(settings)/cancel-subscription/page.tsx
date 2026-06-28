@@ -28,7 +28,7 @@ function CancelledPopup({ periodEnd, onClose }: { periodEnd: string | null; onCl
       <div className="w-full max-w-[784px] bg-white rounded-[20px] pt-[22px] pb-6 shadow-xl">
         <div className="flex items-center gap-2 px-6">
           <BiCheckCircle className="w-6 h-6 text-dark shrink-0" />
-          <span className="fonts-24 font-semibold text-dark leading-[150%] mb-1.5">Subscription Cancelled</span>
+          <span className="font-24 font-semibold text-dark leading-[150%] mb-1.5">Subscription Cancelled</span>
         </div>
         <div className="border-t border-[#EAEAEA] my-4" />
         <p className="mx-6 font-16 font-normal text-dark leading-[150%]">

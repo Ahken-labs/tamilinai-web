@@ -66,7 +66,7 @@ export default function BreakPage() {
     <main className="min-h-screen bg-[#F8F5F2] font-poppins select-none pb-10">
       <div className="sticky top-[66px] md:top-[74px] z-10 w-full bg-white/60 backdrop-blur-sm border-t border-[#EEEEEE] transition-transform duration-300" style={!headerVisible ? { transform: "translateY(-128%)" } : undefined}>
         <div className="flex items-center justify-center px-4 py-3">
-          <span className="fonts-24 font-semibold text-dark">Take a break from searching</span>
+          <span className="font-24 font-semibold text-dark">Take a break from searching</span>
         </div>
       </div>
 
@@ -187,7 +187,7 @@ function BreakConfirmPopup({
         <div className="flex items-center justify-between self-stretch border-b border-[#EAEAEA] px-4 md:px-6 pb-2 pt-4 md:pb-4 md:pt-6">
           <div className="flex items-center">
             <FiAlertTriangle className="w-4 md:w-6 h-4 md:h-6 mr-1 md:mr-2" />
-            <span className="fonts-24 font-semibold leading-[150%] text-dark">Take a break from Inai?</span>
+            <span className="font-24 font-semibold leading-[150%] text-dark">Take a break from Inai?</span>
           </div>
           <button type="button" onClick={onClose} className="shrink-0 cursor-pointer" aria-label="Close">
             <CloseCircleIcon className="h-8 w-8 transition-transform duration-200 hover:scale-110 active:scale-95" />

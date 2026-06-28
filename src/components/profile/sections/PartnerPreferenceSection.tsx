@@ -196,7 +196,7 @@ export default function PartnerPreferenceSection({ onDirty, onSave }: { onDirty?
           value={aboutPartner}
           onChange={handleAboutChange}
           placeholder="Share what genuinely matters to you — values, personality, life goals."
-          className={`w-full resize-none outline-none rounded-[12px] border pt-4 pb-4 pl-4 pr-0 fonts-16 font-normal text-dark placeholder:text-[#656565] leading-[150%] focus:border-[#B31B38] transition-colors ${mounted && aboutPartner ? "border-[#F2F2F2] bg-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)] bg-[#FFF0F3]"}`}
+          className={`w-full resize-none outline-none rounded-[12px] border pt-4 pb-4 pl-4 pr-0 text-[14px] sm:text-[15px] md:text-[16px] font-normal text-dark placeholder:text-[#656565] leading-[150%] focus:border-[#B31B38] transition-colors ${mounted && aboutPartner ? "border-[#F2F2F2] bg-[#F2F2F2]" : "border-[rgba(179,27,56,0.25)] bg-[#FFF0F3]"}`}
           style={{ height: "126px" }}
         />
         <div className="text-[14px] text-secondary4">{wordCount} / {MAX_ABOUT_WORDS}</div>

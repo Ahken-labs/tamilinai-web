@@ -40,11 +40,11 @@ export default function FAQSection() {
   const toggle = (i: number) => setOpenIndex(openIndex === i ? null : i);
 
   return (
-    <section className="w-full bg-light font-poppins px-5 md:px-10 xl:px-[120px] my-12 md:my-18 lg:my-30">
+    <section className="w-full bg-light font-poppins px-5 md:px-10 xl:px-[120px] my-12 sm:my-16 md:my-18 lg:my-30">
 
       {/* Title */}
       <h2 className="font-bold text-dark text-center leading-[150%]
-        font-32">
+        text-[24px] sm:text-[26px] md:text-[28px] lg:text-[32px]">
         {t("Your_Questions_Answered")}
       </h2>
 
@@ -89,7 +89,7 @@ function FAQItem({
           cursor-pointer md:py-4 lg:py-5 py-4 group"
       >
         <span className="font-normal text-dark2 leading-[150%]
-          text-[15px] md:text-[16px] lg:text-[20px]">
+          text-[16px] sm:text-[17px] md:text-[18px] lg:text-[20px]">
           {question}
         </span>
 
@@ -108,7 +108,7 @@ function FAQItem({
         style={{ maxHeight: isOpen ? 400 : 0 }}
       >
         <p className="font-normal text-secondary2 leading-[150%]
-          text-[14px] lg:text-[16px] md:pb-10 pb-8">
+          text-[14px] sm:text-[15px] lg:text-[16px] md:pb-10 pb-8">
           {answer}
         </p>
       </div>

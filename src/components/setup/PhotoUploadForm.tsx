@@ -214,7 +214,7 @@
 //           <StepProgress currentStep={3} />
 //         </div>
 
-//         <h1 className="max-[500px]:-mt-4 mt-6 md:mt-8 lg:mt-10 fonts-24 font-semibold text-dark leading-[150%] max-[500px]:text-left text-center">
+//         <h1 className="max-[500px]:-mt-4 mt-6 md:mt-8 lg:mt-10 font-24 font-semibold text-dark leading-[150%] max-[500px]:text-left text-center">
 //           {t("Add_your_clear_photo")}
 //         </h1>
 
@@ -607,7 +607,7 @@ export default function PhotoUploadForm() {
           <StepProgress currentStep={3} />
         </div>
 
-        <h1 className="max-[500px]:-mt-4 mt-6 md:mt-8 lg:mt-10 fonts-24 font-semibold text-dark leading-[150%] max-[500px]:text-left text-center">
+        <h1 className="max-[500px]:-mt-4 mt-6 md:mt-8 lg:mt-10 font-24 font-semibold text-dark leading-[150%] max-[500px]:text-left text-center">
           {t("Add_your_clear_photo")}
         </h1>
 

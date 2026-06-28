@@ -37,7 +37,7 @@ export default function FormCardLayout({
           
           {/* Title */}
           {title && (
-          <h1 className="fonts-24 font-semibold pt-6 md:pt-8 text-dark leading-[150%]">
+          <h1 className="font-24 font-semibold pt-6 md:pt-8 text-dark leading-[150%]">
             {title}
           </h1>
           )}

@@ -12,7 +12,7 @@ export default function AboutSection() {
 
     return (
         <section className="w-full bg-light overflow-hidden font-poppins">
-            <div className="mt-14 lg:mt-18 relative px-5 py-5 bg-[linear-gradient(180deg,_#FFEBEB_0%,_#FFF7F0_100%)]">
+            <div className="py-10 sm:py-12 md:py-14 lg:py-20 relative px-4 bg-[linear-gradient(180deg,_#FFEBEB_0%,_#FFF7F0_100%)]">
                 {/* ── LEFT PILLAR ── */}
                 <div className="pointer-events-none absolute left-5 top-1/2 hidden -translate-y-1/2 select-none lg:block">
                     <Image
@@ -20,7 +20,7 @@ export default function AboutSection() {
                         alt=""
                         width={156}
                         height={412}
-                        className="w-[156px] h-[412px]"
+                        className="w-[188.102px] h-[498px]"
                         priority
                     />
                 </div>
@@ -32,7 +32,7 @@ export default function AboutSection() {
                         alt=""
                         width={156}
                         height={412}
-                        className="w-[156px] h-[412px] scale-x-[-1]"
+                        className="w-[188.102px] h-[498px] scale-x-[-1]"
                         priority
                     />
                 </div>
@@ -48,23 +48,24 @@ export default function AboutSection() {
                             className="w-[320px] h-[110px]"
                         />
                     </div>
-                    <p className="md:text-[16px] text-[15px] font-medium text-dark">
+                    <p className="text-[16px] font-medium text-dark">
                         {t("Our_story")}
                     </p>
                     <h2
-                        className="mt-2 font-medium text-dark1 italic text-center leading-[150%]
-                    font-28
+                        className="mt-2 font-medium text-dark1 italic text-center leading-[150%] 
+                        text-[24px] sm:text-[25px] md:text-[26px] lg:text-[28px]
                     max-w-[328px] md:max-w-[640px] mx-auto" >
-                        <span className="block">&ldquo;{t("More_than_just_matchmaking")}</span>
-                        <span className="block">{t("We_are_your_bridge_to_home")}&rdquo;</span>
+                        <span className="block">{t("More_than_a_directory")}</span>
+                        <span className="block">{t("A_trusted_space_for")}</span>
+                        <span className="block">{t("life_most_important_connections")}</span>
 
                     </h2>
-                    <p className="mt-5 md:text-[16px] text-[15px] leading-[150%] text-dark font-normal text-center">
+                    <p className="mt-5 text-[16px] leading-[150%] text-dark font-normal text-center">
                         {t("vision_parah1")} <br /><br />
                         {t("vision_parah2")}
                     </p>
                     <Button
-                        text={t("Begin_your_journey")}
+                        text={t("Join_our_verified_network")}
                         className="mt-5 !md:text-[16px] !text-[15px]"
                         onPress={() => setOpenForm(true)}
                     />
@@ -84,7 +85,7 @@ export default function AboutSection() {
                     onClose={() => setOpenForm(false)}
                 />
             </div>
-            <div className="mt-10 lg:mt-18 font-tamil text-dark lg:text-[20px] md:text-[18px] text-[16px] mx-auto text-center">
+            <div className="my-10 sm:my-12 md:my-14 lg:my-20 font-tamil text-dark lg:text-[20px] md:text-[18px] text-[16px] mx-auto text-center">
                 தமிழால் இணைவதால்,<br />
                 தமிழ் மணங்களை இணைப்பதால்,<br />
                 இணைகளை இணைப்பதால்,<br />

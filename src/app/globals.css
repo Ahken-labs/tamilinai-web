@@ -1,8 +1,11 @@
 @import "tailwindcss";
 
 html {
-  scroll-behavior: smooth !important;
+  scroll-behavior: auto;
 }
+/* html {
+  scroll-behavior: smooth !important;
+} */
 
 body {
   -webkit-user-select: none;
@@ -143,15 +146,17 @@ input, textarea, select {
 .font-28 {
   font-size: 18px;
 }
+/* c */
 .font-24 {
-  font-size: 15px;
+  font-size: 18px;
 }
 .font-20 {
   font-size: 12px;
 }
 .font-18 {
-  font-size: 12px;
+  font-size: 15px;
 }
+/* c */
 .font-16 {
   font-size: 14px;
 }
@@ -159,14 +164,8 @@ input, textarea, select {
   font-size: 12px;
 }
 
-/* new */
-.fonts-24 {
-  font-size: 18px;
-}
+
 .fonts-18 {
-  font-size: 14px;
-}
-.fonts-16 {
   font-size: 14px;
 }
 
@@ -180,31 +179,26 @@ input, textarea, select {
   .font-28 {
     font-size: 20px;
   }
+  /* c */
   .font-24 {
-    font-size: 18px;
+    font-size: 20px;
   }
   .font-20 {
     font-size: 13px;
   }
   .font-18 {
-    font-size: 14px;
+    font-size: 16px;
   }
+  /* c */
   .font-16 {
-    font-size: 14px;
+    font-size: 15px;
   }
   .font-14 {
     font-size: 12px;
   }
 
-    /* new */
-  .fonts-24 {
-    font-size: 20px;
-  }
   .fonts-18 {
     font-size: 15px;
-  }
-  .fonts-16 {
-    font-size: 14px;
   }
 }
 
@@ -218,15 +212,17 @@ input, textarea, select {
   .font-28 {
     font-size: 24px;
   }
+  /* c */
   .font-24 {
-    font-size: 20px;
+    font-size: 22px;
   }
   .font-20 {
     font-size: 16px;
   }
   .font-18 {
-    font-size: 16px;
+    font-size: 17px;
   }
+  /* c */
   .font-16 {
     font-size: 16px;
   }
@@ -234,14 +230,8 @@ input, textarea, select {
     font-size: 13px;
   }
 
-  /* new */
-  .fonts-24 {
-    font-size: 22px;
-  }
+
   .fonts-18 {
-    font-size: 16px;
-  }
-  .fonts-16 {
     font-size: 16px;
   }
 }
@@ -256,6 +246,7 @@ input, textarea, select {
   .font-28 {
   font-size: 28px;
   }
+  /* c */
   .font-24 {
     font-size: 24px;
   }
@@ -265,6 +256,7 @@ input, textarea, select {
   .font-18 {
     font-size: 18px;
   }
+  /* c */
   .font-16 {
     font-size: 16px;
   }
@@ -272,15 +264,9 @@ input, textarea, select {
     font-size: 14px;
   }
 
-  /* new */
-  .fonts-24 {
-    font-size: 24px;
-  }
+
   .fonts-18 {
     font-size: 18px;
-  }
-  .fonts-16 {
-    font-size: 16px;
   }
 }
 
@@ -289,6 +275,7 @@ input, textarea, select {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;

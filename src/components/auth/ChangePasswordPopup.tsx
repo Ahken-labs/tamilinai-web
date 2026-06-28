@@ -171,7 +171,7 @@ export default function ChangePasswordPopup({ isOpen, onClose }: Props) {
       <div className="flex max-h-[90vh] w-full max-w-[784px] flex-col overflow-hidden rounded-[20px] bg-light shadow-2xl">
         <div className="flex items-center justify-between self-stretch border-b border-[#EAEAEA] px-4 pb-2 pt-4 md:pb-4 md:pt-6">
           <div className="flex items-center justify-center">
-            <span className="font-poppins fonts-24 font-semibold leading-[150%] text-dark">
+            <span className="font-poppins font-24 font-semibold leading-[150%] text-dark">
               Change password
             </span>
           </div>
