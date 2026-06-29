@@ -74,11 +74,11 @@ export default function AdvantageSection() {
                 {/* Below lg: seamless auto-scroll carousel — pauses on mouse hover or touch */}
                 <div
                     ref={wrapperRef}
-                    className="lg:hidden mt-12 w-full overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing"
+                    className="lg:hidden mt-12 w-full overflow-x-auto no-scrollbar"
 
                 >
                     <div className="flex flex-row w-max">
-                        {[...CARDS, ...CARDS].map((card, idx) => (
+                        {[...CARDS, ...CARDS, ...CARDS].map((card, idx) => (
                             <div key={idx} className="relative w-[266px] h-[380px] shrink-0 rounded-[24px] overflow-hidden ml-4">
                                 <Image src={card.image} alt={t(card.titleKey)} fill className="object-cover" />
                                 <div className="absolute inset-0" />

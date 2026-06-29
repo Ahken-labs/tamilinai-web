@@ -25,7 +25,7 @@ interface FooterProps {
 const NAV_LEFT = [
   { label: "Home", href: "#hero", appHref: "/matches" },
   { label: "About_Us", href: "#about", appHref: "/about" },
-  { label: "Join_Now", href: "#", appHref: "/register" },
+  // { label: "Join_Now", href: "#", appHref: "/register" },
   { label: "Terms_Conditions", href: "/terms", appHref: "/terms" },
   { label: "Privacy_Policy", href: "/privacy", appHref: "/privacy" },
   { label: "Refund_Return_Policy", href: "/refund-policy", appHref: "/refund-policy" },

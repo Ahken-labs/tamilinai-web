@@ -8,7 +8,7 @@ import BusinessSection from "./sections/BusinessSection";
 import CardsSection from "./sections/CardsSection";
 import AdvantageSection from "./sections/AdvantageSection";
 import BoostedProfileSection from "./sections/BoostedProfileSection";
-import ServicesSection from "./sections/ServicesSection";
+// import ServicesSection from "./sections/ServicesSection";
 
 export default function HomePage() {
   return (
@@ -16,7 +16,7 @@ export default function HomePage() {
       <section id="hero">
         <HeroSection />
       </section>
-      <ServicesSection />
+      {/* <ServicesSection /> */}
       <BusinessSection />
       <CardsSection />
       <AdvantageSection />

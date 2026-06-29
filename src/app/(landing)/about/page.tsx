@@ -9,7 +9,7 @@ import BusinessSection from "../sections/BusinessSection";
 import CardsSection from "../sections/CardsSection";
 import AdvantageSection from "../sections/AdvantageSection";
 import BoostedProfileSection from "../sections/BoostedProfileSection";
-import ServicesSection from "../sections/ServicesSection";
+// import ServicesSection from "../sections/ServicesSection";
 
 export const metadata = {
   title: "About Inai - Tamil Matrimony Sri Lanka",
@@ -24,7 +24,7 @@ export default function AboutPage() {
       <section id="hero">
         <HeroSection />
       </section>
-      <ServicesSection />
+      {/* <ServicesSection /> */}
       <BusinessSection />
       <CardsSection />
       <AdvantageSection />

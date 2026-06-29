@@ -13,7 +13,6 @@ export function useDragScroll(ref: RefObject<HTMLDivElement | null>) {
             dragging = true;
             startX = e.clientX;
             startScroll = el!.scrollLeft;
-            el!.style.cursor = "grabbing";
             e.preventDefault();
         }
 
@@ -25,7 +24,6 @@ export function useDragScroll(ref: RefObject<HTMLDivElement | null>) {
         function onMouseUp() {
             if (!dragging) return;
             dragging = false;
-            el!.style.cursor = "";
         }
 
         el.addEventListener("mousedown", onMouseDown);

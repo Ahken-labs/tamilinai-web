@@ -30,10 +30,10 @@ interface MockProfile {
 }
 
 const MOCK_PROFILES: MockProfile[] = [
-    { id: "1", displayId: "INI 945", gender: "male", location: "Ontario, Canada.", age: 34, height: "163 cm", work: "HR Consultant", religion: "Hindu", elite: "max" },
+    { id: "1", displayId: "INI 945", gender: "male", location: "Ontario, Canada.", age: 34, height: "163 cm", work: "HR Consultant", religion: "Hindu", elite: "pro" },
     { id: "2", displayId: "INI 943", gender: "male", location: "Jaffna, Sri Lanka.", age: 37, height: "148 cm", work: "Engineer", religion: "Hindu", elite: "pro" },
     { id: "3", displayId: "INI 944", gender: "female", location: "Toronto, Canada.", age: 25, height: "154 cm", work: "Not working", religion: "Hindu", elite: "pro" },
-    { id: "4", displayId: "INI 942", gender: "male", location: "Trincomalee, Sri Lanka.", age: 25, height: "154 cm", work: "Not working", religion: "Hindu", elite: null },
+    { id: "4", displayId: "INI 942", gender: "male", location: "Trincomalee, Sri Lanka.", age: 25, height: "154 cm", work: "Not working", religion: "Hindu", elite: "pro" },
     { id: "5", displayId: "INI 946", gender: "female", location: "Kilinochchi, Sri Lanka.", age: 29, height: "157 cm", work: "Not working", religion: "Hindu", elite: "pro" },
     { id: "6", displayId: "INI 947", gender: "male", location: "Oslo, Norway.", age: 25, height: "154 cm", work: "Not working", religion: "Hindu", elite: "pro" },
 ];
@@ -160,7 +160,7 @@ export default function BoostedProfileSection() {
                     style={{ background: "linear-gradient(270deg, #F3F4F6 0%, #F3F4F6 25%, rgba(243,244,246,0.00) 100%)" }}
                 />
 
-                <div ref={scrollRef} className="overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing">
+                <div ref={scrollRef} className="overflow-x-auto no-scrollbar">
                     <div className="flex flex-row gap-3 sm:gap-4 md:gap-5 px-4 w-max">
                         {MOCK_PROFILES.map((profile) => (
                             <AdCard key={profile.id} profile={profile} />

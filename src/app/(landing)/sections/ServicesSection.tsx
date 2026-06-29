@@ -43,6 +43,26 @@ const SERVICES: MockService[] = [
     { id: "15", title: "NSR Wedding Hall",          location: "16 Stanley Rd, Jaffna", rating: 4.1, type: "Wedding venue", image: null, featured: true },
 ];
 
+function ChipScroll() {
+    const ref = useRef<HTMLDivElement>(null);
+    useDragScroll(ref);
+    return (
+        <div className="md:hidden mt-5 w-full overflow-x-auto no-scrollbar" ref={ref}>
+            <div className="flex flex-col gap-3 px-4 w-max">
+                {[CATEGORIES.slice(0, 9), CATEGORIES.slice(9)].map((row, ri) => (
+                    <div key={ri} className="flex flex-row gap-2">
+                        {row.map((cat, i) => (
+                            <div key={i} className="rounded-full bg-[#F0F0F0] px-3 py-1 text-[14px] sm:text-[15px] text-[#222] whitespace-nowrap hover:bg-[#E5E5E5] transition-colors">
+                                {cat}
+                            </div>
+                        ))}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
 function MobileScroll() {
     const scrollRef = useRef<HTMLDivElement>(null);
     useDragScroll(scrollRef);
@@ -71,7 +91,7 @@ function MobileScroll() {
             <div
                 ref={scrollRef}
                 onScroll={handleScroll}
-                className="overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing"
+                className="overflow-x-auto no-scrollbar"
                 style={{ scrollbarWidth: "none" }}
             >
                 <div className="flex flex-row px-4 w-max" style={{ gap: GAP }}>
@@ -175,20 +195,8 @@ export default function ServicesSection() {
                     ))}
                 </div>
 
-                {/* Category chips — below sm: 2 rows horizontal scroll */}
-                <div className="md:hidden mt-5 w-full flex flex-col gap-3">
-                    {[CATEGORIES.slice(0, 9), CATEGORIES.slice(9)].map((row, ri) => (
-                        <div key={ri} className="overflow-x-auto no-scrollbar">
-                            <div className="flex flex-row gap-2 px-4 w-max">
-                                {row.map((cat, i) => (
-                                    <div key={i} className="rounded-full bg-[#F0F0F0] px-3 py-1 text-[14px] sm:text-[15px] text-[#222] whitespace-nowrap hover:bg-[#E5E5E5] transition-colors">
-                                        {cat}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                {/* Category chips — below md: 2 rows scroll together */}
+                <ChipScroll />
 
                 {/* CTA — mobile only */}
                 <div className="md:hidden flex mt-7">
