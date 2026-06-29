@@ -1,10 +1,11 @@
 import { useRef, useEffect } from "react";
 
 interface UseCardCarouselOptions {
-    cardWidth: number;   // px width of one card
-    cardGap: number;     // px gap between cards
-    totalCards: number;  // number of real cards (duplicates handled internally)
-    interval?: number;   // ms between auto-advances (default 3000)
+    cardWidth: number;
+    cardGap: number;
+    totalCards: number;
+    interval?: number;
+    resumeDelay?: number;
 }
 
 export function useCardCarousel({
@@ -12,89 +13,94 @@ export function useCardCarousel({
     cardGap,
     totalCards,
     interval = 3000,
+    resumeDelay = 10000,
 }: UseCardCarouselOptions) {
     const wrapperRef = useRef<HTMLDivElement>(null);
-    const paused = useRef(false);
-    const dragging = useRef(false);
-    const dragStartX = useRef(0);
-    const dragStartScroll = useRef(0);
-    const currentIndex = useRef(0);
-    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     useEffect(() => {
-        const el = wrapperRef.current;
-        if (!el) return;
+        if (!wrapperRef.current) return;
+        const el = wrapperRef.current as HTMLDivElement;
 
-        const CARD_WIDTH = cardWidth + cardGap;
-        const TOTAL = totalCards;
+        const STEP = cardWidth + cardGap;
+        const SET = totalCards * STEP; // width of one full set of cards
 
-        function advance() {
-            if (paused.current || !el) return;
-            currentIndex.current += 1;
-            el.scrollTo({ left: currentIndex.current * CARD_WIDTH, behavior: "smooth" });
+        // Start in the middle set so user can scroll left or right infinitely
+        el.scrollLeft = SET;
 
-            if (currentIndex.current >= TOTAL) {
-                setTimeout(() => {
-                    currentIndex.current = currentIndex.current - TOTAL;
-                    el.scrollTo({ left: currentIndex.current * CARD_WIDTH, behavior: "instant" });
-                }, 500);
+        let autoTimer: ReturnType<typeof setInterval> | null = null;
+        let resumeTimer: ReturnType<typeof setTimeout> | null = null;
+        let dragging = false;
+        let dragStartX = 0;
+        let dragStartScroll = 0;
+
+        function onScroll() {
+            if (el.scrollLeft < SET * 0.5) {
+                el.scrollLeft += SET;
+            } else if (el.scrollLeft >= SET * 1.5) {
+                el.scrollLeft -= SET;
             }
         }
 
-        intervalRef.current = setInterval(advance, interval);
+        function startAuto() {
+            if (autoTimer) clearInterval(autoTimer);
+            autoTimer = setInterval(() => {
+                el.scrollTo({ left: el.scrollLeft + STEP, behavior: "smooth" });
+            }, interval);
+        }
+
+        function stopAndResumeLater() {
+            if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+            if (resumeTimer) clearTimeout(resumeTimer);
+            resumeTimer = setTimeout(() => startAuto(), resumeDelay);
+        }
 
         function onMouseDown(e: MouseEvent) {
-            const node = wrapperRef.current;
-            if (!node) return;
-            dragging.current = true;
-            paused.current = true;
-            dragStartX.current = e.clientX;
-            dragStartScroll.current = node.scrollLeft;
-            node.style.cursor = "grabbing";
+            dragging = true;
+            stopAndResumeLater();
+            dragStartX = e.clientX;
+            dragStartScroll = el.scrollLeft;
             e.preventDefault();
         }
-
         function onMouseMove(e: MouseEvent) {
-            const node = wrapperRef.current;
-            if (!dragging.current || !node) return;
-            node.scrollLeft = dragStartScroll.current - (e.clientX - dragStartX.current);
+            if (!dragging) return;
+            el.scrollLeft = dragStartScroll - (e.clientX - dragStartX);
         }
-
         function onMouseUp() {
-            const node = wrapperRef.current;
-            if (!dragging.current) return;
-            dragging.current = false;
-            paused.current = false;
-            if (node) {
-                node.style.cursor = "";
-                const nearest = Math.round(node.scrollLeft / CARD_WIDTH);
-                currentIndex.current = nearest % TOTAL;
-                node.scrollTo({ left: nearest * CARD_WIDTH, behavior: "smooth" });
-            }
+            if (!dragging) return;
+            dragging = false;
         }
 
-        const pause = () => { if (!dragging.current) paused.current = true; };
-        const resume = () => { if (!dragging.current) paused.current = false; };
+        function onMouseEnter() {
+            if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+        }
+        function onMouseLeave() {
+            if (!dragging) startAuto();
+        }
 
+        startAuto();
+
+        el.addEventListener("scroll", onScroll, { passive: true });
+        el.addEventListener("mouseenter", onMouseEnter);
+        el.addEventListener("mouseleave", onMouseLeave);
         el.addEventListener("mousedown", onMouseDown);
         window.addEventListener("mousemove", onMouseMove);
         window.addEventListener("mouseup", onMouseUp);
-        el.addEventListener("mouseenter", pause);
-        el.addEventListener("mouseleave", resume);
-        el.addEventListener("touchstart", pause, { passive: true });
-        el.addEventListener("touchend", resume);
+        el.addEventListener("touchstart", stopAndResumeLater, { passive: true });
+        el.addEventListener("wheel", stopAndResumeLater, { passive: true });
 
         return () => {
-            if (intervalRef.current) clearInterval(intervalRef.current);
+            if (autoTimer) clearInterval(autoTimer);
+            if (resumeTimer) clearTimeout(resumeTimer);
+            el.removeEventListener("scroll", onScroll);
+            el.removeEventListener("mouseenter", onMouseEnter);
+            el.removeEventListener("mouseleave", onMouseLeave);
             el.removeEventListener("mousedown", onMouseDown);
             window.removeEventListener("mousemove", onMouseMove);
             window.removeEventListener("mouseup", onMouseUp);
-            el.removeEventListener("mouseenter", pause);
-            el.removeEventListener("mouseleave", resume);
-            el.removeEventListener("touchstart", pause);
-            el.removeEventListener("touchend", resume);
+            el.removeEventListener("touchstart", stopAndResumeLater);
+            el.removeEventListener("wheel", stopAndResumeLater);
         };
-    }, [cardWidth, cardGap, totalCards, interval]);
+    }, [cardWidth, cardGap, totalCards, interval, resumeDelay]);
 
     return wrapperRef;
 }

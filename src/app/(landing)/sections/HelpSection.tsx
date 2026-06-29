@@ -38,7 +38,7 @@ export function HelpSection() {
             width={250}
             height={400}
             sizes="(max-width: 768px) 180px, (max-width: 1024px) 220px, 250px"
-            className="relative z-10  w-[180px] h-[288px] md:w-[220px] md:h-[352px] lg:w-[250px] lg:h-[400px] object-contain "
+            className="relative z-10  w-[180px] h-[288px] md:w-[220px] md:h-[352px] lg:w-[250px] lg:h-[400px] object-contain object-bottom"
           />
         </div>
 
