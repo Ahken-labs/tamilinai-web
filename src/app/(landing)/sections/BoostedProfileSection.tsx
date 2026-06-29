@@ -148,7 +148,7 @@ export default function BoostedProfileSection() {
             </div>
 
             {/* Scrollable cards row */}
-            <div className="relative mt-6 sm:mt-7 md:mt-8 lg:mt-10">
+            <div className="relative mt-6 sm:mt-7 md:mt-8 lg:mt-10 mx-auto justify-center flex">
                 {/* Left fog */}
                 <div
                     className="min-[500px]:flex hidden pointer-events-none absolute left-0 top-0 bottom-0 w-10 z-10"
