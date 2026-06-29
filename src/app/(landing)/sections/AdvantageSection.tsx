@@ -62,7 +62,7 @@ export default function AdvantageSection() {
                     {CARDS.map((card) => (
                         <div key={card.titleKey} className="relative flex-1 max-w-[266px] min-w-0 aspect-[266/380] rounded-[24px] overflow-hidden">
                             <Image src={card.image} alt={t(card.titleKey)} fill className="object-cover" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                            <div className="absolute inset-0" />
                             <div className="absolute inset-0 flex flex-col justify-end items-start gap-2 p-4">
                                 <p className="text-white text-[20px] font-semibold leading-[150%]">{t(card.titleKey)}</p>
                                 <p className="text-[#E5E7EB] text-[14px] font-normal leading-[150%]">{t(card.subtextKey)}</p>
@@ -81,7 +81,7 @@ export default function AdvantageSection() {
                         {[...CARDS, ...CARDS].map((card, idx) => (
                             <div key={idx} className="relative w-[266px] h-[380px] shrink-0 rounded-[24px] overflow-hidden ml-4">
                                 <Image src={card.image} alt={t(card.titleKey)} fill className="object-cover" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                                <div className="absolute inset-0" />
                                 <div className="absolute inset-0 flex flex-col justify-end items-start gap-2 p-4">
                                     <p className="text-white text-[20px] font-semibold leading-[150%]">{t(card.titleKey)}</p>
                                     <p className="text-[#E5E7EB] text-[14px] font-normal leading-[150%]">{t(card.subtextKey)}</p>
