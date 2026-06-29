@@ -79,7 +79,7 @@ function MobileScroll() {
                 </div>
             </div>
 
-            <div className="sm:mt-10 mt-9 mx-auto w-fit h-[26px] rounded-full px-3 bg-[#F2F2F2] flex items-center" style={{ gap: 20 }}>
+            <div className="sm:mt-10 mt-9 mx-auto w-fit h-[26px] rounded-full px-3 bg-[#F2F2F2] flex items-center gap-3 max-[500px]:gap-2">
                 {SERVICES.map((_, i) => (
                     <button
                         key={i}
