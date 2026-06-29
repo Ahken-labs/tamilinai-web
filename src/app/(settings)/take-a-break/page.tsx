@@ -51,10 +51,10 @@ export default function BreakPage() {
   const headerVisible = useScrollHide();
 
   const [photoSrc] = useState(() => {
-    if (typeof window === "undefined") return "/images/no_photo.png";
+    if (typeof window === "undefined") return "/images/no_photo.webp";
     return readMeCache()?.gender?.toLowerCase() === "male"
-      ? "/images/no_photo_male.png"
-      : "/images/no_photo.png";
+      ? "/images/no_photo_male.webp"
+      : "/images/no_photo.webp";
   });
 
   const selected = BREAK_OPTIONS[selectedOption];

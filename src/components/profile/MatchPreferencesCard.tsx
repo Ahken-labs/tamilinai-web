@@ -178,8 +178,8 @@ export default function MatchPreferencesCard({
 }: Props) {
   if (isLoading) return <SkeletonCard />;
 
-  const theirPhoto = theirPhotoUrl ?? (theirGender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png");
-  const myPhoto = myPhotoUrl ?? (myGender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png");
+  const theirPhoto = theirPhotoUrl ?? (theirGender === "male" ? "/images/no_photo_male.webp" : "/images/no_photo.webp");
+  const myPhoto = myPhotoUrl ?? (myGender === "male" ? "/images/no_photo_male.webp" : "/images/no_photo.webp");
   const theirPronoun = theirGender === "male" ? "His" : "Her";
 
   // null prefs = no preferences saved yet, show all rows as "Any" (all matched)

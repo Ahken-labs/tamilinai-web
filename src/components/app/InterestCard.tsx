@@ -64,7 +64,7 @@ function PhotoSection({ interest }: { interest: Interest }) {
   const rawPhoto = (!isPrivate && interest.profilePhoto) ? interest.profilePhoto : null;
 
   const photo = getProfilePhotoSrc(rawPhoto, "approved", interest.gender);
-  const myPhoto = interest.myPhoto ?? "/images/no_photo.png";
+  const myPhoto = interest.myPhoto ?? "/images/no_photo.webp";
   const { status } = interest;
 
   if (status === "accepted_by_me" || status === "accepted_by_them") {

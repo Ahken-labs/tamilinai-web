@@ -370,7 +370,7 @@ function UserProfileContent() {
   const photoUnderReview = profile.photoUnderReview ?? false;
   const hasPhoto = !isPrivate && !!pr.photoUrl;
   const noPhotoCase = !pr.photoUrl && !isPrivate && !photoUnderReview;
-  const placeholder = profile.gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png";
+  const placeholder = profile.gender === "male" ? "/images/no_photo_male.webp" : "/images/no_photo.webp";
 
   const photoSrc = hasPhoto ? pr.photoUrl! : placeholder;
   const profileId = profile.id;

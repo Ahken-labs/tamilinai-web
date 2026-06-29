@@ -72,9 +72,9 @@ export default function MatchInterestCard({
     const isMale = gender === "male";
     const she = isMale ? "He" : "She";
     const her = isMale ? "his" : "her";
-    const theirPhoto = profilePhoto ?? (isMale ? "/images/no_photo_male.png" : "/images/no_photo.png");
+    const theirPhoto = profilePhoto ?? (isMale ? "/images/no_photo_male.webp" : "/images/no_photo.webp");
     const me = readMeCache();
-    const myPhoto = me?.profile?.photoUrl ?? (me?.gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png");
+    const myPhoto = me?.profile?.photoUrl ?? (me?.gender === "male" ? "/images/no_photo_male.webp" : "/images/no_photo.webp");
     const router = useRouter();
     const queryClient = useQueryClient();
     const [pending, setPending] = useState(false);

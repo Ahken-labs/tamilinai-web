@@ -139,7 +139,7 @@ function NotifAvatar({ item }: { item: AppNotification }) {
   }
 
   if (item.type === "photo_rejected") {
-    const placeholder = me?.gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png";
+    const placeholder = me?.gender === "male" ? "/images/no_photo_male.webp" : "/images/no_photo.webp";
     return (
       <ProtectedImage
         src={placeholder}
@@ -154,7 +154,7 @@ function NotifAvatar({ item }: { item: AppNotification }) {
 
   if (item.fromUser && item.type !== "profile_completion_request") {
     const photoSrc = item.fromUser.photoUrl
-      ?? (item.fromUser.gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png");
+      ?? (item.fromUser.gender === "male" ? "/images/no_photo_male.webp" : "/images/no_photo.webp");
     return (
       <ProtectedImage
         src={photoSrc}

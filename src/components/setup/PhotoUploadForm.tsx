@@ -88,7 +88,7 @@
 //   const fileInputRef = useRef<HTMLInputElement>(null);
 
 //   const gender = typeof window !== "undefined" ? (sessionStorage.getItem("inai_setup_gender") ?? "female") : "female";
-//   const placeholderSrc = gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png";
+//   const placeholderSrc = gender === "male" ? "/images/no_photo_male.webp" : "/images/no_photo.webp";
 
 //   const [photoFile, setPhotoFile] = useState<File | null>(null);
 //   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
@@ -462,7 +462,7 @@ export default function PhotoUploadForm() {
   useEffect(() => { router.prefetch("/matches"); }, [router]);
 
   const gender = typeof window !== "undefined" ? (sessionStorage.getItem("inai_setup_gender") ?? "female") : "female";
-  const placeholderSrc = gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png";
+  const placeholderSrc = gender === "male" ? "/images/no_photo_male.webp" : "/images/no_photo.webp";
 
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);

@@ -73,7 +73,7 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
   const tags = getTags(profile);
   const viewerIsElite = readMeCache()?.isElite ?? false;
 
-  const placeholder = profile.gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png";
+  const placeholder = profile.gender === "male" ? "/images/no_photo_male.webp" : "/images/no_photo.webp";
   const photoSrc = profile.isPrivate || !profile.photo ? placeholder : profile.photo;
 
   async function handleShortlist() {

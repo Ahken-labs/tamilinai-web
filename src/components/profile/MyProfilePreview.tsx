@@ -209,7 +209,7 @@ function buildSections(me: Me): SectionData[] {
 export default function MyProfilePreview({ me, photoSrc }: { me: Me; photoSrc: string }) {
   const pr = me.profile;
   const age = calculateAge(pr.dateOfBirth);
-  const placeholder = me.gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png";
+  const placeholder = me.gender === "male" ? "/images/no_photo_male.webp" : "/images/no_photo.webp";
   const displaySrc = photoSrc || placeholder;
   const sections = buildSections(me).filter((s) => !s.hidden);
 
