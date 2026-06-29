@@ -14,6 +14,7 @@ import {
 import Button from "@/src/components/common-layout/Button";
 import RegisterForm from "@/src/components/auth/RegisterForm";
 import { useState, useRef } from "react";
+import { useDragScroll } from "@/src/hooks/useDragScroll";
 import { ChevronIcon } from "@/src/assets/Icons";
 
 interface MockProfile {
@@ -48,7 +49,7 @@ function AdCard({ profile }: { profile: MockProfile }) {
     const photo = profile.gender === "female" ? "/images/no_photo.webp" : "/images/no_photo_male.webp";
 
     return (
-        <div className="shrink-0 w-[85vw] min-w-[264px] max-w-[325px] rounded-[24px] border border-[#F0F0F0] bg-white px-4 sm:px-5 md:px-6 py-10 flex flex-col justify-center items-center">
+        <div className="shrink-0 w-[85vw] max-[500px]:max-w-[264px] min-w-[264px] max-w-[325px] rounded-[24px] border border-[#F0F0F0] bg-white px-4 sm:px-5 md:px-6 py-10 flex flex-col justify-center items-center">
             {/* Photo + ID + tag row */}
             <div className="flex items-center w-full gap-3 sm:gap-3.5 md:gap-4">
                 <Image
@@ -97,7 +98,7 @@ function AdCard({ profile }: { profile: MockProfile }) {
 
 function ViewAllCard({ label }: { label: string }) {
     return (
-        <Link href="/login" className="shrink-0 w-[85vw] min-w-[264px] max-w-[325px] rounded-[24px] border border-[#F0F0F0] bg-white px-4 sm:px-5 md:px-6 py-10 flex flex-col items-center justify-center no-underline">
+        <Link href="/login" className="shrink-0 w-[85vw] max-[500px]:max-w-[264px] min-w-[264px] max-w-[325px] rounded-[24px] border border-[#F0F0F0] bg-white px-4 sm:px-5 md:px-6 py-10 flex flex-col items-center justify-center no-underline">
             <div className="flex items-center gap-1">
                 <span className="text-[#222] font-poppins text-[16px] font-medium leading-[150%]">{label}</span>
                 <ArrowRight className="w-4 h-4 text-[#222]" />
@@ -110,6 +111,7 @@ export default function BoostedProfileSection() {
     const { t } = useLang();
     const [openForm, setOpenForm] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
+    useDragScroll(scrollRef);
 
     const CARD_STEP = 345; // card max-width + gap
 
@@ -158,7 +160,7 @@ export default function BoostedProfileSection() {
                     style={{ background: "linear-gradient(270deg, #F3F4F6 0%, #F3F4F6 25%, rgba(243,244,246,0.00) 100%)" }}
                 />
 
-                <div ref={scrollRef} className="overflow-x-auto no-scrollbar">
+                <div ref={scrollRef} className="overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing">
                     <div className="flex flex-row gap-3 sm:gap-4 md:gap-5 px-4 w-max">
                         {MOCK_PROFILES.map((profile) => (
                             <AdCard key={profile.id} profile={profile} />

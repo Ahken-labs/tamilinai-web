@@ -4,6 +4,7 @@ import { useLang } from "@/src/context/LangContext";
 import Button from "@/src/components/common-layout/Button";
 import RegisterForm from "@/src/components/auth/RegisterForm";
 import { useState, useRef } from "react";
+import { useDragScroll } from "@/src/hooks/useDragScroll";
 import Image from "next/image";
 
 const CATEGORIES = [
@@ -44,6 +45,7 @@ const SERVICES: MockService[] = [
 
 function MobileScroll() {
     const scrollRef = useRef<HTMLDivElement>(null);
+    useDragScroll(scrollRef);
     const [currentIdx, setCurrentIdx] = useState(0);
     const CARD_WIDTH = 192;
     const GAP = 16;
@@ -69,7 +71,7 @@ function MobileScroll() {
             <div
                 ref={scrollRef}
                 onScroll={handleScroll}
-                className="overflow-x-auto no-scrollbar"
+                className="overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing"
                 style={{ scrollbarWidth: "none" }}
             >
                 <div className="flex flex-row px-4 w-max" style={{ gap: GAP }}>
