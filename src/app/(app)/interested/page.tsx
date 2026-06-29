@@ -31,7 +31,7 @@ function InterestedContent() {
   });
   const queryClient = useQueryClient();
   const me = readMeCache();
-  const myPhoto = me?.profile?.photoUrl ?? (me?.gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png");
+  const myPhoto = me?.profile?.photoUrl ?? (me?.gender === "male" ? "/images/no_photo_male.webp" : "/images/no_photo.webp");
 
 
   const { data: sentRaw, isLoading: sentLoading, isFetching: sentFetching } = useQuery({

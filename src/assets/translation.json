@@ -211,7 +211,13 @@
         "Advantage_sub3": "Our support team is available 7 days a week to assist vendors with their profiles and help families navigate our comprehensive resources.",
         "Advantage_title4": "Seamless planning",
         "Advantage_sub4": "An intuitive, user-friendly interface designed to help you discover premium venues, connect with top-tier professionals, and organize effortlessly.",
-        "Advantage_cta": "Register with Inai"
+        "Advantage_cta": "Register with Inai",
+        "Boosted_heading": "Boosted top ads of the month",
+        "Boosted_viewAll": "View all",
+        "Services_eyebrow": "Boosted ads",
+        "Services_heading": "Discover professionals for your wedding",
+        "Services_cta": "See all services",
+        "Join_now_to_see_all":"Join now to see all"
     },
     "ta": {
         "Already_a_member": "ஏற்கனவே உறுப்பினரா?",
@@ -426,6 +432,12 @@
         "Advantage_sub3": "வாரத்தில் 7 நாட்களும் வழங்குநர்களுக்கும் குடும்பங்களுக்கும் உதவ எங்கள் குழு தயாராக உள்ளது.",
         "Advantage_title4": "தடையற்ற திட்டமிடல்",
         "Advantage_sub4": "சிறந்த இடங்களை கண்டுபிடிக்கவும் தொழில்முறை நிபுணர்களுடன் இணைக்கவும் உதவும் எளிமையான இடைமுகம்.",
-        "Advantage_cta": "இணையுடன் பதிவு செய்யுங்கள்"
+        "Advantage_cta": "இணையுடன் பதிவு செய்யுங்கள்",
+        "Boosted_heading": "மாத சிறந்த விளம்பரங்கள்",
+        "Boosted_viewAll": "அனைத்தையும் காண்க",
+        "Services_eyebrow": "சிறப்பு விளம்பரங்கள்",
+        "Services_heading": "உங்கள் திருமணத்திற்கான நிபுணர்களை கண்டுபிடியுங்கள்",
+        "Services_cta": "அனைத்து சேவைகளையும் காண",
+        "Join_now_to_see_all":"அனைத்தையும் காண இப்போதே இணையுங்கள்"
     }
 }

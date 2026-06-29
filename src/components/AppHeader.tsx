@@ -191,7 +191,7 @@ export default function AppHeader() {
   const displayName = me?.name ?? "";
   const displayId = me?.displayId ?? "";
   const photo = me?.profile?.photoUrl
-    ?? (me?.gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png");
+    ?? (me?.gender === "male" ? "/images/no_photo_male.webp" : "/images/no_photo.webp");
 
   // Lock body scroll when mobile drawer is open
   useEffect(() => {

@@ -13,5 +13,5 @@ export function getProfilePhotoSrc(
   if (photoUrl && (isOwnProfile || photoStatus === "approved")) {
     return photoUrl;
   }
-  return gender === "male" ? "/images/no_photo_male.png" : "/images/no_photo.png";
+  return gender === "male" ? "/images/no_photo_male.webp" : "/images/no_photo.webp";
 }

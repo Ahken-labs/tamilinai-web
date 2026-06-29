@@ -7,16 +7,20 @@ import AboutSection from "./sections/AboutSection";
 import BusinessSection from "./sections/BusinessSection";
 import CardsSection from "./sections/CardsSection";
 import AdvantageSection from "./sections/AdvantageSection";
+import BoostedProfileSection from "./sections/BoostedProfileSection";
+import ServicesSection from "./sections/ServicesSection";
 
 export default function HomePage() {
   return (
-    <main>
+    <main className="overflow-x-hidden">
       <section id="hero">
         <HeroSection />
       </section>
+      <ServicesSection />
       <BusinessSection />
       <CardsSection />
       <AdvantageSection />
+      <BoostedProfileSection />
 
       <WhyInaiSection />
       <DiasporaSection />

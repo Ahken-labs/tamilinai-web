@@ -8,6 +8,8 @@ import SectionScroller from "../SectionScroller";
 import BusinessSection from "../sections/BusinessSection";
 import CardsSection from "../sections/CardsSection";
 import AdvantageSection from "../sections/AdvantageSection";
+import BoostedProfileSection from "../sections/BoostedProfileSection";
+import ServicesSection from "../sections/ServicesSection";
 
 export const metadata = {
   title: "About Inai - Tamil Matrimony Sri Lanka",
@@ -17,14 +19,16 @@ export const metadata = {
 
 export default function AboutPage() {
   return (
-    <main>
+    <main className="overflow-x-hidden">
       <SectionScroller sectionId="about" />
       <section id="hero">
         <HeroSection />
       </section>
+      <ServicesSection />
       <BusinessSection />
       <CardsSection />
       <AdvantageSection />
+      <BoostedProfileSection />
 
       <WhyInaiSection />
       <DiasporaSection />
