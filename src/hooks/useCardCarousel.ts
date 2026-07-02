@@ -12,8 +12,8 @@ export function useCardCarousel({
     cardWidth,
     cardGap,
     totalCards,
-    interval = 3000,
-    resumeDelay = 10000,
+    interval = 2000,
+    resumeDelay = 2000,
 }: UseCardCarouselOptions) {
     const wrapperRef = useRef<HTMLDivElement>(null);
 
