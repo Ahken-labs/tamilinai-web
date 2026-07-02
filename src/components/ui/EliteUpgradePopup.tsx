@@ -151,11 +151,6 @@ export default function EliteUpgradePopup({ onClose }: Props) {
                 >
                   faster with
                 </p>
-                {/* Elite badge */}
-                {/* <div className="inline-flex items-center gap-1 rounded-[40px] bg-[#FFDED3] px-2 max-[500px]:py-0 py-0.5">
-                  <EliteCrownIcon className="w-5 h-5 shrink-0" />
-                  <span className="font-poppins max-[500px]:text-[14px] text-[16px] sm:text-[18px] md:text-[20px] text-[#A97216]">Elite pro</span>
-                </div> */}
                 <EliteProTag />
               </div>
             </div>
@@ -206,7 +201,7 @@ export default function EliteUpgradePopup({ onClose }: Props) {
           </button>
 
           {/* Heading */}
-          <div className="max-w-[224px]">
+          <div className="max-w-[250px]">
             <p
               className="font-24 font-bold leading-[130%]"
               style={{
@@ -231,11 +226,6 @@ export default function EliteUpgradePopup({ onClose }: Props) {
               >
                 faster with
               </p>
-              {/* Elite badge */}
-              {/* <div className="inline-flex items-center gap-1 rounded-[40px] bg-[#FFDED3] px-2 py-0.5">
-                <EliteCrownIcon className="w-4 md:w-5 h-4 md:h-5 shrink-0" />
-                <span className="font-poppins text-[16px] sm:text-[18px] md:text-[20px] text-[#A97216]">Elite</span>
-              </div> */}
               <EliteProTag/>
             </div>
           </div>

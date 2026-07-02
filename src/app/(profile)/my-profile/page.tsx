@@ -97,8 +97,8 @@ export default function MyProfilePage() {
   // Photo crop state
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [cropSrc, setCropSrc] = useState<string | null>(null);
-  const [pendingPhoto, setPendingPhoto] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
   // About Me draft (sessionStorage-backed)
   const [aboutMe, setAboutMe] = useState("");
@@ -164,10 +164,10 @@ export default function MyProfilePage() {
   const displayId = me?.displayId ?? "";
   const photoStatus = me?.profile?.photoStatus ?? null;
   const photoSrc = previewUrl ?? getProfilePhotoSrc(me?.profile?.photoUrl, photoStatus, me?.gender, true);
-  const hasPhoto = !!(me?.profile?.photoUrl || pendingPhoto);
+  const hasPhoto = !!(me?.profile?.photoUrl || previewUrl);
   const isNew = me?.createdAt ? isAccountNew(me.createdAt) : false;
 
-  const hasPendingChanges = pendingPhoto !== null || aboutMeDirty;
+  const hasPendingChanges = aboutMeDirty;
 
   // File picker handler
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -178,11 +178,20 @@ export default function MyProfilePage() {
     e.target.value = "";
   };
 
-  // After crop confirmed
-  const handleCropConfirm = useCallback((file: File, url: string) => {
-    setPendingPhoto(file);
-    setPreviewUrl(url);
+  // After crop confirmed — upload immediately
+  const handleCropConfirm = useCallback(async (file: File, url: string) => {
     setCropSrc(null);
+    setPreviewUrl(url);
+    setUploadingPhoto(true);
+    try {
+      await uploadPhoto(file);
+      invalidateMeCache();
+      getMe().then((data) => { writeMeCache(data); setMe(data); }).catch(() => {});
+    } catch {
+      setPreviewUrl(null);
+    } finally {
+      setUploadingPhoto(false);
+    }
   }, []);
 
   // About Me change
@@ -225,10 +234,6 @@ export default function MyProfilePage() {
     try {
       const saves: Promise<unknown>[] = [];
       const bp = me?.profile;
-
-      if (pendingPhoto) {
-        saves.push(uploadPhoto(pendingPhoto));
-      }
 
       // ── Personal: aboutMe + religion + caste + country + city + citizenship ──
       const personalPayload: PersonalDetailsPayload = {};
@@ -360,7 +365,6 @@ export default function MyProfilePage() {
 
       // Clear all drafts
       clearAllDrafts();
-      setPendingPhoto(null);
       setAboutMeDirty(false);
 
       // Re-fetch and notify AppHeader to update score
@@ -580,8 +584,9 @@ export default function MyProfilePage() {
                 {activeTab !== "preview_my_profile" && (
                   <div className="absolute left-1/2 -translate-x-1/2 z-10 bottom-0 mb-1.5">
                     <Button
-                      text={hasPhoto ? "Edit" : "Upload"}
-                      onPress={() => fileInputRef.current?.click()}
+                      text={uploadingPhoto ? "Uploading…" : hasPhoto ? "Edit" : "Upload"}
+                      onPress={() => { if (!uploadingPhoto) fileInputRef.current?.click(); }}
+                      disabled={uploadingPhoto}
                       className="max-[700px]:py-2 px-10 py-3 !font-medium text"
                       iconLeft={<CameraIcon className="w-4 md:w-4.5 h-4 md:h-4.5" />}
                     />
@@ -631,7 +636,7 @@ export default function MyProfilePage() {
               </div>
 
               {/* ── Desktop header >500px ── */}
-              <h1 className="max-[500px]:hidden font-24 font-semibold text-dark">My profile</h1>
+              <h1 className="max-[500px]:hidden fonts-24 font-semibold text-dark">My profile</h1>
 
               {/* Name + badge + tag row */}
               <div className="max-[500px]:hidden mt-4 md:mt-6 flex items-center justify-between gap-4 flex-wrap">
