@@ -1,14 +1,15 @@
 import "./globals.css";
 import { Poppins, Noto_Sans_Tamil, Arima } from "next/font/google";
 import { LangProvider } from "../context/LangContext";
-
-const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-poppins", display: "swap" });
-const notoSansTamil = Noto_Sans_Tamil({ subsets: ["tamil"], weight: ["400", "500", "700"], variable: "--font-tamil", display: "swap" });
-const arima = Arima({ subsets: ["tamil", "latin"], weight: ["700"], variable: "--font-arima", display: "swap" });
 import QueryProvider from "../providers/QueryProvider";
 import SeoSchema from "./SeoSchema";
 import NoContextMenu from "../components/NoContextMenu";
 import { ToastProvider } from "../components/ui/Toast";
+import SessionRestorer from "../components/SessionRestorer";
+
+const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-poppins", display: "swap" });
+const notoSansTamil = Noto_Sans_Tamil({ subsets: ["tamil"], weight: ["400", "500", "700"], variable: "--font-tamil", display: "swap" });
+const arima = Arima({ subsets: ["tamil", "latin"], weight: ["700"], variable: "--font-arima", display: "swap" });
 
 export const viewport = {
   width: "device-width",
@@ -18,7 +19,7 @@ export const viewport = {
 export const metadata = {
   metadataBase: new URL('https://inai.lk'),
   title: {
-    default: 'Inai',
+    default: 'Inai - Tamil wedding directory',
     template: '%s | Inai',
   },
   description:
@@ -32,11 +33,11 @@ export const metadata = {
     canonical: 'https://inai.lk',
   },
   openGraph: {
-    title: 'Inai',
+    title: 'Inai - Tamil wedding directory',
     description:
       'Inai Tamil Matrimony is an online matchmaking platform based in Sri Lanka, helping Tamil brides and grooms find life partners locally and across the global diaspora. We connect Sri Lankan Tamils with matches in Canada, the UK, Australia, Germany, Singapore, Malaysia, and India. Members search verified profiles by religion, caste, education, profession, and city, serving Hindu, Catholic, Christian, and Muslim Tamil communities. The platform offers secure messaging, video verification, and membership options for matrimonial search. Parents, siblings, and individuals can create and manage profiles for family members. Inai is a culturally rooted matrimonial service for Tamil families in Sri Lanka and worldwide.',
     url: 'https://inai.lk',
-    siteName: 'Inai',
+    siteName: 'Inai - Tamil wedding directory',
     type: 'website',
     images: [
       {
@@ -49,7 +50,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Inai',
+    title: 'Inai - Tamil wedding directory',
     description: 'Find your life partner on Inai — Tamil matrimony platform for Sri Lanka and the global diaspora.',
     images: ['/og-image.png'],
   },
@@ -69,6 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preload" href="/images/elite_popup.webp" as="image" type="image/webp" />
       </head>
       <body>
+        <SessionRestorer />
         <NoContextMenu />
         <SeoSchema/>
         <QueryProvider>

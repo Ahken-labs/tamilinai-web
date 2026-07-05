@@ -10,6 +10,11 @@ import AdvantageSection from "./sections/AdvantageSection";
 import BoostedProfileSection from "./sections/BoostedProfileSection";
 // import ServicesSection from "./sections/ServicesSection";
 
+export const metadata = {
+  title: 'Inai - Tamil wedding directory',
+  alternates: { canonical: 'https://inai.lk' },
+};
+
 export default function HomePage() {
   return (
     <main className="overflow-x-hidden">
