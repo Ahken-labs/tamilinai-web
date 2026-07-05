@@ -34,10 +34,15 @@ export function useAuth(): UseAuthReturn {
   }, []);
 
   const logout = useCallback(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL ?? ''}/api/auth/logout`, {
+      method: 'POST',
+      credentials: 'include',
+    }).catch(() => {});
     localStorage.removeItem('tamilinai_access_token');
     localStorage.removeItem('tamilinai_user');
+    sessionStorage.clear();
     setUser(null);
-    router.push('/login');
+    router.push('/');
   }, [router]);
 
   return { user, isAuthenticated: !!user, saveSession, logout };

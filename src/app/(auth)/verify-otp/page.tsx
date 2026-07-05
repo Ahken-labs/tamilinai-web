@@ -1,6 +1,8 @@
 import OtpForm from "../../../components/auth/OtpForm";
 import FlowGuard from "../../../components/guards/FlowGuard";
 
+export const metadata = { robots: { index: false, follow: false } };
+
 export default async function Page({
   searchParams,
 }: {
