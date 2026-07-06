@@ -45,7 +45,7 @@ export default function HeroOverlay() {
                                     <div className="lg:hidden">
                                         <Button
                                             className="mt-2 w-full !md:text-[16px] !text-[15px]"
-                                            text={t("Find_your_matches")}
+                                            text={t("Start_my_journey")}
                                             onPress={() => setOpenForm(true)}
                                         />
                                     </div>
