@@ -7,7 +7,7 @@
         "Inai_lk_Sri_Lankan_Tamil_matrimony": "Inai.lk - For your A-Z wedding needs.",
         "hero_section_parah": "The ultimate digital directory built for Sri Lankan Tamils worldwide. From finding top-tier venues and photographers to discovering meaningful connections - plan your perfect union here.",
         "Find_your_matches": "Find your matches",
-        "Start_my_journey":"Start my journey",
+        "Start_my_journey": "Start my journey",
         "Create_your_free_profile": "Create your ad profile",
         "Create_my_free_profile": "Create my free profile",
         "This_profile_is_for": "This profile is for",
@@ -218,7 +218,17 @@
         "Services_eyebrow": "Boosted ads",
         "Services_heading": "Discover professionals for your wedding",
         "Services_cta": "See all services",
-        "Join_now_to_see_all":"Join now to see all"
+        "Join_now_to_see_all": "Join now to see all",
+        "Profile_under_review": "Profile under review",
+        "Profile_under_review_desc": "This business profile is currently being reviewed by our team. It will be visible once approved.",
+        "See_more": "See more",
+        "See_less": "See less",
+        "View_details": "View details",
+        "Location": "Location",
+        "Service_areas": "Service areas",
+        "Island_wide": "Island-wide",
+        "Rs_total": "total",
+        "Starting_price": "Starting price"
     },
     "ta": {
         "Already_a_member": "ஏற்கனவே உறுப்பினரா?",
@@ -228,7 +238,7 @@
         "Inai_lk_Sri_Lankan_Tamil_matrimony": "இணை.lk - உங்கள் திருமணத்திற்கான அனைத்துத் தேவைகளுக்கும்.",
         "hero_section_parah": "உலகெங்கிலும் உள்ள இலங்கைத் தமிழர்களுக்காக உருவாக்கப்பட்ட மிகச்சிறந்த டிஜிட்டல் வழிகாட்டி. தலைசிறந்த நிகழ்விடங்களையும் புகைப்படக் கலைஞர்களையும் கண்டறிவது முதல் அர்த்தமுள்ள உறவுகளை உருவாக்குவது வரை - உங்கள் கச்சிதமான திருமணத்தை இங்கே திட்டமிடுங்கள்.",
         "Find_your_matches": "உங்கள் பொருத்தங்களைக் கண்டறியவும்",
-         "Start_my_journey":"பயணத்தைத் தொடங்க",
+        "Start_my_journey": "பயணத்தைத் தொடங்க",
         "Create_your_free_profile": "உங்கள் விளம்பர விவரக்குறிப்பை உருவாக்கவும்",
         "Create_my_free_profile": "சுயவிவரத்தை உருவாக்கு",
         "This_profile_is_for": "சுயவிவரம் யாருக்காக",
@@ -440,6 +450,16 @@
         "Services_eyebrow": "சிறப்பு விளம்பரங்கள்",
         "Services_heading": "உங்கள் திருமணத்திற்கான நிபுணர்களை கண்டுபிடியுங்கள்",
         "Services_cta": "அனைத்து சேவைகளையும் காண",
-        "Join_now_to_see_all":"அனைத்தையும் காண இப்போதே இணையுங்கள்"
+        "Join_now_to_see_all": "அனைத்தையும் காண இப்போதே இணையுங்கள்",
+        "Profile_under_review": "சுயவிவரம் மதிப்பாய்வில் உள்ளது",
+        "Profile_under_review_desc": "இந்த வணிக சுயவிவரம் தற்போது எங்கள் குழுவால் மதிப்பாய்வு செய்யப்படுகிறது. ஒப்புதல் பெற்ற பிறகு தெரியும்.",
+        "See_more": "மேலும் காண்க",
+        "See_less": "குறைவாகக் காண்க",
+        "View_details": "விவரங்களைக் காண்க",
+        "Location": "இருப்பிடம்",
+        "Service_areas": "சேவை பகுதிகள்",
+        "Island_wide": "தீவு முழுவதும்",
+        "Rs_total": "மொத்தம்",
+        "Starting_price": "தொடக்க விலை"
     }
 }
