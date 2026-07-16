@@ -228,7 +228,15 @@
         "Service_areas": "Service areas",
         "Island_wide": "Island-wide",
         "Rs_total": "total",
-        "Starting_price": "Starting price"
+        "Starting_price": "Starting price",
+        "Reviews": "Reviews",
+        "Add_a_review": "Add a review",
+        "See_all_reviews": "See all reviews",
+        "Post": "Post",
+        "Review_placeholder": "What did you love about their service? Share details to help other couples plan their big day!",
+        "Sign_in_to_review": "Share your experience",
+        "Sign_in_to_review_sub": "Sign in quickly to post your review.",
+        "Sign_in_with_Google": "Sign in with Google"
     },
     "ta": {
         "Already_a_member": "ஏற்கனவே உறுப்பினரா?",
@@ -460,6 +468,14 @@
         "Service_areas": "சேவை பகுதிகள்",
         "Island_wide": "தீவு முழுவதும்",
         "Rs_total": "மொத்தம்",
-        "Starting_price": "தொடக்க விலை"
+        "Starting_price": "தொடக்க விலை",
+        "Reviews": "மதிப்புரைகள்",
+        "Add_a_review": "மதிப்புரை சேர்க்க",
+        "See_all_reviews": "அனைத்து மதிப்புரைகளையும் காண்க",
+        "Post": "பதிவிடு",
+        "Review_placeholder": "அவர்களின் சேவையில் உங்களுக்கு என்ன பிடித்தது? மற்ற ஜோடிகள் திட்டமிட உதவும் விவரங்களை பகிரவும்!",
+        "Sign_in_to_review": "உங்கள் அனுபவத்தை பகிரவும்",
+        "Sign_in_to_review_sub": "உங்கள் மதிப்புரையை பதிவிட விரைவாக உள்நுழைக.",
+        "Sign_in_with_Google": "Google மூலம் உள்நுழை"
     }
 }

@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: { params: Promise<{ username:
   const data = await getBusiness(username);
   if (!data || "pending" in data) return {};
   return {
-    title: `${data.businessName} — ${data.category} on Inai`,
+    title: `${data.businessName} - ${data.category} on Inai`,
     description: data.bio ?? `${data.businessName} offers ${data.category} services in ${data.district}, Sri Lanka.`,
   };
 }

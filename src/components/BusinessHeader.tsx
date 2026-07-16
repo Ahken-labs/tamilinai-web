@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useLang } from "../context/LangContext";
 import { BackChevronIcon, ChevronIcon, Icon, ShareIcon, TamilLanguageIcon } from "../assets/Icons";
 import Link from "next/link";
+import ShareModal from "./ui/ShareModal";
 
 const LANGUAGES = [
   { label: "English", value: "en" as const },
@@ -12,23 +13,15 @@ const LANGUAGES = [
 ];
 
 export default function BusinessHeader() {
-  const { lang, setLang, t } = useLang();
+  const { lang, setLang } = useLang();
   const router = useRouter();
 
   const [desktopOpen, setDesktopOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
 
   function handleShare() {
-    const url = typeof window !== "undefined" ? window.location.href : "";
-    if (navigator.share) {
-      navigator.share({ url }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(url).then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      });
-    }
+    setShareOpen(true);
   }
 
   const desktopRef = useRef<HTMLDivElement>(null);
@@ -50,6 +43,7 @@ export default function BusinessHeader() {
 
 
   return (
+    <>
     <header className="sticky top-0 z-50 w-full bg-white/60 backdrop-blur-sm">
       <div className="mx-auto flex h-[68px] lg:h-[76px] max-w-[1920px] items-center justify-between px-4 lg:px-10 xl:px-[120px]">
         {/* Logo */}
@@ -78,7 +72,7 @@ export default function BusinessHeader() {
             className="h-10 w-10 flex shrink-0 p-0 cursor-pointer select-none items-center justify-center"
           >
             <div className="rounded-full p-2 bg-[#F0F0F0]">
-              <ShareIcon className="w-6 h-6" stroke={copied ? "#B31B38" : "#525252"} />
+              <ShareIcon className="w-6 h-6" stroke="#525252" />
             </div>
           </button>
           {/* Language selector */}
@@ -112,7 +106,7 @@ export default function BusinessHeader() {
             className="h-10 w-10 flex shrink-0 max-[500px]:p-0.5 p-0 cursor-pointer select-none items-center justify-center"
           >
             <div className="rounded-full max-[500px]:p-1.5 p-2 bg-[#F0F0F0]">
-              <ShareIcon className="w-6 h-6" stroke={copied ? "#B31B38" : "#525252"} />
+              <ShareIcon className="w-6 h-6" stroke="#525252" />
             </div>
           </button>
           <div ref={mobileRef} className="relative">
@@ -137,6 +131,14 @@ export default function BusinessHeader() {
         </div>
       </div>
     </header>
+    {shareOpen && (
+      <ShareModal
+        url={typeof window !== "undefined" ? window.location.href : ""}
+        title={typeof document !== "undefined" ? document.title : "Check this out on Inai"}
+        onClose={() => setShareOpen(false)}
+      />
+    )}
+  </>
   );
 }
 
@@ -163,7 +165,7 @@ function LanguageDropdown({ open, lang, setLang, close, }: {
   );
 }
 
-function BusinessLoginButton({ className = "" }: { className?: string }) {
+export function BusinessLoginButton({ className = "" }: { className?: string }) {
   return (
     <Link
       href="https://business.inai.lk/login"
@@ -178,7 +180,7 @@ function BusinessLoginButton({ className = "" }: { className?: string }) {
   );
 }
 
-function LoginButton({ className = "" }: { className?: string }) {
+export function LoginButton({ className = "" }: { className?: string }) {
   const { t } = useLang();
   const router = useRouter();
 

@@ -18,6 +18,8 @@ import {
   QualificationIcon,
 } from "@/src/assets/Icons";
 import ServiceModal from "./ServiceModal";
+import BusinessReviewSection from "./BusinessReviewSection";
+import Button from "@/src/components/common-layout/Button";
 
 function CareerIcon({ className }: { className?: string }) {
   return (
@@ -57,7 +59,7 @@ function MobileScroll({
   }
 
   return (
-    <div className="relative mx-auto">
+    <div className="max-[500px]:py-6 py-7 sm:py-8 md:py-9 lg:py-10 relative mx-auto">
       <button
         type="button"
         onClick={() => scrollByCard(-1)}
@@ -71,7 +73,7 @@ function MobileScroll({
           {allPhotos.map((photo, i) => (
             <div
               key={i}
-              className="relative min-w-[200px] max-w-[200px] min-[500px]:min-w-[248px] min-[500px]:max-w-[248px] w-full aspect-square overflow-hidden rounded-[20.645px] bg-[#D9D9D9]"
+              className="relative w-[clamp(200px,26vw,248px)] aspect-square overflow-hidden rounded-[20.645px] bg-[#D9D9D9]"
             >
               <Image src={photo.url} alt={photo.service.title} fill className="object-cover" loading="lazy" />
               <button
@@ -129,14 +131,14 @@ function ServiceListItem({
       onClick={() => onViewDetails(service)}
       className="flex max-w-[640px] mx-auto w-full items-center max-[500px]:gap-3 gap-5 max-[500px]:rounded-[16px] rounded-[32px] max-[500px]:p-2 p-4 shadow-[0_0_8px_0_rgba(0,0,0,0.12)] cursor-pointer text-left"
     >
-      <div className="relative max-[500px]:h-20 h-39 max-[500px]:w-20 w-39 shrink-0 overflow-hidden max-[500px]:rounded-[12px] rounded-[20px] bg-[#D9D9D9]">
+      <div className="relative h-[clamp(80px,20vw,156px)] w-[clamp(80px,20vw,156px)] shrink-0 overflow-hidden max-[500px]:rounded-[12px] rounded-[20px] bg-[#D9D9D9]">
         {cover && <Image src={cover} alt={service.title} fill className="object-cover" loading="lazy" />}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="leading-[150%] truncate font-poppins max-[500px]:text-[14px] text-[20px] font-semibold text-[#222222]">{service.title}</p>
-        <p className="leading-[135%] max-[500px]:mt-0.5 mt-1 max-[500px]:line-clamp-2 line-clamp-3 font-poppins max-[500px]:text-[12px] text-[16px] text-[#767676]">{service.description}</p>
+        <p className="leading-[150%] truncate font-poppins max-[500px]:text-[14px] text-[16px] sm:text-[18px] md:text-[20px] font-semibold text-[#222222]">{service.title}</p>
+        <p className="leading-[135%] max-[500px]:mt-0.5 mt-1 max-[500px]:line-clamp-2 line-clamp-3 font-poppins max-[500px]:text-[12px] text-[14px] sm:text-[16px] text-[#767676]">{service.description}</p>
         <div className="max-[500px]:mt-1 mt-4 inline-flex items-center py-[2px] pl-2 pr-1.5 bg-[#F2F2F2] rounded-full gap-1">
-          <span className="font-poppins max-[500px]:text-[12px] text-[16px] leading-[150%] text-[#B31B38]">{t("View_details")}</span>
+          <span className="font-poppins max-[500px]:text-[12px] text-[14px] sm:text-[16px] leading-[150%] text-[#B31B38]">{t("View_details")}</span>
           <BackChevronIcon className="max-[500px]:w-3 w-4 max-[500px]:h-3 h-4 shrink-0 rotate-180" stroke="#B31B38" strokeWidth={2.5} />
         </div>
       </div>
@@ -191,13 +193,13 @@ export default function PublicPortfolioClient({ business: b }: { business: Publi
   }, [b.bio]);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/public/business/${b.username}/view`, { method: "POST" }).catch(() => {});
+    fetch(`${API_BASE_URL}/api/public/business/${b.username}/view`, { method: "POST" }).catch(() => { });
   }, [b.username]);
 
   function handleWhatsApp() {
     if (!waClicked) {
       setWaClicked(true);
-      fetch(`${API_BASE_URL}/api/public/business/${b.username}/whatsapp-click`, { method: "POST" }).catch(() => {});
+      fetch(`${API_BASE_URL}/api/public/business/${b.username}/whatsapp-click`, { method: "POST" }).catch(() => { });
     }
     if (whatsappHref) window.open(whatsappHref, "_blank", "noopener");
   }
@@ -212,14 +214,14 @@ export default function PublicPortfolioClient({ business: b }: { business: Publi
 
             {b.coverPhotoUrl && (
               <div
-                className="hidden sm:block absolute inset-0 rounded-[24px] opacity-100"
+                className="hidden sm:block absolute inset-0 rounded-[24px] opacity-80"
                 style={{
                   backgroundImage: `linear-gradient(89deg, rgba(255,255,255,0.00) 50%, rgba(255,255,255,0.30) 85%, #FFF 100%), linear-gradient(270deg, rgba(255,255,255,0.00) 50%, rgba(255,255,255,0.30) 85%, #FFF 100%), linear-gradient(180deg, #FFF 0%, rgba(255,255,255,0.20) 45%, #FFF 90%), url(${b.coverPhotoUrl})`,
                   backgroundColor: "#D9D9D9",
                   backgroundPosition: "center",
                   backgroundSize: "cover",
                   backgroundRepeat: "no-repeat",
-                  filter: "blur(4px)",
+                  filter: "blur(7px)",
                 }}
               />
             )}
@@ -242,8 +244,11 @@ export default function PublicPortfolioClient({ business: b }: { business: Publi
               </div>
             </div>
 
-            <div className="relative flex flex-col px-4 max-[500px]:mt-12 mt-21">
-              <h1 className="text-center font-poppins max-[500px]:text-[24px] text-[32px] font-semibold leading-[120%] text-[#222]">
+            {/* height gap between logo*/}
+            <div className="max-[500px]:h-6 h-11 " />
+
+            <div className="relative flex flex-col px-4 max-[500px]:mt-6 mt-7 sm:mt-8 md:mt-9 lg:mt-10">
+              <h1 className="text-center font-poppins max-[500px]:text-[24px] text-[26px] sm:text-[28px] md:text-[30px] lg:text-[32px] font-semibold leading-[120%] text-[#222]">
                 {b.businessName}
               </h1>
 
@@ -251,7 +256,7 @@ export default function PublicPortfolioClient({ business: b }: { business: Publi
                 <div className="mx-auto mt-2 max-[500px]:mt-[15.67px] max-w-[640px] text-center">
                   <p
                     ref={bioRef}
-                    className={`font-poppins max-[500px]:text-[12px] text-[14px] md:text-[18px] leading-[150%] text-[#656565] ${bioExpanded ? "" : "line-clamp-3 max-[500px]:line-clamp-4"}`}
+                    className={`font-poppins max-[500px]:text-[12px] text-[14px] sm:text-[16px] md:text-[17px] lg:text-[18px] leading-[150%] text-[#656565] ${bioExpanded ? "" : "line-clamp-3 max-[500px]:line-clamp-4"}`}
                   >
                     {b.bio}
                   </p>
@@ -269,16 +274,13 @@ export default function PublicPortfolioClient({ business: b }: { business: Publi
               )}
 
               {whatsappHref && (
-                <button
-                  type="button"
-                  onClick={handleWhatsApp}
-                  className="max-[500px]:mt-4 mt-6 mx-auto max-[500px]:px-4 inline-flex items-center justify-center select-none cursor-pointer font-semibold text-white transition-all duration-150 active:scale-[0.98] py-3 px-10 rounded-full text-[14px] md:text-[16px] bg-[#B31B38] hover:bg-[#8E162D] active:bg-[#6F1023]"
-                >
-                  <span className="mr-2 flex items-center">
-                    <WhatsAppLineIcon className="w-5 h-5" />
-                  </span>
-                  {t("WhatsApp")}
-                </button>
+                <Button
+                  text={t("WhatsApp")}
+                  onPress={handleWhatsApp}
+                  className="max-[500px]:mt-4 mt-6 mx-auto max-[500px]:px-4 items-center "
+                  iconLeft={<WhatsAppLineIcon className="h-5 w-5" />}
+                />
+
               )}
             </div>
           </div>
@@ -289,23 +291,23 @@ export default function PublicPortfolioClient({ business: b }: { business: Publi
           <div className="px-4 sm:px-6">
             <div className="max-[500px]:mt-6 mt-10 max-w-[640px] mx-auto flex flex-col max-[500px]:gap-2 gap-3 rounded-[20px] bg-white max-[500px]:px-4 px-5 max-[500px]:py-6 py-5 shadow-[0_0_8px_0_rgba(0,0,0,0.16)]">
               {b.experience && (
-                <div className="flex items-center max-[500px]:gap-2.5 gap-[19.58px]">
+                <div className="flex items-center max-[500px]:gap-2.5 gap-3 sm:gap-4 md:gap-5">
                   <ClockIcon className="max-[500px]:w-3.5 w-5 max-[500px]:h-3.5 h-5 shrink-0" />
-                  <span className="font-poppins max-[500px]:text-[14px] text-[18px] text-[#222222]">{b.experience}</span>
+                  <span className="font-poppins max-[500px]:text-[14px] text-[15px] sm:text-[16px] md:text-[17px] lg:text-[18px] text-[#222222]">{b.experience}</span>
                 </div>
               )}
               {b.qualifications && (
-                <div className="flex items-center max-[500px]:gap-2.5 gap-[19.58px]">
+                <div className="flex items-center max-[500px]:gap-2.5 gap-3 sm:gap-4 md:gap-5">
                   <QualificationIcon className="max-[500px]:w-3.5 w-5 max-[500px]:h-3.5 h-5 shrink-0" />
-                  <span className="font-poppins max-[500px]:text-[14px] text-[18px] text-[#222222]">{b.qualifications}</span>
+                  <span className="font-poppins max-[500px]:text-[14px] text-[15px] sm:text-[16px] md:text-[17px] lg:text-[18px] text-[#222222]">{b.qualifications}</span>
                 </div>
               )}
               {b.careerHighlight && (
-                <div className="flex items-start max-[500px]:gap-2.5 gap-[19.58px]">
+                <div className="flex items-start max-[500px]:gap-2.5 gap-3 sm:gap-4 md:gap-5">
                   <div className="mt-[2.5px] shrink-0">
                     <CareerIcon className="max-[500px]:w-3.5 w-5 max-[500px]:h-3.5 h-5" />
                   </div>
-                  <span className="font-poppins max-[500px]:text-[14px] text-[18px] text-[#222222]">{b.careerHighlight}</span>
+                  <span className="font-poppins max-[500px]:text-[14px] text-[15px] sm:text-[16px] md:text-[17px] lg:text-[18px] text-[#222222]">{b.careerHighlight}</span>
                 </div>
               )}
             </div>
@@ -314,7 +316,7 @@ export default function PublicPortfolioClient({ business: b }: { business: Publi
 
         {/* ── Services ─────────────────────────────────────────────────────── */}
         {b.services.length > 0 && (
-          <section className="w-full bg-white font-poppins max-[500px]:mt-12 mt-20 md:max-w-[1040px] min-[500px]:px-2 sm:px-4 md:mx-auto">
+          <section className="w-full bg-white font-poppins max-[500px]:mt-6 mt-7 sm:mt-8 md:mt-9 lg:mt-10 md:max-w-[1040px] min-[500px]:px-2 sm:px-4 md:mx-auto">
             <MobileScroll
               services={b.services}
               onExpand={(url, title) => setLightbox({ url, title })}
@@ -322,7 +324,7 @@ export default function PublicPortfolioClient({ business: b }: { business: Publi
               viewDetailsLabel={t("View_details")}
             />
 
-            <div className="max-[500px]:mt-12 mt-20 flex flex-col max-[500px]:gap-4 gap-5 px-2 sm:px-4">
+            <div className="max-[500px]:mt-6 mt-10 flex flex-col max-[500px]:gap-4 gap-5 px-2 sm:px-4">
               {b.services.map((s) => (
                 <ServiceListItem key={s.id} service={s} onViewDetails={setDetailsService} />
               ))}
@@ -333,36 +335,35 @@ export default function PublicPortfolioClient({ business: b }: { business: Publi
         {/* ── Location + service areas ──────────────────────────────────────── */}
         <div className="flex flex-col items-center px-4 max-[500px]:mt-5 mt-6">
           {whatsappHref && (
-            <button
-              type="button"
-              onClick={handleWhatsApp}
-              className="inline-flex items-center justify-center select-none cursor-pointer font-semibold text-white transition-all duration-150 active:scale-[0.98] py-3 max-[500px]:px-6 px-10 rounded-full text-[14px] md:text-[16px] bg-[#B31B38] hover:bg-[#8E162D] active:bg-[#6F1023]"
-            >
-              {t("WhatsApp")}
-            </button>
-          )}
+              <Button text={t("WhatsApp")} 
+              className="max-[500px]:px-6"
+              onPress={handleWhatsApp}/>
+            )}
 
           {locationText && (
-            <div className="max-[500px]:mt-6 mt-12">
-              <h3 className="text-center font-poppins max-[500px]:text-[16px] text-[20px] font-semibold leading-[150%] text-[#222]">
+            <div className="max-[500px]:mt-6 mt-7 sm:mt-8 md:mt-9 lg:mt-10">
+              <h3 className="text-center font-poppins text-[16px] sm:text-[18px] md:text-[19px] text-[20px] font-semibold leading-[150%] text-[#222]">
                 {t("Location")}
               </h3>
-              <p className="max-[500px]:mt-1 mt-2 text-center font-poppins max-[500px]:text-[14px] text-[16px] leading-[135%] text-[#767676]">{locationText}</p>
+              <p className="max-[500px]:mt-1 mt-2 text-center font-poppins text-[14px] sm:text-[15px] md:text-[16px] leading-[135%] text-[#767676]">{locationText}</p>
             </div>
           )}
 
           {b.serviceDistricts.length > 0 && (
             <div className="max-[500px]:mt-4 mt-6">
-              <h3 className="text-center font-poppins max-[500px]:text-[16px] text-[20px] font-semibold leading-[150%] text-[#222]">
+              <h3 className="text-center font-poppins text-[16px] sm:text-[18px] md:text-[19px] text-[20px] font-semibold leading-[150%] text-[#222]">
                 {t("Service_areas")}
               </h3>
-              <p className="max-[500px]:mt-1 mt-2 max-w-[320px] text-center font-poppins max-[500px]:text-[14px] text-[16px] leading-[135%] text-[#767676]">
+              <p className="max-[500px]:mt-1 mt-2 max-w-[320px] text-center font-poppins text-[14px] sm:text-[15px] md:text-[16px] leading-[135%] text-[#767676]">
                 {b.islandWide ? t("Island_wide") : b.serviceDistricts.join(", ")}
               </p>
             </div>
           )}
 
         </div>
+
+        {/* ── Reviews ──────────────────────────────────────────────────────── */}
+        <BusinessReviewSection showActions={true} businessName={b.businessName} username={b.username} />
 
       </div>
 
