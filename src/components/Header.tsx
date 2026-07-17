@@ -53,8 +53,9 @@ export default function Header() {
           {!isLoginPage && <span className="font-poppins text-[16px] font-medium text-dark">
             {t("Already_a_member")}
           </span>}
-          <BusinessLoginButton className="hidden lg:flex ml-0" />
-          {!isLoginPage && <LoginButton className="hidden lg:flex ml-5" />}
+           {!isLoginPage && <LoginButton className="hidden lg:flex ml-2" />}
+          <BusinessLoginButton className="hidden lg:flex ml-5" />
+         
 
           {/* Language selector */}
           <div ref={desktopRef} className="relative ml-5">
@@ -80,9 +81,9 @@ export default function Header() {
 
         {/* Mobile right: login + language icon */}
         <div className="flex items-center gap-2 lg:hidden">
-          <BusinessLoginButton className={`flex lg:hidden ${isLoginPage?"mr-2":""}`} />
-          {!isLoginPage && <LoginButton className="flex lg:hidden" />}
-
+           {!isLoginPage && <LoginButton className="flex lg:hidden" />}
+          <BusinessLoginButton className={`flex lg:hidden ${isLoginPage?"mr-1":""}`} />
+         
           <div ref={mobileRef} className="relative">
             <button
               type="button"
