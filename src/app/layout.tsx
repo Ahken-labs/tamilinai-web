@@ -6,6 +6,7 @@ import SeoSchema from "./SeoSchema";
 import NoContextMenu from "../components/NoContextMenu";
 import { ToastProvider } from "../components/ui/Toast";
 import SessionRestorer from "../components/SessionRestorer";
+import GoogleAuthProvider from "../providers/GoogleAuthProvider";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-poppins", display: "swap" });
 const notoSansTamil = Noto_Sans_Tamil({ subsets: ["tamil"], weight: ["400", "500", "700"], variable: "--font-tamil", display: "swap" });
@@ -73,13 +74,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SessionRestorer />
         <NoContextMenu />
         <SeoSchema/>
-        <QueryProvider>
-          <LangProvider>
-            <ToastProvider>
-              {children}
-            </ToastProvider>
-          </LangProvider>
-        </QueryProvider>
+        <GoogleAuthProvider>
+          <QueryProvider>
+            <LangProvider>
+              <ToastProvider>
+                {children}
+              </ToastProvider>
+            </LangProvider>
+          </QueryProvider>
+        </GoogleAuthProvider>
       </body>
     </html>
   );

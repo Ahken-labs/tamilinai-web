@@ -1,23 +1,28 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useLang } from "../context/LangContext";
-import { ChevronIcon, Logo, TamilLanguageIcon } from "../assets/Icons";
+import { BackChevronIcon, ChevronIcon, Icon, ShareIcon, TamilLanguageIcon } from "../assets/Icons";
 import Link from "next/link";
+import ShareModal from "./ui/ShareModal";
 
 const LANGUAGES = [
   { label: "English", value: "en" as const },
   { label: "தமிழ்", value: "ta" as const },
 ];
 
-export default function Header() {
-  const { lang, setLang, t } = useLang();
-  const pathname = usePathname();
-  const isLoginPage = pathname === "/login";
+export default function BusinessHeader() {
+  const { lang, setLang } = useLang();
+  const router = useRouter();
 
   const [desktopOpen, setDesktopOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+
+  function handleShare() {
+    setShareOpen(true);
+  }
 
   const desktopRef = useRef<HTMLDivElement>(null);
   const mobileRef = useRef<HTMLDivElement>(null);
@@ -38,26 +43,40 @@ export default function Header() {
 
 
   return (
+    <>
     <header className="sticky top-0 z-50 w-full bg-white/60 backdrop-blur-sm">
       <div className="mx-auto flex h-[68px] lg:h-[76px] max-w-[1920px] items-center justify-between px-4 lg:px-10 xl:px-[120px]">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-[7.2px] min-[500px]:gap-[8px]">
-          <Logo className="max-[500px]:w-8 w-9 lg:w-10 max-[500px]:h-8 h-9 lg:h-10" />
-          <span className="min-[360px]:flex hidden font-tamil text-[15.429px] sm:text-[16px] font-semibold leading-[150%] min-[500px]:tracking-[0.7px] text-dark">
-            இணை.lk
-          </span>
-        </Link>
+        <div className="flex items-center max-[500px]:gap-2 gap-3">
+          <Link href="/" className="flex items-center gap-[7.2px] min-[500px]:gap-[8px]">
+            <Icon className="max-[500px]:w-10 w-10 lg:w-10 max-[500px]:h-10 h-10 lg:h-10" />
+          </Link>
+          <button
+            type="button"
+            onClick={() => router.back()}
+            aria-label="Go back"
+            className="h-10 w-10 flex shrink-0 max-[500px]:p-0.5 p-0 cursor-pointer select-none items-center justify-center"
+          >
+            <div className="rounded-full max-[500px]:p-1.5 p-2 bg-[#F0F0F0]">
+              <BackChevronIcon />
+            </div>
+          </button>
+        </div>
 
         {/* Desktop right */}
         <div className="hidden items-center lg:flex">
-          {!isLoginPage && <span className="font-poppins text-[16px] font-medium text-dark">
-            {t("Already_a_member")}
-          </span>}
-          <BusinessLoginButton className="hidden lg:flex ml-0" />
-          {!isLoginPage && <LoginButton className="hidden lg:flex ml-5" />}
-
+          <button
+            type="button"
+            onClick={handleShare}
+            aria-label="Share"
+            className="h-10 w-10 flex shrink-0 p-0 cursor-pointer select-none items-center justify-center"
+          >
+            <div className="rounded-full p-2 bg-[#F0F0F0]">
+              <ShareIcon className="w-6 h-6" stroke="#525252" />
+            </div>
+          </button>
           {/* Language selector */}
-          <div ref={desktopRef} className="relative ml-5">
+          <div ref={desktopRef} className="relative ml-3">
             <button
               type="button"
               onClick={() => setDesktopOpen(!desktopOpen)}
@@ -78,19 +97,28 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Mobile right: login + language icon */}
+        {/* Mobile right: share + language icon */}
         <div className="flex items-center gap-2 lg:hidden">
-          <BusinessLoginButton className={`flex lg:hidden ${isLoginPage?"mr-2":""}`} />
-          {!isLoginPage && <LoginButton className="flex lg:hidden" />}
-
+          <button
+            type="button"
+            onClick={handleShare}
+            aria-label="Share"
+            className="h-10 w-10 flex shrink-0 max-[500px]:p-0.5 p-0 cursor-pointer select-none items-center justify-center"
+          >
+            <div className="rounded-full max-[500px]:p-1.5 p-2 bg-[#F0F0F0]">
+              <ShareIcon className="w-6 h-6" stroke="#525252" />
+            </div>
+          </button>
           <div ref={mobileRef} className="relative">
             <button
               type="button"
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="cursor-pointer flex items-center justify-center rounded-full select-none"
+              className="h-10 w-10 flex shrink-0 max-[500px]:p-0.5 p-0 cursor-pointer select-none items-center justify-center"
               aria-label="Toggle language"
             >
-              <TamilLanguageIcon />
+              <div className="rounded-full max-[500px]:p-1.5 p-2 bg-[#F0F0F0]">
+                <TamilLanguageIcon />
+              </div>
             </button>
 
             <LanguageDropdown
@@ -103,6 +131,14 @@ export default function Header() {
         </div>
       </div>
     </header>
+    {shareOpen && (
+      <ShareModal
+        url={typeof window !== "undefined" ? window.location.href : ""}
+        title={typeof document !== "undefined" ? document.title : "Check this out on Inai"}
+        onClose={() => setShareOpen(false)}
+      />
+    )}
+  </>
   );
 }
 
@@ -129,7 +165,7 @@ function LanguageDropdown({ open, lang, setLang, close, }: {
   );
 }
 
-function BusinessLoginButton({ className = "" }: { className?: string }) {
+export function BusinessLoginButton({ className = "" }: { className?: string }) {
   return (
     <Link
       href="https://business.inai.lk/login"
@@ -144,7 +180,7 @@ function BusinessLoginButton({ className = "" }: { className?: string }) {
   );
 }
 
-function LoginButton({ className = "" }: { className?: string }) {
+export function LoginButton({ className = "" }: { className?: string }) {
   const { t } = useLang();
   const router = useRouter();
 

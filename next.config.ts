@@ -5,9 +5,15 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["react-icons", "@heroicons/react"],
   },
   images: {
-    // R2 is intentionally NOT listed here — photos are served through
-    // /api/photos (requires Bearer token) so /_next/image cannot bypass auth.
-    remotePatterns: [],
+    // Matrimony user photos go through /api/photos (auth required) — not listed.
+    // Business photos are public CDN via R2, so next/image can optimise them directly.
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "pub-7e411a89c7ef486aace9c306d036d113.r2.dev",
+        pathname: "/**",
+      },
+    ],
   },
   async headers() {
     return [
