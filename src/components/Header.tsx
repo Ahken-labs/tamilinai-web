@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useLang } from "../context/LangContext";
 import { ChevronIcon, Logo, TamilLanguageIcon } from "../assets/Icons";
 import Link from "next/link";
@@ -13,6 +13,8 @@ const LANGUAGES = [
 
 export default function Header() {
   const { lang, setLang, t } = useLang();
+  const pathname = usePathname();
+  const isLoginPage = pathname === "/login";
 
   const [desktopOpen, setDesktopOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -48,11 +50,11 @@ export default function Header() {
 
         {/* Desktop right */}
         <div className="hidden items-center lg:flex">
-          <span className="font-poppins text-[16px] font-medium text-dark">
+          {!isLoginPage && <span className="font-poppins text-[16px] font-medium text-dark">
             {t("Already_a_member")}
-          </span>
-          <BusinessLoginButton className="hidden lg:flex ml-2" />
-          <LoginButton className="hidden lg:flex ml-5" />
+          </span>}
+          <BusinessLoginButton className="hidden lg:flex ml-0" />
+          {!isLoginPage && <LoginButton className="hidden lg:flex ml-5" />}
 
           {/* Language selector */}
           <div ref={desktopRef} className="relative ml-5">
@@ -78,8 +80,8 @@ export default function Header() {
 
         {/* Mobile right: login + language icon */}
         <div className="flex items-center gap-2 lg:hidden">
-          <BusinessLoginButton className="flex lg:hidden" />
-          <LoginButton className="flex lg:hidden" />
+          <BusinessLoginButton className={`flex lg:hidden ${isLoginPage?"mr-2":""}`} />
+          {!isLoginPage && <LoginButton className="flex lg:hidden" />}
 
           <div ref={mobileRef} className="relative">
             <button

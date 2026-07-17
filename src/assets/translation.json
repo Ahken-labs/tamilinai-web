@@ -123,7 +123,7 @@
         "Benefit_2": "Prospects can contact you directly without middle man.",
         "Benefit_3": "Gives authentic feel to your profile",
         "Welcome_back": "Welcome back",
-        "Keep_your_Inai_account_secure": "Enter your details to access your account",
+        "login_subtext": "Log in to connect and plan your special day.",
         "Mobile_or_email": "Mobile or email",
         "Password": "Password",
         "Forgotten_password": "Forgotten password?",
@@ -236,7 +236,11 @@
         "Review_placeholder": "What did you love about their service? Share details to help other couples plan their big day!",
         "Sign_in_to_review": "Share your experience",
         "Sign_in_to_review_sub": "Sign in quickly to post your review.",
-        "Sign_in_with_Google": "Sign in with Google"
+        "Sign_in_with_Google": "Sign in with Google",
+        "Create_new_account":"Create new account",
+        "Login_with_email":"Login with email",
+        "Login_with_phone":"Login with phone",
+        "WhatsApp_number":"WhatsApp number"
     },
     "ta": {
         "Already_a_member": "ஏற்கனவே உறுப்பினரா?",
@@ -363,7 +367,7 @@
         "Benefit_2": "இணைகள் நேரடியாக தொடர்பு கொள்ள முடியும்.",
         "Benefit_3": "உங்கள் சுயவிவரத்திற்கு நம்பகத்தன்மை கிடைக்கும்",
         "Welcome_back": "மீண்டும் வருக",
-        "Keep_your_Inai_account_secure": "உங்கள் இணை கணக்கை பாதுகாப்பாக வைத்திருங்கள். இதை உள்நுழைவதற்கு பயன்படுத்துவீர்கள்.",
+        "login_subtext": "இணைந்து, உங்கள் சிறப்பான நாளைத் திட்டமிட உள்நுழையவும்.",
         "Mobile_or_email": "மொபைல் அல்லது மின்னஞ்சல்",
         "Password": "கடவுச்சொல்",
         "Forgotten_password": "கடவுச்சொல் மறந்துவிட்டதா?",
@@ -476,6 +480,10 @@
         "Review_placeholder": "அவர்களின் சேவையில் உங்களுக்கு என்ன பிடித்தது? மற்ற ஜோடிகள் திட்டமிட உதவும் விவரங்களை பகிரவும்!",
         "Sign_in_to_review": "உங்கள் அனுபவத்தை பகிரவும்",
         "Sign_in_to_review_sub": "உங்கள் மதிப்புரையை பதிவிட விரைவாக உள்நுழைக.",
-        "Sign_in_with_Google": "Google மூலம் உள்நுழை"
+        "Sign_in_with_Google": "Google மூலம் உள்நுழை",
+        "Create_new_account":"புதிய கணக்கை உருவாக்க",
+        "Login_with_email":"மின்னஞ்சல் மூலம் உள்நுழையவும்",
+        "Login_with_phone":"தொலைபேசி மூலம் உள்நுழையவும்",
+        "WhatsApp_number":"வாட்ஸ்அப் எண்"
     }
 }

@@ -2,14 +2,10 @@
 
 import { useLang } from "@/src/context/LangContext";
 import Button from "@/src/components/common-layout/Button";
-import RegisterForm from "@/src/components/auth/RegisterForm";
-import { useState } from "react";
 import Image from "next/image";
 
 export default function BusinessSection() {
     const { t } = useLang();
-    const [openForm, setOpenForm] = useState(false);
-
     return (
         <section className="w-full bg-[#530024] font-poppins mt-0 md:mt-0 lg:mt-0" >
             <div className="py-10 sm:py-15 md:py-20 lg:py-25 max-[500px]:px-0 sm:px-6 md:px-10 flex flex-col items-center">
@@ -35,7 +31,7 @@ export default function BusinessSection() {
                     <Button
                         text={t("Business_cta")}
                         className=""
-                        onPress={() => setOpenForm(true)}
+                        onPress={() => window.location.href = "https://business.inai.lk/register/basic-details/intro"}
                     />
                 </div>
 
@@ -61,16 +57,11 @@ export default function BusinessSection() {
                     <Button
                         text={t("Business_cta")}
                         className=""
-                        onPress={() => setOpenForm(true)}
+                        onPress={() => window.location.href = "https://business.inai.lk/register/basic-details/intro"}
                     />
                 </div>
             </div>
 
-            <RegisterForm
-                variant="modal"
-                open={openForm}
-                onClose={() => setOpenForm(false)}
-            />
         </section>
     );
 }
