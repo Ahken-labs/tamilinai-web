@@ -28,10 +28,11 @@ export default function GoogleSignInModal({ onClose, onSuccess }: GoogleSignInMo
     flow: "implicit",
     scope: "openid email profile",
     onSuccess: async (tokenResponse) => {
+      const idToken = (tokenResponse as unknown as { id_token?: string }).id_token;
       const res = await fetch(`${API_BASE}/api/public/business/google-auth`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ accessToken: tokenResponse.access_token }),
+        body: JSON.stringify({ idToken, accessToken: tokenResponse.access_token }),
       });
       if (!res.ok) return;
       const data = await res.json();
