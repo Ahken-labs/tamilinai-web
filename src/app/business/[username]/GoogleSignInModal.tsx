@@ -26,6 +26,7 @@ export default function GoogleSignInModal({ onClose, onSuccess }: GoogleSignInMo
 
   const login = useGoogleLogin({
     flow: "auth-code",
+    scope: "openid email profile",
     onSuccess: async ({ code }) => {
       const res = await fetch(`${API_BASE}/api/public/business/google-auth`, {
         method: "POST",
