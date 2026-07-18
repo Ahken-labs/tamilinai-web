@@ -164,7 +164,7 @@ function LoginButton({ className = "" }: { className?: string }) {
     >
       <div className={`cursor-pointer select-none items-center justify-center bg-[#B31B38] hover:bg-[#8E162D] active:bg-[#6F1023]
         font-poppins text-[14px] sm:text-[15px] md:text-[16px] font-medium text-[#FFFFFF] transition-colors duration-150 
-        ${className} py-1.5 sm:py-2 px-2 sm:px-4 rounded-[8px]`}>
+        ${className} py-1.5 sm:py-[9px] px-2 sm:px-4 rounded-[8px]`}>
         {t("Log_In")}
       </div>
     </button>
