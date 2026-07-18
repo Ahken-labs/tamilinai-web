@@ -4,11 +4,12 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { createPortal } from "react-dom";
 import { useScrollLock } from "@/src/hooks/useScrollLock";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { CopyIcon, CopiedCheckIcon, ReuploadIcon, ReceiptFileIcon, UploadIcon, ReceiptDocIcon, VerifiedCheckCircleIcon } from "@/src/assets/Icons";
 import Button from "@/src/components/common-layout/Button";
 import { useToast } from "@/src/components/ui/Toast";
 import { createBankTransferOrder, preUploadReceipt, getPendingBankTransfer } from "@/src/lib/api/billing";
+import { getMe } from "@/src/lib/api/user";
 import { compressImageFile } from "@/src/lib/compressImage";
 import { readMeCache } from "@/src/components/AppHeader";
 import { BANK_DETAILS } from "@/src/constants/elitePlans";
@@ -59,16 +60,20 @@ function BankDetailsCard({ copiedKey, onCopy, subtitle, uploaded = false }: {
       {subtitle && (
         <p className="mt-1 sm:mt-1.5 md:mt-2 text-[14px] sm:text-[15px] md:text-[16px] text-[#2E7D32] leading-[150%]">{subtitle}</p>
       )}
-      <div className="mt-3 sm:mt-4 md:mt-5 border-[#D8D8D8] border-t flex flex-col">
+      <div className="py-5 pr-3 bg-[#F2F2F2] pl-4 mt-5 sm:mt-6 rounded-[16px] flex flex-col">
+        <span className="font-semibold text-[16px] sm:text-[18px] text-[#222222] mb-1">Account details</span>
         {BANK_DETAILS.map(({ label, displayValue, copyValue }) => (
-          <div key={label} className="flex flex-col gap-[2px] sm:gap-[3px] md:gap-[4px] mt-3 sm:mt-3.5 md:mt-4">
-            <span className="text-[14px] sm:text-[15px] md:text-[16px] text-[#525252]">{label}</span>
-            <div className="flex items-center justify-between rounded-[12px] bg-[#F2F2F2] pr-1 pl-2 sm:pl-3 md:pl-4 py-1">
-              <span className="text-[14px] sm:text-[15px] md:text-[16px] text-[#222222] font-medium flex-1 min-w-0 truncate">{displayValue}</span>
+          <div key={label} className="flex flex-col mt-3 sm:mt-3.5 md:mt-4">
+            <div className="flex items-center justify-between ">
+              <div className="flex-col flex">
+                <span className="font-16 text-[#525252] leading-[150%]">{label}</span>
+                <span className="font-16 text-[#222222] leading-[150%] font-medium flex-1 min-w-0">{displayValue}</span>
+
+              </div>
               <button
                 type="button"
                 onClick={() => onCopy(copyValue)}
-                className={`shrink-0 max-[500px]:px-[14px] px-[16px] md:px-[18px] max-[500px]:py-[6px] py-[7px] md:py-[9px] bg-white border border-[#EBEBEB] rounded-full hover:bg-[#FFF0F3] transition-opacity cursor-pointer ${uploaded ? "text-[#222222]" : "text-[#B31B38]"}`}
+                className={`shrink-0 max-[500px]:px-[14px] px-[16px] md:px-[18px] max-[500px]:py-[6px] py-[7px] md:py-[9px] border border-[#FFFFFF] rounded-full hover:bg-[#FFF0F3] transition-opacity cursor-pointer ${uploaded ? "text-[#222222]" : "text-[#B31B38]"}`}
                 aria-label={`Copy ${label}`}
               >
                 {copiedKey === copyValue ? <CopiedCheckIcon className="w-5 h-5" /> : <CopyIcon className="w-5 h-5" />}
@@ -150,6 +155,8 @@ function UploadReceiptPopup({ onClose, onFileSelected, displayId }: {
 
 export default function BankTransferFlow({ planKey, planLabel, symbol, total, promoCode, onStepChange }: Props) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const fromSetup = searchParams.get("from") === "setup";
   const { toast } = useToast();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [file, setFile] = useState<File | null>(null);
@@ -164,8 +171,8 @@ export default function BankTransferFlow({ planKey, planLabel, symbol, total, pr
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cancelUploadRef = useRef<(() => void) | null>(null);
 
-  const [displayId] = useState(() => readMeCache()?.displayId ?? "");
-  const hasTrustBadge = readMeCache()?.trustBadge ?? false;
+  const [displayId, setDisplayId] = useState(() => readMeCache()?.displayId ?? "");
+  const [hasTrustBadge, setHasTrustBadge] = useState(() => readMeCache()?.trustBadge ?? false);
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
@@ -173,6 +180,12 @@ export default function BankTransferFlow({ planKey, planLabel, symbol, total, pr
       if (pending) { setStep(3); onStepChange?.(3); }
       setChecking(false);
     });
+    if (!readMeCache()?.displayId) {
+      getMe().then((me) => {
+        setDisplayId(me.displayId ?? "");
+        setHasTrustBadge(me.trustBadge ?? false);
+      }).catch(() => {});
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -355,7 +368,7 @@ export default function BankTransferFlow({ planKey, planLabel, symbol, total, pr
           )}
           <Button className={`${hasTrustBadge ? "mt-5 w-full" : "mt-4 max-[500px]:!px-4 w-full !text-[#B31B38] bg-[#F2F2F2] hover:bg-[#cccccc]"}`}
             text="Take me to my dashboard"
-            onPress={() => router.push("/matches")}
+            onPress={() => router.push(fromSetup ? "/matches?welcome=1" : "/matches")}
           />
         </div>
 

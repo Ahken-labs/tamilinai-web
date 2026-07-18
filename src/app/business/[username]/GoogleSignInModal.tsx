@@ -51,7 +51,6 @@ export default function GoogleSignInModal({ onClose, onSuccess }: GoogleSignInMo
             className="flex items-center justify-center p-2 cursor-pointer"
           >
             <XIcon className="w-8 max-[500px]:w-6 h-8 max-[500px]:h-6" stroke="#222" />
-
           </button>
         </div>
 
@@ -66,7 +65,7 @@ export default function GoogleSignInModal({ onClose, onSuccess }: GoogleSignInMo
             onClick={() => login()}
             className="mt-5 mx-auto flex items-center gap-3 pl-2 pr-4 py-2 bg-[#F2F2F2] rounded-full hover:bg-[#ccc] transition-colors cursor-pointer font-poppins text-[16px] leading-[150%] font-medium text-[#222]"
           >
-           <GoogleIcon className="w-11 h-11"/>
+            <GoogleIcon className="w-11 h-11" />
             {t("Sign_in_with_Google")}
           </button>
         </div>
