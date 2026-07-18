@@ -28,13 +28,10 @@ export default function GoogleSignInModal({ onClose, onSuccess }: GoogleSignInMo
     flow: "implicit",
     scope: "openid email profile",
     onSuccess: async (tokenResponse) => {
-      // id_token is present in the response when openid scope is granted
-      const credential = (tokenResponse as unknown as { id_token?: string }).id_token;
-      if (!credential) return;
       const res = await fetch(`${API_BASE}/api/public/business/google-auth`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ credential }),
+        body: JSON.stringify({ accessToken: tokenResponse.access_token }),
       });
       if (!res.ok) return;
       const data = await res.json();
