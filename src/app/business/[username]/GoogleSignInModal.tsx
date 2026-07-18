@@ -2,10 +2,10 @@
 
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
-import { GoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
 import { useScrollLock } from "../../../hooks/useScrollLock";
 import { useLang } from "../../../context/LangContext";
-import { XIcon } from "../../../assets/Icons";
+import { GoogleIcon, XIcon } from "../../../assets/Icons";
 
 interface GoogleSignInModalProps {
   onClose: () => void;
@@ -23,6 +23,24 @@ export default function GoogleSignInModal({ onClose, onSuccess }: GoogleSignInMo
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [onClose]);
+
+  const login = useGoogleLogin({
+    flow: "implicit",
+    scope: "openid email profile",
+    onSuccess: async (tokenResponse) => {
+      // id_token is present in the response when openid scope is granted
+      const credential = (tokenResponse as unknown as { id_token?: string }).id_token;
+      if (!credential) return;
+      const res = await fetch(`${API_BASE}/api/public/business/google-auth`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credential }),
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      onSuccess(data.token, data.name, data.picture);
+    },
+  });
 
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-end min-[500px]:items-center justify-center bg-black/60 min-[500px]:px-4 ">
@@ -47,26 +65,13 @@ export default function GoogleSignInModal({ onClose, onSuccess }: GoogleSignInMo
             <p className="text-[14px] leading-[150%] mt-1 text-[#767676]">{t("Sign_in_to_review_sub")}</p>
           </div>
 
-          <div className="mt-5 flex justify-center">
-            <GoogleLogin
-              onSuccess={async (credentialResponse) => {
-                const credential = credentialResponse.credential;
-                if (!credential) return;
-                const res = await fetch(`${API_BASE}/api/public/business/google-auth`, {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ credential }),
-                });
-                if (!res.ok) return;
-                const data = await res.json();
-                onSuccess(data.token, data.name, data.picture);
-              }}
-              useOneTap={false}
-              text="signin_with"
-              shape="pill"
-              size="large"
-            />
-          </div>
+          <button
+            onClick={() => login()}
+            className="mt-5 mx-auto flex items-center gap-3 pl-2 pr-4 py-2 bg-[#F2F2F2] rounded-full hover:bg-[#ccc] transition-colors cursor-pointer font-poppins text-[16px] leading-[150%] font-medium text-[#222]"
+          >
+            <GoogleIcon className="w-11 h-11" />
+            {t("Sign_in_with_Google")}
+          </button>
         </div>
 
       </div>
