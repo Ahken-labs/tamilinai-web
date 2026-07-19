@@ -38,7 +38,7 @@ export default function GoogleSignInModal({ onClose, onSuccess }: GoogleSignInMo
       onSuccess(data.token, data.name, data.picture);
     },
   });
-
+  
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-end min-[500px]:items-center justify-center bg-black/60 min-[500px]:px-4 ">
       <div className="pb-8 flex h-[96dvh] max-h-[50dvh] min-[500px]:h-auto min-[500px]:max-h-[85vh] w-full min-[500px]:max-w-[640px] flex-col overflow-hidden rounded-t-[32px] min-[500px]:rounded-[32px] bg-white shadow-2xl">
