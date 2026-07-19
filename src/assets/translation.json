@@ -279,7 +279,9 @@
         "Add_interests": "Add interests",
         "Add_interests_hobbies":"Add interests & hobbies",
         "Business":"Business",
-        "About_my_partner":"About my partner (optional)"
+        "About_my_partner":"About my partner (optional)",
+        "Are_you_a_wedding_vendor":"Are you a wedding vendor?",
+        "Go_to_Inai_Business_Login":"Go to Inai Business Login"
     },
     "ta": {
         "Already_a_member": "ஏற்கனவே உறுப்பினரா?",
@@ -561,7 +563,9 @@
         "Add_interests": "விருப்பங்களைச் சேர்க்கவும்",
         "Add_interests_hobbies":"விருப்பங்களை சேர்க்கவும்",
         "Business":"வணிகம்",
-        "About_my_partner":"எனது இணையரைப் பற்றி (விருப்பத்திற்குரியது)"
+        "About_my_partner":"எனது இணையரைப் பற்றி (விருப்பத்திற்குரியது)",
+        "Are_you_a_wedding_vendor":"நீங்கள் ஒரு திருமணச் சேவை வழங்குநரா?",
+        "Go_to_Inai_Business_Login":"இணை வணிக உள்நுழைவு பகுதிக்குச் செல்லவும்"
 
     }
 }

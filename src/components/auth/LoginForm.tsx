@@ -134,6 +134,7 @@ export default function LoginForm() {
                       value={phone}
                       onChange={(val) => { setPhone(val.replace(/\D/g, "")); setIdentifierError(""); }}
                       label={t("WhatsApp_number")}
+                      shortLabel={t("Phone_number")}
                       className="bg-[#F2F2F2] border-[#F2F2F2]"
                       type="tel"
                       error={identifierError}
@@ -215,12 +216,12 @@ export default function LoginForm() {
           <div className="flex justify-center items-center gap-2 sm:gap-4">
             <Image src="/images/business_shop.webp" alt="" width={56} height={56} className="shrink-0" style={{ width: "clamp(49.047px, 5vw, 55.735px)", height: "clamp(49.047px, 5vw, 55.735px)" }} />
             <div className="flex flex-col">
-              <span className="font-poppins font-16 font-normal leading-[150%] text-[#222]">Are you a wedding vendor?</span>
+              <span className="font-poppins font-16 font-normal leading-[150%] text-[#222]">{t("Are_you_a_wedding_vendor")}</span>
               <Link
                 href="https://business.inai.lk/login"
                 className="hover:underline mt-[2px] font-poppins font-16 font-medium leading-[150%] text-primary"
               >
-                Go to Inai Business Login
+                {t("Go_to_Inai_Business_Login")}
               </Link>
             </div>
           </div>
