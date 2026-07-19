@@ -33,7 +33,11 @@ export default function GoogleSignInModal({ onClose, onSuccess }: GoogleSignInMo
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code }),
       });
-      if (!res.ok) return;
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        console.error("[google-auth] failed", res.status, err);
+        return;
+      }
       const data = await res.json();
       onSuccess(data.token, data.name, data.picture);
     },
