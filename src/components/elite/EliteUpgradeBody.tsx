@@ -133,7 +133,7 @@ export default function EliteUpgradeBody() {
                 router.replace(`${base}?plan=${pending.planKey}${extra}`);
             }
         });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     function scrollToCard(idx: number) {
@@ -226,7 +226,7 @@ export default function EliteUpgradeBody() {
                         className="text-[#222] text-[16px] font-semibold hover:text-[#B31B38] transition-colors cursor-pointer"
                     >
                         Skip for now
-                        <DoubleChevronRightIcon className="inline ml-1 w-3 h-3" />
+                        <DoubleChevronRightIcon className="inline ml-1 w-3 h-3" stroke="currentColor" />
                     </button>
                 </div>
             )}

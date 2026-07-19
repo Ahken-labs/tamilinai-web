@@ -204,7 +204,7 @@ export default function PersonalDetailsForm() {
         <div className="max-[500px]:mt-5 mt-6 sm:mt-7 lg:mt-8 flex flex-col max-[500px]:gap-5 gap-6 sm:gap-7 md:gap-8">
 
           <FormRow label={t("Highest_education")} align="center" required error={errors.education}>
-            <DropdownField typeable compact placeholder={t("Select_education")} value={education} open={opens.education} setOpen={setOpen("education")} onSelect={setEducation} items={filtEducation} dropdownClassName="max-h-[220px]" />
+            <DropdownField compact placeholder={t("Select_education")} value={education} open={opens.education} setOpen={setOpen("education")} onSelect={setEducation} items={filtEducation} dropdownClassName="max-h-[220px]" />
           </FormRow>
 
           <FormRow label={t("Education_detail")} align="center">
@@ -216,7 +216,7 @@ export default function PersonalDetailsForm() {
           </FormRow>
 
           <FormRow label={t("sector")} align="center">
-            <DropdownField typeable compact placeholder={t("Select_sector")} value={sector} open={opens.sector} setOpen={setOpen("sector")} onSelect={setSector} items={SECTOR} dropdownClassName="max-h-[220px]" />
+            <DropdownField compact placeholder={t("Select_sector")} value={sector} open={opens.sector} setOpen={setOpen("sector")} onSelect={setSector} items={SECTOR} dropdownClassName="max-h-[220px]" />
           </FormRow>
 
           <FormRow label={t("Monthly_income")} align="center">
@@ -245,7 +245,7 @@ export default function PersonalDetailsForm() {
           </FormRow>
 
           <FormRow label="Resident Status" align="center">
-            <DropdownField typeable compact placeholder={t("Select")} value={residentStatus} open={opens.residentStatus} setOpen={setOpen("residentStatus")} onSelect={setResidentStatus} items={RESIDENT_STATUS_OPTIONS} dropdownClassName="max-h-[220px]" />
+            <DropdownField compact placeholder={t("Select")} value={residentStatus} open={opens.residentStatus} setOpen={setOpen("residentStatus")} onSelect={setResidentStatus} items={RESIDENT_STATUS_OPTIONS} dropdownClassName="max-h-[220px]" />
           </FormRow>
 
         </div>
@@ -255,11 +255,11 @@ export default function PersonalDetailsForm() {
         <div className="max-[500px]:mt-5 mt-6 sm:mt-7 lg:mt-8 flex flex-col max-[500px]:gap-5 gap-6 sm:gap-7 md:gap-8">
 
           <FormRow label={t("Religion")} align="center" required error={errors.religion}>
-            <DropdownField typeable compact placeholder={t("Select_religion")} value={religion} open={opens.religion} setOpen={setOpen("religion")} onSelect={v => { setReligion(v); setCaste(""); }} items={filtReligion} dropdownClassName="max-h-[220px]" />
+            <DropdownField compact placeholder={t("Select_religion")} value={religion} open={opens.religion} setOpen={setOpen("religion")} onSelect={v => { setReligion(v); setCaste(""); }} items={filtReligion} dropdownClassName="max-h-[220px]" />
           </FormRow>
 
           <FormRow label={t("Caste_or_denomination")} align="center" required error={errors.caste}>
-            <DropdownField typeable compact placeholder={religion ? t("Select_caste") : "Select religion first"} value={caste} open={opens.caste} setOpen={setOpen("caste")} onSelect={v => { setCaste(v); setCasteOther(""); }} items={filtCaste} dropdownClassName="max-h-[220px]" />
+            <DropdownField search compact placeholder={religion ? t("Select_caste") : "Select religion first"} value={caste} open={opens.caste} setOpen={setOpen("caste")} onSelect={v => { setCaste(v); setCasteOther(""); }} items={filtCaste} dropdownClassName="max-h-[260px]" />
           </FormRow>
 
           {caste === "Other" && (
@@ -275,15 +275,15 @@ export default function PersonalDetailsForm() {
         <div className="max-[500px]:mt-5 mt-6 sm:mt-7 lg:mt-8 flex flex-col max-[500px]:gap-5 gap-6 sm:gap-7 md:gap-8">
 
           <FormRow label={t("Diet_habit")} align="center">
-            <DropdownField typeable compact placeholder={t("Select")} value={dietHabit} open={opens.diet} setOpen={setOpen("diet")} onSelect={setDietHabit} items={DIET_OPTIONS} dropdownClassName="max-h-[220px]" />
+            <DropdownField compact placeholder={t("Select")} value={dietHabit} open={opens.diet} setOpen={setOpen("diet")} onSelect={setDietHabit} items={DIET_OPTIONS} dropdownClassName="max-h-[220px]" />
           </FormRow>
 
           <FormRow label={t("Smoking_habit")} align="center">
-            <DropdownField typeable compact placeholder={t("Select")} value={smokingHabit} open={opens.smoking} setOpen={setOpen("smoking")} onSelect={setSmokingHabit} items={SMOKING_OPTIONS} dropdownClassName="max-h-[220px]" />
+            <DropdownField compact placeholder={t("Select")} value={smokingHabit} open={opens.smoking} setOpen={setOpen("smoking")} onSelect={setSmokingHabit} items={SMOKING_OPTIONS} dropdownClassName="max-h-[220px]" />
           </FormRow>
 
           <FormRow label={t("Drinking_habit")} align="center">
-            <DropdownField typeable compact placeholder={t("Select")} value={drinkingHabit} open={opens.drinking} setOpen={setOpen("drinking")} onSelect={setDrinkingHabit} items={DRINKING_OPTIONS} dropdownClassName="max-h-[220px]" />
+            <DropdownField compact placeholder={t("Select")} value={drinkingHabit} open={opens.drinking} setOpen={setOpen("drinking")} onSelect={setDrinkingHabit} items={DRINKING_OPTIONS} dropdownClassName="max-h-[220px]" />
           </FormRow>
 
           <FormRow label={t("Interests_hobbies")} align="center">

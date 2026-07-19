@@ -53,7 +53,7 @@ export default function CountryCodeSelect({ value, onChange, open, setOpen, labe
             <span className="text-[14px] md:text-[16px] font-medium leading-[125%] text-[#222222]">{getCodeOnly(value)}</span>
           </div>
         ) : (
-          <span className="text-[14px] md:text-[16px] font-normal leading-[125%] text-[#525252]">
+          <span className="text-[16px] font-normal leading-[125%] text-[#525252]">
             {getCodeOnly(value)}
           </span>
         )}

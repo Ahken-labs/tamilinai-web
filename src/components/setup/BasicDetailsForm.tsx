@@ -13,7 +13,6 @@ import { validateDOB } from "../../utils/dateUtils";
 import { filterItems } from "../../utils/formUtils";
 import { useDOBState } from "../../hooks/useDOBState";
 import { MARITAL_OPTIONS, HEIGHTS, WEIGHTS, PHYSICAL_BUILD_OPTIONS } from "@/src/constants/profiles";
-import { CITY_OPTIONS } from "@/src/constants/location";
 import { LanguagePopup } from "../profile/sections/BasicInfoSection";
 import { saveBasicDetails, saveFamilyDetails } from "../../lib/api/user";
 
@@ -170,9 +169,9 @@ export default function BasicDetailsForm() {
           {/* Date of birth */}
           <FormRow label={t("DOB")} required error={liveDobError ?? errors.dob}>
             <div className="flex gap-2">
-              <DropdownField typeable compact placeholder={t("Year")} value={birthYear} open={dobOpen.year} setOpen={setDobFieldOpen("year")} onSelect={setYear} items={filtYears} dropdownClassName="max-h-[300px]" className="flex-1" />
+              <DropdownField compact placeholder={t("Year")} value={birthYear} open={dobOpen.year} setOpen={setDobFieldOpen("year")} onSelect={setYear} items={filtYears} dropdownClassName="max-h-[300px]" className="flex-1" />
               <DropdownField typeable compact placeholder={t("Month")} value={birthMonth} open={dobOpen.month} setOpen={setDobFieldOpen("month")} onSelect={setMonth} items={filtMonths} dropdownClassName="max-h-[300px] min-w-[120px]" className="flex-1" />
-              <DropdownField typeable compact placeholder={t("Day")} value={birthDay} open={dobOpen.day} setOpen={setDobFieldOpen("day")} onSelect={setBirthDay} items={filtDays} dropdownClassName="max-h-[300px]" className="flex-1" />
+              <DropdownField compact placeholder={t("Day")} value={birthDay} open={dobOpen.day} setOpen={setDobFieldOpen("day")} onSelect={setBirthDay} items={filtDays} dropdownClassName="max-h-[300px]" className="flex-1" />
             </div>
           </FormRow>
 
@@ -190,12 +189,12 @@ export default function BasicDetailsForm() {
 
           {/* Height */}
           <FormRow label={t("Height")} align="center" required error={errors.height}>
-            <DropdownField typeable compact placeholder={t("Select_height_in_Cm")} value={height} open={opens.height} setOpen={setOpen("height")} onSelect={setHeight} items={filtHeights} dropdownClassName="max-h-[200px]" />
+            <DropdownField compact placeholder={t("Select_height_in_Cm")} value={height} open={opens.height} setOpen={setOpen("height")} onSelect={setHeight} items={filtHeights} dropdownClassName="max-h-[200px]" />
           </FormRow>
 
           {/* Weight */}
           <FormRow label={t("Weight")} align="center" required error={errors.weight}>
-            <DropdownField typeable compact placeholder={t("Select_weight_in_Kg")} value={weight} open={opens.weight} setOpen={setOpen("weight")} onSelect={setWeight} items={filtWeights} dropdownClassName="max-h-[200px]" />
+            <DropdownField compact placeholder={t("Select_weight_in_Kg")} value={weight} open={opens.weight} setOpen={setOpen("weight")} onSelect={setWeight} items={filtWeights} dropdownClassName="max-h-[200px]" />
           </FormRow>
 
           {/* Any physical challenge */}
@@ -226,7 +225,7 @@ export default function BasicDetailsForm() {
 
           {/* physical build */}
           <FormRow label={t("Physical_build")} align="center">
-            <DropdownField typeable compact placeholder={t("Select_fitness_type")} value={physBuild} open={opens.physBuild} setOpen={setOpen("physBuild")} onSelect={setPhysBuild} items={PHYSICAL_BUILD_OPTIONS} dropdownClassName="max-h-[200px]" />
+            <DropdownField compact placeholder={t("Select_fitness_type")} value={physBuild} open={opens.physBuild} setOpen={setOpen("physBuild")} onSelect={setPhysBuild} items={PHYSICAL_BUILD_OPTIONS} dropdownClassName="max-h-[200px]" />
           </FormRow>
 
           {/* Languages spoken */}
@@ -262,27 +261,27 @@ export default function BasicDetailsForm() {
 
           {/* origin */}
           <FormRow align="center" label={t("Family_origin_Ancestral")}>
-            <DropdownField typeable compact placeholder={t("Select_district")} value={familyOrigin} open={opens.familyOrigin} setOpen={setOpen("familyOrigin")} onSelect={setFamilyOrigin} items={CITY_OPTIONS} dropdownClassName="max-h-[200px]" />
+            <input value={familyOrigin} onChange={e => setFamilyOrigin(e.target.value)} placeholder={t("Select_district")} className="flex-1 py-2 h-10 w-full items-center rounded-[12px] border border-[#F2F2F2] bg-[#F2F2F2] px-4 text-[16px] text-dark outline-none placeholder:text-[#656565]" />
           </FormRow>
 
           {/* number of brothers */}
           <FormRow label={t("Number_of_brothers")} align="center">
-            <DropdownField typeable numberOnly compact placeholder={t("Select")} value={brothers} open={opens.brothers} setOpen={setOpen("brothers")} onSelect={setBrothers} items={NUMBER_OPTIONS} dropdownClassName="max-h-[200px]" />
+            <DropdownField numberOnly compact placeholder={t("Select")} value={brothers} open={opens.brothers} setOpen={setOpen("brothers")} onSelect={(v) => { setBrothers(v); if (v === "0") setBrothersMarried("0"); }} items={NUMBER_OPTIONS} dropdownClassName="max-h-[200px]" />
           </FormRow>
 
           {/* brothers married */}
           <FormRow label={t("Brothers_married")} align="center">
-            <DropdownField typeable numberOnly compact placeholder={t("Select")} value={brothersMarried} open={opens.brothersMarried} setOpen={setOpen("brothersMarried")} onSelect={setBrothersMarried} items={NUMBER_OPTIONS} dropdownClassName="max-h-[200px]" />
+            <DropdownField numberOnly compact placeholder={t("Select")} value={brothersMarried} open={opens.brothersMarried} setOpen={setOpen("brothersMarried")} onSelect={setBrothersMarried} items={NUMBER_OPTIONS} dropdownClassName="max-h-[200px]" />
           </FormRow>
 
           {/* number of sisters */}
           <FormRow label={t("Number_of_sisters")} align="center">
-            <DropdownField typeable numberOnly compact placeholder={t("Select")} value={sisters} open={opens.sisters} setOpen={setOpen("sisters")} onSelect={setSisters} items={NUMBER_OPTIONS} dropdownClassName="max-h-[200px]" />
+            <DropdownField numberOnly compact placeholder={t("Select")} value={sisters} open={opens.sisters} setOpen={setOpen("sisters")} onSelect={(v) => { setSisters(v); if (v === "0") setSistersMarried("0"); }} items={NUMBER_OPTIONS} dropdownClassName="max-h-[200px]" />
           </FormRow>
 
           {/* sisters married */}
           <FormRow label={t("Sisters_married")} align="center">
-            <DropdownField typeable numberOnly compact placeholder={t("Select")} value={sistersMarried} open={opens.sistersMarried} setOpen={setOpen("sistersMarried")} onSelect={setSistersMarried} items={NUMBER_OPTIONS} dropdownClassName="max-h-[200px]" />
+            <DropdownField numberOnly compact placeholder={t("Select")} value={sistersMarried} open={opens.sistersMarried} setOpen={setOpen("sistersMarried")} onSelect={setSistersMarried} items={NUMBER_OPTIONS} dropdownClassName="max-h-[200px]" />
           </FormRow>
 
         </div>

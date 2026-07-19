@@ -203,7 +203,7 @@ export default function DropdownField({
           onClick={() => setOpen(!open)}
           className={`flex w-full items-center justify-between rounded-[12px] border ${bgClassName} pl-4 pr-[18px] py-[10px] text-left transition-colors cursor-pointer focus:outline-none ${borderClass} ${className}`}
         >
-          <span className={`text-[14px] md:text-[16px] font-normal leading-[125%] ${textClassName ?? "text-[#656565]"}`}>
+          <span className={`text-[16px] font-normal leading-[125%] ${textClassName ?? "text-[#656565]"}`}>
             {value || placeholder}
           </span>
           <ChevronIcon open={open} />
