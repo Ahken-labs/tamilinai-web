@@ -212,6 +212,7 @@ export default function BusinessReviewSection({
           totalCount={totalCount}
           showActions={showActions}
           onClose={() => { setReviewsOpen(false); }}
+          onAddReview={() => { setReviewsOpen(false); openAddReview(); }}
         />
       )}
 
