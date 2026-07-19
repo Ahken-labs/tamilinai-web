@@ -85,7 +85,7 @@ export function HobbiesPopup({ initialSelected, onClose, onConfirm }: {
           <div className="h-20" />
         </div>
         <div className="hidden min-[500px]:flex justify-end gap-4 md:gap-5 border-t border-[#EAEAEA] px-4 md:px-5 py-3 md:py-4 shrink-0">
-          <div className="w-full" />
+          <div className="min-[510]:w-full" />
           <Button text="Add interests & hobbies" onPress={() => { onConfirm(draft); onClose(); }} className="w-full" />
         </div>
       </div>

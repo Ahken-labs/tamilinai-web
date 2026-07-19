@@ -34,6 +34,7 @@ type DropdownFieldProps = {
   typeable?: boolean; // true = input + dropdown
   compact?: boolean;  // 40px height, no floating label — for profile forms
   numberOnly?: boolean; // strip non-numeric characters on input
+  search?: boolean; // show search box inside dropdown
 };
 
 export default function DropdownField({
@@ -54,8 +55,11 @@ export default function DropdownField({
   typeable = false,
   compact = false,
   numberOnly = false,
+  search = false,
 }: DropdownFieldProps) {
   const [focused, setFocused] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const isActive = focused || open || (value?.length ?? 0) > 0;
@@ -65,6 +69,15 @@ export default function DropdownField({
   const borderClass = open
     ? (openBorderClassName ?? borderClassName ?? "border-[#F2F2F2]")
     : (borderClassName ?? "border-[#F2F2F2]");
+
+  useEffect(() => {
+    if (!search) return;
+    if (open) {
+      setTimeout(() => searchRef.current?.focus(), 50);
+    } else {
+      setSearchQuery("");
+    }
+  }, [open, search]);
 
   // Close when user clicks outside this component.
   useEffect(() => {
@@ -101,20 +114,24 @@ export default function DropdownField({
     setOpen(false);
   }
 
-  const filteredItems = isFiltering
-    ? [...items]
-      .filter((item) =>
-        item.toLowerCase().includes((value ?? "").toLowerCase())
-      )
-      .sort((a, b) => {
-        const q = (value ?? "").toLowerCase();
-        const aStarts = a.toLowerCase().startsWith(q);
-        const bStarts = b.toLowerCase().startsWith(q);
-        if (aStarts && !bStarts) return -1;
-        if (!aStarts && bStarts) return 1;
-        return a.localeCompare(b);
-      })
-    : items;
+  const filteredItems = search && searchQuery.trim()
+    ? items.filter((item) => item.toLowerCase().includes(searchQuery.toLowerCase()))
+    : search && value && !searchQuery
+    ? [value, ...items.filter((item) => item !== value)]
+    : isFiltering
+      ? [...items]
+        .filter((item) =>
+          item.toLowerCase().includes((value ?? "").toLowerCase())
+        )
+        .sort((a, b) => {
+          const q = (value ?? "").toLowerCase();
+          const aStarts = a.toLowerCase().startsWith(q);
+          const bStarts = b.toLowerCase().startsWith(q);
+          if (aStarts && !bStarts) return -1;
+          if (!aStarts && bStarts) return 1;
+          return a.localeCompare(b);
+        })
+      : items;
   return (
     <div ref={containerRef} className={`relative ${className}`}>
       {typeable ? (
@@ -168,6 +185,18 @@ export default function DropdownField({
             </div>
           )}
         </div>
+      ) : search ? (
+        <div
+          className={`flex min-w-0 ${compact ? "h-[40px]" : "h-[55px] md:h-[60px]"} items-center rounded-[12px] border ${bgClassName} px-4 transition-colors cursor-pointer ${borderClass}`}
+          onClick={() => setOpen(!open)}
+        >
+          <span className={`w-full min-w-0 truncate text-[16px] outline-none ${value ? (textClassName ?? "text-dark") : "text-[#525252]"}`}>
+            {value || placeholder}
+          </span>
+          <button type="button" onClick={(e) => { e.stopPropagation(); setOpen(!open); }} className="shrink-0 cursor-pointer pl-2 focus:outline-none">
+            <ChevronIcon open={open} />
+          </button>
+        </div>
       ) : (
         <button
           type="button"
@@ -187,6 +216,20 @@ export default function DropdownField({
           className={`absolute left-0 right-0 top-[calc(100%+4px)] z-30 overflow-y-auto rounded-xl border border-[#E0E0E0] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.1)] ${dropdownClassName}`}
           style={{ maxHeight: height }}
         >
+          {search && (
+            <div className="p-2 border-b border-[#F0F0F0] sticky top-0 bg-white z-10">
+              <input
+                ref={searchRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onMouseDown={(e) => e.stopPropagation()}
+                placeholder="Search..."
+                className="w-full px-3 py-2 rounded-[8px] bg-[#F0F0F0] text-[13px] md:text-[14px] text-[#222] placeholder:text-[#999] outline-none"
+              />
+            </div>
+          )}
+          <div>
           {filteredItems.length === 0 ? (
             <p className="px-4 py-3 text-[14px] text-center text-[#999]">No results</p>
           ) : filteredItems.map((item, index) => {
@@ -214,6 +257,7 @@ export default function DropdownField({
               </button>
             );
           })}
+          </div>
         </div>
       )}
     </div>

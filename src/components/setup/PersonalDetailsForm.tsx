@@ -221,7 +221,7 @@ export default function PersonalDetailsForm() {
 
           <FormRow label={t("Monthly_income")} align="center">
             <div className="flex max-[500px]:gap-2 gap-4 max-[500px]:flex-col flex-wrap">
-              <DropdownField typeable compact placeholder={t("Select_currency")} value={currency} open={opens.currency} setOpen={setOpen("currency")} onSelect={setCurrency} items={CURRENCY_OPTIONS} dropdownClassName="max-h-[220px] min-[500px]:min-w-[200px]" className="flex-1 min-[500px]:max-w-[200px]" />
+              <DropdownField search compact placeholder={t("Select_currency")} value={currency} open={opens.currency} setOpen={setOpen("currency")} onSelect={setCurrency} items={CURRENCY_OPTIONS} dropdownClassName="max-h-[260px] min-[500px]:min-w-[220px]" className="flex-1 min-w-0 min-[500px]:max-w-[200px]" />
               <input value={monthlyIncome} onChange={e => setMonthlyIncome(e.target.value.replace(/\D/g, ""))} placeholder={t("Enter_monthly_income")} className="flex-1 py-2 h-10 w-full items-center rounded-[12px] border border-[#F2F2F2] bg-[#F2F2F2] px-4 text-[16px] text-dark outline-none placeholder:text-[#656565]" />
             </div>
           </FormRow>
@@ -233,7 +233,7 @@ export default function PersonalDetailsForm() {
         <div className="max-[500px]:mt-5 mt-6 sm:mt-7 lg:mt-8 flex flex-col max-[500px]:gap-5 gap-6 sm:gap-7 md:gap-8">
 
           <FormRow label={t("Country_living_in")} align="center" required error={errors.country}>
-            <DropdownField typeable compact placeholder={t("Select_country")} value={country} open={opens.country} setOpen={setOpen("country")} onSelect={setCountry} items={filtCountry} dropdownClassName="max-h-[220px]" />
+            <DropdownField search compact placeholder={t("Select_country")} value={country} open={opens.country} setOpen={setOpen("country")} onSelect={setCountry} items={filtCountry} dropdownClassName="max-h-[260px]" />
           </FormRow>
 
           <FormRow label={t("Residing_district_or_city")} align="center" required error={errors.city}>
@@ -241,7 +241,7 @@ export default function PersonalDetailsForm() {
           </FormRow>
 
           <FormRow label={t("Citizenship")} align="center" required error={errors.citizenship}>
-            <DropdownField typeable compact placeholder={t("Select_citizenship")} value={citizenship} open={opens.citizenship} setOpen={setOpen("citizenship")} onSelect={setCitizenship} items={filtCitizenship} dropdownClassName="max-h-[220px]" />
+            <DropdownField search compact placeholder={t("Select_citizenship")} value={citizenship} open={opens.citizenship} setOpen={setOpen("citizenship")} onSelect={setCitizenship} items={filtCitizenship} dropdownClassName="max-h-[260px]" />
           </FormRow>
 
           <FormRow label="Resident Status" align="center">

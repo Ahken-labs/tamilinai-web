@@ -171,7 +171,7 @@ export default function BasicDetailsForm() {
           <FormRow label={t("DOB")} required error={liveDobError ?? errors.dob}>
             <div className="flex gap-2">
               <DropdownField typeable compact placeholder={t("Year")} value={birthYear} open={dobOpen.year} setOpen={setDobFieldOpen("year")} onSelect={setYear} items={filtYears} dropdownClassName="max-h-[300px]" className="flex-1" />
-              <DropdownField typeable compact placeholder={t("Month")} value={birthMonth} open={dobOpen.month} setOpen={setDobFieldOpen("month")} onSelect={setMonth} items={filtMonths} dropdownClassName="max-h-[300px]" className="flex-1" />
+              <DropdownField typeable compact placeholder={t("Month")} value={birthMonth} open={dobOpen.month} setOpen={setDobFieldOpen("month")} onSelect={setMonth} items={filtMonths} dropdownClassName="max-h-[300px] min-w-[120px]" className="flex-1" />
               <DropdownField typeable compact placeholder={t("Day")} value={birthDay} open={dobOpen.day} setOpen={setDobFieldOpen("day")} onSelect={setBirthDay} items={filtDays} dropdownClassName="max-h-[300px]" className="flex-1" />
             </div>
           </FormRow>

@@ -1,4 +1,5 @@
 export const CURRENCY_OPTIONS = [
+  "LKR - Sri Lankan Rupee",
   "AFN - Afghan Afghani",
   "ALL - Albanian Lek",
   "DZD - Algerian Dinar",
@@ -75,7 +76,6 @@ export const CURRENCY_OPTIONS = [
   "LSL - Lesotho Loti",
   "LRD - Liberian Dollar",
   "LYD - Libyan Dinar",
-  "LKR - Sri Lankan Rupee",
   "MOP - Macanese Pataca",
   "MKD - Macedonian Denar",
   "MGA - Malagasy Ariary",
