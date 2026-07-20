@@ -438,7 +438,6 @@ export function CheckoutContent() {
     if (!readMeCache()?.countryCode) {
       getMe().then((me) => setCountryCode(me.countryCode ?? undefined)).catch(() => {});
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const plan = getPlanByKey(planKey) ?? ELITE_PLANS[0];
