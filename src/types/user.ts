@@ -250,6 +250,7 @@ export interface CareerDetailsPayload {
 }
 
 export interface FamilyDetailsPayload {
+  familyOrigin?: string;
   fatherOccupation?: string;
   motherOccupation?: string;
   brotherCount?: number;

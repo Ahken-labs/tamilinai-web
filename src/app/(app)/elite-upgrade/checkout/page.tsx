@@ -13,6 +13,7 @@ import {
 import { EliteBasicTag, EliteProTag, EliteMaxTag } from "@/src/components/ui/Tags";
 import { CONTACT } from "@/src/lib/contact";
 import { readMeCache } from "@/src/components/AppHeader";
+import { getMe } from "@/src/lib/api/user";
 import { ELITE_PLANS, getPlanByKey, getPricing, isSriLanka } from "@/src/constants/elitePlans";
 import { GoHeartFill } from "react-icons/go";
 import Button from "@/src/components/common-layout/Button";
@@ -427,11 +428,18 @@ function PlanSummary({
 // Main checkout content
 // ─────────────────────────────────────────────────────────────────────────────
 
-function CheckoutContent() {
+export function CheckoutContent() {
   const searchParams = useSearchParams();
   const planKey = searchParams.get("plan") ?? "basic";
 
-  const [countryCode] = useState<string | undefined>(() => readMeCache()?.countryCode);
+  const [countryCode, setCountryCode] = useState<string | undefined>(() => readMeCache()?.countryCode);
+
+  useEffect(() => {
+    if (!readMeCache()?.countryCode) {
+      getMe().then((me) => setCountryCode(me.countryCode ?? undefined)).catch(() => {});
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const plan = getPlanByKey(planKey) ?? ELITE_PLANS[0];
   const pricing = getPricing(plan, countryCode);

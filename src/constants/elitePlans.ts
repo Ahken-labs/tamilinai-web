@@ -41,7 +41,7 @@ export const ELITE_PLANS: ElitePlan[] = [
     features: [
       "Unlimited profiles",
       "Unlimited interest requests",
-      "Connect with up to **20 verified profiles** total",
+      "Connect with up to **20 verified profile ads** total",
       "1-week ad profile boost per month **(for 3 months)**",
     ],
   },
@@ -55,7 +55,7 @@ export const ELITE_PLANS: ElitePlan[] = [
     features: [
       "Unlimited profiles",
       "Unlimited interest requests",
-      "Connect with up to **50 verified profiles** total",
+      "Connect with up to **50 verified profile ads** total",
       "1-week ad profile boost per month **(for 6 months)**",
       "Hand-curated matches sent to your WhatsApp **twice a month.**",
     ],
@@ -70,7 +70,7 @@ export const ELITE_PLANS: ElitePlan[] = [
     features: [
       "Unlimited profiles",
       "Unlimited interest requests",
-      "Connect with up to **120 verified profiles** total",
+      "Connect with up to **120 verified profile ads** total",
       "1-week ad profile boost per month **(for 10 months)**",
       "**Weekly** hand-curated matches sent to your WhatsApp.",
       "Priority customer service",

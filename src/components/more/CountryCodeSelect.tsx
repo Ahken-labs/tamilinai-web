@@ -16,7 +16,9 @@ type Props = {
 
 export default function CountryCodeSelect({ value, onChange, open, setOpen, label, className, buttonClassName }: Props) {
   const [search, setSearch] = useState("");
+  const [isWide, setIsWide] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const getCodeOnly = (val: string) => {
     const match = val.match(/\(\+\d+\)/);
@@ -27,7 +29,14 @@ export default function CountryCodeSelect({ value, onChange, open, setOpen, labe
     ? COUNTRIES.filter((c) => c.toLowerCase().includes(search.toLowerCase()))
     : COUNTRIES;
 
-  // Focus search input when dropdown opens
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => setIsWide(entry.contentRect.width >= 260));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   useEffect(() => {
     if (open) {
       setTimeout(() => searchRef.current?.focus(), 50);
@@ -37,27 +46,42 @@ export default function CountryCodeSelect({ value, onChange, open, setOpen, labe
     }
   }, [open]);
 
-  const isLabelled = !!label;
-
   return (
-    <div className={`relative ${className ?? ""}`}>
+    <div ref={containerRef} className={`relative ${className ?? ""}`}>
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className={`flex max-[500px]:h-[52px] h-[55px] md:h-[60px] w-full items-center justify-between rounded-[12px] border px-4 text-left transition-colors focus:outline-none cursor-pointer
-          ${buttonClassName ?? (isLabelled ? "bg-[#F2F2F2] border-[#F2F2F2]" : "bg-white border-[#8C8C8C] focus:border-[#B31B38]")}`}
+        className={`relative flex max-[500px]:h-[52px] h-[55px] md:h-[60px] w-full items-center justify-between rounded-[12px] border px-4 text-left transition-colors focus:outline-none cursor-pointer
+          ${buttonClassName ?? "bg-white border-[#8C8C8C]"}`}
       >
-        {isLabelled ? (
-          <div className="flex flex-col gap-[2px] md:gap-[4px]">
-            <span className="text-[12px] md:text-[14px] font-normal leading-[125%] text-[#525252]">{label}</span>
-            <span className="text-[14px] md:text-[16px] font-medium leading-[125%] text-[#222222]">{getCodeOnly(value)}</span>
-          </div>
+        {label ? (
+          isWide ? (
+            /* wide: label + value stacked, chevron centred on right */
+            <>
+              <div className="flex flex-col min-w-0 flex-1">
+                <span className="text-[12px] font-normal leading-[150%] max-[500px]:tracking-[-0.23px] text-[#747474]">{label}</span>
+                <span className="truncate mt-0.5 text-[16px] font-normal leading-[125%] text-[#242424]">{value || getCodeOnly(value)}</span>
+              </div>
+              <ChevronIcon open={open} />
+            </>
+          ) : (
+            /* narrow: label on top row, code + chevron on bottom row */
+            <div className="flex flex-col w-full min-w-0">
+              <span className="text-[12px] font-normal leading-[150%] min-[500px]:tracking-[-0.23px] text-[#747474]">{label}</span>
+              <div className="mt-0.5 flex items-center justify-between gap-1">
+                <span className="text-[16px] font-normal leading-[125%] text-[#242424]">{getCodeOnly(value)}</span>
+                <ChevronIcon open={open} />
+              </div>
+            </div>
+          )
         ) : (
-          <span className="text-[14px] md:text-[16px] font-normal leading-[125%] text-[#525252]">
-            {getCodeOnly(value)}
-          </span>
+          <>
+            <span className="text-[16px] font-normal leading-[125%] text-[#525252]">
+              {getCodeOnly(value)}
+            </span>
+            <ChevronIcon open={open} />
+          </>
         )}
-        <ChevronIcon open={open} />
       </button>
 
       {open && (

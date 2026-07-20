@@ -25,19 +25,24 @@ export default function GoogleSignInModal({ onClose, onSuccess }: GoogleSignInMo
   }, [onClose]);
 
   const login = useGoogleLogin({
-    flow: "implicit",
-    onSuccess: async (tokenResponse) => {
+    flow: "auth-code",
+    scope: "openid email profile",
+    onSuccess: async ({ code }) => {
       const res = await fetch(`${API_BASE}/api/public/business/google-auth`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ accessToken: tokenResponse.access_token }),
+        body: JSON.stringify({ code }),
       });
-      if (!res.ok) return;
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        console.error("[google-auth] failed", res.status, err);
+        return;
+      }
       const data = await res.json();
       onSuccess(data.token, data.name, data.picture);
     },
   });
-
+  
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-end min-[500px]:items-center justify-center bg-black/60 min-[500px]:px-4 ">
       <div className="pb-8 flex h-[96dvh] max-h-[50dvh] min-[500px]:h-auto min-[500px]:max-h-[85vh] w-full min-[500px]:max-w-[640px] flex-col overflow-hidden rounded-t-[32px] min-[500px]:rounded-[32px] bg-white shadow-2xl">
@@ -51,7 +56,6 @@ export default function GoogleSignInModal({ onClose, onSuccess }: GoogleSignInMo
             className="flex items-center justify-center p-2 cursor-pointer"
           >
             <XIcon className="w-8 max-[500px]:w-6 h-8 max-[500px]:h-6" stroke="#222" />
-
           </button>
         </div>
 
@@ -66,7 +70,7 @@ export default function GoogleSignInModal({ onClose, onSuccess }: GoogleSignInMo
             onClick={() => login()}
             className="mt-5 mx-auto flex items-center gap-3 pl-2 pr-4 py-2 bg-[#F2F2F2] rounded-full hover:bg-[#ccc] transition-colors cursor-pointer font-poppins text-[16px] leading-[150%] font-medium text-[#222]"
           >
-           <GoogleIcon className="w-11 h-11"/>
+            <GoogleIcon className="w-11 h-11" />
             {t("Sign_in_with_Google")}
           </button>
         </div>

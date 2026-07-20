@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Button from "@/src/components/common-layout/Button";
-import { CheckmarkIcon, EliteCrownIcon, EliteProIcon, EliteVIPIcon, ProfileVisibilityIcon, ResponseIcon, StepPreferencesIcon } from "@/src/assets/Icons";
+import { CheckmarkIcon, DoubleChevronRightIcon, EliteCrownIcon, EliteProIcon, EliteVIPIcon, ProfileVisibilityIcon, ResponseIcon, StepPreferencesIcon } from "@/src/assets/Icons";
 import { FaWhatsapp } from "react-icons/fa";
 import { readMeCache } from "@/src/components/AppHeader";
 import { ELITE_PLANS, getPricing, ElitePlan, PlanPricing } from "@/src/constants/elitePlans";
@@ -118,6 +118,8 @@ function PlanCard({
 
 export default function EliteUpgradeBody() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const fromSetup = searchParams.get("from") === "setup";
     const [countryCode] = useState<string | undefined>(() => readMeCache()?.countryCode);
     const carouselRef = useRef<HTMLDivElement>(null);
     const [carouselIdx, setCarouselIdx] = useState(1);
@@ -125,9 +127,13 @@ export default function EliteUpgradeBody() {
     useEffect(() => {
         scrollToCard(1);
         getPendingBankTransfer().then((pending) => {
-            if (pending) router.replace(`/elite-upgrade/checkout?plan=${pending.planKey}`);
+            if (pending) {
+                const base = fromSetup ? "/upgrade/checkout" : "/elite-upgrade/checkout";
+                const extra = fromSetup ? "&from=setup" : "";
+                router.replace(`${base}?plan=${pending.planKey}${extra}`);
+            }
         });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     function scrollToCard(idx: number) {
@@ -140,7 +146,11 @@ export default function EliteUpgradeBody() {
     }
 
     function goToCheckout(planKey: string) {
-        router.push(`/elite-upgrade/checkout?plan=${planKey}&autoRenew=true`);
+        if (fromSetup) {
+            router.push(`/upgrade/checkout?plan=${planKey}&autoRenew=true&from=setup`);
+        } else {
+            router.push(`/elite-upgrade/checkout?plan=${planKey}&autoRenew=true`);
+        }
     }
 
     const pricings = ELITE_PLANS.map((p) => getPricing(p, countryCode));
@@ -158,14 +168,14 @@ export default function EliteUpgradeBody() {
                     {/* Mobile carousel — below 860px */}
                     <div className="relative min-[860px]:hidden">
                         <button type="button" onClick={() => scrollToCard(Math.max(0, carouselIdx - 1))}
-                            className="absolute left-0 top-1/2 z-10" style={{ transform: "translateY(-50%)" }}>
+                            className="cursor-pointer absolute left-0 top-1/2 z-10" style={{ transform: "translateY(-50%)" }}>
                             <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <rect width="36" height="36" rx="18" transform="matrix(-1 0 0 1 36 0)" fill="black" fillOpacity="0.3" />
                                 <path d="M21.0938 25.9201L14.5737 19.4001C13.8037 18.6301 13.8037 17.3701 14.5737 16.6001L21.0938 10.0801" stroke="white" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                         </button>
                         <button type="button" onClick={() => scrollToCard(Math.min(2, carouselIdx + 1))}
-                            className="absolute right-0 top-1/2 z-10" style={{ transform: "translateY(-50%)" }}>
+                            className="cursor-pointer absolute right-0 top-1/2 z-10" style={{ transform: "translateY(-50%)" }}>
                             <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <rect width="36" height="36" rx="18" fill="black" fillOpacity="0.3" />
                                 <path d="M14.9062 10.0801L21.4263 16.6001C22.1963 17.3701 22.1963 18.6301 21.4263 19.4001L14.9062 25.9201" stroke="white" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
@@ -208,7 +218,20 @@ export default function EliteUpgradeBody() {
                 </div>
             </div>
 
-            <div className="mt-10 sm:mt-12 md:mt-13 lg:mt-14">
+            {fromSetup && (
+                <div className="flex justify-center mt-6 sm:mt-8 md:mt-9 lg:mt-10">
+                    <button
+                        type="button"
+                        onClick={() => router.push("/matches?welcome=1")}
+                        className="text-[#222] text-[16px] font-semibold hover:text-[#B31B38] transition-colors cursor-pointer"
+                    >
+                        Skip for now
+                        <DoubleChevronRightIcon className="inline ml-1 w-3 h-3" stroke="currentColor" />
+                    </button>
+                </div>
+            )}
+
+            <div className="mt-6 sm:mt-8 md:mt-9 lg:mt-10">
                 <ReviewSection />
             </div>
             <ReviewFAQSection />

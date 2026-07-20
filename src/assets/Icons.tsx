@@ -1699,6 +1699,15 @@ export function WhatsAppLineIcon({ className = "w-5 h-5 shrink-0", ...props }: I
   );
 }
 
+export function DoubleChevronRightIcon({ className = "w-3 h-3 shrink-0", stroke = "#222222" }: { className?: string; stroke?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" fill="none" className={className}>
+      <path d="M1.625 2.04102L5.23144 5.64746C5.4267 5.84272 5.4267 6.1593 5.23144 6.35456L1.625 9.96101" stroke={stroke} strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M7.125 2.04102L10.7314 5.64746C10.9267 5.84272 10.9267 6.1593 10.7314 6.35456L7.125 9.96101" stroke={stroke} strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
 //for business
 export function ClockIcon({ className }: { className?: string }) {
   return (

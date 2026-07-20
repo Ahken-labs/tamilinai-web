@@ -111,6 +111,7 @@ interface ReviewsModalProps {
   totalCount: number;
   showActions: boolean;
   onClose: () => void;
+  onAddReview: () => void;
 }
 
 export default function ReviewsModal({
@@ -119,6 +120,7 @@ export default function ReviewsModal({
   totalCount,
   showActions,
   onClose,
+  onAddReview,
 }: ReviewsModalProps) {
   const { t } = useLang();
   useScrollLock(true);
@@ -183,7 +185,7 @@ export default function ReviewsModal({
               <Button
                 text={t("Add_a_review")}
                 className={`${isEmpty ? "max-[500px]:w-full mx-auto" : "max-[500px]:w-full"}`}
-                onPress={() => { }}
+                onPress={onAddReview}
               />
             </div>
           </div>

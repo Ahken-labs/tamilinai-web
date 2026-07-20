@@ -131,6 +131,7 @@ function LanguageDropdown({ open, lang, setLang, close, }: {
 }
 
 function BusinessLoginButton({ className = "" }: { className?: string }) {
+  const { t } = useLang();
   return (
     <Link
       href="https://business.inai.lk/login"
@@ -139,7 +140,7 @@ function BusinessLoginButton({ className = "" }: { className?: string }) {
       <div className={`cursor-pointer select-none items-center justify-center border border-[#B31B38]
         font-poppins text-[14px] md:text-[16px] font-medium text-[#B31B38] transition-colors duration-150 hover:bg-[#B31B38] hover:text-white
         ${className} py-[5px] sm:py-2 px-2 sm:px-4 rounded-[8px]`}>
-        Business
+        {t("Business")}
       </div>
     </Link>
   );

@@ -219,8 +219,9 @@ export default function RegisterForm({
                 error={errors.name}
             />
 
-            <div className="grid grid-cols-1 max-[500px]:gap-4 gap-5 min-[500px]:grid-cols-[120px_1fr]">
+            <div className="grid grid-cols-1 max-[500px]:gap-4 gap-4 min-[500px]:grid-cols-[120px_1fr]">
                 <CountryCodeSelect
+                    label={t("Country_code")}
                     value={countryCode}
                     onChange={(val) => { setCountryCode(val); setPhone(""); setErrors((prev) => ({ ...prev, phone: undefined })); }}
                     open={activeDropdown === "country"}

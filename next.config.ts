@@ -26,6 +26,16 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      {
+        // Google OAuth popup needs to postMessage back — relax COOP for business pages
+        source: "/business/:path*",
+        headers: [
+          {
+            key: "Cross-Origin-Opener-Policy",
+            value: "same-origin-allow-popups",
+          },
+        ],
+      },
     ];
   },
 };
