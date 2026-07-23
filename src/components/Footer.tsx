@@ -25,7 +25,8 @@ interface FooterProps {
 const NAV_LEFT = [
   { label: "Home", href: "#hero", appHref: "/matches" },
   { label: "About_Us", href: "#about", appHref: "/about" },
-  // { label: "Join_Now", href: "#", appHref: "/register" },
+  { label: "Create_Ad_Profile", href: "#", appHref: "/register" },
+  { label: "Business_cta", href: "https://business.inai.lk", appHref: "https://business.inai.lk" },
   { label: "Terms_Conditions", href: "/terms", appHref: "/terms" },
   { label: "Privacy_Policy", href: "/privacy", appHref: "/privacy" },
   { label: "Refund_Return_Policy", href: "/refund-policy", appHref: "/refund-policy" },
@@ -98,6 +99,10 @@ export default function Footer({ variant = "landing" }: FooterProps) {
   };
 
   const handleLeftNav = (label: string, href: string, appHref: string) => {
+    if (label === "Business_cta") {
+      window.open("https://business.inai.lk", "_blank", "noopener,noreferrer");
+      return;
+    }
     if (isApp) {
       if (label === "Terms_Conditions") { setOpenPopup("terms"); return; }
       if (label === "Privacy_Policy") { setOpenPopup("privacy"); return; }
@@ -105,7 +110,7 @@ export default function Footer({ variant = "landing" }: FooterProps) {
       router.push(appHref);
       return;
     }
-    if (label === "Join_Now") {
+    if (label === "Create_Ad_Profile") {
       setOpenForm(true);
     } else if (label === "Terms_Conditions" || label === "Privacy_Policy" || label === "Refund_Return_Policy") {
       router.push(href);

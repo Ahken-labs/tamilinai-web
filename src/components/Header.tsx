@@ -50,21 +50,21 @@ export default function Header() {
 
         {/* Desktop right */}
         <div className="hidden items-center lg:flex">
-          {!isLoginPage && <span className="font-poppins text-[16px] font-medium text-dark">
+          {!isLoginPage && <span className="font-poppins text-[16px] font-medium text-dark pr-2">
             {t("Already_a_member")}
           </span>}
-           {!isLoginPage && <LoginButton className="hidden lg:flex ml-2" />}
-          <BusinessLoginButton className="hidden lg:flex ml-5" />
-         
+          {!isLoginPage && <div className="mr-5"><LoginButton className="flex" /> </div>}
+          <div className="mr-5 flex"><BusinessLoginButton className="flex" /></div>
+
 
           {/* Language selector */}
-          <div ref={desktopRef} className="relative ml-5">
+          <div ref={desktopRef} className="relative">
             <button
               type="button"
               onClick={() => setDesktopOpen(!desktopOpen)}
               className="flex items-center gap-2 cursor-pointer select-none"
             >
-              <span className="font-tamil text-[16px] font-medium text-dark">
+              <span className=" font-tamil text-[16px] font-medium text-dark">
                 {lang === "en" ? "ஆங்கிலம்" : "Tamil"}
               </span>
               <ChevronIcon open={desktopOpen} />
@@ -81,9 +81,9 @@ export default function Header() {
 
         {/* Mobile right: login + language icon */}
         <div className="flex items-center gap-2 lg:hidden">
-           {!isLoginPage && <LoginButton className="flex lg:hidden" />}
-          <BusinessLoginButton className={`flex lg:hidden ${isLoginPage?"mr-1":""}`} />
-         
+          {!isLoginPage && <LoginButton className="flex lg:hidden" />}
+          <BusinessLoginButton className={`flex lg:hidden ${isLoginPage ? "mr-1" : ""}`} />
+
           <div ref={mobileRef} className="relative">
             <button
               type="button"
@@ -119,7 +119,7 @@ function LanguageDropdown({ open, lang, setLang, close, }: {
         <button key={l.value} type="button" onClick={() => {
           setLang(l.value); close();
         }}
-          className={`my-0.5 w-full rounded-[8px] px-5 py-2 text-left font-tamil text-[15px] font-medium transition-colors ${lang === l.value
+          className={`cursor-pointer transition-transform duration-300 ease-out hover:scale-[1.03] my-0.5 w-full rounded-[8px] px-5 py-2 text-left font-tamil text-[15px] font-medium transition-colors ${lang === l.value
             ? "bg-[#fdf0f2] text-[#B31B38]"
             : "text-dark hover:bg-[#EAEAEA] hover:text-dark"
             }`} >
@@ -135,9 +135,9 @@ function BusinessLoginButton({ className = "" }: { className?: string }) {
   return (
     <Link
       href="https://business.inai.lk/login"
-      className="max-[500px]:py-[5.5px] py-0"
+      className="max-[500px]:py-[5.5px] py-0 transition-transform duration-300 ease-out hover:scale-[1.05]"
     >
-      <div className={`cursor-pointer select-none items-center justify-center border border-[#B31B38]
+      <div className={`sm:h-[32px] cursor-pointer select-none items-center justify-center border border-[#B31B38]
         font-poppins text-[14px] md:text-[16px] font-medium text-[#B31B38] transition-colors duration-150 hover:bg-[#B31B38] hover:text-white
         ${className} py-[5px] sm:py-2 px-2 sm:px-4 rounded-[8px]`}>
         {t("Business")}
@@ -161,9 +161,9 @@ function LoginButton({ className = "" }: { className?: string }) {
     <button
       type="button"
       onClick={handleLogin}
-      className="max-[500px]:py-[5.5px] py-0"
+      className="transition-transform duration-300 ease-out hover:scale-[1.06] max-[500px]:py-[5.5px] py-0"
     >
-      <div className={`cursor-pointer select-none items-center justify-center bg-[#B31B38] hover:bg-[#8E162D] active:bg-[#6F1023]
+      <div className={`sm:h-[32px] cursor-pointer select-none items-center justify-center bg-[#B31B38] hover:bg-[#8E162D] active:bg-[#6F1023]
         font-poppins text-[14px] sm:text-[15px] md:text-[16px] font-medium text-[#FFFFFF] transition-colors duration-150 
         ${className} py-1.5 sm:py-[9px] px-2 sm:px-4 rounded-[8px]`}>
         {t("Log_In")}
