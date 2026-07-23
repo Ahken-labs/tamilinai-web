@@ -161,14 +161,12 @@
 
 import { useLang } from "@/src/context/LangContext";
 import Button from "@/src/components/common-layout/Button";
-import RegisterForm from "@/src/components/auth/RegisterForm";
 import { CheckmarkIcon, EliteProIcon } from "@/src/assets/Icons";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
 export default function CardsSection() {
     const { t } = useLang();
-    const [openForm, setOpenForm] = useState(false);
     const [visible, setVisible] = useState(false);
     const sectionRef = useRef<HTMLElement>(null);
 
@@ -243,7 +241,7 @@ export default function CardsSection() {
                     </div>
 
                     <div className="mt-6">
-                        <Button text={t("Cards_cta")} onPress={() => setOpenForm(true)} />
+                        <Button text={t("Cards_cta")} onPress={() => window.open("https://cards.inai.lk/", "_blank", "noopener,noreferrer")} />
                     </div>
 
                     <div className="mt-6 sm:mt-7 md:mt-8 lg:mt-10 w-full max-w-[640px] rounded-[24px] bg-white max-[500px]:px-2 px-4 md:px-5 lg:px-6 py-4 sm:py-5 md:py-6">
@@ -263,7 +261,6 @@ export default function CardsSection() {
 
             </div>
 
-            <RegisterForm variant="modal" open={openForm} onClose={() => setOpenForm(false)} />
         </section>
     );
 }
