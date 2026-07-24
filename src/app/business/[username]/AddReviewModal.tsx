@@ -53,7 +53,9 @@ interface AddReviewModalProps {
   onPost: (rating: number, text: string) => void | Promise<void>;
 }
 
-export default function AddReviewModal({ businessName, reviewerName, reviewerPicture, initialRating, initialText, onClose, onPost }: AddReviewModalProps) {
+export default function AddReviewModal({ businessName,
+  //  reviewerName, reviewerPicture, 
+   initialRating, initialText, onClose, onPost }: AddReviewModalProps) {
   const { t } = useLang();
   const [rating, setRating] = useState(initialRating ?? 5);
   const [text, setText] = useState(initialText ?? "");
@@ -86,7 +88,7 @@ export default function AddReviewModal({ businessName, reviewerName, reviewerPic
           <h2 className="max-[500px]:mt-2 font-poppins text-[20px] font-semibold leading-[135%] text-[#222] text-center">
             {businessName}
           </h2>
-{/* 
+          {/* 
           {(reviewerName || reviewerPicture) && (
             <div className="flex items-center gap-3 mt-4">
               {reviewerPicture && (
@@ -116,10 +118,11 @@ export default function AddReviewModal({ businessName, reviewerName, reviewerPic
         </div>
 
         {/* Footer */}
-        <div className="shrink-0 border-t border-[#F0F0F0] max-[500px]:px-4 px-6 py-3">
+        <div className="min-[500px]:mt-1 shrink-0 flex w-full max-[500px]:border-t max-[500px]:border-[#F0F0F0] max-[500px]:px-4 px-6 max-[500px]:py-3 py-4">
+          <div className="flex-1 w-full"/>
           <Button
             text={t("Post")}
-            className="w-full"
+            className="max-[500px]:w-full"
             onPress={handlePost}
           />
         </div>

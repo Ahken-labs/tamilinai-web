@@ -60,12 +60,17 @@ function MobileScroll({
 
   return (
     <div className="max-[500px]:py-6 py-7 sm:py-8 md:py-9 lg:py-10 relative mx-auto">
+      <div
+        className="min-[500px]:flex hidden pointer-events-none absolute left-[-1px] top-0 bottom-0 w-10 z-10"
+        style={{ background: "linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 35%, rgba(243,244,246,0.00) 100%)" }}
+      />
       <button
         type="button"
         onClick={() => scrollByCard(-1)}
         aria-label="Scroll left"
         className="hidden min-[500px]:flex absolute -left-0 top-1/2 -translate-y-1/2 z-20 p-1.5 items-center justify-center rounded-full bg-black/30 backdrop-blur-[25px] cursor-pointer"
       >
+
         <BackChevronIcon className="w-6 h-6" stroke="#fff" strokeWidth={3} />
       </button>
       <div ref={scrollRef} className="overflow-x-auto no-scrollbar" style={{ scrollbarWidth: "none" }}>
@@ -106,7 +111,7 @@ function MobileScroll({
         <BackChevronIcon className="w-6 h-6" stroke="#fff" strokeWidth={3} />
       </button>
       <div
-        className="pointer-events-none absolute right-0 top-0 bottom-0 w-10 z-10"
+        className="min-[500px]:flex hidden pointer-events-none absolute right-[-1px] top-0 bottom-0 w-10 z-10"
         style={{ background: "linear-gradient(270deg, #FFFFFF 0%, #FFFFFF 35%, rgba(243,244,246,0.00) 100%)" }}
       />
     </div>
@@ -324,7 +329,7 @@ export default function PublicPortfolioClient({ business: b }: { business: Publi
               viewDetailsLabel={t("View_details")}
             />
 
-            <div className="max-[500px]:mt-6 mt-10 flex flex-col max-[500px]:gap-4 gap-5 px-2 sm:px-4">
+            <div className="max-[500px]:mt-6 mt-10 flex flex-col max-[500px]:gap-4 gap-5 px-4 sm:px-4">
               {b.services.map((s) => (
                 <ServiceListItem key={s.id} service={s} onViewDetails={setDetailsService} />
               ))}
@@ -335,10 +340,10 @@ export default function PublicPortfolioClient({ business: b }: { business: Publi
         {/* ── Location + service areas ──────────────────────────────────────── */}
         <div className="flex flex-col items-center px-4 max-[500px]:mt-5 mt-6">
           {whatsappHref && (
-              <Button text={t("WhatsApp")} 
+            <Button text={t("WhatsApp")}
               className="max-[500px]:px-6"
-              onPress={handleWhatsApp}/>
-            )}
+              onPress={handleWhatsApp} />
+          )}
 
           {locationText && (
             <div className="max-[500px]:mt-6 mt-7 sm:mt-8 md:mt-9 lg:mt-10">
