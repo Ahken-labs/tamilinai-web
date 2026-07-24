@@ -107,7 +107,7 @@ function MobileScroll({
       </button>
       <div
         className="pointer-events-none absolute right-0 top-0 bottom-0 w-10 z-10"
-        style={{ background: "linear-gradient(270deg, #FFFFFF 0%, #FFFFFF 35%, rgba(243,244,246,0.00) 70%)" }}
+        style={{ background: "linear-gradient(270deg, #FFFFFF 0%, #FFFFFF 35%, rgba(243,244,246,0.00) 100%)" }}
       />
     </div>
   );
