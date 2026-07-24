@@ -86,7 +86,7 @@ export default function AddReviewModal({ businessName, reviewerName, reviewerPic
           <h2 className="max-[500px]:mt-2 font-poppins text-[20px] font-semibold leading-[135%] text-[#222] text-center">
             {businessName}
           </h2>
-
+{/* 
           {(reviewerName || reviewerPicture) && (
             <div className="flex items-center gap-3 mt-4">
               {reviewerPicture && (
@@ -97,7 +97,7 @@ export default function AddReviewModal({ businessName, reviewerName, reviewerPic
                 <span className="font-poppins text-[14px] text-[#343434] font-medium">{reviewerName}</span>
               )}
             </div>
-          )}
+          )} */}
 
           <div className="flex justify-center my-6 min-[500px]:my-5">
             <StarPicker rating={rating} onChange={setRating} />

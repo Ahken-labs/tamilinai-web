@@ -107,7 +107,7 @@ function MobileScroll({
       </button>
       <div
         className="pointer-events-none absolute right-0 top-0 bottom-0 w-10 z-10"
-        style={{ background: "linear-gradient(270deg, #F3F4F6 0%, #F3F4F6 25%, rgba(243,244,246,0.00) 100%)" }}
+        style={{ background: "linear-gradient(270deg, #FFFFFF 0%, #FFFFFF 35%, rgba(243,244,246,0.00) 70%)" }}
       />
     </div>
   );
@@ -233,7 +233,7 @@ export default function PublicPortfolioClient({ business: b }: { business: Publi
                 )}
               </div>
 
-              <div className="absolute min-[500px]:-bottom-11.5 -bottom-6.5 max-[500px]:left-2 min-[500px]:right-0 min-[500px]:left-0 min-[500px]:mx-auto flex h-13 min-[500px]:h-23 w-13 min-[500px]:w-23 items-center justify-center overflow-hidden rounded-full border-[4px] border-white bg-[#E8E8E8]">
+              <div className="absolute min-[500px]:-bottom-11.5 -bottom-6.5 max-[500px]:left-2 min-[500px]:right-0 min-[500px]:left-0 min-[500px]:mx-auto flex h-[50.4px] min-[500px]:h-23 w-[50.4px] min-[500px]:w-23 items-center justify-center overflow-hidden rounded-full max-[500px]:border-[2.4px] border-[4px] border-white bg-[#E8E8E8]">
                 {b.logoUrl ? (
                   <Image src={b.logoUrl} alt="" fill className="object-cover" />
                 ) : (
