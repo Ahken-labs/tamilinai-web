@@ -256,20 +256,20 @@ export default function CloseAccountPage() {
                 <Link href="/take-a-break" className="flex-1">
                   <Button
                     text="Pause my profile instead"
-                    className="flex-1 w-full"
+                    className="max-[605px]:!px-4 font-poppins !font-medium flex-1 w-full"
                   />
                 </Link>
               ) : step === 2 ? (
                 <Button
                   text="Go back"
                   onPress={() => setStep(1)}
-                  className="flex-1 w-full !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
+                  className="font-poppins !font-medium flex-1 w-full !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
                 />
               ) : (
                 <Button
                   text="Cancel"
                   onPress={() => router.push("/matches")}
-                  className="flex-1 w-full !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
+                  className="font-poppins !font-medium flex-1 w-full !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
                 />
               )}
 
@@ -278,7 +278,7 @@ export default function CloseAccountPage() {
                   <Button
                     text="Continue"
                     onPress={handleContinue}
-                    className="w-full !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
+                    className="font-poppins !font-medium w-full !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
                   />
                 </div>
               ) : step === 2 ? (
@@ -292,7 +292,7 @@ export default function CloseAccountPage() {
                   text={submitting ? "Deleting…" : "Delete my account"}
                   onPress={handleDelete}
                   disabled={submitting}
-                  className="flex-1"
+                  className="font-poppins !font-medium flex-1"
                 />
               )}
             </div>
