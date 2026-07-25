@@ -36,7 +36,7 @@ export default function InputBox({
 
   if (compact) {
     return (
-      <div className="flex flex-col w-full">
+      <div className="font-poppins flex flex-col w-full">
         <div
           className={`flex h-[40px] items-center rounded-[12px] border bg-[#F2F2F2] px-4 transition-colors
             ${focused ? "border-[#F2F2F2]" : "border-[#F2F2F2]"} ${className ?? ""}`}
@@ -60,7 +60,7 @@ export default function InputBox({
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="font-poppins flex flex-col">
       <div
         className={`relative flex max-[500px]:h-[52px] h-[55px] md:h-[60px] items-center rounded-xl border px-4 transition-colors
           ${focused ? "border-[#B31B38]" : "border-[#8C8C8C]"} ${className ?? ""}`}

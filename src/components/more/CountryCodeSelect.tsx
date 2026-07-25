@@ -51,7 +51,7 @@ export default function CountryCodeSelect({ value, onChange, open, setOpen, labe
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className={`relative flex max-[500px]:h-[52px] h-[55px] md:h-[60px] w-full items-center justify-between rounded-[12px] border px-4 text-left transition-colors focus:outline-none cursor-pointer
+        className={`font-poppins relative flex max-[500px]:h-[52px] h-[55px] md:h-[60px] w-full items-center justify-between rounded-[12px] border px-4 text-left transition-colors focus:outline-none cursor-pointer
           ${buttonClassName ?? "bg-white border-[#8C8C8C]"}`}
       >
         {label ? (
@@ -76,7 +76,7 @@ export default function CountryCodeSelect({ value, onChange, open, setOpen, labe
           )
         ) : (
           <>
-            <span className="text-[16px] font-normal leading-[125%] text-[#525252]">
+            <span className="font-poppins text-[16px] font-normal leading-[125%] text-[#525252]">
               {getCodeOnly(value)}
             </span>
             <ChevronIcon open={open} />

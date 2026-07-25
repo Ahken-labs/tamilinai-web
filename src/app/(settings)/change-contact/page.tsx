@@ -208,7 +208,7 @@ function ChangeContactContent() {
               icon={requesting ? undefined : <ArrowRightIcon />}
               onPress={handleRequest}
               disabled={requesting}
-              className="flex-1"
+              className="font-poppins flex-1"
             />
           </div>
         }
@@ -221,6 +221,7 @@ function ChangeContactContent() {
               open={countryOpen}
               setOpen={setCountryOpen}
               label="Country code"
+              buttonClassName="bg-[#F2F2F2] border-none"
             />
             <InputBox
               value={value}
@@ -259,13 +260,13 @@ function ChangeContactContent() {
           <Button
             text="Go back"
             onPress={() => { setStep("request"); setDigits(Array(OTP_LENGTH).fill("")); setOtpError(""); }}
-            className="flex-1 !bg-white !text-[#222222] hover:!bg-[#F8F8F8]"
+            className="font-poppins flex-1 !bg-white !text-[#222222] hover:!bg-[#F8F8F8]"
           />
           <Button
             text={verifying ? "Verifying…" : "Confirm change"}
             icon={verifying ? undefined : <ArrowRightIcon />}
             onPress={handleVerify}
-            className="flex-1"
+            className="font-poppins flex-1"
           />
         </div>
       }
@@ -286,7 +287,7 @@ function ChangeContactContent() {
             value={digit}
             onChange={(e) => handleDigitChange(i, e.target.value)}
             onKeyDown={(e) => handleDigitKeyDown(i, e)}
-            className={`flex-1 max-w-[42px] sm:max-w-[50px] md:max-w-[56px] text-center py-3 md:py-4 rounded-[10px] sm:rounded-[11px] md:rounded-[12px] border text-[16px] md:text-[18px] font-medium text-dark2 outline-none transition-colors duration-150
+            className={`font-poppins flex-1 max-w-[42px] sm:max-w-[50px] md:max-w-[56px] text-center py-3 md:py-4 rounded-[10px] sm:rounded-[11px] md:rounded-[12px] border text-[16px] md:text-[18px] font-medium text-dark2 outline-none transition-colors duration-150
               ${otpError
                 ? "border-[#B31B38] bg-[#fff5f7]"
                 : digit
