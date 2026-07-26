@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import UnderReviewPage from "./UnderReviewPage";
+import OnBreakPage from "./OnBreakPage";
 import PublicPortfolioClient from "./PublicPortfolioClient";
 import API_BASE_URL from "@/src/lib/api/config";
 import BusinessHeader from "@/src/components/BusinessHeader";
@@ -44,9 +45,9 @@ export interface PublicBusiness {
   services: Service[];
 }
 
-async function getBusiness(username: string): Promise<PublicBusiness | { pending: true } | null> {
+async function getBusiness(username: string): Promise<PublicBusiness | { pending: true } | { onBreak: true } | null> {
   try {
-    const res = await fetch(`${API_BASE_URL}/api/public/business/${username}`, { next: { revalidate: 60 } });
+    const res = await fetch(`${API_BASE_URL}/api/public/business/${username}`, { cache: "no-store" });
     if (res.status === 404) return null;
     return res.json();
   } catch {
@@ -57,7 +58,7 @@ async function getBusiness(username: string): Promise<PublicBusiness | { pending
 export async function generateMetadata({ params }: { params: Promise<{ username: string }> }): Promise<Metadata> {
   const { username } = await params;
   const data = await getBusiness(username);
-  if (!data || "pending" in data) return {};
+  if (!data || "pending" in data || "onBreak" in data) return {};
   return {
     title: `${data.businessName} - ${data.category} on Inai`,
     description: data.bio ?? `${data.businessName} offers ${data.category} services in ${data.district}, Sri Lanka.`,
@@ -70,6 +71,7 @@ export default async function BusinessPortfolioPage({ params }: { params: Promis
 
   if (!data) notFound();
   if ("pending" in data) return <UnderReviewPage />;
+  if ("onBreak" in data) return <OnBreakPage />;
 
   return (
   <main>
