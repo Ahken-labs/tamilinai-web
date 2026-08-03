@@ -3,9 +3,9 @@
 import { useLang } from "@/src/context/LangContext";
 import Button from "@/src/components/common-layout/Button";
 import RegisterForm from "@/src/components/auth/RegisterForm";
+import BizCard from "@/src/components/common-layout/BizCard";
 import { useState, useRef } from "react";
 import { useDragScroll } from "@/src/hooks/useDragScroll";
-import Image from "next/image";
 
 const CATEGORIES = [
     "Bridal Makeup", "Bridal Dressing", "Wedding Cakes", "Photography & Video",
@@ -124,43 +124,18 @@ function MobileScroll() {
     );
 }
 
-function StarIcon() {
-    return (
-        <svg width="14.667" height="14" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12.005 7.26625L10.313 1.85161C10.2155 1.53973 9.77409 1.53973 9.67663 1.85161L7.98456 7.26625C7.94107 7.40541 7.81219 7.50016 7.66639 7.50016H1.80817C1.48988 7.50016 1.35265 7.90364 1.60493 8.0977L6.06053 11.5251C6.17124 11.6102 6.21711 11.7554 6.17545 11.8887L4.45768 17.3856C4.36234 17.6907 4.70949 17.942 4.96958 17.7563L9.80105 14.3052C9.91695 14.2224 10.0726 14.2224 10.1885 14.3052L15.02 17.7563C15.2801 17.942 15.6272 17.6907 15.5319 17.3856L13.8141 11.8887C13.7725 11.7554 13.8183 11.6102 13.9291 11.5251L18.3847 8.0977C18.6369 7.90364 18.4997 7.50016 18.1814 7.50016H12.3232C12.1774 7.50016 12.0485 7.40541 12.005 7.26625Z" fill="#6C6C6C"/>
-        </svg>
-    );
-}
-
 function ServiceCard({ service }: { service: MockService }) {
     return (
-        <div className="flex flex-col min-w-[192px] max-w-[192px] min-[500px]:max-w-[244px] w-full">
-            {/* Image */}
-            <div className="relative w-full min-h-[192px] max-h-[244px] aspect-square rounded-[32px] bg-[#D9D9D9] overflow-hidden">
-                {service.image && (
-                    <Image src={service.image} alt={service.title} fill className="object-cover" />
-                )}
-                {service.featured && (
-                    <div
-                        className="absolute border border-white top-4 right-4 px-[10.5px] py-[4.5px] rounded-full bg-white/80"
-                        style={{ boxShadow: "0 0 0 1px rgba(0,0,0,0.02), 0 2px 6px 0 rgba(0,0,0,0.04), 0 4px 8px 0 rgba(0,0,0,0.10)" }}
-                    >
-                        <span className="text-[#222] font-poppins text-[11px] font-semibold leading-[13px]">Featured</span>
-                    </div>
-                )}
-            </div>
-
-            {/* Info */}
-            <div className="mt-2 flex flex-col gap-1">
-                <p className="text-[#222] font-poppins text-[14px] font-medium leading-[150%] line-clamp-2">{service.title}</p>
-                <p className="text-[#656565] font-poppins text-[14px] font-normal leading-[150%] truncate">{service.location}</p>
-                <div className="flex items-center">
-                    <StarIcon />
-                    <span className="ml-[2.5px] text-[#767676] font-poppins text-[14px] leading-[150%]">{service.rating}</span>
-                    <span className="ml-1 text-[#767676] font-poppins text-[14px] font-normal leading-[150%] truncate"><span className="font-bold">·</span> {service.type}</span>
-                </div>
-            </div>
-        </div>
+        <BizCard
+            title={service.title}
+            location={service.location}
+            rating={service.rating}
+            image={service.image}
+            featured={service.featured}
+            type={service.type}
+            className="min-w-[192px] max-w-[192px] min-[500px]:max-w-[244px] w-full"
+            imageClassName="w-full min-h-[192px] max-h-[244px] aspect-square"
+        />
     );
 }
 
