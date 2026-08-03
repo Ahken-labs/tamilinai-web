@@ -30,720 +30,542 @@ type PolicySection = {
 };
 
 const metaLines: MetaLine[] = [
-    { text: "Effective Date: 1st June 2025" },
-    { text: "Last Updated: 1st June 2025" },
-    { text: "Version 1.0" },
+    { text: "Effective Date: 8th August 2025" },
+    { text: "Last Updated: 8th August 2025" },
+    { text: "Version 1.1" },
     { text: "www.inai.lk" },
-    { text: "privacy@inai.lk" },
+    { text: "connect@inai.lk" },
     { text: "A product of Ahken Nexus | Built by Ahkenlabs (ahkenlabs.com)" },
 ];
 
 const policySections: PolicySection[] = [
     {
-        title: "Introduction & our commitment",
+        title: "1. WHO WE ARE",
         blocks: [
             {
                 type: "paragraph",
-                text: `Welcome to Inai (“inai.lk”, “we”, “us”, or “our”). Inai is a Tamil matrimony platform operated under Ahken Nexus and built by Ahkenlabs (ahkenlabs.com). Our mission is to connect Sri Lankan Tamil individuals and diaspora communities worldwide to find life partners who share their culture, values, and aspirations.
-We understand that when you use Inai you are sharing some of the most personal information in your life — your identity, family background, physical attributes, relationship goals, and contact details. This Privacy Policy explains exactly what data we collect, why we collect it, who may see it, how we protect it, and what rights you hold over it.
-By registering on inai.lk or any associated mobile application, you confirm that you have read, understood, and agreed to this Privacy Policy. If you do not agree, please do not use the platform.
-This policy applies to all users of inai.lk regardless of country of residence.`,
-            },
-        ],
-    },
-    {
-        title: "1. Data controller & contact",
-        blocks: [
-            {
-                type: "paragraph",
-                text: `The Data Controller responsible for your personal information is:
-Platform Name: Inai
-Parent Company: Ahken Nexus
-Technology Partner: Ahkenlabs (ahkenlabs.com)
-Website: www.inai.lk
-Privacy Contact Email: privacy@inai.lk
-Grievance Contact Email: grievance@inai.lk
-For all privacy-related queries, data correction requests, or complaints, please contact us at privacy@inai.lk. We aim to respond within 14 business days.
-`,
-            },
-        ],
-    },
-    {
-        title: "2. Personal data we collect",
-        blocks: [
-            {
-                type: "paragraph",
-                text: "We collect data in the following categories when you register, build a profile, and use the platform:",
-            },
-            {
-                type: "subheading",
-                text: `
-                2.1 Identity & Contact Information`,
-            },
-            {
-                type: "bullets",
-                items: [
-                    "Full name",
-                    "Date of birth and age",
-                    "Gender",
-                    "Mobile number (including WhatsApp number)",
-                    "Email address",
-                    "Citizenship / nationality",
-                    "Country, city, and district of current residence",
-                    "City of birth",
-                ],
-            },
-            {
-                type: "subheading",
-                text: "2.2 Physical & Health Attributes",
-            },
-            {
-                type: "bullets",
-                items: [
-                    "Height and weight",
-                    "Body build",
-                    "Whether you have any physical disability (Yes / No — voluntary disclosure only)",
-                ],
-            },
-            {
-                type: "subheading",
-                text: "2.3 Educational & Professional Background",
-            },
-            {
-                type: "bullets",
-                items: [
-                    "Highest educational qualification",
-                    "Employment status and job title",
-                    "Industry / job sector",
-                    "Income range (approximate bracket)",
-                ],
-            },
-            {
-                type: "subheading",
-                text: "2.4 Cultural & Religious Identity",
-            },
-            {
-                type: "bullets",
-                items: [
-                    "Religion",
-                    "Caste (voluntary)",
-                    "Eating habits (vegetarian, non-vegetarian, etc.)",
-                    "Drinking habits",
-                    "Smoking habits",
-                ],
-            },
-            {
-                type: "subheading",
-                text: "2.5 Family Background",
-            },
-            {
-                type: "bullets",
-                items: [
-                    "Father’s occupation",
-                    "Mother’s occupation",
-                    "Number of brothers and sisters",
-                    "Profile created by (self, parent, sibling, guardian)",
-                ],
-            },
-            {
-                type: "subheading",
-                text: "2.6 Partner Preferences",
-            },
-            {
-                type: "bullets",
-                items: [
-                    "Preferred age range, height, education, religion, caste, location, and other matching criteria you set",
-                ],
-            },
-            {
-                type: "subheading",
-                text: "2.7 Account & Technical Data",
-            },
-            {
-                type: "bullets",
-                items: [
-                    "Login credentials (password stored as salted hash — never in plain text)",
-                    "Device type, browser, IP address, operating system",
-                    "Session activity logs, pages visited, and interactions (interest sent, profiles viewed)",
-                    "Payment transaction records for Elite Membership (no raw card details are stored — handled by PCI-DSS payment gateway)",
-                ],
-            },
-            {
-                type: "subheading",
-                text: "2.8 User-Generated Content",
-            },
-            {
-                type: "bullets",
-                items: [
-                    "Profile photographs and any additional images you upload",
-                    "Messages exchanged on the platform (if messaging is enabled)",
-                    "Any feedback or support queries you submit",
-                ],
-            },
-        ],
-    },
-    {
-        title: "3. Legal Basis for Processing",
-        blocks: [
-            {
-                type: "paragraph",
-                text: `We process your data on the following legal grounds:
+                text: `INAI ("INAI", "we", "us", "our") operates the website inai.lk and associated services (the "Platform").
                 
                 `,
             },
             {
-                type: "bullets",
-                items: [
-                    "Contractual Necessity — to deliver the matrimony matching service you signed up for",
-                    "Consent — for sensitive categories such as disability status, caste, religion, body attributes, and family details; you may withdraw consent at any time",
-                    "Legitimate Interests — for fraud prevention, platform security, and improving matching algorithms",
-                    `Legal Obligation — to comply with laws of Sri Lanka and applicable laws of your country of residence`,
-                ],
+                type: "paragraph",
+                text: `Legal entity: Ahken Nexus (Pvt) Ltd
+                `,
             },
             {
                 type: "paragraph",
-                text: `
-                Where we rely on consent, you have the right to withdraw it at any time without affecting the lawfulness of prior processing. Some features may become unavailable if you withdraw consent for core profile data.`,
-            },
-        ],
-    },
-    {
-        title: "4. How We Use Your Data",
-        blocks: [
-            {
-                type: "paragraph",
-                text: "4.1 Core Matching Service",
-            },
-            {
-                type: "bullets",
-                items: [
-                    "Display your profile to other registered users of the opposite gender (or your specified preference) after email and mobile verification",
-                    "Power compatibility filters and partner preference matching",
-                    "Enable you to send and receive expressions of interest",
-                ],
-            },
-            {
-                type: "subheading",
-                text: "4.2 Contact Details — Elite Membership Gate",
+                text: `Company registration number: PV 00324108
+                `,
             },
             {
                 type: "paragraph",
-                text: `Contact information (mobile number, WhatsApp number, and email address) is classified as sensitive contact data. It is NOT visible to other users unless:`,
-            },
-            {
-                type: "bullets",
-                items: [
-                    "The user viewing your profile holds an active Elite Membership, AND",
-                    "You have not opted out of contact-detail visibility in your privacy settings",
-                ],
+                text: `Registered address: 247/1, Uthayanagar west, Kilinochchi, Sri Lanka
+                `,
             },
             {
                 type: "paragraph",
-                text: `This gating mechanism is a core revenue-generating and safety feature of the platform.`,
-            },
-            {
-                type: "subheading",
-                text: "4.3 Identity Verification",
-            },
-            {
-                type: "bullets",
-                items: [
-                    "OTP-based mobile number verification",
-                    "Email verification link",
-                    "We may request identity documents for optional verified badge features",
-                ],
-            },
-            {
-                type: "subheading",
-                text: "4.4 Communications",
-            },
-            {
-                type: "bullets",
-                items: [
-                    "Transactional emails: registration, verification, password reset, membership receipts",
-                    "Service notifications: new interests received, profile views, system updates",
-                    "Promotional communications (only if you have opted in; you may opt out at any time)",
-                ],
-            },
-            {
-                type: "subheading",
-                text: "4.5 Platform Improvement & Analytics",
-            },
-            {
-                type: "bullets",
-                items: [
-                    "Aggregate and anonymised usage analytics to improve features",
-                    "A/B testing of user interface improvements",
-                    "Fraud detection and abuse prevention",
-                ],
-            },
-            {
-                type: "subheading",
-                text: "4.6 Legal & Safety Purposes",
-            },
-            {
-                type: "bullets",
-                items: [
-                    "Responding to lawful government or court orders",
-                    "Investigating reports of misuse, harassment, or fraudulent profiles",
-                    "Enforcing our Terms of Service",
-                ],
-            },
-        ],
-    },
-    {
-        title: "5. Data Visibility — Who Sees What",
-        blocks: [
-            {
-                type: "paragraph",
-                text: `Because Inai involves sharing sensitive personal data between users, we operate a tiered visibility model:
+                text: `Privacy contact: privacy@inai.lk
                 
                 `,
             },
             {
-                type: "subheading",
-                text: "5.1 Publicly Visible to All Registered Users",
-            },
-            {
-                type: "bullets",
-                items: [
-                    "First name and age",
-                    "City of residence (general — not exact address)",
-                    "Highest education level",
-                    "Job sector",
-                    "Religion and caste (unless hidden by user)",
-                    "Height",
-                    "Profile photographs",
-                ],
-            },
-            {
-                type: "subheading",
-                text: "5.2 Visible to All Registered Users (Opposite Gender / Preference)",
-            },
-            {
-                type: "bullets",
-                items: [
-                    "Full name",
-                    "Weight and body shape",
-                    "Eating, drinking, and smoking habits",
-                    "Family details (parents’ occupation, siblings)",
-                    "Income range",
-                    "Disability status (only if user has chosen to disclose)",
-                    "Partner preferences",
-                ],
-            },
-            {
-                type: "subheading",
-                text: "5.3 Visible ONLY to Elite Members",
-            },
-            {
-                type: "bullets",
-                items: [
-                    "Mobile / WhatsApp number",
-                    "Email address",
-                ],
-            },
-            {
-                type: "subheading",
-                text: "5.4 Never Visible to Other Users",
-            },
-            {
-                type: "bullets",
-                items: [
-                    "Password hash",
-                    "IP address and device data",
-                    "Payment records",
-                    `Internal moderation or fraud flags`,
-                ],
-            },
-            {
-                type: "italic",
-                text: `
-                You may further control your own visibility through profile privacy settings within your account dashboard.`,
-            },
-        ],
-    },
-    {
-        title: "6. Special Category (Sensitive) Data",
-        blocks: [
-            {
                 type: "paragraph",
-                text: `The following data fields are classified as sensitive under applicable privacy frameworks and are processed with additional care:
-                
+                text: `We are the data controller for personal data processed through the Platform.
                 `,
             },
-            {
-                type: "bullets",
-                items: [
-                    "Physical disability status",
-                    "Caste (a category that can attract discrimination)",
-                    "Religious beliefs",
-                    "Health-related attributes (disability, body shape)",
-                    "Family financial indicators (income range, parental occupation)",
-                ],
-            },
-            {
-                type: "paragraph",
-                text: "We collect these only with your explicit, informed consent. You may choose not to disclose any sensitive category data, and the platform will still function, though matching accuracy may be reduced. You may also request deletion of sensitive category data at any time.",
-            },
         ],
     },
     {
-        title: "7. Data Sharing & Third Parties",
+        title: "2. WHAT INAI IS",
         blocks: [
             {
                 type: "paragraph",
-                text: `We do not sell, rent, or trade your personal data to any third party for commercial purposes. Data is shared only in the following circumstances:
-                
-                `,
-            },
-            {
-                type: "subheading",
-                text: "7.1 Registered Platform Users",
-            },
-            {
-                type: "paragraph",
-                text: "As described in Section 5, other registered users will see profile data according to the tiered visibility model. By registering on Inai you acknowledge and consent to this.",
-            },
-            {
-                type: "subheading",
-                text: "7.2 Service Providers (Data Processors)",
-            },
-            {
-                type: "paragraph",
-                text: "We engage trusted third-party processors who act under strict data processing agreements. These include:",
-            },
-            {
-                type: "bullets",
-                items: [
-                    "Cloud hosting & infrastructure providers (e.g., servers, databases)",
-                    "Payment gateway operators (PCI-DSS compliant — raw card data never reaches our servers)",
-                    "Email delivery services (transactional emails)",
-                    "SMS / OTP gateway providers (for mobile verification)",
-                    "Analytics tools (using anonymised or aggregated data only)",
-                ],
-            },
-            {
-                type: "subheading",
-                text: "7.3 Legal & Regulatory Disclosure",
-            },
-            {
-                type: "paragraph",
-                text: "We may disclose data when required by a valid court order, warrant, or request from law enforcement authorities in Sri Lanka or the user’s country of residence. We will notify you of such requests to the extent permitted by law.",
-            },
-            {
-                type: "subheading",
-                text: "7.4 Business Transfers",
-            },
-            {
-                type: "paragraph",
-                text: "In the event of a merger, acquisition, or sale of assets, your data may be transferred to the acquiring entity, who will be bound by terms no less protective than this Privacy Policy. You will be notified prior to any such transfer.",
-            },
-            {
-                type: "subheading",
-                text: "7.5 Safety of Others",
-            },
-            {
-                type: "paragraph",
-                text: "We may share data if we have a good-faith belief that disclosure is necessary to prevent imminent harm to a person or to protect the safety of our users and the public.",
-            },
-        ],
-    },
-    {
-        title: "8. International Data Transfers",
-        blocks: [
-            {
-                type: "paragraph",
-                text: "Inai serves Sri Lankan Tamils worldwide including diaspora communities in countries such as India, the United Kingdom, Canada, Australia, France, Germany, and the UAE. Your data may be processed in countries other than your country of residence.",
-            },
-            {
-                type: "paragraph",
-                text: `
-                Where data is transferred outside Sri Lanka, we ensure adequate safeguards are in place, including:`,
-            },
-            {
-                type: "bullets",
-                items: [
-                    "Standard Contractual Clauses (SCCs) approved by the European Commission for transfers involving EU/EEA residents",
-                    "UK International Data Transfer Agreements (IDTAs) for UK residents",
-                    "Contractual obligations equivalent to GDPR protections for all other international transfers",
-                ],
-            },
-            {
-                type: "paragraph",
-                text: `
-                Users in the European Union, United Kingdom, and other jurisdictions with specific data protection laws retain all rights afforded to them by their local laws, including those described in Section 11 of this policy.`,
-            },
-        ],
-    },
-    {
-        title: "9. Data Retention",
-        blocks: [
-            {
-                type: "paragraph",
-                text: `We retain your personal data for the following periods:
-                
-                `,
-            },
-            {
-                type: "bullets",
-                items: [
-                    "Active account: for the duration of your registration plus a 90-day grace period after account deactivation",
-                    "Deleted account: profile data is purged within 30 days of a deletion request; anonymised statistical data may be retained indefinitely",
-                    "Payment records: retained for 7 years to meet financial and tax obligations",
-                    "Security logs and fraud-prevention records: up to 3 years",
-                    "Backup copies: overwritten within 90 days of the original deletion",
-                ],
-            },
-            {
-                type: "paragraph",
-                text: `
-                You may request deletion of your account and all associated data at any time through the account settings or by emailing ${"privacy@inai.lk."}`,
-            },
-        ],
-    },
-    {
-        title: "10. Data Security",
-        blocks: [
-            {
-                type: "paragraph",
-                text: `We implement industry-standard technical and organisational measures to protect your data
-                
-                `,
-            },
-            {
-                type: "subheading",
-                text: "10.1 Technical Safeguards",
-            },
-            {
-                type: "bullets",
-                items: [
-                    "All data in transit encrypted via TLS 1.2 or higher (HTTPS enforced sitewide)",
-                    "All data at rest encrypted using AES-256",
-                    "Passwords stored as salted cryptographic hashes (bcrypt or Argon2)",
-                    "Contact details stored in encrypted fields with decryption restricted to Elite Membership validation layer",
-                    "Payment processed through PCI-DSS Level 1 certified payment gateways; no raw card data stored",
-                    "Two-factor authentication (2FA) available for user accounts",
-                    "Regular vulnerability scanning and penetration testing",
-                ],
-            },
-            {
-                type: "subheading",
-                text: "10.2 Organisational Safeguards",
-            },
-            {
-                type: "bullets",
-                items: [
-                    "Role-based access control — staff access to user data is limited to what is necessary for their function",
-                    "All employees and contractors handling personal data are bound by confidentiality agreements",
-                    "Data breach response plan in place",
-                ],
-            },
-            {
-                type: "subheading",
-                text: "10.3 Breach Notification",
-            },
-            {
-                type: "paragraph",
-                text: `In the event of a data breach that poses a risk to your rights and freedoms, we will notify affected users within 72 hours of becoming aware of the breach (or within the timeframe required by applicable law), and will notify relevant regulatory authorities as required.`,
-            },
-        ],
-    },
-    {
-        title: "11. Your Rights",
-        blocks: [
-            {
-                type: "paragraph",
-                text: `Depending on your country of residence you have the following rights regarding your personal data:`,
-            },
-            {
-                type: "bullets",
-                items: [
-                    "Right of Access — request a copy of all personal data we hold about you",
-                    "Right to Rectification — correct inaccurate or incomplete data",
-                    "Right to Erasure (“Right to be Forgotten”) — request deletion of your account and data",
-                    "Right to Restrict Processing — ask us to suspend processing in certain circumstances",
-                    "Right to Data Portability — receive your data in a machine-readable format",
-                    "Right to Object — object to processing based on legitimate interests",
-                    "Right to Withdraw Consent — withdraw consent for sensitive data at any time",
-                    "Right to Lodge a Complaint — with the relevant data protection authority in your country",
-                ],
-            },
-            {
-                type: "paragraph",
-                text: `To exercise any of these rights, email privacy@inai.lk with the subject line “Privacy Rights Request” along with your registered email address. We will respond within 14 business days. We may ask you to verify your identity before processing your request.`,
-            },
-        ],
-    },
-    {
-        title: "12. Children’s Privacy",
-        blocks: [
-            {
-                type: "paragraph",
-                text: `Inai is strictly a service for adults. You must be at least 18 years of age to register and use this platform. We do not knowingly collect personal data from persons under 18 years of age. If we become aware that a minor has registered, we will immediately suspend and delete that account and all associated data. If you believe a minor has registered on our platform, please report it immediately to privacy@inai.lk.`,
-            },
-        ],
-    },
-    {
-        title: "13. User Responsibilities & Misuse Prevention",
-        blocks: [
-            {
-                type: "paragraph",
-                text: `By using Inai, you agree to the following:
+                text: `INAI is an advertising and directory platform for the wedding and event industry. We publish:
 
                 `,
             },
             {
                 type: "bullets",
                 items: [
-                    "You will provide accurate, truthful, and up-to-date information in your profile",
-                    "You will use contact details and other member data obtained through the platform solely for the purpose of exploring a matrimonial relationship",
-                    "You will not use any data obtained from Inai for commercial solicitation, spamming, harassment, stalking, blackmail, fraud, or any illegal purpose",
-                    "You will not copy, screenshot, or otherwise reproduce another member’s profile information for distribution outside the platform",
-                    "You will not share your account credentials with any third party",
+                    `Business listings — profiles and service listings for wedding vendors, freelancers and event businesses.
+                    `,
+                    `Personal advertisements  submitted by individuals or their family members.
+                    `,
+                    `Invitation card design and printing services — customised wedding and event stationery.
+                    `
                 ],
             },
             {
                 type: "paragraph",
-                text: `Violation of these responsibilities may result in immediate account suspension, reporting to law enforcement, and civil or criminal legal action. Inai reserves the right to report misuse of members’ data to appropriate authorities.`,
+                text: `
+                We publish advertisements. We are not a matchmaking service, marriage broker, or introduction agency. We do not select, recommend, screen or vouch for any person or business advertised on the Platform. See our Terms and Conditions for the full position.
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `
+                This does not change our responsibilities under data protection law: we remain a controller of the personal data we hold, and this policy explains how we handle it.
+                `,
             },
         ],
     },
     {
-        title: "14. Limitation of Platform Liability",
+        title: "3. THE PERSONAL DATA WE COLLECT",
         blocks: [
             {
                 type: "paragraph",
-                text: `While Inai implements rigorous security and verification measures, we cannot guarantee that every user on the platform is who they claim to be, or that data will never be misused by another user. Inai’s liability is limited to actions within our direct control as a platform operator.`,
-            },
-            {
-                type: "paragraph",
-                text: "We are not liable for:",
+                text: `3.1 Account data (required to register)   
+                `,
             },
             {
                 type: "bullets",
                 items: [
-                    "Misuse of your data by another user who obtained it through the platform in accordance with its intended use (e.g., an Elite Member contacting you)",
-                    "Consequences arising from you voluntarily sharing additional personal information outside the platform directly with another user",
-                    "Third-party websites linked from our platform",
+                    ` Name: To identify your account
+                    `,
+                    `WhatsApp / mobile number: Account verification, service notifications, login
+                    `,
+                    `Email address: Account recovery, receipts, service notices
+                    `,
+                    `Gender: Required to categorise and display advertisements
+                    `,
+                    `Year of birth: To confirm you are 18+ and categorise advertisements
+                    `,
+                    `City of residence: To display and filter advertisements by location
+                    `,
                 ],
             },
             {
                 type: "paragraph",
-                text: `If you experience any misuse or harassment, please report it immediately to abuse@inai.lk and, if necessary, to local law enforcement.`,
+                text: `
+                3.2 Advertisement data — personal proposals
+                `,
             },
-        ],
-    },
-    {
-        title: "15. Cookies & Tracking Technologies",
-        blocks: [
             {
                 type: "paragraph",
-                text: "We use cookies and similar technologies to:",
+                text: `Provided when you choose to publish a proposal advertisement. Some fields are required to publish; others are optional. Optional fields are shown as optional in the form. Leaving them blank will not prevent your advertisement from being published.
+                
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `3.3 Advertisement data — business and freelancer listings
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `Business or trading name, contact person, WhatsApp and telephone numbers, business email, business address and service areas, business registration number (where provided), certifications and qualifications, awards and achievements, portfolio images, service descriptions and pricing. Business listing information is published for a commercial purpose and is treated as public.
+                
+                `,
+            },
+
+            {
+                type: "paragraph",
+                text: `3.4 Transaction data
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `Order records, listing and boost purchases, invoice history, and card design and print order specifications. We do not store your full card number, CVV, or bank credentials. Card payments are processed by our payment providers. We receive only a transaction reference, the amount, the outcome, and the last four digits of the card.
+                
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `3.5 Technical data
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `To operate the Platform securely we automatically process:
+                
+                `,
             },
             {
                 type: "bullets",
                 items: [
-                    "Maintain your login session",
-                    "Remember your preferences",
-                    "Analyse aggregate platform usage",
-                    "Prevent fraud and enhance security",
+                    `IP address — for security, fraud prevention, bot detection, abuse investigation, and to determine your approximate country for currency and field-visibility purposes. Retained in server and security logs for [30–90] days, then deleted. We do not use IP addresses for advertising or profiling, and we do not sell them.
+                    `,
+                    `Browser type, device type, operating system, and pages viewed — for aggregate analytics and to fix faults.
+                    `,
+                    `Cookies and similar technologies — see section 10.
+                    `
                 ],
             },
             {
                 type: "paragraph",
-                text: "We do not use third-party advertising cookies. You may control cookie preferences through your browser settings. Disabling certain cookies may impact platform functionality.",
+                text: `3.6 Data we do not collect
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `We do not collect precise GPS or device-level location data, and we do not collect persistent device identifiers or device fingerprints.
+                `,
             },
         ],
     },
     {
-        title: "16. Elite Membership & Payments",
+        title: "4. SENSITIVE PERSONAL DATA",
         blocks: [
             {
                 type: "paragraph",
-                text: "Payment for Elite Membership is processed by a PCI-DSS compliant third-party payment gateway. Inai does not store full credit/debit card numbers or CVV codes. We retain only:",
+                text: `Some information you may choose to provide is sensitive personal data requiring heightened protection:
+                
+                `,
             },
             {
                 type: "bullets",
                 items: [
-                    "Transaction ID",
-                    "Membership tier and duration purchased",
-                    "Amount paid and date of transaction",
-                    "Billing name (as provided to the payment gateway)",
+                    `Religion
+                    `,
+                    `Caste or community
+                    `,
+                    `Disability or health status
+                    `,
+                    `Dietary habits, where these reveal religious or philosophical belief
+                    
+                    `
                 ],
             },
             {
                 type: "paragraph",
-                text: "Membership is personal and non-transferable. Refund eligibility is governed by our Terms of Service.",
-            },
-        ],
-    },
-    {
-        title: "17. Changes to This Privacy Policy",
-        blocks: [
-            {
-                type: "paragraph",
-                text: "We may update this Privacy Policy from time to time to reflect changes in our practices, legal requirements, or platform features. When we make material changes, we will:",
+                text: `Our rules for this data:
+                `,
             },
             {
                 type: "bullets",
                 items: [
-                    "Post the updated policy on inai.lk/privacy with a revised “Last Updated” date",
-                    "Send an email notification to all registered users",
-                    "Display an in-app notification upon your next login",
+                    `Every sensitive field is optional. You can publish a complete advertisement without any of them.
+                    `,
+                    `We rely on your explicit, separate consent. You will be asked to tick a specific consent box before any sensitive field is published. This consent is separate from accepting our Terms and Conditions.
+                    `,
+                    `You control visibility. For each sensitive field you may choose: publicly visible, visible only to logged-in users, or stored but hidden.
+                    `,
+                    `We never disclose sensitive data to third-party advertisers or data partners in any form that identifies you.
+                    `,
+                    `You may withdraw consent at any time and we will remove the field from publication. Withdrawal does not affect the lawfulness of processing before withdrawal.
+                    `,
+                    `Regional restrictions. Where a field is restricted by law in your country, we may disable it. In particular, the caste field is hidden by default for users accessing the Platform from the United Kingdom and the European Economic Area.
+                    `
                 ],
             },
-            {
-                type: "paragraph",
-                text: `Your continued use of the platform after the effective date of the updated policy constitutes your acceptance. If you do not agree with the changes, you may delete your account before the effective date.`,
-            },
         ],
     },
     {
-        title: "18. Governing Law & Jurisdiction",
+        title: "5. ADVERTISEMENTS CREATED ON BEHALF OF ANOTHER PERSON",
         blocks: [
             {
                 type: "paragraph",
-                text: `This Privacy Policy is governed by and interpreted in accordance with the laws of the Democratic Socialist Republic of Sri Lanka. Disputes shall be subject to the exclusive jurisdiction of the courts of Sri Lanka.
-For users resident in specific jurisdictions with mandatory data protection laws (including but not limited to EU GDPR, UK GDPR, Canadian PIPEDA, and Australian Privacy Act 1988), the protections afforded by those laws are additionally available to you to the extent they exceed the protections described in this policy.`,
-            },
-        ],
-    },
-    {
-        title: "19. Additional Information for EU / UK Residents (GDPR / UK GDPR)",
-        blocks: [
-            {
-                type: "paragraph",
-                text: "If you are resident in the European Economic Area or the United Kingdom, the following additional provisions apply:",
+                text: `Where you create an advertisement for another person — for example a parent creating a proposal for a son or daughter — you must confirm that:
+                
+                `,
             },
             {
                 type: "bullets",
                 items: [
-                    "The legal bases for processing your data are as described in Section 3 above",
-                    "You have the right to lodge a complaint with your local supervisory authority (e.g., the ICO in the UK, or your national DPA in the EU)",
-                    "Where we transfer your data outside the EEA or UK, we rely on Standard Contractual Clauses or equivalent safeguards",
-                    "We do not carry out automated decision-making that produces legal or similarly significant effects on you without human oversight",
+                    `the person is 18 years of age or older;
+                    `,
+                    `they have given you permission to publish their information;
+                    `,
+                    `you will give them a copy of this Privacy Policy.
+                    `
+                ],
+            },
+            {
+                type: "paragraph",
+                text: `
+                We will send a verification message to the WhatsApp number of the person advertised before the advertisement is published. If they do not confirm, we will not publish it.
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `
+                The person advertised has the same rights over their data as any other user and may contact us directly to amend, hide or delete the advertisement, regardless of who created or paid for it. We will always honour a removal request from the person the advertisement is about.
+                `,
+            },
+        ],
+    },
+    {
+        title: "6. WHY WE PROCESS YOUR DATA, AND OUR LEGAL BASIS",
+        blocks: [
+            {
+                type: "bullets",
+                items: [
+                    `Creating and managing your account: Performance of a contract
+                    `,
+                    `Publishing your advertisement or listing: Performance of a contract
+                    `,
+                    `Publishing sensitive fields (religion, caste, disability): Explicit consent
+                    `,
+                    `Taking payment and issuing receipts: Performance of a contract; legal obligation
+                    `,
+                    `Sending service messages about your account or order: Performance of a contract
+                    `,
+                    `Sending marketing messages: Consent (opt-in; withdrawable)
+                    `,
+                    `Passing your enquiry to a vendor you selected: Consent
+                    `,
+                    `Fraud prevention, security and abuse investigation: Legitimate interests; legal obligation
+                    `,
+                    `Aggregate analytics to improve the Platform: Legitimate interests
+                    `,
+                    `Responding to lawful requests from authorities: Legal obligation
+                    `
                 ],
             },
         ],
     },
     {
-        title: "20. Grievance Redressal",
+        title: "7. WHO WE SHARE DATA WITH",
         blocks: [
             {
                 type: "paragraph",
-                text: "If you have any complaint or grievance regarding the collection, storage, use, or sharing of your personal data, you may contact our Grievance Officer:",
+                text: `We share personal data only in the categories below. We do not sell your personal data.
+                
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `7.1 Publicly, on the Platform. The content of your advertisement or business listing is published on the Platform and is visible to visitors and search engines. Only the fields you have chosen to make visible are published. Do not include information in your advertisement that you are not willing to make public.
+                
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `7.2 Service providers (processors) acting on our instructions. Hosting and cloud infrastructure; payment processors; WhatsApp/SMS and email delivery providers; analytics providers; print production partners for card orders. Each is bound by contract to process data only as instructed and to keep it secure.
+                
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `7.3 Vendors you have chosen to contact. If you submit an enquiry, request a quote, or tick a box asking to be contacted by vendors in a category, we pass the specific information needed to answer that enquiry (typically your name, WhatsApp number, event date, city and requirements) to the vendors concerned. This happens only where you have actively asked for it. We tell you which vendors will receive it before you submit. You can withdraw from this at any time in your account settings.
+                
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `7.4 Legal and safety disclosures. Where required by law, court order or a lawful request from an authority; or where necessary to investigate fraud, scams, threats or serious misuse of the Platform.
+
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `7.5 Business transfer. If INAI is sold, merged or restructured, data may transfer to the acquirer, who will remain bound by this policy or give you notice of any change.
+                
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `Note on the original business brief: the original model proposed that INAI "may share all user data with our partners or third-party companies." A blanket clause of that kind would not be a valid basis for disclosure under the Sri Lankan PDPA or the GDPR, and would be particularly problematic for religion, caste and disability data. The structure above achieves the underlying commercial goal — vendor access to interested customers — through consented enquiry routing and aggregate, non-identifying audience reporting. This is a more durable commercial asset than a one-off data sale, and it is defensible to a regulator.
+                
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `7.6 Aggregate and non-identifying reporting. We may share statistics with advertisers and partners — for example, the number of users searching a category in a given district, or age distributions across the Platform. These reports never identify an individual and cannot be reversed to do so.
+                `,
+            },
+        ],
+    },
+    {
+        title: "8. INTERNATIONAL TRANSFERS",
+        blocks: [
+            {
+                type: "paragraph",
+                text: `INAI is based in Sri Lanka. Our service providers may be located in other countries, including the United States and within the EEA. Where we transfer personal data outside Sri Lanka or outside the EEA/UK, we rely on appropriate safeguards including standard contractual clauses with our providers.
+                `
+            },
+            {
+                type: "paragraph",
+                text: `If you use the Platform from outside Sri Lanka, your data will be transferred to and processed in Sri Lanka.
+                `
+            },
+        ],
+    },
+    {
+        title: "9. HOW LONG WE KEEP DATA",
+        blocks: [
+            {
+                type: "bullets",
+                items: [
+                    `Active account and profile data: While your account is active
+                    `,
+                    `Data after account deletion: Deleted or anonymised within 30 days
+                    `,
+                    `Expired advertisements: Removed from public view on expiry; deleted after 3 months unless renewed
+                    `,
+                    `Transaction and invoice records: 6/7 years — required for tax and accounting law
+                    `,
+                    `Security and IP logs: 30–90 days
+                    `,
+                    `Records relating to fraud, scams or serious abuse: Up to 5 years, to prevent repeat offending
+                    `,
+                    `Marketing consent records: Until withdrawn, plus 2 years as proof of consent
+                    `
+                ],
+            },
+        ],
+    },
+    {
+        title: "10. COOKIES",
+        blocks: [
+            {
+                type: "paragraph",
+                text: `We use:
+                `,
             },
             {
                 type: "bullets",
                 items: [
-                    "Email: grievance@inai.lk",
-                    "Response time: We aim to resolve all grievances within 30 calendar days.",
+                    `Essential cookies — login sessions, security, fraud prevention. These cannot be switched off.
+                    `,
+                    `Analytics cookies — to understand how the Platform is used, in aggregate. Set only with your consent.
+                    `,
+                    `Functional cookies — remembering language and currency preference.
+                    `,
                 ],
             },
             {
                 type: "paragraph",
-                text: "If you are not satisfied with our response, you may escalate to the relevant data protection authority in your country of residence.",
+                text: `
+                We do not use third-party advertising or cross-site tracking cookies. You can manage your preferences via the cookie banner or your browser settings.`,
+            },
+        ],
+    },
+    {
+        title: "11. YOUR RIGHTS",
+        blocks: [
+            {
+                type: "paragraph",
+                text: `Subject to the conditions and exceptions in applicable law, you have the right to:
+                `,
+            },
+            {
+                type: "bullets",
+                items: [
+                    `Access — obtain a copy of the personal data we hold about you.
+                    `,
+                    `Rectification — correct inaccurate or incomplete data.
+                    `,
+                    `Erasure — ask us to delete your data.
+                    `,
+                    `Withdraw consent — at any time, for anything based on consent.
+                    `,
+                    `Object — to processing based on legitimate interests, and to direct marketing at any time.
+                    `,
+                    `Restriction — ask us to pause processing while a dispute is resolved.
+                    `,
+                    `Portability — receive your data in a structured, machine-readable format.
+                    `,
+                    `Review of automated decisions — where a decision is made about you solely by automated means.
+                    `,
+                ],
+            },
+            {
+                type: "paragraph",
+                text: `
+                How to exercise them: email privacy@inai.lk from the email address on your account, or use the tools in your account settings.
+                
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `Our response time: within 3 working days, and in any event within one month. We may extend this for complex requests and will tell you if we do. We do not charge a fee unless a request is manifestly unfounded or excessive.
+                
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `Complaints. If you are unhappy with our response, contact us first at privacy@inai.lk. You may also complain to the Data Protection Authority of Sri Lanka (dpa.gov.lk). If you are in the EEA or UK, you may complain to your national supervisory authority.
+                `,
+            },
+        ],
+    },
+    {
+        title: "12. SECURITY",
+        blocks: [
+            {
+                type: "paragraph",
+                text: `We protect your data using encryption in transit (HTTPS/TLS), encryption of sensitive fields at rest, role-based access controls limiting staff access to what their job requires, access logging, and regular backups.
+                
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `No system is completely secure. If a breach occurs that is likely to result in a risk to your rights, we will notify the Data Protection Authority and, where the risk is high, notify you directly without undue delay.
+                `,
+            },
+        ],
+    },
+    {
+        title: "13. AGE RESTRICTION",
+        blocks: [
+            {
+                type: "paragraph",
+                text: `The Platform is for adults aged 18 and over. We do not knowingly collect data from anyone under 18. If we learn that we hold data on a person under 18, we will delete it and remove any associated advertisement immediately. Report concerns to privacy@inai.lk.
+                `,
+            },
+        ],
+    },
+    {
+        title: "14. YOUR SAFETY ON THE PLATFORM",
+        blocks: [
+            {
+                type: "paragraph",
+                text: `We publish advertisements; we do not verify the truthfulness of what advertisers say about themselves. Please be careful when sharing personal information with people you meet through the Platform.
+                
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `Never send money to a person you have met through an advertisement. Report suspicious behaviour to support@inai.lk.
+                `,
+            },
+        ],
+    },
+    {
+        title: "15. CHANGES TO THIS POLICY",
+        blocks: [
+            {
+                type: "paragraph",
+                text: `We may update this policy. If we make a material change — particularly one affecting how we share data — we will notify you by email or WhatsApp at least 14 days before it takes effect. Where a change requires your consent, we will ask for it separately.
+                `,
+            },
+        ],
+    },
+    {
+        title: "16. CONTACT",
+        blocks: [
+            {
+                type: "paragraph",
+                text: `Ahken Nexus (Pvt) Ltd
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `247/1, Uthayanagar west, Kilinochchi, Sri Lanka
+                
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `Email: privacy@inai.lk
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `Support: support@inai.lk
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `WhatsApp: +94 770 750 760
+                `,
+            },
+            {
+                type: "paragraph",
+                text: `Website: inai.lk
+                `,
             },
         ],
     },
@@ -753,26 +575,26 @@ function renderBlock(block: ContentBlock): ReactNode {
     switch (block.type) {
         case "paragraph":
             return (
-                <p className="whitespace-pre-line text-left text-[14px] md:text-[16px] font-normal leading-[150%] text-secondary3">
+                <p className="whitespace-pre-line text-left font-16 font-normal leading-[150%] text-[#767676]">
                     {block.text}
                 </p>
             );
         case "italic":
             return (
-                <p className="whitespace-pre-line italic text-left text-[14px] md:text-[16px] font-normal leading-[150%] text-secondary3">
+                <p className="whitespace-pre-line italic text-left font-16 font-normal leading-[150%] text-secondary3">
                     {block.text}
                 </p>
             );
         case "subheading":
             return (
-                <div className="whitespace-pre-line text-left text-[14px] md:text-[16px] leading-[150%] text-secondary3 ">
+                <div className="whitespace-pre-line text-left font-16 leading-[150%] text-secondary3 ">
                     {block.text}
                 </div>
             );
 
         case "bullets":
             return (
-                <ul className="list-disc pl-5 text-left text-[14px] md:text-[16px] font-normal leading-[150%] text-secondary3 space-y-0">
+                <ul className="list-disc pl-5 text-left font-16 font-normal leading-[150%] text-secondary3 space-y-0">
                     {block.items.map((item, index) => (
                         <li key={`${item}-${index}`} className="whitespace-pre-line">
                             {item}
@@ -785,8 +607,8 @@ function renderBlock(block: ContentBlock): ReactNode {
 
 function PolicySectionBlock({ title, blocks }: PolicySection) {
     return (
-        <div className="flex flex-col justify-center border-b border-[#EAEAEA] py-4 sm:py-5 md:py-6">
-            <h2 className="text-left text-[16px] md:text-[18px] font-medium leading-[150%] text-dark pb-1.5">
+        <div className="flex flex-col justify-center py-4 sm:py-5 md:py-6">
+            <h2 className="text-left text-[16px] sm:text-[17px] md:text-[18px] font-semibold leading-[150%] text-[#767676] pb-1.5">
                 {title}
             </h2>
 
@@ -797,16 +619,12 @@ function PolicySectionBlock({ title, blocks }: PolicySection) {
 
 export default function PrivacyPolicy() {
     return (
-        <div className="font-poppins mx-auto flex max-w-[910px] flex-col bg-white px-4 md:px-6">
+        <div className="font-poppins mx-auto flex max-w-[910px] flex-col bg-white">
             <div className="flex flex-col items-center text-center">
-                <div className="text-[16px] md:text-[18px] font-medium leading-[150%] text-dark">
+                <div className="text-[16px] sm:text-[17px] md:text-[18px] font-medium leading-[150%] text-dark">
                     INAI.LK
                 </div>
-                <div className="mt-1.5  font-normal leading-[150%] text-secondary3">
-                    Tamil Matrimony — Connecting Hearts Worldwide
-                </div>
-
-                <div className="mt-1.5 flex w-full flex-col items-center text-center text-[14px] md:text-[16px] font-normal leading-[150%] text-secondary3">
+                <div className="mt-1.5 flex w-full flex-col items-center text-center font-16 font-normal leading-[150%] text-secondary3">
                     {metaLines.map((item) => (
                         <div key={item.text}>{item.text}</div>
                     ))}
@@ -824,34 +642,14 @@ export default function PrivacyPolicy() {
                     />
                 ))}
             </div>
-
-            <div className="py-4 sm:py-5 md:py-6 border-b border-[#EAEAEA]">
-                <h2 className="text-left text-[16px] md:text-[18px] font-medium leading-[150%] text-dark">
-                    Acknowledgement
-                </h2>
-                <p className="mt-1.5 text-left text-[14px] md:text-[16px] font-normal leading-[150%] text-secondary3">
-                    By using Inai, you acknowledge that you have read this Privacy Policy in
-                    full, understand its contents, and agree to be bound by its terms.
-                </p>
-
-                <div className="mt-4 sm:mt-5 md:mt-6 flex flex-col gap-0 text-left text-[14px] md:text-[16px] font-normal leading-[150%] text-secondary3">
-                    <div className="font-semibold italic">
-                        Thank you for trusting Inai with your most personal journey.
-                    </div>
-                    <div className="italic">Every heart deserves a safe space to search.</div>
-                    <div>— The Inai Team —</div>
+            <div className="mt-2 border-t border-[#EAEAEA]" />
+            <div className="mt-6">
+                <div className="text-center flex-col flex font-16 font-normal leading-[150%] text-secondary3">
+                    <span>Inai.lk  |  A product of Ahken Nexus | Built by Ahkenlabs</span>
+                    <div className="font-medium"><span className="underline">www.inai.lk</span> |  <span className="underline">privacy@inai.lk</span></div>
                 </div>
             </div>
-
-            <div className="mt-4 md:mt-5">
-                <div className="text-center text-[14px] md:text-[16px] font-normal leading-[150%] text-secondary3">
-                    Inai.lk | A product of Ahken Nexus | Built by Ahkenlabs
-                </div>
-                <div className="text-center text-[14px] md:text-[16px] font-semibold leading-[150%] text-secondary3">
-                    www.inai.lk | privacy@inai.lk
-                </div>
-            </div>
-            <div className="border-b border-[#EAEAEA] mt-5 md:mt-6" />
+            <div className="border-b border-[#EAEAEA] mt-6" />
         </div>
     );
 }
