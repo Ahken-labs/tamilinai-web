@@ -10,22 +10,22 @@ import { useCardCarousel } from "@/src/hooks/useCardCarousel";
 
 const CARDS = [
     {
-        image: "/images/advantage1.webp",
+        image: "/images/advantage/advantage1.webp",
         titleKey: "Advantage_title1",
         subtextKey: "Advantage_sub1",
     },
     {
-        image: "/images/advantage2.webp",
+        image: "/images/advantage/advantage2.webp",
         titleKey: "Advantage_title2",
         subtextKey: "Advantage_sub2",
     },
     {
-        image: "/images/advantage3.webp",
+        image: "/images/advantage/advantage3.webp",
         titleKey: "Advantage_title3",
         subtextKey: "Advantage_sub3",
     },
     {
-        image: "/images/advantage4.webp",
+        image: "/images/advantage/advantage4.webp",
         titleKey: "Advantage_title4",
         subtextKey: "Advantage_sub4",
     },
