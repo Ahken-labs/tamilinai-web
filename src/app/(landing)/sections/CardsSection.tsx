@@ -213,13 +213,13 @@ export default function CardsSection() {
                 {/* Card fan */}
                 <div className={`mt-6 sm:mt-7 md:mt-8 lg:mt-10 relative flex items-center justify-center w-full min-w-[320px] max-w-[1200px] aspect-[1200/882]${visible ? " cards-visible" : ""}`} style={{ overflow: "visible" }}>
                     <div className="card-1 absolute inset-0 flex items-center justify-center" style={{ transform: "rotate(22deg)", transformOrigin: "center bottom", zIndex: 1 }}>
-                        <Image src="/images/card3.webp" alt="Wedding invitation card design 3" width={1200} height={882} className="w-full h-auto drop-shadow-lg" />
+                        <Image src="/images/cards/card3.webp" alt="Wedding invitation card design 3" width={1200} height={882} className="w-full h-auto drop-shadow-lg" />
                     </div>
                     <div className="card-2 absolute inset-0 flex items-center justify-center" style={{ transform: "rotate(-5deg)", transformOrigin: "center bottom", zIndex: 2 }}>
-                        <Image src="/images/card2.webp" alt="Wedding invitation card design 2" width={1200} height={882} className="w-full h-auto drop-shadow-xl" />
+                        <Image src="/images/cards/card2.webp" alt="Wedding invitation card design 2" width={1200} height={882} className="w-full h-auto drop-shadow-xl" />
                     </div>
                     <div className="card-3 absolute inset-0 flex items-center justify-center" style={{ transform: "rotate(-22deg)", transformOrigin: "center bottom", zIndex: 3 }}>
-                        <Image src="/images/card1.webp" alt="Wedding invitation card design 1" width={1200} height={882} className="w-full h-auto drop-shadow-xl" />
+                        <Image src="/images/cards/card1.webp" alt="Wedding invitation card design 1" width={1200} height={882} className="w-full h-auto drop-shadow-xl" />
                     </div>
                 </div>
 
