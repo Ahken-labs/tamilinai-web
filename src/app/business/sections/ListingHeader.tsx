@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronIcon, Logo, SearchIcon, TamilLanguageIcon } from "@/src/assets/Icons";
+import {  Logo, SearchIcon, TamilLanguageIcon } from "@/src/assets/Icons";
 import { useLang } from "@/src/context/LangContext";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";

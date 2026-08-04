@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { ChevronRight, ChevronRightIcon } from "@/src/assets/Icons";
+import { ChevronRight } from "@/src/assets/Icons";
 
 export default function BizCardsPromo() {
   const [visible, setVisible] = useState(false);

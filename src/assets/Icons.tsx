@@ -1729,7 +1729,7 @@ export function ClockIcon({ className }: { className?: string }) {
   );
 }
 
-export function ChevronRight({ className = "w-[14px] h-[14px] shrink-0", stroke="#fff", strokeWidth = 1.4, ...props }: IconProps & { strokeWidth?: number }) {
+export function ChevronRight({ className = "w-[14px] h-[14px] shrink-0", stroke="#fff",  ...props }: IconProps & { strokeWidth?: number }) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" className={className} {...props}>
       <path d="M4.68555 11.6191L8.89306 7.41162C9.12087 7.18382 9.12087 6.81447 8.89306 6.58667L4.68555 2.37915" stroke={stroke} strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />

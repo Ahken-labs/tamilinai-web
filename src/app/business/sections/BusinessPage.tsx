@@ -25,18 +25,16 @@ const SECTION_CATEGORIES = CATEGORIES.filter((c) => c.slug !== "all" && c.slug !
 
 export default function BusinessPage() {
   const [activeCategory, setActiveCategory] = useState<CategorySlug>("all");
-  const [chipsVisible, setChipsVisible] = useState(true);
+  const [chipsVisible, setChipsVisible] = useState(false);
   const storiesRef = useRef<HTMLDivElement>(null);
   const pauseScrollSpy = useRef(false);
 
-  // Mobile only: hide chips initially, show when stories scroll out of view
+  // Mobile only: show chips when stories scroll out of view (desktop always shows via CSS override)
   useEffect(() => {
     const el = storiesRef.current;
     if (!el) return;
     const isMobile = window.matchMedia("(max-width: 500px)").matches;
     if (!isMobile) return;
-    // Hide immediately on mobile before observer fires
-    setChipsVisible(false);
     const observer = new IntersectionObserver(
       ([entry]) => setChipsVisible(!entry.isIntersecting),
       { threshold: 0.25 },

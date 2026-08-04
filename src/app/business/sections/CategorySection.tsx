@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRef } from "react";
 import { useDragScroll } from "@/src/hooks/useDragScroll";
 import BizCard from "@/src/components/common-layout/BizCard";
-import { ArrowRight, BackChevronIcon, ChevronRight, Seeall } from "@/src/assets/Icons";
+import { BackChevronIcon, ChevronRight, Seeall } from "@/src/assets/Icons";
 import type { BizCategorySlug as CategorySlug } from "@/src/constants/bizCategories";
 
 export interface BizListing {
