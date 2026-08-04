@@ -734,6 +734,17 @@ export const ArrowRight = ({ className = "" }: { className?: string }) => {
   );
 };
 
+// BOTH THIS AND arrow right is almost same
+export const Seeall = ({ className = "" }: { className?: string }) => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className={`w-4 h-4 ${className}`} viewBox="0 0 16 16" fill="none">
+  <path d="M9.61914 3.95312L13.6658 7.99979L9.61914 12.0465" stroke="#222222" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+  <path d="M2.33398 8H13.554" stroke="#222222" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+</svg>
+  );
+};
+
+
 export function ViewedIcon({
   className = "w-[16px] h-[8px]",
   ...props

@@ -81,7 +81,7 @@ export default function BusinessPage() {
       <ListingHeader activeCategory={activeCategory} onCategoryChange={handleCategoryChange} chipsVisible={chipsVisible} />
 
       <div ref={storiesRef}>
-        <CategoryStories onCategoryClick={handleCategoryChange} />
+        <CategoryStories />
       </div>
 
       <div className="py-6 sm:py-7 md:py-8 lg:py-10">

@@ -1,20 +1,17 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useRef, useState } from "react";
 import { useDragScroll } from "@/src/hooks/useDragScroll";
 import RegisterForm from "@/src/components/auth/RegisterForm";
 import { BackChevronIcon, ChevronRight } from "@/src/assets/Icons";
-import { BIZ_CATEGORIES as CATEGORIES, type BizCategorySlug as CategorySlug } from "@/src/constants/bizCategories";
+import { BIZ_CATEGORIES as CATEGORIES } from "@/src/constants/bizCategories";
 
 const STORY_CATEGORIES = CATEGORIES.filter((c) => c.slug !== "all");
 const SCROLL_STEP = 340;
 
-interface CategoryStoriesProps {
-  onCategoryClick: (slug: CategorySlug) => void;
-}
-
-export default function CategoryStories({ onCategoryClick }: CategoryStoriesProps) {
+export default function CategoryStories() {
   const ref = useRef<HTMLDivElement>(null);
   useDragScroll(ref);
   const [openRegister, setOpenRegister] = useState(false);
@@ -61,10 +58,9 @@ export default function CategoryStories({ onCategoryClick }: CategoryStoriesProp
 
             {/* Category cards */}
             {STORY_CATEGORIES.map((cat) => (
-              <button
+              <Link
                 key={cat.slug}
-                type="button"
-                onClick={() => onCategoryClick(cat.slug)}
+                href={cat.slug === "more" ? "/business" : `/business/category/${cat.slug}`}
                 className="cursor-pointer relative shrink-0 rounded-[16px] overflow-hidden bg-[#D9D9D9]"
                 style={{ width: "clamp(120px, 11vw, 140px)", aspectRatio: "3/4" }}
               >
@@ -76,7 +72,7 @@ export default function CategoryStories({ onCategoryClick }: CategoryStoriesProp
                   <div className="max-w-22 font-poppins text-[16px] font-normal leading-[120%] text-white flex-1 text-left">{cat.label}</div>
                   <ChevronRight className="w-[14px] h-[14px] shrink-0 text-white" />
                 </div>
-              </button>
+              </Link>
             ))}
 
           </div>

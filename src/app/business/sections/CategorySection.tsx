@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRef } from "react";
 import { useDragScroll } from "@/src/hooks/useDragScroll";
 import BizCard from "@/src/components/common-layout/BizCard";
-import { BackChevronIcon, ChevronRight, ChevronRightIcon } from "@/src/assets/Icons";
+import { ArrowRight, BackChevronIcon, ChevronRight, Seeall } from "@/src/assets/Icons";
 import type { BizCategorySlug as CategorySlug } from "@/src/constants/bizCategories";
 
 export interface BizListing {
@@ -23,9 +23,14 @@ interface CategorySectionProps {
   items: BizListing[];
 }
 
+const MAX_VISIBLE = 8;
+
 export default function CategorySection({ title, slug, items }: CategorySectionProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   useDragScroll(scrollRef);
+
+  const hasMore = items.length > MAX_VISIBLE;
+  const visible = hasMore ? items.slice(0, MAX_VISIBLE) : items;
 
   function scroll(dir: "left" | "right") {
     if (!scrollRef.current) return;
@@ -33,17 +38,19 @@ export default function CategorySection({ title, slug, items }: CategorySectionP
   }
 
   return (
-    <section id={`section-${slug}`} className="w-full">
+    <section id={`section-${slug}`} className="max-w-[974px] w-full">
       {/* Section heading */}
       <div className="flex items-center justify-between px-4 mb-4">
         <h2 className="font-poppins text-[18px] md:text-[20px] font-semibold text-[#222]">{title}</h2>
-        <Link
-          href={`/business/category/${slug}`}
-          className="hover:bg-[#ccc] min-[500px]:pl-3 pr-2 pl-2 py-1 rounded-full bg-[#F2F2F2] flex items-center gap-1.5"
-        >
-          <span className="font-poppins text-[16px] text-[#222] flex max-[500px]:hidden">See all</span>
-          <ChevronRight className="w-[14px] h-[14px] shrink-0" stroke="#222" />
-        </Link>
+        {hasMore && (
+          <Link
+            href={`/business/category/${slug}`}
+            className="hover:bg-[#ccc] min-[500px]:pl-3 pr-2 pl-2 py-1 rounded-full bg-[#F2F2F2] flex items-center gap-1.5"
+          >
+            <span className="font-poppins text-[16px] text-[#222] flex max-[500px]:hidden">See all</span>
+            <ChevronRight className="w-[14px] h-[14px] shrink-0" stroke="#222" />
+          </Link>
+        )}
       </div>
 
       {/* Scrollable cards row */}
@@ -57,18 +64,14 @@ export default function CategorySection({ title, slug, items }: CategorySectionP
           type="button"
           onClick={() => scroll("left")}
           aria-label="Scroll left"
-          className="cursor-pointer transition-transform duration-300 ease-out hover:scale-[1.06] absolute left-[2px] lg:-left-2 top-[68px] -translate-y-1/2 z-20 p-1.5 hidden min-[500px]:flex items-center justify-center rounded-full bg-black/30 backdrop-blur-[25px]"
+          className="cursor-pointer transition-transform duration-300 ease-out hover:scale-[1.06] absolute left-[2px] lg:-left-2 top-[74px] -translate-y-1/2 z-20 p-1.5 hidden min-[500px]:flex items-center justify-center rounded-full bg-black/30 backdrop-blur-[25px]"
         >
           <BackChevronIcon className="w-[clamp(20px,2vw,24px)] h-[clamp(20px,2vw,24px)]" stroke="#fff" strokeWidth={3} />
         </button>
 
-        <div
-          ref={scrollRef}
-          className="overflow-x-auto no-scrollbar"
-          style={{ scrollbarWidth: "none" }}
-        >
-          <div className="flex gap-4 px-4 md:px-8">
-            {items.map((biz) => (
+        <div ref={scrollRef} className="overflow-x-auto no-scrollbar" style={{ scrollbarWidth: "none" }}>
+          <div className="flex w-max gap-4 px-4 md:px-8">
+            {visible.map((biz) => (
               <Link key={biz.id} href={`/business/${biz.username}`} className="shrink-0">
                 <BizCard
                   title={biz.title}
@@ -81,6 +84,15 @@ export default function CategorySection({ title, slug, items }: CategorySectionP
                 />
               </Link>
             ))}
+            {hasMore && (
+              <Link
+                href={`/business/category/${slug}`}
+                className="shrink-0 w-[156px] h-[156px] rounded-[16px] bg-white shadow-[0_2px_12px_rgba(0,0,0,0.08)] flex items-center justify-center gap-1 no-underline"
+              >
+                <span className="font-poppins font-16 font-medium text-[#222] leading-[150%]">See all</span>
+                <Seeall />
+              </Link>
+            )}
           </div>
         </div>
 
@@ -89,13 +101,13 @@ export default function CategorySection({ title, slug, items }: CategorySectionP
           type="button"
           onClick={() => scroll("right")}
           aria-label="Scroll right"
-          className="cursor-pointer transition-transform duration-300 ease-out hover:scale-[1.06] absolute right-[1px] lg:-right-2 top-[68px] -translate-y-1/2 z-20 p-1.5 hidden min-[500px]:flex items-center justify-center rounded-full bg-black/30 backdrop-blur-[25px]"
+          className="cursor-pointer transition-transform duration-300 ease-out hover:scale-[1.06] absolute right-[1px] lg:-right-2 top-[74px] -translate-y-1/2 z-20 p-1.5 hidden min-[500px]:flex items-center justify-center rounded-full bg-black/30 backdrop-blur-[25px]"
         >
           <BackChevronIcon className="w-[clamp(20px,2vw,24px)] h-[clamp(20px,2vw,24px)] rotate-180" stroke="#fff" strokeWidth={3} />
         </button>
         <div
           className="pointer-events-none absolute -right-[1px] top-0 bottom-0 w-10 z-10 hidden min-[500px]:block"
-          style={{ background: "linear-gradient(270deg, #ffffff 0%, #ffffff 35%, rgba(255,255,255,0.00) 100%)" }}
+          style={{ background: "linear-gradient(270deg, #FFFFFF 0%, #FFFFFF 35%, rgba(255,255,255,0.00) 100%)" }}
         />
       </div>
     </section>
