@@ -27,9 +27,6 @@ import BankTransferFlow, { STEPS } from "@/src/components/elite/BankTransferFlow
 import StepProgress from "@/src/components/more/StepProgress";
 import RefundPolicyPopup from "@/src/components/footer/RefundPolicyPopup";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// PaymentForm — kept for future card payment integration, not rendered yet
-// ─────────────────────────────────────────────────────────────────────────────
 
 const ELEMENT_STYLE = {
   base: { fontFamily: "Poppins, sans-serif", fontSize: "16px", color: "#222222", "::placeholder": { color: "#525252" } },
@@ -70,7 +67,7 @@ function Feature({ text }: { text: string }) {
   );
 }
 
-// Stored for future card payment integration — not rendered
+
 export function PaymentForm({
   buttonLabel, planKey, promoCode, autoRenew, onSuccess,
 }: {
@@ -195,9 +192,6 @@ export function PaymentForm({
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// PlanSummary — right card
-// ─────────────────────────────────────────────────────────────────────────────
 
 function PlanSummary({
   symbol, perMonth, months, total, features, planKey, currency, onPromoApplied,
@@ -238,10 +232,9 @@ function PlanSummary({
 
   return (
     <>
-      {/* Mobile collapsible card — visible only ≤500px */}
       <div className="hidden max-[500px]:block font-poppins w-full">
         <div className="p-4 border border-[#EAEAEA] bg-[#F2F2F2] rounded-[20px]">
-          {/* Clickable header + summary row */}
+    
           <div className="cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
             <div className="flex items-center justify-between">
               <span className="text-[16px] font-normal leading-[150%] text-[#242424]">Order summary</span>
@@ -252,7 +245,7 @@ function PlanSummary({
               {!isExpanded && <span className="text-[16px] font-semibold leading-[150%] text-[#222222]">{symbol} {formatTotal(discountedTotal, symbol)}</span>}
             </div>
           </div>
-          {/* Accordion expanded content */}
+   
           <div className={`grid transition-all duration-300 ease-in-out ${isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
             <div className="overflow-hidden">
               <div>
@@ -333,7 +326,7 @@ function PlanSummary({
           </div>
         </div>
       </div>
-      {/* Desktop full version — hidden ≤500px */}
+
       <div className="font-poppins w-full md:max-w-[360px] flex flex-col max-[500px]:hidden">
         <div className="py-6 px-5 bg-[#F2F2F2] border border-[#EAEAEA] rounded-t-[20px] rounded-b-[8px]">
           <PlanTag planKey={planKey} />
@@ -424,9 +417,6 @@ function PlanSummary({
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Main checkout content
-// ─────────────────────────────────────────────────────────────────────────────
 
 export function CheckoutContent() {
   const searchParams = useSearchParams();
@@ -453,7 +443,7 @@ export function CheckoutContent() {
   return (
     <>
       <main className="min-h-screen bg-[#F8F5F2] pb-20">
-        {/* Sticky stepper — same pattern as close-account */}
+
         <div
           className="sticky max-[500px]:top-[66px] top-[66px] md:top-[74px] z-10 w-full bg-white/60 backdrop-blur-sm border-t border-[#EEEEEE] transition-transform duration-300"
           style={!headerVisible ? { transform: "translateY(-120%)" } : undefined}
@@ -467,7 +457,7 @@ export function CheckoutContent() {
 
         <div className="mx-auto max-w-[1037px] px-4 sm:px-6 md:px-6 lg:px-10 max-[500px]:pt-4 pt-5 sm:pt-6 md:pt-7 lg:pt-8">
           <div className={currentStep < 3 ? "flex flex-col md:flex-row gap-5 md:gap-6 items-start" : "flex justify-center"}>
-            {/* BankTransferFlow — order-2 on mobile (<500px), left column on desktop */}
+
             <div className="max-[500px]:order-2 w-full">
               <BankTransferFlow
                 planKey={plan.key}
@@ -481,7 +471,7 @@ export function CheckoutContent() {
             </div>
             {currentStep < 3 && (
               <>
-                {/* PlanSummary — order-1 on mobile (comes first), right column on desktop */}
+
                 <div className="max-[500px]:order-1 w-full md:max-w-[360px]">
                   <PlanSummary
                     symbol={pricing.symbol}
@@ -494,7 +484,7 @@ export function CheckoutContent() {
                     onPromoApplied={handlePromoApplied}
                   />
                 </div>
-                {/* Support card — order-3 on mobile (last), hidden on desktop (PlanSummary shows it) */}
+
                 <div className="hidden max-[500px]:block max-[500px]:order-3 w-full font-poppins">
                   <div className="flex flex-col gap-1.5 py-3 px-4 bg-[#F2F2F2] border border-[#EAEAEA] rounded-[20px]">
                     <a href={`${CONTACT.whatsappUrl}`} target="_blank" rel="noopener noreferrer"

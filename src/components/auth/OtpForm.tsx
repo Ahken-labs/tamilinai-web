@@ -226,7 +226,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
       } else {
         const identifier = sessionStorage.getItem("inai_reset_identifier") ?? "";
         const res = method === "sms"
-          ? await forgotPassword({ channel: "sms", phone: identifier, countryCode })
+          ? await forgotPassword({ channel: "sms", phone, countryCode })
           : await forgotPassword({ channel: "email", email: identifier });
         cooldownSeconds = res.cooldownSeconds ?? 60;
       }

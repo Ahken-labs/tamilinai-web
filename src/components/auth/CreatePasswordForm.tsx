@@ -119,23 +119,20 @@ export default function CreatePasswordForm({ variant = "register" }: Props) {
             return;
         }
 
-        // Register: clear any stale setup drafts from a previous registration, then navigate.
-        // inai_setup_start guards basic-details and survives page refreshes within
-        // the same browser session, so slow users won't be kicked out if they refresh.
         ["inai_setup_basic", "inai_setup_personal", "inai_setup_about"].forEach(k => sessionStorage.removeItem(k));
-        sessionStorage.setItem("inai_setup_start", "1");
-        setLoading(true); // prevents double-click; component unmounts on navigate
-        router.replace("/basic-details");
-
-        createPassword({ tempToken, password })
-            .then((res) => {
-                sessionStorage.removeItem("inai_temp_token");
-                // Keep inai_setup_start — SetupGuard needs it for page refreshes
-                saveSession(res);
-            })
-            .catch(() => {
-                // silent — user is on basic-details; token check at submit will catch failure
-            });
+        setLoading(true);
+        try {
+            const res = await createPassword({ tempToken, password });
+            sessionStorage.removeItem("inai_temp_token");
+            saveSession(res);
+            sessionStorage.setItem("inai_setup_start", "1");
+            router.replace("/basic-details");
+        } catch (err) {
+            const message = err instanceof ApiError ? err.message : "Something went wrong. Please try again.";
+            setSubmitError(message);
+            setLoading(false);
+            return;
+        }
     };
 
     const handlePasswordBlur = () => {
