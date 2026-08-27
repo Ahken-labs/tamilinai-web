@@ -17,8 +17,8 @@ export default function TermsPage() {
             <span className="font-poppins font-semibold font-24 text-dark">Terms &amp; Conditions</span>
           </div>
         </div>
-        <div className="pb-8 px-auto bg-[#F8F5F2] pt-6 md:pt-8 px-4 max-[370px]:px-2">
-          <div className="rounded-[20px] max-w-[920px] bg-white p-4 md:p-6 mx-auto">
+        <div className="pb-20 px-auto bg-[#F8F5F2] pt-6 md:pt-8 px-4 max-[370px]:px-2">
+          <div className="rounded-[20px] max-w-[934px] bg-white p-6 mx-auto">
             <Terms />
           </div>
         </div>

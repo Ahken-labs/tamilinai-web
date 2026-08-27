@@ -734,6 +734,17 @@ export const ArrowRight = ({ className = "" }: { className?: string }) => {
   );
 };
 
+// BOTH THIS AND arrow right is almost same
+export const Seeall = ({ className = "" }: { className?: string }) => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className={`w-4 h-4 ${className}`} viewBox="0 0 16 16" fill="none">
+  <path d="M9.61914 3.95312L13.6658 7.99979L9.61914 12.0465" stroke="#222222" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+  <path d="M2.33398 8H13.554" stroke="#222222" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+</svg>
+  );
+};
+
+
 export function ViewedIcon({
   className = "w-[16px] h-[8px]",
   ...props
@@ -1714,6 +1725,14 @@ export function ClockIcon({ className }: { className?: string }) {
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" fill="none" className={className}>
       <path d="M12.8327 6.99984C12.8327 10.2198 10.2193 12.8332 6.99935 12.8332C3.77935 12.8332 1.16602 10.2198 1.16602 6.99984C1.16602 3.77984 3.77935 1.1665 6.99935 1.1665C10.2193 1.1665 12.8327 3.77984 12.8327 6.99984Z" stroke="#222222" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M9.1632 8.856L7.35487 7.77684C7.03987 7.59017 6.7832 7.141 6.7832 6.7735V4.38184" stroke="#222222" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function ChevronRight({ className = "w-[14px] h-[14px] shrink-0", stroke="#fff",  ...props }: IconProps & { strokeWidth?: number }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" className={className} {...props}>
+      <path d="M4.68555 11.6191L8.89306 7.41162C9.12087 7.18382 9.12087 6.81447 8.89306 6.58667L4.68555 2.37915" stroke={stroke} strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

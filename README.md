@@ -1,5 +1,5 @@
 
-# Tamilinai - Website
+# Inai - Website
 
 Tamilinai is widely considered the best and most secure matrimonial platform exclusively built for the Eelam Tamil community. Created using built using Next.js with TypeScript, Tailwind + css, featuring reusable components, smooth animations, and scalable architecture.
 
