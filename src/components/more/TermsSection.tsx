@@ -628,7 +628,7 @@ function TermsSectionBlock({ title, blocks }: PolicySection) {
 
 export default function Terms() {
     return (
-        <div className="font-poppins mx-auto flex max-w-[910px] flex-col bg-white">
+        <div className="font-poppins mx-auto px-4 flex max-w-[910px] flex-col bg-white">
             <div className="flex flex-col items-center text-center">
                 <div className="text-[16px] sm:text-[17px] md:text-[18px] font-medium leading-[150%] text-dark">
                     INAI.LK
