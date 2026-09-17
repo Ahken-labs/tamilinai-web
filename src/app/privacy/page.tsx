@@ -18,7 +18,7 @@ export default function PrivacyPage() {
           </div>
         </div>
         <div className="pb-20 px-auto bg-[#F8F5F2] pt-6 md:pt-8 px-4 max-[370px]:px-2">
-          <div className="rounded-[20px] max-w-[934px] bg-white p-6 mx-auto">
+          <div className="rounded-[20px] max-w-[934px] bg-white py-6 mx-auto">
             <PrivacyPolicy />
           </div>
         </div>
