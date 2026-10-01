@@ -41,7 +41,51 @@ export function EliteMaxTag({ className = "" }: TagProps) {
 }
 
 
-// New 
+const LARGE = "inline-flex items-center gap-1 py-2 pl-[14px] pr-[16px] rounded-[41px] font-poppins font-medium leading-none text-[14px] sm:text-[15px] md:text-[16px]";
+const ICON = "max-[500px]:w-4 w-4.5 md:w-5 max-[500px]:h-4 h-4.5 md:h-5 shrink-0";
+
+// Appheader
+export function EliteUpgradeTag({ className = "" }: TagProps) {
+  return (
+    <span className={`inline-flex items-center gap-1.5 py-2 pl-[14px] pr-[16px] rounded-[41px] bg-[#B31B38] font-poppins text-[14px] font-semibold leading-none text-white ${className}`}>
+      <EliteVIPIcon className="w-4 sm:w-5 md:w-6 h-4 sm:h-5 md:h-6 shrink-0" fill="#FFFFFF" />
+      Get Elite
+    </span>
+  );
+}
+
+// Appheader
+export function EliteBasicLargeTag({ className = "" }: TagProps) {
+  return (
+    <span className={`${LARGE} ${className}`} style={{ background: "linear-gradient(269deg, #FFE0C2 44.21%, #FFF2D9 98.97%)", color: "#725E4C" }}>
+      <EliteCrownIcon className={ICON} fill="#725E4C" />
+      Elite basic
+    </span>
+  );
+}
+
+// Appheader
+export function EliteProLargeTag({ className = "" }: TagProps) {
+  return (
+    <span className={`${LARGE} ${className}`} style={{ background: "#FFDED3", color: "#B31B38" }}>
+      <EliteProIcon className={ICON} fill="#B31B38" />
+      Elite pro
+    </span>
+  );
+}
+
+// Appheader
+export function EliteVIPLargeTag({ className = "" }: TagProps) {
+  return (
+    <span className={`${LARGE} ${className}`} style={{ background: "#222222", color: "#FFDED3" }}>
+      <EliteVIPIcon className={ICON} fill="#FFDED3" />
+      Elite VIP
+    </span>
+  );
+}
+
+
+// New
 export function NewTag({ className = "" }: TagProps) {
   return (
     <span className={`${BASE} px-3 bg-[#D5ECFF] text-[#5D5D5D] ${className}`}>
