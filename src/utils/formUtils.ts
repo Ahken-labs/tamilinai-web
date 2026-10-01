@@ -6,6 +6,13 @@ export function filterItems(items: string[], query: string): string[] {
   );
 }
 
+// Waits a frame so error rows set via setState have rendered.
+export function scrollToFirstError() {
+  requestAnimationFrame(() => {
+    document.querySelector("[data-form-error]")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+}
+
 // For search inputs: always filter regardless of exact match.
 // Items starting with the query appear before items that just contain it.
 export function filterSearch(items: string[], query: string): string[] {

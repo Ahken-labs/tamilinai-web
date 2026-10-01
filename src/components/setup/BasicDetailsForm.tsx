@@ -10,7 +10,7 @@ import FormRow from "../common-layout/FormRow";
 import FormCardLayout from "../common-layout/FormCardLayout";
 import { useLang } from "@/src/context/LangContext";
 import { validateDOB } from "../../utils/dateUtils";
-import { filterItems } from "../../utils/formUtils";
+import { filterItems, scrollToFirstError } from "../../utils/formUtils";
 import { useDOBState } from "../../hooks/useDOBState";
 import { MARITAL_OPTIONS, HEIGHTS, WEIGHTS, PHYSICAL_BUILD_OPTIONS } from "@/src/constants/profiles";
 import { LanguagePopup } from "../profile/sections/BasicInfoSection";
@@ -101,7 +101,10 @@ export default function BasicDetailsForm() {
       errs.disability = "*Please provide disability details";
 
     setErrors(errs);
-    if (Object.keys(errs).length) return;
+    if (Object.keys(errs).length) {
+      scrollToFirstError();
+      return;
+    }
 
     try {
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify({

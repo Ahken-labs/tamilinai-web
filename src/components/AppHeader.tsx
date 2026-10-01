@@ -6,7 +6,6 @@ import { useState, useEffect, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Logo,
-  SearchIcon,
   MatchesIcon,
   NotificationsIcon,
   ShortlistedIcon,
@@ -18,6 +17,7 @@ import {
   LogoutIcon,
   SettingIcon
 } from "../assets/Icons";
+import { EliteUpgradeTag, EliteBasicLargeTag, EliteProLargeTag, EliteVIPLargeTag } from "./ui/Tags";
 import Image from "next/image";
 import ProtectedImage from "./common-layout/ProtectedImage";
 import { getProgressWidth } from "../utils/getProgressWidth";
@@ -205,6 +205,16 @@ export default function AppHeader() {
     };
   }, [mobileOpen]);
 
+  const eliteBadge = me && (isElite ? (
+    me.elitePlanKey === "pro" ? <EliteProLargeTag /> :
+    me.elitePlanKey === "max" ? <EliteVIPLargeTag /> :
+    <EliteBasicLargeTag />
+  ) : (
+    <Link href="/elite-upgrade" className="hover:opacity-90 transition-opacity duration-150">
+      <EliteUpgradeTag />
+    </Link>
+  ));
+
   const closeMobile = () => setMobileOpen(false);
 
   // Scroll-hide for mobile (≤900px)
@@ -245,17 +255,7 @@ export default function AppHeader() {
             <Link href={"/matches"}>
               <Logo />
             </Link>
-            <button
-              type="button"
-              onClick={() => { setSettingsOpen(false); setMobileOpen(false); setOpenModal("search"); }}
-              className="flex items-center pr-4 pl-2 py-2 gap-2 rounded-[41px] bg-[#E0E0E0] cursor-pointer hover:bg-[#D4D4D4] transition-colors duration-150"
-            >
-              {/* desktop */}
-              <SearchIcon className="w-5 md:w-5.3 lg:w-6 h-5 md:h-5.3 lg:h-6 text-[#525252]" />
-              <span className="bg-transparent text-[14px] md:text-[15px] lg:text-[16px] font-normal text-[#4A4A4A]">
-                Search
-              </span>
-            </button>
+            {eliteBadge}
           </div>
 
           {/* Center: Nav tabs — all sizes */}
@@ -403,19 +403,7 @@ export default function AppHeader() {
           {/* Left: Logo + Search */}
           <div className="flex items-center gap-2">
             <Logo className="w-9 h-9" />
-            <button
-              type="button"
-              onClick={() => { setSettingsOpen(false); setMobileOpen(false); setOpenModal("search"); }}
-              className="flex items-center max-[420px]:pr-1.5 pr-3 max-[420px]:pl-1.5 pl-2 py-1.5 max-[420px]:gap-0.5 gap-2 rounded-[41px] bg-[#E0E0E0] cursor-pointer hover:bg-[#D4D4D4] transition-colors duration-150"
-            >
-              <SearchIcon className="w-5 sm:w-6 h-5 sm:h-6 text-[#525252]" />
-              <span className="text-[14px] sm:text-[16px] font-normal text-[#4A4A4A] max-[420px]:hidden">
-                Search
-              </span>
-              <span className="text-[12px] sm:text-[16px] font-normal text-[#4A4A4A] min-[420px]:hidden">
-                Search
-              </span>
-            </button>
+            {eliteBadge}
           </div>
 
           {/* Right: Profile indicator — opens drawer */}
