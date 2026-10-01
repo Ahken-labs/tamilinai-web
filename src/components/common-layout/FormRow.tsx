@@ -12,7 +12,7 @@ export default function FormRow({label, required, children, error, className = "
   const isCenter = align === "center";
 
   return (
-    <div className={`${className}`}>
+    <div className={`${className}`} data-form-error={error ? "" : undefined}>
       <div className={`flex flex-col min-[500px]:flex-row ${isCenter ? "min-[500px]:items-center" : "min-[500px]:items-start"}`}>
         <div
           className={`max-[499px]:w-full ${leftWidth} max-[499px]:mr-0 mr-5 shrink-0 mb-2 min-[500px]:mb-0 ${

@@ -18,6 +18,7 @@ import { HobbiesPopup } from "../profile/sections/InterestsHobbiesSection";
 import { COUNTRY_OPTIONS, RESIDENT_STATUS_OPTIONS } from "@/src/constants/location";
 import { CURRENCY_OPTIONS } from "@/src/constants/currencies";
 import { savePersonalDetails, saveCareerDetails, saveLifestyleDetails } from "../../lib/api/user";
+import { scrollToFirstError } from "../../utils/formUtils";
 import { BUILD_TO_BE, DIET_TO_BE, SMOKE_TO_BE, DRINK_TO_BE, RESIDENT_TO_BE } from "@/src/utils/profileMappers";
 
 
@@ -136,7 +137,10 @@ export default function PersonalDetailsForm() {
     if (!citizenship) errs.citizenship = "*Citizenship is required";
 
     setErrors(errs);
-    if (Object.keys(errs).length) return;
+    if (Object.keys(errs).length) {
+      scrollToFirstError();
+      return;
+    }
 
     persist();
     router.push("/photo-upload");
