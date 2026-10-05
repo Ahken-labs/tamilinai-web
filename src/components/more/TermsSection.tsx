@@ -79,7 +79,6 @@ const TermsSections: PolicySection[] = [
             {
                 type: "bullets",
                 items: [
-                    `a matrimonial agency, marriage bureau, matchmaking service, or introduction agency;`,
                     `a broker, agent or intermediary between any two users;`,
                     `a party to any agreement formed between a user and a vendor, or between two individuals.`,
                 ],
