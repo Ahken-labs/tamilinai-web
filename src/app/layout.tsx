@@ -7,6 +7,7 @@ import NoContextMenu from "../components/NoContextMenu";
 import { ToastProvider } from "../components/ui/Toast";
 import SessionRestorer from "../components/SessionRestorer";
 import GoogleAuthProvider from "../providers/GoogleAuthProvider";
+import GoogleAnalytics from "../components/GoogleAnalytics";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-poppins", display: "swap" });
 const notoSansTamil = Noto_Sans_Tamil({ subsets: ["tamil"], weight: ["400", "500", "700"], variable: "--font-tamil", display: "swap" });
@@ -74,6 +75,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SessionRestorer />
         <NoContextMenu />
         <SeoSchema/>
+        <GoogleAnalytics />
         <GoogleAuthProvider>
           <QueryProvider>
             <LangProvider>
