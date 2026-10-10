@@ -11,6 +11,7 @@ import { createPassword, resetPassword } from "../../lib/api/auth";
 import { useAuth } from "../../hooks/useAuth";
 import { ApiError } from "../../lib/api/client";
 import { useLoadingText } from "@/src/hooks/useLoadingText";
+import { trackAccountCreated } from "../../lib/analytics";
 
 type Props = {
     variant?: "register" | "reset";
@@ -126,6 +127,7 @@ export default function CreatePasswordForm({ variant = "register" }: Props) {
             sessionStorage.removeItem("inai_temp_token");
             saveSession(res);
             sessionStorage.setItem("inai_setup_start", "1");
+            trackAccountCreated();
             router.replace("/basic-details");
         } catch (err) {
             const message = err instanceof ApiError ? err.message : "Something went wrong. Please try again.";
