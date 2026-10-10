@@ -1,3 +1,10 @@
+// Meta pixel/Conversions API dedup context — same eventId on browser and server.
+export interface MetaEventContext {
+  eventId: string;
+  fbp?: string;
+  fbc?: string;
+}
+
 export interface RegisterPayload {
   profileType: string;
   gender: string;
@@ -6,6 +13,7 @@ export interface RegisterPayload {
   countryCode: string;
   email: string;
   channel?: 'sms' | 'email';
+  meta?: MetaEventContext;
 }
 
 export interface VerifyOtpPayload {
@@ -17,6 +25,7 @@ export interface VerifyOtpPayload {
 export interface CreatePasswordPayload {
   tempToken: string;
   password: string;
+  meta?: MetaEventContext;
 }
 
 export interface LoginPayload {
