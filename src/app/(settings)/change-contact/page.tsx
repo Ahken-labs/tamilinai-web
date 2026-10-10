@@ -12,6 +12,7 @@ import { readMeCache, writeMeCache, invalidateMeCache } from "@/src/components/A
 import { COUNTRIES } from "@/src/constants/countries";
 import { sanitizePhoneInput, validatePhone, validateEmail } from "@/src/utils/validation";
 import { ApiError } from "@/src/lib/api/client";
+import { applyOtpInput } from "@/src/lib/otpInput";
 import {
   requestEmailChange, confirmEmailChange,
   requestPhoneChange, confirmPhoneChange,
@@ -139,12 +140,11 @@ function ChangeContactContent() {
   }
 
   function handleDigitChange(index: number, val: string) {
-    if (!/^\d?$/.test(val)) return;
-    const next = [...digits];
-    next[index] = val;
-    setDigits(next);
+    const result = applyOtpInput(digits, index, val);
+    if (!result) return;
+    setDigits(result.digits);
     setOtpError("");
-    if (val && index < OTP_LENGTH - 1) inputRefs.current[index + 1]?.focus();
+    inputRefs.current[result.focusIndex]?.focus();
   }
 
   function handleDigitKeyDown(index: number, e: React.KeyboardEvent<HTMLInputElement>) {
@@ -283,7 +283,7 @@ function ChangeContactContent() {
             ref={(el) => { inputRefs.current[i] = el; }}
             type="text"
             inputMode="numeric"
-            maxLength={1}
+            autoComplete={i === 0 ? "one-time-code" : "off"}
             value={digit}
             onChange={(e) => handleDigitChange(i, e.target.value)}
             onKeyDown={(e) => handleDigitKeyDown(i, e)}

@@ -7,6 +7,7 @@ import { ChevronIcon } from "../../assets/Icons";
 import { sendIdentityVerifyOtp, confirmIdentityVerifyOtp } from "../../lib/api/user";
 import { invalidateMeCache } from "../AppHeader";
 import { ApiError } from "../../lib/api/client";
+import { applyOtpInput } from "../../lib/otpInput";
 
 const OTP_LENGTH = 6;
 const RESEND_SECONDS = 300;
@@ -76,12 +77,11 @@ export default function VerifyIdentityOtp({ method, maskedIdentifier }: Props) {
   };
 
   const handleChange = (index: number, value: string) => {
-    if (!/^\d?$/.test(value)) return;
-    const next = [...digits];
-    next[index] = value;
-    setDigits(next);
+    const result = applyOtpInput(digits, index, value);
+    if (!result) return;
+    setDigits(result.digits);
     setError("");
-    if (value && index < OTP_LENGTH - 1) inputRefs.current[index + 1]?.focus();
+    inputRefs.current[result.focusIndex]?.focus();
   };
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -179,7 +179,7 @@ export default function VerifyIdentityOtp({ method, maskedIdentifier }: Props) {
                 ref={(el) => { inputRefs.current[i] = el; }}
                 type="text"
                 inputMode="numeric"
-                maxLength={1}
+                autoComplete={i === 0 ? "one-time-code" : "off"}
                 value={digit}
                 onChange={(e) => handleChange(i, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(i, e)}
