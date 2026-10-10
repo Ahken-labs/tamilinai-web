@@ -21,6 +21,7 @@ import { register } from "../../lib/api/auth";
 import { ApiError } from "../../lib/api/client";
 import { sanitizePhoneInput, validatePhone, validateEmail } from "../../utils/validation";
 import { useToast } from "../ui/Toast";
+import { newMetaContext, trackLead } from "../../lib/analytics";
 
 type RegisterFormProps = {
     variant?: "hero" | "modal";
@@ -120,6 +121,7 @@ export default function RegisterForm({
         setLoading(true);
         setErrors((prev) => ({ ...prev, submit: undefined }));
         try {
+            const meta = newMetaContext();
             const res = await register({
                 profileType: profileFor.toLowerCase(),
                 gender: gender.toLowerCase() as "male" | "female",
@@ -128,7 +130,9 @@ export default function RegisterForm({
                 countryCode: code,
                 email: email.trim(),
                 channel: "sms",
+                meta,
             });
+            trackLead(meta);
             sessionStorage.setItem("inai_reg_draft", JSON.stringify({ profileFor, gender, countryCode, fullName, phone, email: email.trim() }));
             sessionStorage.setItem("inai_reg_key", res.registrationKey);
             sessionStorage.setItem("otp_sms_sent_at", String(Date.now()));
