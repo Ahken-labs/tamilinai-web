@@ -43,6 +43,41 @@ function convertApiToDisplay(prefs: PartnerPreferences): Record<string, unknown>
   };
 }
 
+// Section display format (the sessionStorage draft) → API format. Reverse of
+// convertApiToDisplay, mirroring PartnerPreferenceModal.buildPayload. The draft may only
+// hold the fields the user touched, so only keys present in it are sent — the API leaves
+// the rest unchanged. Empty age/height → null ("no preference").
+export function convertDisplayToApi(draft: Record<string, unknown>): PartnerPreferences {
+  const p: PartnerPreferences = {};
+  const has = (k: string) => k in draft;
+  const num = (v: unknown) => {
+    const n = parseInt(String(v ?? ""), 10);
+    return Number.isFinite(n) ? n : null;
+  };
+  const one = (v: unknown) => [String(v)];
+  const list = (v: unknown) => (Array.isArray(v) ? (v as string[]) : []);
+
+  if (has("ageMin")) p.ageMin = num(draft.ageMin);
+  if (has("ageMax")) p.ageMax = num(draft.ageMax);
+  if (has("heightMin")) p.heightMinCm = num(draft.heightMin);
+  if (has("heightMax")) p.heightMaxCm = num(draft.heightMax);
+  if (has("marital")) p.maritalStatuses = one(draft.marital);
+  if (has("physical")) p.physicalStatuses = one(draft.physical);
+  if (has("religion")) p.religions = one(draft.religion);
+  if (has("food")) p.foodHabits = one(draft.food);
+  if (has("smoking")) p.smokingHabits = one(draft.smoking);
+  if (has("drinking")) p.drinkingHabits = one(draft.drinking);
+  // null = "show all"; subset = user's selection
+  if (has("edu")) {
+    const edu = list(draft.edu);
+    p.educationLevels = edu.length && edu.length < EDUCATION_OPTIONS.length ? edu : null;
+  }
+  if (has("countries")) p.countries = list(draft.countries).length ? list(draft.countries) : null;
+  if (has("castes")) p.castes = list(draft.castes).length ? list(draft.castes) : null;
+  if (has("aboutPartner")) p.aboutPartner = String(draft.aboutPartner ?? "");
+  return p;
+}
+
 function getDraft() {
   try {
     // 1. Section's own draft (unsaved edits take priority)
