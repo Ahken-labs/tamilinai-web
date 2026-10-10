@@ -37,7 +37,7 @@ import ReligionCasteSection from "@/src/components/profile/sections/ReligionCast
 import LocationSection from "@/src/components/profile/sections/LocationSection";
 import LifestyleSection from "@/src/components/profile/sections/LifestyleSection";
 import InterestsHobbiesSection from "@/src/components/profile/sections/InterestsHobbiesSection";
-import PartnerPreferenceSection from "@/src/components/profile/sections/PartnerPreferenceSection";
+import PartnerPreferenceSection, { convertDisplayToApi } from "@/src/components/profile/sections/PartnerPreferenceSection";
 
 const TABS = [
   { label: "Edit profile", value: "edit_profile" },
@@ -61,6 +61,17 @@ function readDraft<T>(key: string): T | null {
 
 function clearAllDrafts() {
   Object.values(DRAFT_KEYS).forEach(k => sessionStorage.removeItem(k));
+}
+
+// Re-cache saved partner prefs so the section (and the preference modal) show the new
+// values — they read "inai_partner_pref" first, which would otherwise be stale for 30 min.
+async function refreshPartnerPrefCache(): Promise<void> {
+  try {
+    const prefs = await getPartnerPreferences();
+    sessionStorage.setItem("inai_partner_pref", JSON.stringify({ data: prefs, expiresAt: Date.now() + 30 * 60 * 1000 }));
+  } catch {
+    sessionStorage.removeItem("inai_partner_pref");
+  }
 }
 
 function isAccountNew(createdAt: string): boolean {
@@ -352,7 +363,7 @@ export default function MyProfilePage() {
 
       // ── Partner prefs ─────────────────────────────────────────────────────
       const ppd = readDraft<Record<string, unknown>>(DRAFT_KEYS.partner);
-      if (ppd) saves.push(savePartnerPreferences(ppd as Parameters<typeof savePartnerPreferences>[0]));
+      if (ppd) saves.push(savePartnerPreferences(convertDisplayToApi(ppd)));
 
       if (saves.length === 0) {
         // Nothing actually changed — just clear drafts and return
@@ -366,6 +377,7 @@ export default function MyProfilePage() {
       // Clear all drafts
       clearAllDrafts();
       setAboutMeDirty(false);
+      if (ppd) await refreshPartnerPrefCache();
 
       // Re-fetch and notify AppHeader to update score
       invalidateMeCache();
@@ -522,11 +534,9 @@ export default function MyProfilePage() {
   async function handleSavePartner() {
     const ppd = readDraft<Record<string, unknown>>(DRAFT_KEYS.partner);
     if (!ppd) return;
-    await savePartnerPreferences(ppd as Parameters<typeof savePartnerPreferences>[0]);
+    await savePartnerPreferences(convertDisplayToApi(ppd));
     sessionStorage.removeItem(DRAFT_KEYS.partner);
-    getPartnerPreferences().then(prefs => {
-      try { sessionStorage.setItem("inai_partner_pref", JSON.stringify({ data: prefs, expiresAt: Date.now() + 30 * 60 * 1000 })); } catch {}
-    }).catch(() => {});
+    await refreshPartnerPrefCache();
     await refreshAfterSave();
   }
 
