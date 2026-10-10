@@ -9,6 +9,7 @@ import { useLang } from "../../context/LangContext";
 import { verifyOtp, resendOtp, forgotPassword } from "../../lib/api/auth";
 import { ApiError } from "../../lib/api/client";
 import { useLoadingText } from "@/src/hooks/useLoadingText";
+import { applyOtpInput } from "@/src/lib/otpInput";
 
 const OTP_LENGTH = 6;
 
@@ -84,14 +85,11 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
   const countdown = method === "email" ? emailCountdown : smsCountdown;
 
   const handleChange = (index: number, value: string) => {
-    if (!/^\d?$/.test(value)) return;
-    const next = [...digits];
-    next[index] = value;
-    setDigits(next);
+    const result = applyOtpInput(digits, index, value);
+    if (!result) return;
+    setDigits(result.digits);
     setError("");
-    if (value && index < OTP_LENGTH - 1) {
-      inputRefs.current[index + 1]?.focus();
-    }
+    inputRefs.current[result.focusIndex]?.focus();
   };
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -301,7 +299,7 @@ export default function OtpForm({ variant = "register", searchParams }: OtpFormP
                 ref={(el) => { inputRefs.current[i] = el; }}
                 type="text"
                 inputMode="numeric"
-                maxLength={1}
+                autoComplete={i === 0 ? "one-time-code" : "off"}
                 value={digit}
                 onChange={(e) => handleChange(i, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(i, e)}
