@@ -58,7 +58,7 @@ export default function ChangePasswordPopup({ isOpen, onClose }: Props) {
       {
         key: "symbol",
         label: "One symbol",
-        met: /[^A-Za-z0-9]/.test(newPassword),
+        met: /[^A-Za-z0-9\s]/.test(newPassword),
       },
     ],
     [newPassword]
@@ -217,7 +217,7 @@ export default function ChangePasswordPopup({ isOpen, onClose }: Props) {
           <InputBox
             value={newPassword}
             onChange={(val) => {
-              setNewPassword(val);
+              setNewPassword(val.replace(/\s/g, "")); // no spaces — login strips them
               setNewPasswordError("");
             }}
             onFocus={() => setNewPasswordFocused(true)}
@@ -264,7 +264,7 @@ export default function ChangePasswordPopup({ isOpen, onClose }: Props) {
             <InputBox
               value={confirmPassword}
               onChange={(val) => {
-                setConfirmPassword(val);
+                setConfirmPassword(val.replace(/\s/g, ""));
                 setConfirmPasswordError("");
               }}
               onFocus={() => setConfirmFocused(true)}

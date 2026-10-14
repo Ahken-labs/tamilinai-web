@@ -157,7 +157,7 @@ export default function LoginForm() {
               <InputBox
                 value={password}
                 onChange={(val) => {
-                  setPassword(val.replace(/ /g, ""));
+                  setPassword(val.replace(/\s/g, ""));
                   setPasswordError("");
                 }}
                 label={t("Password")}
