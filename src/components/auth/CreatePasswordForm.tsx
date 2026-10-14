@@ -57,7 +57,7 @@ export default function CreatePasswordForm({ variant = "register" }: Props) {
             {
                 key: "symbol",
                 label: "One symbol",
-                met: /[^A-Za-z0-9]/.test(password),
+                met: /[^A-Za-z0-9\s]/.test(password),
             },
         ],
         [password]
@@ -173,7 +173,7 @@ export default function CreatePasswordForm({ variant = "register" }: Props) {
             <InputBox
                 value={password}
                 onChange={(val) => {
-                    setPassword(val);
+                    setPassword(val.replace(/\s/g, "")); // no spaces — login strips them
                     setPasswordError("");
                 }}
                 onFocus={() => setPasswordFocused(true)}
@@ -220,7 +220,7 @@ export default function CreatePasswordForm({ variant = "register" }: Props) {
                 <InputBox
                     value={confirmPassword}
                     onChange={(val) => {
-                        setConfirmPassword(val);
+                        setConfirmPassword(val.replace(/\s/g, ""));
                         setConfirmPasswordError("");
                     }}
                     onFocus={() => setConfirmFocused(true)}
