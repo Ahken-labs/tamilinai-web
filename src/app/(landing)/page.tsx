@@ -11,7 +11,7 @@ import BoostedProfileSection from "./sections/BoostedProfileSection";
 // import ServicesSection from "./sections/ServicesSection";
 
 export const metadata = {
-  title: 'Inai - Tamil wedding directory',
+  title: { absolute: 'Inai - Sri Lankan Tamil Matrimony' },
   alternates: { canonical: 'https://inai.lk' },
 };
 
