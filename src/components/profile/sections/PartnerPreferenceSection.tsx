@@ -128,14 +128,23 @@ function RadioGroup({ options, value, onChange }: {
 }
 
 
-// Called as a useState lazy initializer — only runs on first client render.
-// Safe because PartnerPreferenceSection only ever mounts client-side ({open && body}).
+// Called as a useState lazy initializer. Only safe after mount — see PartnerPreferenceSection.
 function getInitialDraft(): Record<string, unknown> {
   if (typeof window === "undefined") return {};
   return getDraft() ?? {};
 }
 
-export default function PartnerPreferenceSection({ onDirty, onSave }: { onDirty?: () => void; onSave?: () => Promise<void> }) {
+type SectionProps = { onDirty?: () => void; onSave?: () => Promise<void> };
+
+// The section is server-rendered (collapsed, not unmounted), and its initial values come
+// from sessionStorage, which the server can't see. Render the form only after mount so
+// the first client render matches the server HTML instead of causing a hydration error.
+export default function PartnerPreferenceSection(props: SectionProps) {
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
+  return mounted ? <PartnerPreferenceForm {...props} /> : null;
+}
+
+function PartnerPreferenceForm({ onDirty, onSave }: SectionProps) {
   const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
 
   const [saving, setSaving] = useState(false);

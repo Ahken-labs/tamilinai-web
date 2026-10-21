@@ -76,7 +76,7 @@ export default function AppHeader() {
       .catch(() => { /* keep cached data */ });
   }, []);
 
-  // Re-fetch me whenever my-profile page signals a successful save
+  // Reload me from cache when my-profile signals a successful save
   useEffect(() => {
     const handler = () => {
       const cached = readCache();
@@ -217,7 +217,7 @@ export default function AppHeader() {
 
   const closeMobile = () => setMobileOpen(false);
 
-  // Scroll-hide for mobile (≤900px)
+  // Scroll-hide for mobile (<900px)
   const [navVisible, setNavVisible] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const lastScrollY = useRef(0);
@@ -250,7 +250,7 @@ export default function AppHeader() {
       >
         <div className="max-w-[1920px] mx-auto flex px-5 lg:px-10 max-[320px]:h-[56px] max-[768px]:h-[66px] h-[74px] max-[320px]:pt-2 pt-5 gap-5 min-[900px]:gap-6">
 
-          {/* Left: Logo + Search — desktop only */}
+          {/* Left: Logo + Elite/Upgrade tag — desktop only */}
           <div className="hidden min-[900px]:flex mb-2 items-center gap-2 lg:gap-3 flex-1 min-w-0">
             <Link href={"/matches"}>
               <Logo />
@@ -289,35 +289,22 @@ export default function AppHeader() {
               <button
                 type="button"
                 onClick={() => { setMobileOpen(false); setSettingsOpen((v) => !v); }}
-                className={`cursor-pointer flex items-center py-1 pl-1 pr-2 rounded-[42px] transition-colors duration-150 gap-2 ${isElite && trustBadge ? "" : "bg-[#E0E0E0] hover:bg-[#D4D4D4]"}`}
-                style={
-                  isElite && trustBadge
-                    ? { background: "linear-gradient(269deg, #FFE0C2 44.21%, #FFF2D9 98.97%), #E0E0E0" }
-                    : undefined
-                }
+                className="cursor-pointer flex items-center py-1 pl-1 pr-2 rounded-[42px] transition-colors duration-150 gap-2 bg-[#E0E0E0] hover:bg-[#D4D4D4]"
               >
                 <div className="w-8 h-8 rounded-full overflow-hidden border border-white bg-[#D9D9D9] relative">
                   <ProtectedImage src={photo} fill className="object-cover" alt="my profile" sizes="32px" />
                 </div>
                 <div className="font-poppins flex flex-col gap-1">
-                  {!trustBadge ? (
-                    <>
-                      <span className="font-poppins text-[12px] md:text-[14px] font-semibold text-[#525252] leading-none">Profile points</span>
-                      <div className="flex items-center gap-2">
-                        <div className="w-[52px] h-2 bg-white rounded-[19px] overflow-hidden">
-                          <div className="h-full bg-[#B31B38] rounded-[19px] transition-[width] duration-700 ease-in-out" style={{ width: `${getProgressWidth(score)}%` }} />
-                        </div>
-                        <span className="font-16 font-normal text-[#B31B38] leading-none">{score}%</span>
-                      </div>
-                    </>
-                  ) : !isElite ? (
-                    <span className="font-14 font-semibold text-[#B31B38] leading-none">Upgrade</span>
-                  ) : (
-                    <span className="font-14 font-semibold text-[#8D5900] leading-none">Elite</span>
-                  )}
+                  <span className="font-poppins text-[12px] md:text-[14px] font-semibold text-[#525252] leading-none">Profile points</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-[52px] h-2 bg-white rounded-[19px] overflow-hidden">
+                      <div className="h-full bg-[#B31B38] rounded-[19px] transition-[width] duration-700 ease-in-out" style={{ width: `${getProgressWidth(score)}%` }} />
+                    </div>
+                    <span className="font-16 font-normal text-[#B31B38] leading-none">{score}%</span>
+                  </div>
                 </div>
                 <div className="w-px self-stretch bg-white mx-1 py-0.5" />
-                <SettingsIcon className={`w-6 h-6 ${isElite && trustBadge ? "text-[#8D5900]" : "text-[#525252]"}`} />
+                <SettingsIcon className="w-6 h-6 text-[#525252]" />
               </button>
 
               {/* Desktop settings dropdown */}
@@ -400,7 +387,7 @@ export default function AppHeader() {
       >
         <div className="max-w-[1920px] mx-auto flex items-center max-[420px]:px-3 px-5 h-[56px] gap-3 justify-between">
 
-          {/* Left: Logo + Search */}
+          {/* Left: Logo + Elite/Upgrade tag */}
           <div className="flex items-center gap-2">
             <Logo className="w-9 h-9" />
             {eliteBadge}
@@ -410,31 +397,22 @@ export default function AppHeader() {
           <button
             type="button"
             onClick={() => { setSettingsOpen(false); setMobileOpen((v) => !v); }}
-            className={`cursor-pointer flex items-center py-0.5 pl-0.5 pr-1.5 rounded-[42px] transition-colors duration-150 gap-1 ${isElite && trustBadge ? "" : "bg-[#E0E0E0] hover:bg-[#D4D4D4]"}`}
-            style={isElite && trustBadge ? { background: "linear-gradient(269deg, #FFE0C2 44.21%, #FFF2D9 98.97%), #E0E0E0" } : undefined}
+            className="cursor-pointer flex items-center py-0.5 pl-0.5 pr-1.5 rounded-[42px] transition-colors duration-150 gap-1 bg-[#E0E0E0] hover:bg-[#D4D4D4]"
           >
             <div className="w-8 h-8 rounded-full overflow-hidden border border-white bg-[#D9D9D9] relative">
               <ProtectedImage src={photo} fill className="object-cover" alt="my profile" sizes="32px" />
             </div>
-            <div className="flex flex-col gap-0.5">
-              {!trustBadge ? (
-                <>
-                  <span className="font-poppins text-[12px] md:text-[14px] font-semibold text-[#525252] leading-none">Profile points</span>
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-[40px] h-2 bg-white rounded-[19px] overflow-hidden">
-                      <div className="h-full bg-[#B31B38] rounded-[19px] transition-[width] duration-700 ease-in-out" style={{ width: `${getProgressWidth(score)}%` }} />
-                    </div>
-                    <span className="text-[14px] font-normal text-[#B31B38] leading-none">{score}%</span>
-                  </div>
-                </>
-              ) : !isElite ? (
-                <span className="text-[12px] font-semibold text-[#B31B38] leading-none">Upgrade</span>
-              ) : (
-                <span className="text-[12px] font-semibold text-[#8D5900] leading-none">Elite</span>
-              )}
+            <div className="flex flex-col gap-0.5 max-[357px]:hidden">
+              <span className="font-poppins text-[12px] md:text-[14px] font-semibold text-[#525252] leading-none">Profile points</span>
+              <div className="flex items-center gap-1.5">
+                <div className="w-[40px] h-2 bg-white rounded-[19px] overflow-hidden">
+                  <div className="h-full bg-[#B31B38] rounded-[19px] transition-[width] duration-700 ease-in-out" style={{ width: `${getProgressWidth(score)}%` }} />
+                </div>
+                <span className="text-[14px] font-normal text-[#B31B38] leading-none">{score}%</span>
+              </div>
             </div>
             <div className="w-px self-stretch bg-white mx-0.5" />
-            <SettingsIcon className={`w-6 h-6 ${isElite && trustBadge ? "text-[#8D5900]" : "text-[#525252]"}`} />
+            <SettingsIcon className="w-6 h-6 text-[#525252]" />
           </button>
         </div>
       </div>
@@ -490,24 +468,22 @@ export default function AppHeader() {
         <div className="flex-1 overflow-y-auto overscroll-contain">
 
           {/* Profile progress */}
-          {!trustBadge && (
-            <Link
-              href="/my-profile"
-              className="block px-4 py-3.5 border-b border-[#F0F0F0] cursor-pointer"
-              onClick={closeMobile}
-            >
-              <div className="font-poppins flex items-center justify-between mb-2">
-                <span className="font-poppins text-[12px] md:text-[14px] font-semibold text-[#525252] uppercase tracking-wide">Profile points</span>
-                <span className="text-[16px] font-semibold text-[#B31B38]">{score}%</span>
-              </div>
-              <div className="w-full h-2 bg-[#EBEBEB] rounded-[19px] overflow-hidden">
-                <div
-                  className="font-poppins h-full bg-[#B31B38] rounded-[19px] transition-[width] duration-700 ease-in-out"
-                  style={{ width: `${getProgressWidth(score)}%` }}
-                />
-              </div>
-            </Link>
-          )}
+          <Link
+            href="/my-profile"
+            className="block px-4 py-3.5 border-b border-[#F0F0F0] cursor-pointer"
+            onClick={closeMobile}
+          >
+            <div className="font-poppins flex items-center justify-between mb-2">
+              <span className="font-poppins text-[12px] md:text-[14px] font-semibold text-[#525252] uppercase tracking-wide">Profile points</span>
+              <span className="text-[16px] font-semibold text-[#B31B38]">{score}%</span>
+            </div>
+            <div className="w-full h-2 bg-[#EBEBEB] rounded-[19px] overflow-hidden">
+              <div
+                className="font-poppins h-full bg-[#B31B38] rounded-[19px] transition-[width] duration-700 ease-in-out"
+                style={{ width: `${getProgressWidth(score)}%` }}
+              />
+            </div>
+          </Link>
 
           {/* Trust badge / Elite upgrade CTA — mirrors desktop */}
           {!trustBadge ? (
