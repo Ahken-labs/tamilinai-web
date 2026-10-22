@@ -17,6 +17,7 @@ import {
 import { sendInterest, respondToInterest } from "@/src/lib/api/interests";
 import { ApiError } from "@/src/lib/api/client";
 import EliteUpgradePopup from "@/src/components/ui/EliteUpgradePopup";
+import CompleteProfilePopup, { needsProfileToSendInterest } from "@/src/components/ui/CompleteProfilePopup";
 
 type StatusType = "sent" | "received" | "recived" | "declined";
 
@@ -55,6 +56,7 @@ export default function Match_ContactSection_Card({
   onAction,
 }: Props) {
   const [pending, setPending] = useState(false);
+  const [showCompleteProfile, setShowCompleteProfile] = useState(false);
   const queryClient = useQueryClient();
   const isMale = gender === "male";
   const she = isMale ? "He" : "She";
@@ -75,6 +77,11 @@ export default function Match_ContactSection_Card({
     }
   }
 
+  function trySendInterest() {
+    if (needsProfileToSendInterest()) { setShowCompleteProfile(true); return; }
+    act(() => sendInterest(profileId));
+  }
+
   const normalizedStatus: "sent" | "received" | "declined" =
     status === "recived" ? "received" : status;
 
@@ -82,15 +89,18 @@ export default function Match_ContactSection_Card({
 
   if (normalizedStatus === "sent" && !isAccepted) {
     return (
-      <SentPendingBody
-        sendCount={sendCount}
-        lastSentAt={lastSentAt}
-        isReminderDue={isReminderDue}
-        pending={pending}
-        she_l={she_l}
-        onSendInterest={() => act(() => sendInterest(profileId))}
-        onSendReminder={() => act(() => sendInterest(profileId))}
-      />
+      <>
+        <SentPendingBody
+          sendCount={sendCount}
+          lastSentAt={lastSentAt}
+          isReminderDue={isReminderDue}
+          pending={pending}
+          she_l={she_l}
+          onSendInterest={trySendInterest}
+          onSendReminder={trySendInterest}
+        />
+        {showCompleteProfile && <CompleteProfilePopup onClose={() => setShowCompleteProfile(false)} />}
+      </>
     );
   }
 

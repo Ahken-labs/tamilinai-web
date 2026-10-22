@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import EliteUpgradePopup from "../ui/EliteUpgradePopup";
+import CompleteProfilePopup, { needsProfileToSendInterest } from "../ui/CompleteProfilePopup";
 import ProtectedPhoto from "../common-layout/ProtectedPhoto";
 import { FaWhatsapp } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
@@ -79,6 +80,7 @@ export default function MatchInterestCard({
     const queryClient = useQueryClient();
     const [pending, setPending] = useState(false);
     const [showLimitPopup, setShowLimitPopup] = useState(false);
+    const [showCompleteProfile, setShowCompleteProfile] = useState(false);
     const [mutualAccepted, setMutualAccepted] = useState(false);
     const [changeMindMode, setChangeMindMode] = useState(false);
     const [shortlisted, setShortlisted] = useState(initialShortlisted);
@@ -122,6 +124,12 @@ export default function MatchInterestCard({
             setPending(false);
         }
     }
+    function trySendInterest() {
+        if (needsProfileToSendInterest()) { setShowCompleteProfile(true); return; }
+        act(() => sendInterest(profileId));
+    }
+    const completeProfilePopup = showCompleteProfile && <CompleteProfilePopup onClose={() => setShowCompleteProfile(false)} />;
+
     const interestText = DEFAULT_INTEREST.replace("{name}", profileName);
     const myName = me?.name ?? "";
     const incomingText = DEFAULT_INTEREST.replace("{name}", myName);
@@ -204,7 +212,7 @@ export default function MatchInterestCard({
                         >
                             <Button className="!px-4 !font-medium w-full"
                                 text={pending ? "Sending..." : "Send Interest"}
-                                onPress={() => act(() => sendInterest(profileId))}
+                                onPress={trySendInterest}
                                 iconLeft={<SendInterestMsgIcon className="h-5 w-5" />}
                             />
                             <Button
@@ -219,6 +227,7 @@ export default function MatchInterestCard({
                         </div>
                     </CardShell>
                     {showLimitPopup && <EliteUpgradePopup trigger="daily_limit" onClose={() => setShowLimitPopup(false)} />}
+                    {completeProfilePopup}
                 </>
             );
         }
@@ -252,6 +261,7 @@ export default function MatchInterestCard({
         if (sendCount === 1 && effectiveIsReminderDue) {
             // 3 days passed — show Send reminder button
             return (
+                <>
                 <CardShell>
                     <SectionTitle title={`You sent a priority interest to ${profileName}`} />
                     <div className="max-[500px]:mt-2 mt-4">
@@ -267,12 +277,14 @@ export default function MatchInterestCard({
                     <div className="max-[500px]:mt-2 mt-3 flex justify-center">
                         <Button
                             text={pending ? "Sending..." : "Send reminder"}
-                            onPress={() => act(() => sendInterest(profileId))}
+                            onPress={trySendInterest}
                             iconLeft={<NotificationIcon className="h-4 w-4 md:h-5 md:w-5" />}
                             className="!px-4 !font-medium"
                         />
                     </div>
                 </CardShell>
+                {completeProfilePopup}
+                </>
             );
         }
 

@@ -24,6 +24,7 @@ import {
 } from "../../assets/Icons";
 import Button from "../common-layout/Button";
 import EliteUpgradePopup from "../ui/EliteUpgradePopup";
+import CompleteProfilePopup, { needsProfileToSendInterest } from "../ui/CompleteProfilePopup";
 import { shortlistProfile, unshortlistProfile } from "../../lib/api/profiles";
 import { sendInterest } from "../../lib/api/interests";
 import { ApiError } from "../../lib/api/client";
@@ -70,6 +71,7 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
   );
   const [interestPending, setInterestPending] = useState(false);
   const [showLimitPopup, setShowLimitPopup] = useState(false);
+  const [showCompleteProfile, setShowCompleteProfile] = useState(false);
   const tags = getTags(profile);
   const viewerIsElite = readMeCache()?.isElite ?? false;
 
@@ -107,6 +109,10 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
     }
     if (interestSent) {
       toast({ type: "neutral", title: "Interest already sent", message: "Wait for their response." });
+      return;
+    }
+    if (needsProfileToSendInterest()) {
+      setShowCompleteProfile(true);
       return;
     }
     setInterestPending(true);
@@ -320,6 +326,7 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
       </div>
 
       {showLimitPopup && <EliteUpgradePopup trigger="daily_limit" onClose={() => setShowLimitPopup(false)} />}
+      {showCompleteProfile && <CompleteProfilePopup onClose={() => setShowCompleteProfile(false)} />}
     </div>
   );
 }
