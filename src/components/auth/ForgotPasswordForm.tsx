@@ -109,6 +109,7 @@ export default function ForgotPasswordForm() {
             open={countryOpen}
             setOpen={setCountryOpen}
             label="Country code"
+            buttonClassName="bg-[#F2F2F2] border-[#F2F2F2]"
           />
           <InputBox
             value={value}
@@ -118,7 +119,7 @@ export default function ForgotPasswordForm() {
             }}
             label={t("Your_mobile_number")}
             type="tel"
-            className="bg-cartbox2 border-gray1"
+            className="bg-[#F2F2F2] border-[#F2F2F2]"
             error={error}
           />
         </div>
@@ -133,7 +134,7 @@ export default function ForgotPasswordForm() {
             }}
             label={t("Your_email_address")}
             type="email"
-            className="bg-cartbox2 border-gray1"
+            className="bg-[#F2F2F2] border-[#F2F2F2]"
             error={error}
           />
           {emailWarning && (
