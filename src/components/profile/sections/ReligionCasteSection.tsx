@@ -58,10 +58,11 @@ export default function ReligionCasteSection({ me, onDirty, onSave }: Props) {
     casteOptions = [...new Set(merged), ...tail];
   }
 
-  const isDirty = saveReady && (
-    religion !== (p?.religion ?? "") ||
-    caste !== (p?.caste ?? "")
-  );
+  // With "Other", the typed caste is what gets saved, so compare that instead
+  const casteChanged = caste === "Other"
+    ? !!casteOther.trim() && casteOther.trim() !== (p?.caste ?? "")
+    : caste !== (p?.caste ?? "");
+  const isDirty = saveReady && (religion !== (p?.religion ?? "") || casteChanged);
 
   async function handleSave() {
     if (saving) return;
