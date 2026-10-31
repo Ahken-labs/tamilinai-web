@@ -64,7 +64,8 @@ function buildSetupFormData(basic: Record<string, string>, personal: Record<stri
   if (personal.education) fd.append("education", personal.education);
   if (personal.occupation) fd.append("occupation", personal.occupation);
   if (personal.religion) fd.append("religion", personal.religion);
-  if (personal.caste) fd.append("caste", personal.caste);
+  const caste = personal.caste === "Other" ? personal.casteOther?.trim() : personal.caste;
+  if (caste) fd.append("caste", caste);
   if (personal.country) fd.append("country", personal.country);
   if (personal.city) fd.append("city", personal.city);
   if (personal.citizenship) fd.append("citizenship", personal.citizenship);

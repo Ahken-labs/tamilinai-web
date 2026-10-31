@@ -96,6 +96,7 @@ export const CASTE_OPTIONS_HINDU = [
   "Nair",
   "Nalavar",
   "Pallar",
+  "Pandaariyar / Veerasaivar",
   "Paraiyar",
   "Reddiyar",
   "Saliyar",
