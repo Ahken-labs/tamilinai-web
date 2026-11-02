@@ -20,6 +20,12 @@ function extractDialCode(country: string): string {
   return match ? "+" + match[1] : "";
 }
 
+// Only same-site paths, so a crafted ?next= link can't send users to another website
+function getPostLoginPath(): string {
+  const next = new URLSearchParams(window.location.search).get("next");
+  return next && next.startsWith("/") && !next.startsWith("//") && !next.includes("\\") ? next : "/matches";
+}
+
 export default function LoginForm() {
   const { t } = useLang();
   const router = useRouter();
@@ -29,7 +35,7 @@ export default function LoginForm() {
 
   useEffect(() => {
     if (localStorage.getItem("tamilinai_access_token")) {
-      router.replace("/matches");
+      router.replace(getPostLoginPath());
     }
   }, [router]);
 
@@ -70,7 +76,7 @@ export default function LoginForm() {
     try {
       const res = await login({ identifier: builtIdentifier, password });
       saveSession(res);
-      router.replace("/matches");
+      router.replace(getPostLoginPath());
     } catch (err) {
       if (err instanceof ApiError) {
         switch (err.code) {
