@@ -5,7 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Button from "@/src/components/common-layout/Button";
 import { CheckmarkIcon, DoubleChevronRightIcon, EliteCrownIcon, EliteProIcon, EliteVIPIcon, ProfileVisibilityIcon, ResponseIcon, StepPreferencesIcon } from "@/src/assets/Icons";
 import { FaWhatsapp } from "react-icons/fa";
-import { readMeCache } from "@/src/components/AppHeader";
+import { readMeCache, writeMeCache } from "@/src/components/AppHeader";
+import { getMe } from "@/src/lib/api/user";
 import { ELITE_PLANS, getPricing, ElitePlan, PlanPricing } from "@/src/constants/elitePlans";
 import ReviewSection from "@/src/components/review/ReviewSection";
 import ReviewFAQSection from "@/src/components/review/ReviewFAQSection";
@@ -116,16 +117,27 @@ function PlanCard({
     );
 }
 
-export default function EliteUpgradeBody() {
+export default function EliteUpgradeBody({ isPublic = false }: { isPublic?: boolean }) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const fromSetup = searchParams.get("from") === "setup";
-    const [countryCode] = useState<string | undefined>(() => readMeCache()?.countryCode);
+    const [countryCode, setCountryCode] = useState<string | undefined>(() => readMeCache()?.countryCode);
+    const [priceReady, setPriceReady] = useState(() => isPublic || !!readMeCache()?.countryCode);
+    const [inSriLanka] = useState(() => Intl.DateTimeFormat().resolvedOptions().timeZone === "Asia/Colombo");
     const carouselRef = useRef<HTMLDivElement>(null);
     const [carouselIdx, setCarouselIdx] = useState(1);
 
     useEffect(() => {
         scrollToCard(1);
+        if (isPublic) {
+            if (localStorage.getItem("tamilinai_access_token")) router.replace("/elite-upgrade");
+            return; // Pending-transfer API needs login; a 401 would redirect the visitor home
+        }
+        // Always refresh: a new account has no cache, and an old cache may belong to another account
+        getMe()
+            .then((me) => { writeMeCache(me); setCountryCode(me.countryCode ?? undefined); })
+            .catch(() => {})
+            .finally(() => setPriceReady(true));
         getPendingBankTransfer().then((pending) => {
             if (pending) {
                 const base = fromSetup ? "/upgrade/checkout" : "/elite-upgrade/checkout";
@@ -146,14 +158,20 @@ export default function EliteUpgradeBody() {
     }
 
     function goToCheckout(planKey: string) {
-        if (fromSetup) {
+        if (isPublic) {
+            const next = `/elite-upgrade/checkout?plan=${planKey}&autoRenew=true`;
+            router.push(`/login?next=${encodeURIComponent(next)}`);
+        } else if (fromSetup) {
             router.push(`/upgrade/checkout?plan=${planKey}&autoRenew=true&from=setup`);
         } else {
             router.push(`/elite-upgrade/checkout?plan=${planKey}&autoRenew=true`);
         }
     }
 
-    const pricings = ELITE_PLANS.map((p) => getPricing(p, countryCode));
+    const pricings = ELITE_PLANS.map((p) => {
+        if (!priceReady) return { symbol: "", perMonth: "...", total: "..." };
+        return isPublic ? (inSriLanka ? p.lkr : p.gbp) : getPricing(p, countryCode);
+    });
 
     return (
         <main className="font-poppins select-none min-h-screen bg-[#F8F5F2] pb-20">

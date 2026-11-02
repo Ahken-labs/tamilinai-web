@@ -424,14 +424,19 @@ export function CheckoutContent() {
 
   const [countryCode, setCountryCode] = useState<string | undefined>(() => readMeCache()?.countryCode);
 
+  const [priceReady, setPriceReady] = useState(() => !!readMeCache()?.countryCode);
+
   useEffect(() => {
     if (!readMeCache()?.countryCode) {
-      getMe().then((me) => setCountryCode(me.countryCode ?? undefined)).catch(() => {});
+      getMe()
+        .then((me) => setCountryCode(me.countryCode ?? undefined))
+        .catch(() => {})
+        .finally(() => setPriceReady(true));
     }
   }, []);
 
   const plan = getPlanByKey(planKey) ?? ELITE_PLANS[0];
-  const pricing = getPricing(plan, countryCode);
+  const pricing = priceReady ? getPricing(plan, countryCode) : { symbol: "", perMonth: "...", total: "..." };
   const currency: "lkr" | "usd" = isSriLanka(countryCode) ? "lkr" : "usd";
 
   const [promoCode, setPromoCode] = useState("");
