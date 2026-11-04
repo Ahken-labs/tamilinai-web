@@ -48,6 +48,7 @@ export const EDUCATION_OPTIONS = [
   "School",
   "O/L",
   "A/L",
+  "NVQ",
   "Professional Certification",
   "Diploma",
   "HND",

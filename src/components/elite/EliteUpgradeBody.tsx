@@ -2,15 +2,19 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Anek_Tamil } from "next/font/google";
 import Button from "@/src/components/common-layout/Button";
 import { CheckmarkIcon, DoubleChevronRightIcon, EliteCrownIcon, EliteProIcon, EliteVIPIcon, ProfileVisibilityIcon, ResponseIcon, StepPreferencesIcon } from "@/src/assets/Icons";
 import { FaWhatsapp } from "react-icons/fa";
 import { readMeCache, writeMeCache } from "@/src/components/AppHeader";
 import { getMe } from "@/src/lib/api/user";
-import { ELITE_PLANS, getPricing, ElitePlan, PlanPricing } from "@/src/constants/elitePlans";
+import { ELITE_PLANS, isSriLanka, ElitePlan, PlanCardCopy, PlanPricing } from "@/src/constants/elitePlans";
+import PlanCardSkeleton from "@/src/components/elite/skeleton-layout/PlanCardSkeleton";
 import ReviewSection from "@/src/components/review/ReviewSection";
 import ReviewFAQSection from "@/src/components/review/ReviewFAQSection";
 import { getPendingBankTransfer } from "@/src/lib/api/billing";
+
+const anekTamil = Anek_Tamil({ subsets: ["tamil"], weight: "700", display: "swap" });
 
 const PLAN_UI = [
     {
@@ -43,11 +47,25 @@ const BENEFITS = [
     { icon: <ResponseIcon className="h-6 w-6" />, text: "Get more responses" },
 ];
 
+function FeatureRow({ text, highlighted, tamil }: { text: string; highlighted?: boolean; tamil: boolean }) {
+    const parts = text.split(/\*\*(.+?)\*\*/g);
+    return (
+        <div className="flex items-center gap-1">
+            <CheckmarkIcon className="h-5 w-5 shrink-0" {...(highlighted ? { stroke: "#8D5900" } : {})} />
+            <span className={`${tamil ? "font-tamil" : "font-poppins"} text-[14px] sm:text-[15px] font-normal leading-[150%] ${highlighted ? "text-[#8D5900]" : "text-dark"}`}>
+                {parts.map((p, j) => j % 2 === 1 ? <span key={j} className="font-semibold">{p}</span> : p)}
+            </span>
+        </div>
+    );
+}
+
 function PlanCard({
-    plan, pricing, ui, onCheckout, desktop,
+    plan, pricing, copy, tamil, ui, onCheckout, desktop,
 }: {
     plan: ElitePlan;
     pricing: PlanPricing;
+    copy: PlanCardCopy;
+    tamil: boolean;
     ui: typeof PLAN_UI[number];
     onCheckout: () => void;
     desktop?: boolean;
@@ -71,26 +89,23 @@ function PlanCard({
                 <span className="font-poppins text-[14px] sm:text-[15px] md:text-[16px] font-normal leading-[150%] text-[#A97216]">{plan.label}</span>
             </div>
 
-            <div className="flex items-baseline gap-0 mt-4 sm:mt-4.5 md:mt-5">
-                <span className="font-poppins text-[24px] sm:text-[26px] md:text-[28px] font-semibold leading-[100%] text-dark">{pricing.symbol} {pricing.perMonth}</span>
-                <span className="font-poppins text-[16px] sm:text-[18px] md:text-[20px] font-normal leading-[100%] text-dark">/month</span>
+            <div className="flex items-baseline gap-2 mt-4 sm:mt-4.5 md:mt-5">
+                <span className="font-poppins text-[24px] sm:text-[26px] md:text-[28px] font-semibold leading-[100%] text-dark">{pricing.symbol} {pricing.total}</span>
+                {pricing.originalTotal && (
+                    <span className="font-poppins text-[16px] font-semibold leading-[100%] text-dark line-through">{pricing.symbol} {pricing.originalTotal}</span>
+                )}
             </div>
+            <span className={`${tamil ? "font-tamil" : "font-poppins"} mt-1.5 sm:mt-2 text-[14px] sm:text-[15px] leading-[150%] text-dark`}>{copy.duration}</span>
 
-            {plan.tagLine ? (
-                <span className="mt-2 italic font-poppins text-[16px] leading-[150%] text-[#8D5900]">{plan.tagLine}</span>
-            ) : (
-                <div className="h-8" />
-            )}
-
-            <div className="flex flex-col w-full mt-6 sm:mt-7 md:mt-8">
-                <div className="flex w-full items-center justify-between">
-                    <span className="font-poppins text-[16px] font-normal leading-[150%] text-dark">Total cost</span>
-                    <span className="font-poppins text-[16px] font-semibold leading-[150%] text-dark">{pricing.symbol} {pricing.total}</span>
-                </div>
-                <div className="flex w-full items-center justify-between">
-                    <span className="font-poppins text-[16px] font-normal leading-[150%] text-dark">Active duration</span>
-                    <span className="font-poppins text-[16px] font-semibold leading-[150%] text-dark">{plan.months} months</span>
-                </div>
+            <div className={`${tamil ? "font-tamil" : "font-poppins"} mt-6 sm:mt-7 md:mt-8 min-h-[73px] text-[14px] sm:text-[15px] leading-[150%] text-dark`}>
+                {copy.averageLabel && (
+                    <>
+                        <div className="font-poppins">{pricing.symbol} {pricing.perMonth}</div>
+                        <div>{copy.averageLabel}</div>
+                    </>
+                )}
+                {copy.summary && <div>{copy.summary}</div>}
+                {copy.tagLine && <div className="text-[#8D5900] mt-1">{copy.tagLine}</div>}
             </div>
 
             <Button
@@ -100,18 +115,9 @@ function PlanCard({
                 iconLeft={<ui.Icon className="w-4 h-4 shrink-0" fill={ui.iconFill} />}
             />
 
-            <div className="flex flex-col gap-3 mt-4 sm:mt-4.5 md:mt-5 flex-1">
-                {plan.features.map((f, i) => {
-                    const parts = f.split(/\*\*(.+?)\*\*/g);
-                    return (
-                        <div key={i} className="flex items-center gap-1">
-                            <CheckmarkIcon className="h-5 w-5 shrink-0" />
-                            <span className="font-poppins text-[14px] font-normal leading-[150%] text-dark">
-                                {parts.map((p, j) => j % 2 === 1 ? <span key={j} className="font-semibold">{p}</span> : p)}
-                            </span>
-                        </div>
-                    );
-                })}
+            <div className="flex flex-col gap-3 mt-5 flex-1">
+                {copy.features.map((f) => <FeatureRow key={f} text={f} tamil={tamil} />)}
+                {copy.highlightedFeatures?.map((f) => <FeatureRow key={f} text={f} tamil={tamil} highlighted />)}
             </div>
         </div>
     );
@@ -168,17 +174,16 @@ export default function EliteUpgradeBody({ isPublic = false }: { isPublic?: bool
         }
     }
 
-    const pricings = ELITE_PLANS.map((p) => {
-        if (!priceReady) return { symbol: "", perMonth: "...", total: "..." };
-        return isPublic ? (inSriLanka ? p.lkr : p.gbp) : getPricing(p, countryCode);
-    });
+    const isLkr = isPublic ? inSriLanka : isSriLanka(countryCode);
+    const pricings = ELITE_PLANS.map((p) => isLkr ? p.lkr : p.gbp);
+    const copies = ELITE_PLANS.map((p) => isLkr ? p.card.lkr : p.card.gbp);
 
     return (
         <main className="font-poppins select-none min-h-screen bg-[#F8F5F2] pb-20">
             <div className="mx-auto flex max-w-[1024px] flex-col px-0 min-[860px]:px-4 lg:px-10">
                 <div className="justify-center text-center pt-5 sm:pt-7 md:pt-7 lg:pt-10 mx-auto px-4">
-                    <h1 className="font-medium text-[20px] sm:text-[24px] text-[#000]">This is One of Life&apos;s Most Precious Decisions.</h1>
-                    <p className="text-[#525252] mt-1 text-[14px] sm:text-[15px] md:text-[16px]">Give your journey the time and quality it truly deserves to discover your perfect match.</p>
+                    <h1 className={`${anekTamil.className} max-[500px]:text-[16px] text-[18px] sm:text-[20px] md:text-[22px] text-[#000]`}>இது வாழ்க்கையின் மிக முக்கியமான முடிவுகளில் ஒன்று</h1>
+                    <p className="font-tamil font-normal text-[#525252] mt-2 font-16">உங்களின் இந்தப் பயணத்திற்குத் தகுதியான நேரத்தையும் தரத்தையும் வழங்கி, சரியான துணையைச் சந்தியுங்கள்!</p>
                 </div>
 
                 <div className="mx-auto mt-6 sm:mt-7 md:mt-9 lg:mt-10 w-full">
@@ -217,7 +222,9 @@ export default function EliteUpgradeBody({ isPublic = false }: { isPublic?: bool
                                 <div key={plan.key} className="flex flex-col flex-shrink-0 snap-center max-[500px]:w-[256px]"
                                     style={{ width: "calc(100% - 80px)", maxWidth: "298.66px", minWidth: "256px" }}>
                                     <div className="h-5" />
-                                    <PlanCard plan={plan} pricing={pricings[i]} ui={PLAN_UI[i]} onCheckout={() => goToCheckout(plan.key)} />
+                                    {priceReady
+                                        ? <PlanCard plan={plan} pricing={pricings[i]} copy={copies[i]} tamil={isLkr} ui={PLAN_UI[i]} onCheckout={() => goToCheckout(plan.key)} />
+                                        : <PlanCardSkeleton />}
                                 </div>
                             ))}
                         </div>
@@ -228,7 +235,9 @@ export default function EliteUpgradeBody({ isPublic = false }: { isPublic?: bool
                         {ELITE_PLANS.map((plan, i) => (
                             <div key={plan.key} className="flex flex-col flex-1" style={{ maxWidth: "298.66px", minWidth: "256px" }}>
                                 <div className="h-5" />
-                                <PlanCard plan={plan} pricing={pricings[i]} ui={PLAN_UI[i]} onCheckout={() => goToCheckout(plan.key)} desktop />
+                                {priceReady
+                                    ? <PlanCard plan={plan} pricing={pricings[i]} copy={copies[i]} tamil={isLkr} ui={PLAN_UI[i]} onCheckout={() => goToCheckout(plan.key)} desktop />
+                                    : <PlanCardSkeleton />}
                             </div>
                         ))}
                     </div>
