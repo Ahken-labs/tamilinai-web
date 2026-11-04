@@ -393,6 +393,14 @@ export function EditIcon({
   );
 }
 
+export function ShieldOutlineIcon({ className = "w-5 h-5 shrink-0", ...props }: IconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" className={className} {...props}>
+      <path d="M17.4262 9.26561C17.4262 13.3406 14.4678 17.1573 10.4262 18.2739C10.1512 18.3489 9.85117 18.3489 9.57617 18.2739C5.5345 17.1573 2.57617 13.3406 2.57617 9.26561V5.60726C2.57617 4.92393 3.09285 4.14893 3.73452 3.8906L8.37616 1.99062C9.41783 1.56563 10.5928 1.56563 11.6345 1.99062L16.2762 3.8906C16.9095 4.14893 17.4345 4.92393 17.4345 5.60726L17.4262 9.26561Z" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" stroke="currentColor" />
+    </svg>
+  );
+}
+
 export function EliteIcon({
   className = "w-4 h-4 shrink-0 text-[#222222]",
   ...props

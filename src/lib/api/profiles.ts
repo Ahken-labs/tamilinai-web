@@ -37,6 +37,10 @@ export function getProfiles(filters?: ProfileFilters): Promise<ProfilesResponse>
   return http(`/api/profiles${query ? `?${query}` : ''}`);
 }
 
+export function getEliteMembers(): Promise<{ profiles: BrowseProfile[] }> {
+  return http('/api/profiles/elite-members');
+}
+
 export function getProfile(userId: string): Promise<ProfileDetail> {
   return http(`/api/profiles/${userId}`);
 }

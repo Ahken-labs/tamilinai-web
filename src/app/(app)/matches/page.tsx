@@ -8,6 +8,7 @@ import { IoCloseOutline } from "react-icons/io5";
 import ToggleTabs from "../../../components/common-layout/ToggleTabs";
 import ProfileCard from "../../../components/app/ProfileCard";
 import ProfileCardSkeleton from "../../../components/app/skeleton-layout/ProfileCardSkeleton";
+import EliteMembersSection from "../../../components/app/EliteMembersSection";
 import Pagination from "../../../components/more/Pagination";
 import PartnerPreferenceModal from "../../../components/app/PartnerPreferenceModal";
 import { getProfiles } from "../../../lib/api/profiles";
@@ -191,6 +192,16 @@ function MatchesContent() {
         </div>
 
         <div className="px-4 lg:px-8 pt-[12px] sm:pt-[27px] pb-4 flex flex-col gap-4 max-w-[1024px] mx-auto">
+
+          {activeTab === "best" && currentPage === 1 && !searchFilters && (
+            <EliteMembersSection
+              photosReady={!isLoading}
+              onViewAll={() => {
+                handleTabChange("elite");
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+            />
+          )}
 
           {showSkeletons ? (
             Array.from({ length: 10 }).map((_, i) => <ProfileCardSkeleton key={i} />)
