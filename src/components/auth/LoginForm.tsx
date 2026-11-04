@@ -23,7 +23,8 @@ function extractDialCode(country: string): string {
 // Only same-site paths, so a crafted ?next= link can't send users to another website
 function getPostLoginPath(): string {
   const next = new URLSearchParams(window.location.search).get("next");
-  return next && next.startsWith("/") && !next.startsWith("//") && !next.includes("\\") ? next : "/matches";
+  // Browsers strip tabs/newlines from URLs, so "/\t/evil.com" would become "//evil.com"
+  return next && /^\/(?!\/)[^\\\x00-\x1f\x7f]*$/.test(next) ? next : "/matches";
 }
 
 export default function LoginForm() {

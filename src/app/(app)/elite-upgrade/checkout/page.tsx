@@ -300,7 +300,7 @@ function PlanSummary({
                     className="flex items-center justify-between cursor-pointer"
                     onClick={(e) => { e.stopPropagation(); setBenefitsExpanded(!benefitsExpanded); }}
                   >
-                    <span className="text-[16px] font-normal leading-[150%] text-[#222222]">Elite VIP benefits</span>
+                    <span className="text-[16px] font-normal leading-[150%] text-[#222222]">{planKey === "max" ? "Elite VIP" : planKey === "pro" ? "Elite pro" : "Elite basic"} benefits</span>
                     <ChevronIcon open={benefitsExpanded} className="w-4 h-4 shrink-0 transition-transform duration-200" stroke="#222222" />
                   </div>
                   <div className={`grid transition-all duration-300 ease-in-out ${benefitsExpanded ? "grid-rows-[1fr] mt-4" : "grid-rows-[0fr]"}`}>
@@ -436,8 +436,10 @@ export function CheckoutContent() {
   }, []);
 
   const plan = getPlanByKey(planKey) ?? ELITE_PLANS[0];
-  const pricing = priceReady ? getPricing(plan, countryCode) : { symbol: "", perMonth: "...", total: "..." };
+  const pricing = getPricing(plan, countryCode);
   const currency: "lkr" | "usd" = isSriLanka(countryCode) ? "lkr" : "usd";
+  const copy = isSriLanka(countryCode) ? plan.card.lkr : plan.card.gbp;
+  const planFeatures = [...copy.features, ...(copy.highlightedFeatures ?? [])];
 
   const [promoCode, setPromoCode] = useState("");
   const handlePromoApplied = useCallback((code: string) => { setPromoCode(code); }, []);
@@ -464,30 +466,38 @@ export function CheckoutContent() {
           <div className={currentStep < 3 ? "flex flex-col md:flex-row gap-5 md:gap-6 items-start" : "flex justify-center"}>
 
             <div className="max-[500px]:order-2 w-full">
-              <BankTransferFlow
-                planKey={plan.key}
-                planLabel={plan.label}
-                months={plan.months}
-                symbol={pricing.symbol}
-                total={pricing.total}
-                promoCode={promoCode || undefined}
-                onStepChange={setCurrentStep}
-              />
+              {priceReady ? (
+                <BankTransferFlow
+                  planKey={plan.key}
+                  planLabel={plan.label}
+                  months={plan.months}
+                  symbol={pricing.symbol}
+                  total={pricing.total}
+                  promoCode={promoCode || undefined}
+                  onStepChange={setCurrentStep}
+                />
+              ) : (
+                <div className="h-[420px] rounded-[20px] bg-white animate-pulse" />
+              )}
             </div>
             {currentStep < 3 && (
               <>
 
                 <div className="max-[500px]:order-1 w-full md:max-w-[360px]">
-                  <PlanSummary
-                    symbol={pricing.symbol}
-                    perMonth={pricing.perMonth}
-                    months={plan.months}
-                    total={pricing.total}
-                    features={plan.features}
-                    planKey={plan.key}
-                    currency={currency}
-                    onPromoApplied={handlePromoApplied}
-                  />
+                  {priceReady ? (
+                    <PlanSummary
+                      symbol={pricing.symbol}
+                      perMonth={pricing.perMonth}
+                      months={plan.months}
+                      total={pricing.total}
+                      features={planFeatures}
+                      planKey={plan.key}
+                      currency={currency}
+                      onPromoApplied={handlePromoApplied}
+                    />
+                  ) : (
+                    <div className="h-[320px] rounded-[20px] bg-white animate-pulse" />
+                  )}
                 </div>
 
                 <div className="hidden max-[500px]:block max-[500px]:order-3 w-full font-poppins">
