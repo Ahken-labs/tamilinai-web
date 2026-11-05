@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { Anek_Tamil } from "next/font/google";
 import Button from "@/src/components/common-layout/Button";
 import { CheckmarkIcon, DoubleChevronRightIcon, EliteCrownIcon, EliteProIcon, EliteVIPIcon, ProfileVisibilityIcon, ResponseIcon, StepPreferencesIcon } from "@/src/assets/Icons";
@@ -9,10 +10,15 @@ import { FaWhatsapp } from "react-icons/fa";
 import { readMeCache, writeMeCache } from "@/src/components/AppHeader";
 import { getMe } from "@/src/lib/api/user";
 import { ELITE_PLANS, isSriLanka, ElitePlan, PlanCardCopy, PlanPricing } from "@/src/constants/elitePlans";
-import PlanCardSkeleton from "@/src/components/elite/skeleton-layout/PlanCardSkeleton";
-import ReviewSection from "@/src/components/review/ReviewSection";
-import ReviewFAQSection from "@/src/components/review/ReviewFAQSection";
+import { PlanFeaturesSkeleton, PlanPriceSkeleton } from "@/src/components/elite/skeleton-layout/PlanCardSkeleton";
 import { getPendingBankTransfer } from "@/src/lib/api/billing";
+
+// Below the plan cards, so their code loads separately and never delays the cards
+const ReviewSection = dynamic(() => import("@/src/components/review/ReviewSection"), {
+    ssr: false,
+    loading: () => <div className="mx-auto h-[320px] max-w-[1024px] animate-pulse rounded-[20px] bg-[#EFEBE7]" />,
+});
+const ReviewFAQSection = dynamic(() => import("@/src/components/review/ReviewFAQSection"), { ssr: false });
 
 const anekTamil = Anek_Tamil({ subsets: ["tamil"], weight: "700", display: "swap" });
 
@@ -60,12 +66,13 @@ function FeatureRow({ text, highlighted, tamil }: { text: string; highlighted?: 
 }
 
 function PlanCard({
-    plan, pricing, copy, tamil, ui, onCheckout, desktop,
+    plan, pricing, copy, tamil, ready, ui, onCheckout, desktop,
 }: {
     plan: ElitePlan;
     pricing: PlanPricing;
     copy: PlanCardCopy;
     tamil: boolean;
+    ready: boolean;
     ui: typeof PLAN_UI[number];
     onCheckout: () => void;
     desktop?: boolean;
@@ -89,24 +96,30 @@ function PlanCard({
                 <span className="font-poppins text-[14px] sm:text-[15px] md:text-[16px] font-normal leading-[150%] text-[#A97216]">{plan.label}</span>
             </div>
 
-            <div className="flex items-baseline gap-2 mt-4 sm:mt-4.5 md:mt-5">
-                <span className="font-poppins text-[24px] sm:text-[26px] md:text-[28px] font-semibold leading-[100%] text-dark">{pricing.symbol} {pricing.total}</span>
-                {pricing.originalTotal && (
-                    <span className="font-poppins text-[16px] font-semibold leading-[100%] text-dark line-through">{pricing.symbol} {pricing.originalTotal}</span>
-                )}
-            </div>
-            <span className={`${tamil ? "font-tamil" : "font-poppins"} mt-1.5 sm:mt-2 text-[14px] sm:text-[15px] leading-[150%] text-dark`}>{copy.duration}</span>
+            {ready ? (
+                <>
+                    <div className="flex items-baseline gap-2 mt-4 sm:mt-4.5 md:mt-5">
+                        <span className="font-poppins text-[24px] sm:text-[26px] md:text-[28px] font-semibold leading-[100%] text-dark">{pricing.symbol} {pricing.total}</span>
+                        {pricing.originalTotal && (
+                            <span className="font-poppins text-[16px] font-semibold leading-[100%] text-dark line-through">{pricing.symbol} {pricing.originalTotal}</span>
+                        )}
+                    </div>
+                    <span className={`${tamil ? "font-tamil" : "font-poppins"} mt-1.5 sm:mt-2 text-[14px] sm:text-[15px] leading-[150%] text-dark`}>{copy.duration}</span>
 
-            <div className={`${tamil ? "font-tamil" : "font-poppins"} mt-6 sm:mt-7 md:mt-8 min-h-[73px] text-[14px] sm:text-[15px] leading-[150%] text-dark`}>
-                {copy.averageLabel && (
-                    <>
-                        <div className="font-poppins">{pricing.symbol} {pricing.perMonth}</div>
-                        <div>{copy.averageLabel}</div>
-                    </>
-                )}
-                {copy.summary && <div>{copy.summary}</div>}
-                {copy.tagLine && <div className="text-[#8D5900] mt-1">{copy.tagLine}</div>}
-            </div>
+                    <div className={`${tamil ? "font-tamil" : "font-poppins"} mt-6 sm:mt-7 md:mt-8 min-h-[73px] text-[14px] sm:text-[15px] leading-[150%] text-dark`}>
+                        {copy.averageLabel && (
+                            <>
+                                <div className="font-poppins">{pricing.symbol} {pricing.perMonth}</div>
+                                <div>{copy.averageLabel}</div>
+                            </>
+                        )}
+                        {copy.summary && <div>{copy.summary}</div>}
+                        {copy.tagLine && <div className="text-[#8D5900] mt-1">{copy.tagLine}</div>}
+                    </div>
+                </>
+            ) : (
+                <PlanPriceSkeleton />
+            )}
 
             <Button
                 text={`Get ${plan.label}`}
@@ -115,30 +128,59 @@ function PlanCard({
                 iconLeft={<ui.Icon className="w-4 h-4 shrink-0" fill={ui.iconFill} />}
             />
 
-            <div className="flex flex-col gap-3 mt-5 flex-1">
-                {copy.features.map((f) => <FeatureRow key={f} text={f} tamil={tamil} />)}
-                {copy.highlightedFeatures?.map((f) => <FeatureRow key={f} text={f} tamil={tamil} highlighted />)}
-            </div>
+            {ready ? (
+                <div className="flex flex-col gap-3 mt-5 flex-1">
+                    {copy.features.map((f) => <FeatureRow key={f} text={f} tamil={tamil} />)}
+                    {copy.highlightedFeatures?.map((f) => <FeatureRow key={f} text={f} tamil={tamil} highlighted />)}
+                </div>
+            ) : (
+                <PlanFeaturesSkeleton rows={copy.features.length + (copy.highlightedFeatures?.length ?? 0)} />
+            )}
         </div>
     );
 }
 
+function centerProCard(row: HTMLElement) {
+    const card = row.children[1] as HTMLElement | undefined;
+    if (!card) return;
+    const snap = row.style.scrollSnapType;
+    row.style.scrollSnapType = "none";
+    row.scrollLeft = card.offsetLeft - (row.clientWidth - card.clientWidth) / 2;
+    row.style.scrollSnapType = snap;
+}
+
+// Runs as soon as the row is in the HTML, before the page's JavaScript downloads
+const CENTER_PRO_SCRIPT = `(function(){var r=document.getElementById("elite-plan-carousel");var c=r&&r.children[1];if(c){r.scrollLeft=c.offsetLeft-(r.clientWidth-c.clientWidth)/2;}})();`;
+
 export default function EliteUpgradeBody({ isPublic = false }: { isPublic?: boolean }) {
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const fromSetup = searchParams.get("from") === "setup";
-    const [countryCode, setCountryCode] = useState<string | undefined>(() => readMeCache()?.countryCode);
-    const [priceReady, setPriceReady] = useState(() => isPublic || !!readMeCache()?.countryCode);
-    const [inSriLanka] = useState(() => Intl.DateTimeFormat().resolvedOptions().timeZone === "Asia/Colombo");
+    // Server HTML can't know these, so they are read after mount to match the first client render
+    const [fromSetup, setFromSetup] = useState(false);
+    const [countryCode, setCountryCode] = useState<string | undefined>();
+    const [priceReady, setPriceReady] = useState(false);
+    const [inSriLanka, setInSriLanka] = useState(false);
     const carouselRef = useRef<HTMLDivElement>(null);
     const [carouselIdx, setCarouselIdx] = useState(1);
 
     useEffect(() => {
-        scrollToCard(1);
+        /* eslint-disable react-hooks/set-state-in-effect */
+        // In-site navigation doesn't run the inline script; leave the row alone if already moved
+        const row = carouselRef.current;
+        if (row && row.scrollLeft === 0) centerProCard(row);
+        const fromSetupNow = new URLSearchParams(window.location.search).get("from") === "setup";
+        setFromSetup(fromSetupNow);
         if (isPublic) {
+            setInSriLanka(Intl.DateTimeFormat().resolvedOptions().timeZone === "Asia/Colombo");
+            setPriceReady(true);
             if (localStorage.getItem("tamilinai_access_token")) router.replace("/elite-upgrade");
             return; // Pending-transfer API needs login; a 401 would redirect the visitor home
         }
+        const cachedCountryCode = readMeCache()?.countryCode;
+        if (cachedCountryCode) {
+            setCountryCode(cachedCountryCode);
+            setPriceReady(true);
+        }
+        /* eslint-enable react-hooks/set-state-in-effect */
         // Always refresh: a new account has no cache, and an old cache may belong to another account
         getMe()
             .then((me) => { writeMeCache(me); setCountryCode(me.countryCode ?? undefined); })
@@ -146,8 +188,8 @@ export default function EliteUpgradeBody({ isPublic = false }: { isPublic?: bool
             .finally(() => setPriceReady(true));
         getPendingBankTransfer().then((pending) => {
             if (pending) {
-                const base = fromSetup ? "/upgrade/checkout" : "/elite-upgrade/checkout";
-                const extra = fromSetup ? "&from=setup" : "";
+                const base = fromSetupNow ? "/upgrade/checkout" : "/elite-upgrade/checkout";
+                const extra = fromSetupNow ? "&from=setup" : "";
                 router.replace(`${base}?plan=${pending.planKey}${extra}`);
             }
         });
@@ -204,7 +246,7 @@ export default function EliteUpgradeBody({ isPublic = false }: { isPublic?: bool
                                 <path d="M14.9062 10.0801L21.4263 16.6001C22.1963 17.3701 22.1963 18.6301 21.4263 19.4001L14.9062 25.9201" stroke="white" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                         </button>
-                        <div ref={carouselRef}
+                        <div id="elite-plan-carousel" ref={carouselRef}
                             onScroll={() => {
                                 const el = carouselRef.current;
                                 if (!el) return;
@@ -222,12 +264,11 @@ export default function EliteUpgradeBody({ isPublic = false }: { isPublic?: bool
                                 <div key={plan.key} className="flex flex-col flex-shrink-0 snap-center max-[500px]:w-[256px]"
                                     style={{ width: "calc(100% - 80px)", maxWidth: "298.66px", minWidth: "256px" }}>
                                     <div className="h-5" />
-                                    {priceReady
-                                        ? <PlanCard plan={plan} pricing={pricings[i]} copy={copies[i]} tamil={isLkr} ui={PLAN_UI[i]} onCheckout={() => goToCheckout(plan.key)} />
-                                        : <PlanCardSkeleton />}
+                                    <PlanCard plan={plan} pricing={pricings[i]} copy={copies[i]} tamil={isLkr} ready={priceReady} ui={PLAN_UI[i]} onCheckout={() => goToCheckout(plan.key)} />
                                 </div>
                             ))}
                         </div>
+                        <script dangerouslySetInnerHTML={{ __html: CENTER_PRO_SCRIPT }} />
                     </div>
 
                     {/* Desktop flex row — 860px and above */}
@@ -235,9 +276,7 @@ export default function EliteUpgradeBody({ isPublic = false }: { isPublic?: bool
                         {ELITE_PLANS.map((plan, i) => (
                             <div key={plan.key} className="flex flex-col flex-1" style={{ maxWidth: "298.66px", minWidth: "256px" }}>
                                 <div className="h-5" />
-                                {priceReady
-                                    ? <PlanCard plan={plan} pricing={pricings[i]} copy={copies[i]} tamil={isLkr} ui={PLAN_UI[i]} onCheckout={() => goToCheckout(plan.key)} desktop />
-                                    : <PlanCardSkeleton />}
+                                <PlanCard plan={plan} pricing={pricings[i]} copy={copies[i]} tamil={isLkr} ready={priceReady} ui={PLAN_UI[i]} onCheckout={() => goToCheckout(plan.key)} desktop />
                             </div>
                         ))}
                     </div>

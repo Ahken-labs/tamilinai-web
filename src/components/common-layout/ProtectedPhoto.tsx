@@ -41,9 +41,10 @@ interface Props {
   priority?: boolean;
   watermark?: string;
   style?: React.CSSProperties;
+  hideWhileLoading?: boolean; // render nothing until loaded, so what's behind stays visible
 }
 
-export default function ProtectedPhoto({ src, alt, fill, width, height, className, watermark = "inai.lk" }: Props) {
+export default function ProtectedPhoto({ src, alt, fill, width, height, className, watermark = "inai.lk", hideWhileLoading = false }: Props) {
   const isProtected = src.startsWith("/api/photos");
   const fetchUrl = isProtected ? `${API_BASE}${src}` : src;
 
@@ -106,6 +107,7 @@ export default function ProtectedPhoto({ src, alt, fill, width, height, classNam
     : { pointerEvents: "none" };
 
   if (!displaySrc) {
+    if (hideWhileLoading) return null;
     // Placeholder skeleton while loading
     const placeholderStyle: React.CSSProperties = fill
       ? { position: "absolute", inset: 0, width: "100%", height: "100%", backgroundColor: "#FFDED3" }

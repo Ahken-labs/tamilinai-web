@@ -1,6 +1,6 @@
 import Header from "@/src/components/Header";
 import Footer from "@/src/components/Footer";
-import PricingClient from "./PricingClient";
+import EliteUpgradeBody from "@/src/components/elite/EliteUpgradeBody";
 
 export const metadata = {
   title: "Elite plans",
@@ -11,7 +11,7 @@ export default function PricingPage() {
   return (
     <>
       <Header />
-      <PricingClient />
+      <EliteUpgradeBody isPublic />
       <Footer />
     </>
   );
