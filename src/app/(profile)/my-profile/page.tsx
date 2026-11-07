@@ -251,7 +251,8 @@ export default function MyProfilePage() {
       if (aboutMeDirty && diff(aboutMe, bp?.aboutMe)) personalPayload.aboutMe = aboutMe;
 
       const rd = readDraft<{ religion: string; caste: string }>(DRAFT_KEYS.religion);
-      if (rd) {
+      // A new religion is only saved together with its caste, never with the old religion's caste
+      if (rd && !(rd.religion && diff(rd.religion, bp?.religion) && !rd.caste)) {
         if (rd.religion && diff(rd.religion, bp?.religion)) personalPayload.religion = rd.religion;
         if (rd.caste && diff(rd.caste, bp?.caste)) personalPayload.caste = rd.caste;
       }

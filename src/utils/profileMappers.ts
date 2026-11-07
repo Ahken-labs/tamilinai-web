@@ -60,14 +60,17 @@ export const RESIDENT_TO_BE: Record<string, string> = {
   "Permanent Resident (PR)": "permanent_resident",
   "Work Permit / Visa": "work_visa",
   "Student Visa": "student_visa",
-  "Temporary Visa": "other",
+  "Temporary Visa": "temporary_visa",
+  "Other": "other",
 };
+// Saves made before temporary_visa existed are stored as "other" and show as "Other"
 export const RESIDENT_FROM_BE: Record<string, string> = {
   "citizen": "Citizen",
   "permanent_resident": "Permanent Resident (PR)",
   "work_visa": "Work Permit / Visa",
   "student_visa": "Student Visa",
-  "other": "Temporary Visa",
+  "temporary_visa": "Temporary Visa",
+  "other": "Other",
 };
 
 // ── Height / Weight ───────────────────────────────────────────────────────────
