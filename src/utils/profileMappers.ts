@@ -27,28 +27,31 @@ export const BUILD_FROM_BE: Record<string, string> = {
 // ── Diet ─────────────────────────────────────────────────────────────────────
 export const DIET_TO_BE: Record<string, string> = {
   "Vegetarian": "vegetarian", "Non-Vegetarian": "non_vegetarian",
-  "Eggetarian": "eggetarian", "Vegan": "vegan",
+  "Eggetarian": "eggetarian", "Vegan": "vegan", "Prefer not to say": "prefer_not_to_say",
 };
 export const DIET_FROM_BE: Record<string, string> = {
   "vegetarian": "Vegetarian", "non_vegetarian": "Non-Vegetarian",
-  "eggetarian": "Eggetarian", "vegan": "Vegan",
+  "eggetarian": "Eggetarian", "vegan": "Vegan", "prefer_not_to_say": "Prefer not to say",
 };
 
 // ── Smoking ───────────────────────────────────────────────────────────────────
 export const SMOKE_TO_BE: Record<string, string> = {
   "Non-Smoker": "never", "Occasionally": "occasionally", "Regularly": "regularly",
+  "Prefer not to say": "prefer_not_to_say",
 };
 export const SMOKE_FROM_BE: Record<string, string> = {
   "never": "Non-Smoker", "occasionally": "Occasionally", "regularly": "Regularly",
+  "prefer_not_to_say": "Prefer not to say",
 };
 
 // ── Drinking ──────────────────────────────────────────────────────────────────
 export const DRINK_TO_BE: Record<string, string> = {
   "Never": "never", "Occasionally": "occasionally", "Regularly": "regularly",
+  "Prefer not to say": "prefer_not_to_say",
 };
 export const DRINK_FROM_BE: Record<string, string> = {
   "never": "Never", "occasionally": "Occasionally", "regularly": "Regularly",
-  "socially": "Occasionally",
+  "socially": "Occasionally", "prefer_not_to_say": "Prefer not to say",
 };
 
 // ── Resident status ───────────────────────────────────────────────────────────
