@@ -240,10 +240,9 @@ export interface PersonalDetailsPayload {
   aboutMe?: string;
 }
 
+// education and occupation are saved by the personal endpoint; the career endpoint ignores them
 export interface CareerDetailsPayload {
-  education?: string;
   educationDetail?: string;
-  occupation?: string;
   sector?: string;
   monthlyIncome?: number;
   incomeCurrency?: string;

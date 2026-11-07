@@ -263,6 +263,10 @@ export default function MyProfilePage() {
         if (ld.citizenship && diff(ld.citizenship, bp?.citizenship)) personalPayload.citizenship = ld.citizenship;
       }
 
+      const cd = readDraft<{ education: string; educationDetail: string; occupation: string; sector: string; currency: string; monthlyIncome: string }>(DRAFT_KEYS.career);
+      if (cd?.education && diff(cd.education, bp?.education)) personalPayload.education = cd.education;
+      if (cd?.occupation && diff(cd.occupation, bp?.occupation)) personalPayload.occupation = cd.occupation;
+
       if (Object.keys(personalPayload).length) saves.push(savePersonalDetails(personalPayload));
 
       // ── Basic (dateOfBirth, marital, height, weight, physicalChallenge, disability) ──
@@ -331,15 +335,12 @@ export default function MyProfilePage() {
 
       if (Object.keys(lifestylePayload).length) saves.push(saveLifestyleDetails(lifestylePayload));
 
-      // ── Career ────────────────────────────────────────────────────────────
-      const cd = readDraft<{ education: string; educationDetail: string; occupation: string; sector: string; currency: string; monthlyIncome: string }>(DRAFT_KEYS.career);
+      // ── Career (education + occupation go with personal above) ──────────
       if (cd) {
         const careerPayload: Parameters<typeof saveCareerDetails>[0] = {};
         const income = cd.monthlyIncome ? Number(cd.monthlyIncome) : undefined;
         const currency = cd.currency ? cd.currency.substring(0, 3) : undefined;
-        if (cd.education && diff(cd.education, bp?.education)) careerPayload.education = cd.education;
         if (cd.educationDetail && diff(cd.educationDetail, bp?.educationDetail)) careerPayload.educationDetail = cd.educationDetail;
-        if (cd.occupation && diff(cd.occupation, bp?.occupation)) careerPayload.occupation = cd.occupation;
         if (cd.sector && diff(cd.sector, bp?.sector)) careerPayload.sector = cd.sector;
         if (income !== undefined && diff(income, bp?.monthlyIncome)) careerPayload.monthlyIncome = income;
         if (currency && diff(currency, bp?.incomeCurrency)) careerPayload.incomeCurrency = currency;
@@ -447,16 +448,20 @@ export default function MyProfilePage() {
     const cd = readDraft<{ education: string; educationDetail: string; occupation: string; sector: string; currency: string; monthlyIncome: string }>(DRAFT_KEYS.career);
     if (!cd) return;
     const bp = me?.profile;
+    const saves: Promise<unknown>[] = [];
+    const personalPayload: PersonalDetailsPayload = {};
+    if (cd.education && sectionDiff(cd.education, bp?.education)) personalPayload.education = cd.education;
+    if (cd.occupation && sectionDiff(cd.occupation, bp?.occupation)) personalPayload.occupation = cd.occupation;
+    if (Object.keys(personalPayload).length) saves.push(savePersonalDetails(personalPayload));
     const careerPayload: Parameters<typeof saveCareerDetails>[0] = {};
     const income = cd.monthlyIncome ? Number(cd.monthlyIncome) : undefined;
     const currency = cd.currency ? cd.currency.substring(0, 3) : undefined;
-    if (cd.education && sectionDiff(cd.education, bp?.education)) careerPayload.education = cd.education;
     if (cd.educationDetail && sectionDiff(cd.educationDetail, bp?.educationDetail)) careerPayload.educationDetail = cd.educationDetail;
-    if (cd.occupation && sectionDiff(cd.occupation, bp?.occupation)) careerPayload.occupation = cd.occupation;
     if (cd.sector && sectionDiff(cd.sector, bp?.sector)) careerPayload.sector = cd.sector;
     if (income !== undefined && sectionDiff(income, bp?.monthlyIncome)) careerPayload.monthlyIncome = income;
     if (currency && sectionDiff(currency, bp?.incomeCurrency)) careerPayload.incomeCurrency = currency;
-    if (Object.keys(careerPayload).length) await saveCareerDetails(careerPayload);
+    if (Object.keys(careerPayload).length) saves.push(saveCareerDetails(careerPayload));
+    if (saves.length) await Promise.all(saves);
     sessionStorage.removeItem(DRAFT_KEYS.career);
     await refreshAfterSave();
   }
