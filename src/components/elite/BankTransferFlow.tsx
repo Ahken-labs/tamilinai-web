@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { createPortal } from "react-dom";
 import { useScrollLock } from "@/src/hooks/useScrollLock";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { CopyIcon, CopiedCheckIcon, ReuploadIcon, ReceiptFileIcon, UploadIcon, ReceiptDocIcon, VerifiedCheckCircleIcon } from "@/src/assets/Icons";
 import Button from "@/src/components/common-layout/Button";
 import { useToast } from "@/src/components/ui/Toast";
@@ -155,8 +155,6 @@ function UploadReceiptPopup({ onClose, onFileSelected, displayId }: {
 
 export default function BankTransferFlow({ planKey, planLabel, symbol, total, promoCode, onStepChange }: Props) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const fromSetup = searchParams.get("from") === "setup";
   const { toast } = useToast();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [file, setFile] = useState<File | null>(null);
@@ -368,7 +366,7 @@ export default function BankTransferFlow({ planKey, planLabel, symbol, total, pr
           )}
           <Button className={`${hasTrustBadge ? "mt-5 w-full" : "mt-4 max-[500px]:!px-4 w-full !text-[#B31B38] bg-[#F2F2F2] hover:bg-[#cccccc]"}`}
             text="Take me to my dashboard"
-            onPress={() => router.push(fromSetup ? "/matches?welcome=1" : "/matches")}
+            onPress={() => router.push("/matches")}
           />
         </div>
 

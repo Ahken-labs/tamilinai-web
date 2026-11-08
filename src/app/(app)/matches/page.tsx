@@ -10,7 +10,7 @@ import ProfileCard from "../../../components/app/ProfileCard";
 import ProfileCardSkeleton from "../../../components/app/skeleton-layout/ProfileCardSkeleton";
 import EliteMembersSection from "../../../components/app/EliteMembersSection";
 import Pagination from "../../../components/more/Pagination";
-import PartnerPreferenceModal from "../../../components/app/PartnerPreferenceModal";
+import FreePlanPopup from "../../../components/ui/FreePlanPopup";
 import { getProfiles } from "../../../lib/api/profiles";
 import type { ProfileFilters } from "../../../lib/api/profiles";
 import type { SearchFilters } from "../../../types/search";
@@ -65,11 +65,6 @@ function MatchesContent() {
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
 
-  const [showWelcome, setShowWelcome] = useState(() => {
-    if (typeof window === "undefined") return false;
-    if (localStorage.getItem("inai_welcome_seen")) return false;
-    return searchParams.get("welcome") === "1";
-  });
   const [activeTab, setActiveTab] = useState("best");
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -155,12 +150,6 @@ function MatchesContent() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  function handleCloseWelcome() {
-    localStorage.setItem("inai_welcome_seen", "1");
-    setShowWelcome(false);
-    router.replace("/matches");
-  }
-
   function handleClearSearch() {
     router.push("/matches");
   }
@@ -170,7 +159,7 @@ function MatchesContent() {
 
   return (
     <>
-      <PartnerPreferenceModal isOpen={showWelcome} onClose={handleCloseWelcome} variant="onboarding" />
+      <FreePlanPopup />
       <main className="min-h-screen bg-[#F8F5F2]">
         <div className="sticky lg:px-10 max-[320px]:top-[56px] max-[768px]:top-[65px] top-[74px] z-10 w-full bg-white/60 backdrop-blur-sm border-t border-[#EEEEEE] transition-transform duration-300" style={!tabBarVisible ? { transform: "translateY(-110%)" } : undefined}>
           {searchFilters ? (
