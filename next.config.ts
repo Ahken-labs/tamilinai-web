@@ -27,6 +27,14 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        // Browsers must always check for a new service worker, never use an old cached copy
+        source: "/sw.js",
+        headers: [
+          { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+          { key: "Content-Type", value: "application/javascript; charset=utf-8" },
+        ],
+      },
+      {
         // Google OAuth popup needs to postMessage back — relax COOP for business pages
         source: "/business/:path*",
         headers: [

@@ -1,4 +1,5 @@
 import "./globals.css";
+import Script from "next/script";
 import { Poppins, Noto_Sans_Tamil, Arima } from "next/font/google";
 import { LangProvider } from "../context/LangContext";
 import QueryProvider from "../providers/QueryProvider";
@@ -14,6 +15,11 @@ import MetaPixel from "../components/MetaPixel";
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-poppins", display: "swap" });
 const notoSansTamil = Noto_Sans_Tamil({ subsets: ["tamil"], weight: ["400", "500", "700"], variable: "--font-tamil", display: "swap" });
 const arima = Arima({ subsets: ["tamil", "latin"], weight: ["700"], variable: "--font-arima", display: "swap" });
+
+// Holds Chrome's install prompt for our own banner (InstallAppBanner); the service worker is registered on the live site only
+const PWA_SCRIPT = `window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__inaiInstall=e;window.dispatchEvent(new Event("inai-install-ready"));});
+window.addEventListener("appinstalled",function(){window.__inaiInstall=null;window.dispatchEvent(new Event("inai-install-ready"));});
+${process.env.NODE_ENV === "production" ? `if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){});});}` : ""}`;
 
 export const viewport = {
   width: "device-width",
@@ -73,6 +79,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preload" as="image" fetchPriority="high" href="/_next/image?url=%2Fimages%2Fhero_image.webp&w=750&q=75" type="image/webp" />
       </head>
       <body>
+        <Script id="pwa-setup" strategy="beforeInteractive">{PWA_SCRIPT}</Script>
         <SessionRestorer />
         <NoContextMenu />
         <ConsoleWarning />
