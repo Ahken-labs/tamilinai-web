@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useScrollLock } from "../../hooks/useScrollLock";
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
-import { ChevronIcon, RadioCircleIcon, CloseCircleIcon, SearchIcon, PartyIcon } from "../../assets/Icons";
+import { RadioCircleIcon, CloseCircleIcon, SearchIcon } from "../../assets/Icons";
 import DropdownField, { MultiSelectDropdown } from "../common-layout/DropdownField";
 import FormRow from "../common-layout/FormRow";
 import Button from "../common-layout/Button";
@@ -77,7 +77,7 @@ function RadioGroup({ options, value, onChange, className = "" }: {
 
 // ── Main component ────────────────────────────────────────────────────────
 
-type Variant = "onboarding" | "search" | "edit";
+type Variant = "search" | "edit";
 
 interface Props {
   isOpen: boolean;
@@ -85,7 +85,7 @@ interface Props {
   variant?: Variant;
 }
 
-export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onboarding" }: Props) {
+export default function PartnerPreferenceModal({ isOpen, onClose, variant = "edit" }: Props) {
   const router = useRouter();
   useScrollLock(isOpen);
   const originalPrefs = useRef<PartnerPreferences | null>(null);
@@ -106,7 +106,6 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
   const scrollRef = useRef<HTMLDivElement>(null);
   const [ageError, setAgeError] = useState("");
   const [heightError, setHeightError] = useState("");
-  const [isLifestyleOpen, setIsLifestyleOpen] = useState(false);
   const [activeSearchTab, setActiveSearchTab] = useState<"search" | "advanced">("search");
   const [searchQuery, setSearchQuery] = useState("");
   const [marital, setMarital] = useState("Unmarried");
@@ -241,39 +240,14 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
     return list.filter((s) => s.toLowerCase().includes(q.toLowerCase()));
   }
 
-  // Flags derived from variant
-  const showSectionHeadings = variant === "onboarding";
-  const lifestyleCollapsible = variant === "onboarding";
   const showAboutPartner = variant !== "search";
   const showSearchOnly = variant === "search" && activeSearchTab === "search";
   const showFooter = !showSearchOnly;
-
-  // Lifestyle fields visible when not collapsible, or when collapsible and toggled open
-  const showLifestyleFields = !lifestyleCollapsible || isLifestyleOpen;
 
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-end min-[500px]:items-center justify-center min-[500px]:p-4 bg-black/50">
       <div className="w-full min-[500px]:max-w-[784px] max-h-[90dvh] min-[500px]:max-h-[90vh] flex flex-col rounded-t-[20px] min-[500px]:rounded-[20px] bg-light shadow-2xl overflow-hidden">
 
-        {/* Header: onboarding */}
-        {variant === "onboarding" && (
-          <div className="shrink-0 bg-[#F0F0F0] px-4 md:px-5 lg:px-6 py-4 md:py-5 lg:py-6">
-            <div className="flex items-center gap-3">
-              <div className="min-w-0 flex-1">
-                <p className="font-poppins text-[14px] sm:text-[15px] md:text-[16px] font-normal text-dark leading-[150%]">
-                  You successfully registered!
-                </p>
-                <p className="font-poppins text-[16px] md:text-[18px] font-medium text-dark leading-[150%]">
-                  Tell us what matters to you in a partner &amp; we&apos;ll show your best matches.<span className="min-[500px]:hidden text-[18px]"> 🎉</span>
-                </p>
-              </div>
-              <span className="hidden min-[500px]:block shrink-0"><PartyIcon /></span>
-            </div>
-          </div>
-        )}
-
-        {/* Header: search or edit */}
-        {(variant === "search" || variant === "edit") && (
           <div className="shrink-0 bg-white border-b border-[#EAEAEA] rounded-t-[20px] px-6 pt-4 md:pt-5.5 pb-4 md:pb-5.5 flex items-center gap-4">
             <span className={`font-poppins font-24 font-semibold text-[dark leading-[150%] shrink-0${variant === "search" ? " max-[500px]:hidden" : ""}`}>
               {variant === "search" ? "Search" : "Edit partner preference"}
@@ -298,7 +272,6 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
               <CloseCircleIcon className="h-8 w-8 transition-transform duration-200 hover:scale-110 active:scale-95 " />
             </button>
           </div>
-        )}
 
         {/* Scrollable body */}
         <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 md:px-5 lg:px-6">
@@ -329,13 +302,7 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
             </div>
           ) : (
             <>
-              {showSectionHeadings && (
-                <h2 className="font-poppins text-[16px] md:text-[18px] font-medium text-dark max-[500px]:py-5 py-6 md:py-7 lg:py-8 leading-[150%]">
-                  Age &amp; height range
-                </h2>
-              )}
-
-              <div className={`flex flex-col max-[500px]:gap-5 gap-6 ${!showSectionHeadings ? "pt-6" : ""}`}>
+              <div className="flex flex-col max-[500px]:gap-5 gap-6 pt-6">
                 {/* Age */}
                 <FormRow label="Age" required error={ageError}>
                   <div className="flex flex-row items-center max-[500px]:gap-2 gap-4">
@@ -397,21 +364,6 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
 
               {/* Background & lifestyle */}
               <div className={`mt-5 sm:mt-6 md:mt-8 border-t border-[#EAEAEA]`}>
-                {lifestyleCollapsible && (
-
-                  <button
-                    type="button"
-                    onClick={() => setIsLifestyleOpen((o) => !o)}
-                    className="w-full flex items-center justify-between gap-2 pt-6 md:pt-7 lg:pt-8 "
-                  >
-                    <h2 className="font-poppins text-[16x] md:text-[18px] pb-1 md:pb-3 font-medium text-dark leading-[150%] text-left">
-                      {isLifestyleOpen ? "Background & lifestyle" : "Background & lifestyle (Optional)"}
-                    </h2>
-                    <ChevronIcon open={isLifestyleOpen} className="w-4 h-4 "/>
-                  </button>
-                )}
-
-                {showLifestyleFields && (
                   <div className="divide-y divide-[#EAEAEA]">
                     <FormRow label="Marital history" required className="max-[500px]:py-5 py-4 lg:py-5">
                       <div className="flex flex-wrap max-[500px]:mt-1 mt-3 md:mt-2">
@@ -502,13 +454,12 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
                       </div>
                     )}
                   </div>
-                )}
               </div>
             </>
           )}
           {/* Footer — scrolls with body */}
           {showFooter && (
-            <div className={`px-2 pb-6 pt-6 md:pt-7 lg:pt-8 flex ${variant === "search" ? "max-[591px]:flex-col" : variant === "onboarding" ? "max-[500px]:flex-col-reverse" : ""} max-[500px]:gap-0 gap-3 md:gap-4`}>
+            <div className={`px-2 pb-6 pt-6 md:pt-7 lg:pt-8 flex ${variant === "search" ? "max-[591px]:flex-col" : ""} max-[500px]:gap-0 gap-3 md:gap-4`}>
               {variant === "search" ? (
                 <>
                   <Button
@@ -523,18 +474,9 @@ export default function PartnerPreferenceModal({ isOpen, onClose, variant = "onb
                     className="flex-1 max-[500px]:mt-2"
                   />
                 </>
-              ) : variant === "edit" ? (
-                <>
-                  <div className="flex-1 mr-4" />
-                  <Button text="Save" onPress={handleSave} className="flex-1" />
-                </>
               ) : (
                 <>
-                  <Button
-                    text="Skip"
-                    onPress={onClose}
-                    className="flex-1 max-[500px]:!bg-[#FFF] !bg-[#FFF0F3] !text-[#B31B38] hover:!bg-[#FFE4E9] active:!bg-[#FFD6DE]"
-                  />
+                  <div className="flex-1 mr-4" />
                   <Button text="Save" onPress={handleSave} className="flex-1" />
                 </>
               )}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useScrollLock } from "../../hooks/useScrollLock";
 import { EliteProIcon, HeadphoneSupportIcon, InfinityIcon, StarBadgeIcon, TrophyIcon, UserSearchIcon, WhatsAppIcon } from "@/src/assets/Icons";
@@ -44,9 +44,26 @@ interface Props {
   onClose: () => void;
 }
 
+const POPUP_IMAGE = "/images/elite_popup.webp";
+const IMAGE_WAIT_MS = 3000;
+
 export default function EliteUpgradePopup({ onClose }: Props) {
   const router = useRouter();
-  useScrollLock(true);
+  const [imageReady, setImageReady] = useState(false);
+  useScrollLock(imageReady);
+
+  // Opens once the background image is downloaded (or after 3s on a slow connection), so it never shows broken
+  useEffect(() => {
+    let done = false;
+    const finish = () => { if (!done) { done = true; setImageReady(true); } };
+    const img = new window.Image();
+    img.onload = finish;
+    img.onerror = finish;
+    img.src = POPUP_IMAGE;
+    if (img.complete) finish();
+    const timer = setTimeout(finish, IMAGE_WAIT_MS);
+    return () => { done = true; clearTimeout(timer); };
+  }, []);
 
   // Close on Escape
   useEffect(() => {
@@ -60,6 +77,7 @@ export default function EliteUpgradePopup({ onClose }: Props) {
     router.push("/elite-upgrade");
   }
 
+  if (!imageReady) return null;
   return (
     <div
       className="fixed inset-0 z-[9999] flex max-[500px]:items-end items-center justify-center max-[500px]:px-0 px-4"

@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import type { AuthUser, AuthResponse } from '../types/auth';
+import { FREE_PLAN_POPUP_SEEN_KEY } from '../constants/sessionKeys';
 
 function readStoredUser(): AuthUser | null {
   if (typeof window === 'undefined') return null;
@@ -30,6 +31,8 @@ export function useAuth(): UseAuthReturn {
   const saveSession = useCallback((response: AuthResponse) => {
     localStorage.setItem('tamilinai_access_token', response.accessToken);
     localStorage.setItem('tamilinai_user', JSON.stringify(response.user));
+    // A fresh login or sign-up shows the free-plan popup again
+    try { sessionStorage.removeItem(FREE_PLAN_POPUP_SEEN_KEY); } catch { /* unavailable */ }
     setUser(response.user);
   }, []);
 

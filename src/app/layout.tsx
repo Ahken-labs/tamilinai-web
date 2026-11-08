@@ -4,6 +4,7 @@ import { LangProvider } from "../context/LangContext";
 import QueryProvider from "../providers/QueryProvider";
 import SeoSchema from "./SeoSchema";
 import NoContextMenu from "../components/NoContextMenu";
+import ConsoleWarning from "../components/ConsoleWarning";
 import { ToastProvider } from "../components/ui/Toast";
 import SessionRestorer from "../components/SessionRestorer";
 import GoogleAuthProvider from "../providers/GoogleAuthProvider";
@@ -70,11 +71,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         {/* LCP hero image — fetchpriority=high ensures browser fetches this first */}
         <link rel="preload" as="image" fetchPriority="high" href="/_next/image?url=%2Fimages%2Fhero_image.webp&w=750&q=75" type="image/webp" />
-        <link rel="preload" href="/images/elite_popup.webp" as="image" type="image/webp" />
       </head>
       <body>
         <SessionRestorer />
         <NoContextMenu />
+        <ConsoleWarning />
         <SeoSchema/>
         <GoogleAnalytics />
         <MetaPixel />

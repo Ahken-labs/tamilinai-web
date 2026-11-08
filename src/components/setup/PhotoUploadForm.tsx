@@ -159,7 +159,7 @@ export default function PhotoUploadForm() {
     const personal = JSON.parse(sessionStorage.getItem("inai_setup_personal") ?? "{}") as Record<string, string>;
     const fd = buildSetupFormData(basic, personal, aboutMeError ? "" : aboutMe, skipPhoto ? undefined : (photoFile ?? undefined));
 
-    router.replace("/upgrade?from=setup");
+    router.replace("/matches");
 
     // Fire in background — user is already navigating forward
     submitProfileSetup(fd)
