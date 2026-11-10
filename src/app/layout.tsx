@@ -16,7 +16,7 @@ const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600"], var
 const notoSansTamil = Noto_Sans_Tamil({ subsets: ["tamil"], weight: ["400", "500", "700"], variable: "--font-tamil", display: "swap" });
 const arima = Arima({ subsets: ["tamil", "latin"], weight: ["700"], variable: "--font-arima", display: "swap" });
 
-// Holds Chrome's install prompt for our own banner (InstallAppBanner); the service worker is registered on the live site only
+// Holds the browser's install prompt for our own popup (useInstallApp); the service worker is registered on the live site only
 const PWA_SCRIPT = `window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__inaiInstall=e;window.dispatchEvent(new Event("inai-install-ready"));});
 window.addEventListener("appinstalled",function(){window.__inaiInstall=null;window.dispatchEvent(new Event("inai-install-ready"));});
 ${process.env.NODE_ENV === "production" ? `if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){});});}` : ""}`;
@@ -24,6 +24,8 @@ ${process.env.NODE_ENV === "production" ? `if("serviceWorker" in navigator){wind
 export const viewport = {
   width: "device-width",
   initialScale: 1,
+  // Without this, iPhones report the home-indicator strip as 0, so bottom bars can't clear it
+  viewportFit: "cover",
 };
 
 export const metadata = {

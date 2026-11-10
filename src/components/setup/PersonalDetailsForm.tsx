@@ -310,7 +310,7 @@ export default function PersonalDetailsForm() {
       )}
 
       {/* Mobile fixed bottom button */}
-      <div className="min-[500px]:hidden fixed bottom-0 left-0 right-0 px-4 py-2" style={{ background: "rgba(255, 255, 255, 0.60)", backdropFilter: "blur(11px)" }}>
+      <div className="min-[500px]:hidden fixed bottom-0 left-0 right-0 px-4 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))]" style={{ background: "rgba(255, 255, 255, 0.60)", backdropFilter: "blur(11px)" }}>
         <Button text={t("Next")} onPress={handleDone} className="!w-full" icon={<ArrowRightIcon />} />
       </div>
     </>

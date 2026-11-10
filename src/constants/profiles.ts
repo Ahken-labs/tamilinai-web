@@ -59,6 +59,7 @@ export const EDUCATION_OPTIONS = [
 
 export const SECTOR = [
   "Government",
+  "Semi Government",
   "Private",
   "Business / Self-Employed",
   "Defense / Police",
@@ -106,6 +107,7 @@ export const CASTE_OPTIONS_HINDU = [
   "Thachar",
   "Thanakkarar",
   "Thattar",
+  "Thevar",
   "Thimilar",
   "Thurumbar",
   "Vannar",

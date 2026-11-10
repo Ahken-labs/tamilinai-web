@@ -23,7 +23,7 @@ import ProtectedImage from "./common-layout/ProtectedImage";
 import { getProgressWidth } from "../utils/getProgressWidth";
 import PartnerPreferenceModal from "./app/PartnerPreferenceModal";
 import LogoutPopup from "./app/LogoutPopup";
-import InstallAppBanner, { useCanInstall, runInstall } from "./InstallAppBanner";
+import { useCanInstall, runInstall } from "../hooks/useInstallApp";
 import { FiDownload } from "react-icons/fi";
 import { getMe } from "../lib/api/user";
 import { getNotifications } from "../lib/api/notifications";
@@ -386,7 +386,7 @@ export default function AppHeader() {
 
       {/* ── Bottom overlay — mobile only (< 900px) ── */}
       <div
-        className="fixed bottom-0 left-0 right-0 z-50 min-[900px]:hidden bg-white/80 backdrop-blur-sm border-t border-[#EAEAEA] transition-transform duration-300"
+        className="fixed bottom-0 left-0 right-0 z-50 min-[900px]:hidden pb-[env(safe-area-inset-bottom)] bg-white/80 backdrop-blur-sm border-t border-[#EAEAEA] transition-transform duration-300"
         style={isMobile && !navVisible ? { transform: "translateY(100%)" } : undefined}
       >
         <div className="max-w-[1920px] mx-auto flex items-center max-[420px]:px-3 px-5 h-[56px] gap-3 justify-between">
@@ -587,7 +587,6 @@ export default function AppHeader() {
       />
 
       <LogoutPopup isOpen={logoutOpen} onClose={() => setLogoutOpen(false)} />
-      <InstallAppBanner />
     </>
   );
 }
