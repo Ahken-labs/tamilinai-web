@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import API_BASE_URL from '../lib/api/config';
+import { tryRefresh } from '../lib/api/refresh';
 
 export default function SessionRestorer() {
   useEffect(() => {
@@ -17,19 +17,12 @@ export default function SessionRestorer() {
       return;
     }
 
-    fetch(`${API_BASE_URL}/api/auth/refresh`, {
-      method: 'POST',
-      credentials: 'include',
-    })
-      .then((res) => (res.ok ? res.json() : Promise.reject()))
-      .then((data: { accessToken: string; user: unknown }) => {
-        localStorage.setItem('tamilinai_access_token', data.accessToken);
-        localStorage.setItem('tamilinai_user', JSON.stringify(data.user));
-      })
-      .catch(() => {
-        localStorage.removeItem('tamilinai_access_token');
-        localStorage.removeItem('tamilinai_user');
-      });
+    // Shares the in-flight renewal with API calls; two parallel renewals would make the server reject one and log the user out
+    tryRefresh().then((ok) => {
+      if (ok) return;
+      localStorage.removeItem('tamilinai_access_token');
+      localStorage.removeItem('tamilinai_user');
+    });
   }, []);
 
   return null;
