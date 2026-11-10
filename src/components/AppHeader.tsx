@@ -23,6 +23,8 @@ import ProtectedImage from "./common-layout/ProtectedImage";
 import { getProgressWidth } from "../utils/getProgressWidth";
 import PartnerPreferenceModal from "./app/PartnerPreferenceModal";
 import LogoutPopup from "./app/LogoutPopup";
+import { useCanInstall, runInstall } from "../hooks/useInstallApp";
+import { FiDownload } from "react-icons/fi";
 import { getMe } from "../lib/api/user";
 import { getNotifications } from "../lib/api/notifications";
 import { getSentInterests, getReceivedInterests } from "../lib/api/interests";
@@ -63,6 +65,7 @@ export default function AppHeader() {
   const [logoutOpen, setLogoutOpen] = useState(false);
 
   const [me, setMe] = useState<Me | null>(null);
+  const canInstall = useCanInstall();
 
   // Load from cache instantly after mount, then refresh from API in background
   useEffect(() => {
@@ -346,6 +349,7 @@ export default function AppHeader() {
                       { text: "Complete / Edit profile", Icon: EditIcon, href: "/my-profile" },
                       ...(trustBadge || isElite ? [] : [{ text: "Upgrade to Elite", Icon: EliteIcon, href: "/elite-upgrade" }]),
                       { text: "Edit partner preference", Icon: HeartIcon, onClick: () => { setSettingsOpen(false); setOpenModal("edit"); } },
+                      ...(canInstall ? [{ text: "Install app", Icon: FiDownload, onClick: () => { setSettingsOpen(false); runInstall(); } }] : []),
                       { text: "Account settings", Icon: SettingIcon, href: "/account-settings" },
                       { text: "Logout", Icon: LogoutIcon, onClick: () => { setSettingsOpen(false); setLogoutOpen(true); } },
                     ].map(({ text, Icon, href, onClick }) =>
@@ -382,7 +386,7 @@ export default function AppHeader() {
 
       {/* ── Bottom overlay — mobile only (< 900px) ── */}
       <div
-        className="fixed bottom-0 left-0 right-0 z-50 min-[900px]:hidden bg-white/80 backdrop-blur-sm border-t border-[#EAEAEA] transition-transform duration-300"
+        className="fixed bottom-0 left-0 right-0 z-50 min-[900px]:hidden pb-[env(safe-area-inset-bottom)] bg-white/80 backdrop-blur-sm border-t border-[#EAEAEA] transition-transform duration-300"
         style={isMobile && !navVisible ? { transform: "translateY(100%)" } : undefined}
       >
         <div className="max-w-[1920px] mx-auto flex items-center max-[420px]:px-3 px-5 h-[56px] gap-3 justify-between">
@@ -533,6 +537,7 @@ export default function AppHeader() {
                 Icon: HeartIcon,
                 onClick: () => { closeMobile(); setOpenModal("edit"); },
               },
+              ...(canInstall ? [{ text: "Install app", Icon: FiDownload, onClick: () => { closeMobile(); runInstall(); } }] : []),
               { text: "Account settings", Icon: SettingIcon, href: "/account-settings" },
               {
                 text: "Logout",

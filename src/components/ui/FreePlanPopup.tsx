@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { FiX } from "react-icons/fi";
 import Button from "../common-layout/Button";
 import { CheckmarkIcon, EliteProIcon } from "@/src/assets/Icons";
+import InstallAppPopup from "./InstallAppPopup";
 import { useScrollLock } from "../../hooks/useScrollLock";
 import { getMe } from "../../lib/api/user";
 import { readMeCache, writeMeCache } from "../AppHeader";
@@ -46,9 +47,10 @@ function preloadPopupImage(): Promise<void> {
   });
 }
 
-// Shown to free users once per visit (per tab); a new login or sign-up shows it again
+// Once per visit (per tab), a new login or sign-up shows it again. Free users: this card, then the install popup. Elite: install popup only
 export default function FreePlanPopup() {
   const [lang, setLang] = useState<"ta" | "en" | null>(null);
+  const [view, setView] = useState<"free" | "install" | null>(null);
 
   useEffect(() => {
     try { if (sessionStorage.getItem(FREE_PLAN_POPUP_SEEN_KEY)) return; } catch { return; }
@@ -59,34 +61,36 @@ export default function FreePlanPopup() {
     getMe()
       .then(async (me) => {
         writeMeCache(me);
-        if (me.isElite) {
-          try { sessionStorage.setItem(FREE_PLAN_POPUP_SEEN_KEY, "1"); } catch { /* unavailable */ }
-          return;
-        }
-        await (imageReady ?? preloadPopupImage());
+        if (!me.isElite) await (imageReady ?? preloadPopupImage());
         if (cancelled) return;
         try { sessionStorage.setItem(FREE_PLAN_POPUP_SEEN_KEY, "1"); } catch { /* unavailable */ }
         setLang(isSriLanka(me.countryCode) ? "ta" : "en");
+        setView(me.isElite ? "install" : "free");
       })
       .catch(() => { /* no popup if the account can't be loaded */ });
     return () => { cancelled = true; };
   }, []);
 
   if (!lang) return null;
-  return <FreePlanPopupCard lang={lang} onClose={() => setLang(null)} />;
+  return (
+    <>
+      {view === "free" && <FreePlanPopupCard lang={lang} onClose={() => setView(null)} onContinueFree={() => setView("install")} />}
+      <InstallAppPopup lang={lang} open={view === "install"} onClose={() => setView(null)} />
+    </>
+  );
 }
 
-function FreePlanPopupCard({ lang, onClose }: { lang: "ta" | "en"; onClose: () => void }) {
+function FreePlanPopupCard({ lang, onClose, onContinueFree }: { lang: "ta" | "en"; onClose: () => void; onContinueFree: () => void }) {
   const router = useRouter();
   const copy = COPY[lang];
   const textFont = lang === "ta" ? "font-tamil" : "font-poppins";
   useScrollLock(true);
 
   useEffect(() => {
-    function onKey(e: KeyboardEvent) { if (e.key === "Escape") onClose(); }
+    function onKey(e: KeyboardEvent) { if (e.key === "Escape") onContinueFree(); }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
+  }, [onContinueFree]);
 
   function handleUpgrade() {
     onClose();
@@ -118,7 +122,7 @@ function FreePlanPopupCard({ lang, onClose }: { lang: "ta" | "en"; onClose: () =
 
         <button
           type="button"
-          onClick={onClose}
+          onClick={onContinueFree}
           aria-label="Close"
           className="absolute right-4 top-4 z-10 flex h-[30px] w-[30px] cursor-pointer items-center justify-center rounded-full bg-white shadow active:scale-95 transition-transform min-[900px]:right-auto min-[900px]:left-8"
         >
@@ -126,7 +130,7 @@ function FreePlanPopupCard({ lang, onClose }: { lang: "ta" | "en"; onClose: () =
         </button>
 
         <div className="flex flex-1 flex-col justify-center px-4 pb-6 pt-1 min-[900px]:px-6 min-[900px]:py-8">
-          <h2 className={`${lang === "ta" ? anekTamil.className : "font-poppins font-bold"} text-[20px] min-[500px]:text-[22px] min-[900px]:text-[24px] leading-[140%] text-[#222222]`}>
+          <h2 className={`${lang === "ta" ? anekTamil.className : "font-poppins font-semibold"} text-[20px] min-[500px]:text-[22px] min-[900px]:text-[24px] leading-[140%] text-[#222222]`}>
             {copy.heading}
           </h2>
 
@@ -151,7 +155,7 @@ function FreePlanPopupCard({ lang, onClose }: { lang: "ta" | "en"; onClose: () =
           />
           <Button
             text={copy.stay}
-            onPress={onClose}
+            onPress={onContinueFree}
             className={`${textFont} mt-3 w-full !px-4 !bg-white !text-[#B31B38] border border-[#B31B38] hover:!bg-[#FFF0F3] active:!bg-[#FFE4E9]`}
           />
         </div>

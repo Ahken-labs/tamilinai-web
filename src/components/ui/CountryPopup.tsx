@@ -38,7 +38,7 @@ export function SelectionPopup({ title, subtitle, onClose, children, onConfirm, 
         </div>
 
         {/* Scrollable body — extra bottom padding on mobile so content clears the fixed button */}
-        <div className="flex-1 overflow-y-auto border-t border-[#EAEAEA] max-[500px]:px-0 px-4 md:px-5 max-[500px]:py-4 py-3 md:py-4 pb-[72px] min-[500px]:pb-3 md:pb-4">
+        <div className="flex-1 overflow-y-auto border-t border-[#EAEAEA] max-[500px]:px-0 px-4 md:px-5 max-[500px]:py-4 max-[500px]:pb-[calc(72px+env(safe-area-inset-bottom))] py-3 md:py-4 pb-[72px] min-[500px]:pb-3 md:pb-4">
           {children}
         </div>
 
@@ -51,7 +51,7 @@ export function SelectionPopup({ title, subtitle, onClose, children, onConfirm, 
 
       {/* Mobile fixed bottom button */}
       <div
-        className="min-[500px]:hidden fixed bottom-0 left-0 right-0 px-4 py-2 z-10"
+        className="min-[500px]:hidden fixed bottom-0 left-0 right-0 px-4 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] z-10"
         style={{ background: "rgba(255, 255, 255, 0.60)", backdropFilter: "blur(11px)" }}
       >
         <Button text={confirmLabel} onPress={onConfirm} className="!w-full" />
