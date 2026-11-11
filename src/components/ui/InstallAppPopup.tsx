@@ -12,8 +12,8 @@ const anekTamil = Anek_Tamil({ subsets: ["tamil"], weight: "700", display: "swap
 
 const COPY = {
   ta: {
-    heading: "ஒவ்வொரு முறையும் பிரவுசரில் தேட வேண்டாம்!",
-    body: ["இலகுவாகவும் உடனுக்குடனும் முழுத்திரையில் வரன் விவரங்களை ", "இணை செயலி (ஆப்)", " மூலம் பார்க்கலாம்."],
+    heading: "ஒவ்வொரு முறையும் கூகுளில் தேட வேண்டாம்!",
+    body: ["உடனுக்குடன் அறிவிப்புகள் (Notifications), சுலபமான பயன்பாடு மற்றும் முழுத்திரை அனுபவத்தைப் பெற ", "இணை செயலி (ஆப்)", " பயன்படுத்துங்கள்."],
     install: "இணை செயலியை நிறுவுக",
     later: "பிறகு",
   },
@@ -25,7 +25,8 @@ const COPY = {
   },
 };
 
-const POPUP_IMAGE = "/images/Install-App-Banner.webp";
+// New name for every new version: /images/ is cached for a year, so browsers would keep showing an old file with the same name
+const POPUP_IMAGE = "/images/Install-App-Banner-v2.webp";
 const IMAGE_WAIT_MS = 3000;
 
 // Mounted early with open=false so the image is already downloaded when the popup opens
@@ -72,16 +73,16 @@ function InstallAppCard({ lang, onClose }: { lang: "ta" | "en"; onClose: () => v
       <div
         role="dialog"
         aria-modal="true"
-        className="relative flex w-full max-h-[92dvh] flex-col overflow-y-auto rounded-t-[32px] bg-white shadow-2xl min-[500px]:max-w-[500px] min-[500px]:rounded-[32px] min-[900px]:max-w-[813px] min-[900px]:flex-row min-[900px]:overflow-hidden"
+        className="relative flex w-full max-h-[92dvh] flex-col overflow-y-auto rounded-t-[32px] bg-white shadow-2xl min-[500px]:max-w-[500px] min-[500px]:rounded-[32px] min-[900px]:max-w-[750px] min-[900px]:flex-row min-[900px]:overflow-hidden"
       >
-        <div className="relative h-[180px] w-full shrink-0 overflow-hidden bg-[#F9E4EA] min-[900px]:h-auto min-[900px]:w-[50%]">
+        <div className="relative h-[180px] w-full shrink-0 overflow-hidden bg-[#F9E4EA] min-[900px]:h-[360px] min-[900px]:w-[360px]">
           {/* Already sized and compressed; optimising it again only adds artefacts */}
           <Image
             src={POPUP_IMAGE}
             alt=""
             fill
             unoptimized
-            className="object-cover max-[400px]:scale-115 max-[400px]:origin-[100%_47%] object-[0%_47%] min-[900px]:object-[75%_center]"
+            className="object-cover max-[400px]:scale-115 max-[400px]:origin-[100%_77%] object-[0%_47%] min-[900px]:object-[100%_100%]"
           />
           <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white to-transparent min-[900px]:hidden" />
           <div className="absolute inset-y-0 right-0 hidden w-24 bg-gradient-to-l from-white to-transparent min-[900px]:block" />
