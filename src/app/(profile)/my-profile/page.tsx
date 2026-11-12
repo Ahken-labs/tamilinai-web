@@ -49,6 +49,7 @@ import { DRAFT_KEYS } from "@/src/constants/profileDraftKeys";
 import { validateAboutMe, splitHighlight } from "@/src/utils/aboutMeValidation";
 import { useScrollHide } from "@/src/hooks/useScrollHide";
 import { useLoadingText } from "@/src/hooks/useLoadingText";
+import { useToast } from "@/src/components/ui/Toast";
 
 export { DRAFT_KEYS } from "@/src/constants/profileDraftKeys";
 
@@ -56,6 +57,13 @@ const ABOUT_ME_KEY = DRAFT_KEYS.about;
 
 function readDraft<T>(key: string): T | null {
   try { const r = sessionStorage.getItem(key); return r ? JSON.parse(r) as T : null; } catch { return null; }
+}
+
+// Drafts only hold changed fields; a missing one must stay undefined, or Number() gives NaN, sent as null and rejected by the API
+function draftNumber(value: string | undefined): number | undefined {
+  if (value == null || value === "") return undefined;
+  const n = Number(value);
+  return Number.isNaN(n) ? undefined : n;
 }
 
 
@@ -104,6 +112,14 @@ function getFirstIncomplete(me: Me | null): string {
 export default function MyProfilePage() {
   const [activeTab, setActiveTab] = useState("edit_profile");
   const [me, setMe] = useState<Me | null>(null);
+  const { toast } = useToast();
+
+  // A failed section save keeps the draft, so the user can fix it and press Save again
+  const withSaveError = (save: () => Promise<void>) => async () => {
+    try { await save(); } catch {
+      toast({ type: "error", title: "Couldn't save", message: "Please check your details and try again." });
+    }
+  };
 
   // Photo crop state
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -352,10 +368,10 @@ export default function MyProfilePage() {
       const fd = readDraft<{ fatherOccupation: string; motherOccupation: string; brothers: string; brothersMarried: string; sisters: string; sistersMarried: string }>(DRAFT_KEYS.family);
       if (fd) {
         const familyPayload: Parameters<typeof saveFamilyDetails>[0] = {};
-        const bc = fd.brothers !== "" ? Number(fd.brothers) : undefined;
-        const bm = fd.brothersMarried !== "" ? Number(fd.brothersMarried) : undefined;
-        const sc = fd.sisters !== "" ? Number(fd.sisters) : undefined;
-        const sm = fd.sistersMarried !== "" ? Number(fd.sistersMarried) : undefined;
+        const bc = draftNumber(fd.brothers);
+        const bm = draftNumber(fd.brothersMarried);
+        const sc = draftNumber(fd.sisters);
+        const sm = draftNumber(fd.sistersMarried);
         if (fd.fatherOccupation && diff(fd.fatherOccupation, bp?.fatherOccupation)) familyPayload.fatherOccupation = fd.fatherOccupation;
         if (fd.motherOccupation && diff(fd.motherOccupation, bp?.motherOccupation)) familyPayload.motherOccupation = fd.motherOccupation;
         if (bc !== undefined && diff(bc, bp?.brotherCount)) familyPayload.brotherCount = bc;
@@ -394,7 +410,10 @@ export default function MyProfilePage() {
 
       // Force section remount so they display fresh saved values
       setSectionRevision(r => r + 1);
-    } catch (err) { console.error("Done save failed:", err); }
+    } catch (err) {
+      console.error("Done save failed:", err);
+      toast({ type: "error", title: "Couldn't save", message: "Please check your details and try again." });
+    }
     finally { setSaving(false); }
   };
 
@@ -472,10 +491,10 @@ export default function MyProfilePage() {
     if (!fd) return;
     const bp = me?.profile;
     const familyPayload: Parameters<typeof saveFamilyDetails>[0] = {};
-    const bc = fd.brothers !== "" ? Number(fd.brothers) : undefined;
-    const bm = fd.brothersMarried !== "" ? Number(fd.brothersMarried) : undefined;
-    const sc = fd.sisters !== "" ? Number(fd.sisters) : undefined;
-    const sm = fd.sistersMarried !== "" ? Number(fd.sistersMarried) : undefined;
+    const bc = draftNumber(fd.brothers);
+    const bm = draftNumber(fd.brothersMarried);
+    const sc = draftNumber(fd.sisters);
+    const sm = draftNumber(fd.sistersMarried);
     if (fd.fatherOccupation && sectionDiff(fd.fatherOccupation, bp?.fatherOccupation)) familyPayload.fatherOccupation = fd.fatherOccupation;
     if (fd.motherOccupation && sectionDiff(fd.motherOccupation, bp?.motherOccupation)) familyPayload.motherOccupation = fd.motherOccupation;
     if (bc !== undefined && sectionDiff(bc, bp?.brotherCount)) familyPayload.brotherCount = bc;
@@ -759,7 +778,7 @@ export default function MyProfilePage() {
                     onDirty={handleDirty}
                     revision={sectionRevision}
                     draftTick={draftTick}
-                    saves={{ basic: handleSaveBasic, career: handleSaveCareer, family: handleSaveFamily, religion: handleSaveReligion, location: handleSaveLocation, lifestyle: handleSaveLifestyle, hobbies: handleSaveHobbies, partner: handleSavePartner }}
+                    saves={{ basic: withSaveError(handleSaveBasic), career: withSaveError(handleSaveCareer), family: withSaveError(handleSaveFamily), religion: withSaveError(handleSaveReligion), location: withSaveError(handleSaveLocation), lifestyle: withSaveError(handleSaveLifestyle), hobbies: withSaveError(handleSaveHobbies), partner: withSaveError(handleSavePartner) }}
                   />
                 )}
               </div>

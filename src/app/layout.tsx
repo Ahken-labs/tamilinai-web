@@ -1,5 +1,4 @@
 import "./globals.css";
-import Script from "next/script";
 import { Poppins, Noto_Sans_Tamil, Arima } from "next/font/google";
 import { LangProvider } from "../context/LangContext";
 import QueryProvider from "../providers/QueryProvider";
@@ -79,9 +78,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         {/* LCP hero image — fetchpriority=high ensures browser fetches this first */}
         <link rel="preload" as="image" fetchPriority="high" href="/_next/image?url=%2Fimages%2Fhero_image.webp&w=750&q=75" type="image/webp" />
+        {/* Plain script in the server-rendered head: runs before the page loads, and React doesn't flag it like next/script in the root layout */}
+        <script id="pwa-setup" dangerouslySetInnerHTML={{ __html: PWA_SCRIPT }} />
       </head>
       <body>
-        <Script id="pwa-setup" strategy="beforeInteractive">{PWA_SCRIPT}</Script>
         <SessionRestorer />
         <NoContextMenu />
         <ConsoleWarning />
