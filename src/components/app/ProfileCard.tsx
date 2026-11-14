@@ -37,6 +37,9 @@ interface ProfileCardProps {
   onInterestSent?: () => void;
 }
 
+// TEMP for the staging screen recording: blurs member names and details; revert after recording
+const DEMO_BLUR = process.env.NEXT_PUBLIC_NO_INDEX === "true" ? "blur-[4px]" : "";
+
 type TagType = "elite" | "viewed" | "new";
 
 function getTags(profile: Profile): TagType[] {
@@ -203,7 +206,7 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
           {/* Name + verified badge */}
           <div className="flex justify-between flex-wrap items-center gap-1 sm:gap-2">
             <h2 className="font-poppins flex gap-2 items-center text-[16px] sm:text-[17px] md:text-[18px] font-medium text-dark leading-tight">
-              {profile.name}
+              <span className={DEMO_BLUR}>{profile.name}</span>
               {profile.isVerified && (
                 <ProfileVerifiedBadgeIcon className="w-4 md:w-6 h-4 md:h-6 shrink-0" />
               )}
@@ -238,7 +241,7 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
                 row.map(({ Icon, value }, ci) => (
                   <div key={`${ri}-${ci}`} className="flex items-center gap-3 md:gap-4 min-w-0">
                     <Icon className="w-4 md:w-5 h-4 md:h-5 shrink-0 text-[#222222]" />
-                    <span className="font-poppins text-[14px] md:text-[16px] text-[#6B6B6B] truncate">{value}</span>
+                    <span className={`font-poppins text-[14px] md:text-[16px] text-[#6B6B6B] truncate ${DEMO_BLUR}`}>{value}</span>
                   </div>
                 ))
               )}
@@ -276,7 +279,7 @@ export default function ProfileCard({ profile, onUnshortlist, onInterestSent }: 
               row.map(({ Icon, value }, ci) => (
                 <div key={`${ri}-${ci}`} className="flex items-center max-[370px]:gap-1.5 gap-2 min-w-0">
                   <Icon className="w-[14px] md:w-5 h-[14px] md:h-5 shrink-0 text-[#222222]" />
-                  <span className="font-poppins text-[14px] md:text-[16px] text-[#6B6B6B] truncate">{value}</span>
+                  <span className={`font-poppins text-[14px] md:text-[16px] text-[#6B6B6B] truncate ${DEMO_BLUR}`}>{value}</span>
                 </div>
               ))
             )}

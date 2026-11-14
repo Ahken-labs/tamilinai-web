@@ -24,6 +24,9 @@ import { useDragScroll } from "../../hooks/useDragScroll";
 import { calculateAge } from "../../utils/calculateAge";
 import type { BrowseProfile } from "../../types/user";
 
+// TEMP for the staging screen recording: blurs member names and details; revert after recording
+const DEMO_BLUR = process.env.NEXT_PUBLIC_NO_INDEX === "true" ? "blur-[4px]" : "";
+
 const SCROLL_STEP = 304;
 // CSS paints the first layer on top, so the opaque gold base must be last
 const CARD_BG = "radial-gradient(100% 158.06% at 35.43% 100%, #FFED99 0%, rgba(226, 185, 101, 0) 36.95%), linear-gradient(122.64deg, rgba(254, 241, 164, 0) 60.94%, rgba(177, 135, 58, 0.11) 61.06%), linear-gradient(112.5deg, #F5C55A 0.99%, #FFFEB3 37.1%, #FFE999 53.2%, #A2782B 100%)";
@@ -93,7 +96,7 @@ function EliteMemberCard({ member, scrollRootRef, photosReady }: {
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate font-poppins text-[18px] max-[500px]:text-[16px] font-medium leading-[150%] text-[#222222]">{member.name}</p>
+          <p className={`truncate font-poppins text-[18px] max-[500px]:text-[16px] font-medium leading-[150%] text-[#222222] ${DEMO_BLUR}`}>{member.name}</p>
           <p className="font-poppins text-[16px] max-[500px]:text-[14px] leading-[150%] text-[#222222]">{member.displayId}</p>
         </div>
       </div>
@@ -102,7 +105,7 @@ function EliteMemberCard({ member, scrollRootRef, photosReady }: {
         {details.map(({ Icon, value }, i) => (
           <div key={i} className="flex min-w-0 items-center gap-2">
             <Icon className="h-5 w-5 max-[500px]:h-[14px] max-[500px]:w-[14px] shrink-0 text-[#222222]" />
-            <span className="truncate font-poppins text-[16px] max-[500px]:text-[14px] leading-[150%] text-[#222222]">{value}</span>
+            <span className={`truncate font-poppins text-[16px] max-[500px]:text-[14px] leading-[150%] text-[#222222] ${DEMO_BLUR}`}>{value}</span>
           </div>
         ))}
       </div>
